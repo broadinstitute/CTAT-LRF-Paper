@@ -1,0 +1,105 @@
+---
+title: "SeraCareFusionAnalysis"
+author: "bhaas"
+date: '2023-12-05'
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+```{r}
+
+data = read.table("data/seracarefusion.allow_rev.combined_results.ROC.tsv", header=T, sep="\t", stringsAsFactors = F) %>%
+    filter(! grepl("flair", prog))
+
+head(data)
+
+```
+
+```{r}
+
+
+TP_plot = data %>% 
+    select(seqtype, prog, min_sum_frags, TP) %>% 
+    ggplot(aes(x=min_sum_frags, y=TP)) +
+    geom_point(aes(color=seqtype)) + geom_line(aes(group=seqtype, color=seqtype)) +
+    facet_wrap(~prog, ncol=1)
+
+TP_plot
+
+```
+
+
+
+# Examine the specific control fusions
+
+```{r}
+Isoseq_fusions = read.table("data/Iso-seq.fusion_preds.txt.scored.gz", header=T, com='', sep="\t") %>%
+    mutate(dataset="ISOseq")
+
+Masseq_L1_fusions = read.table("data/MAS-seq-L1.fusion_preds.txt.scored.gz", header=T, sep="\t", com='') %>% mutate(dataset = "MASseq_L1")
+
+Masseq_L2_fusions = read.table("data/MAS-seq-L2.fusion_preds.txt.scored.gz", header=T, sep="\t", com='') %>% mutate(dataset = "MASseq_L2")
+
+
+fusion_preds = bind_rows(Isoseq_fusions, Masseq_L1_fusions, Masseq_L2_fusions)
+
+fusion_preds %>% head()
+
+```
+
+
+```{r}
+
+control_fusions = read.table("data/SeraCare_fusion_targets.tsv", header=T, sep="\t") %>% select(FusionName)
+
+control_fusions
+```
+
+
+```{r}
+
+control_fusions_found = fusion_preds %>% filter(pred_class == "TP") %>% 
+    select(dataset, prog, selected_fusion) %>% unique() %>% mutate(found=TRUE)
+
+
+progs = fusion_preds %>% select(prog, dataset) %>% unique()
+
+control_fusions_found = full_join(cross_join(control_fusions, progs),
+                                   control_fusions_found,
+                                   by=c('prog', 'FusionName'='selected_fusion', 'dataset')) %>%
+    mutate(found = (! is.na(found)))
+
+
+control_fusions_found 
+```
+
+
+```{r}
+
+control_fusions_found %>%  filter(! grepl("flairfusion", prog)) %>%
+    mutate(prog = factor(prog, levels = c('ctat-LR-fusion.v0.11.0', 'fusionseeker', 'LongGF', 'JAFFAL', 'pbfusion_v0.3.1'))) %>%
+    mutate(prog_data = paste(prog, dataset)) %>%
+    ggplot(aes(x=FusionName, y=reorder(prog_data, desc(prog_data)))) +
+    geom_tile(aes(fill=found), color='black') + 
+    #scale_y_reverse() +
+     theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+#+
+#        theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+#        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+
+
+
+```
+
+# Compare long reads to short reads for detecting these control fusions
+
+
+
+
+
+
