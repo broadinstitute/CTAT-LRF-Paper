@@ -2,7 +2,7 @@
 title: "CTAT_DepMap9Lines"
 author: "bhaas"
 date: '2023-12-05'
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
@@ -51,7 +51,7 @@ TP_fusions = read.table("../3b.DepMap9Lines_Benchmarking/data/min_2.okPara_ignor
     filter(pred_result == "TP") %>%
     select(sample, fusion, pred_result) %>% unique()
 
-TP_fusions
+TP_fusions %>% head()
 ```
 
 ```{r}
