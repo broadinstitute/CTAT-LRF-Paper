@@ -1,0 +1,149 @@
+---
+title: "DepMap Fusion Benchmarking"
+author: "bhaas"
+date: '2023-12-05'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+
+
+```{r}
+
+fusion_preds = read.table("data/preds.collected.gencode_mapped.wAnnot.filt", header=T, sep="\t", stringsAsFactors = F) %>%
+    filter(! grepl("flair", prog))
+
+fusion_preds %>% head()
+```
+
+
+
+```{r}
+
+p = fusion_preds %>% group_by(sample, prog) %>% tally(name='num_fusions') %>%
+    ggplot(aes(x=prog, y=num_fusions)) + geom_col(aes(fill=prog)) + facet_wrap(~sample)  + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+
+p 
+```
+
+
+
+```{r}
+
+# get num truth counts (min 2 agree)
+
+truth_data = read.table("data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.byProgAgree.min_2.truth_set",
+                  header=T, sep="\t", stringsAsFactors = F)
+
+
+truth_data %>% head()
+
+```
+
+```{r}
+
+truth_data$sample_name = sapply(truth_data$proxy_fusion_name, function(x) { str_split(x, "\\|")[[1]][1]})
+
+
+# from Kirsty: 
+#   Just to confirm that the 9th cell line (HCC38) - has been corrected to DMS53 (ACH-000698). 
+
+truth_data = truth_data %>% mutate(sample_name = ifelse(sample_name=="HCC38", "DMS53", sample_name))
+
+
+head(truth_data)
+
+truth_data_counts = truth_data %>% rename(sample=sample_name) %>% group_by(sample) %>% tally(name='num_truth_fusions')
+
+truth_data_counts
+
+```
+
+```{r}
+
+p2 = p + geom_hline(data=truth_data_counts, aes(yintercept=num_truth_fusions))
+
+p2
+
+```
+
+
+
+
+
+```{r}
+# unnest prog names
+
+truth_data = truth_data %>% mutate(prog_names = str_split(prog_names, ","))  %>% unnest(prog_names)
+
+truth_data %>% head()
+```
+
+
+
+```{r}
+#Organize according to pred class
+    
+scored_data = read.table("data/min_2.okPara_ignoreUnsure.results.scored", header=T, sep="\t", stringsAsFactors = F)
+
+# from Kirsty: 
+#   Just to confirm that the 9th cell line (HCC38) - has been corrected to DMS53 (ACH-000698). 
+
+scored_data = scored_data %>% mutate(sample = ifelse(sample=="HCC38", "DMS53", sample))
+
+
+
+scored_data %>% head()
+
+
+```
+
+
+```{r}
+
+scored_data %>% filter(pred_result %in% c("TP", "FP", "FN")) %>% 
+    group_by(sample, prog, pred_result) %>% 
+    tally(name='fusion_counts') %>%
+    ggplot(aes(x=prog, y=fusion_counts, fill=factor(pred_result, levels=c('FP', 'TP', 'FN')))) + geom_col() + facet_wrap(~sample)  +
+        theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+    
+
+```
+
+
+# accuracy analysis
+
+Require min 2 calls to agree as truth set.
+
+```{r}
+
+data = read.table("data/min_2.okPara_ignoreUnsure.results.scored.ROC", header=T, sep="\t", stringsAsFactors = F) %>%
+    filter(! grepl("flair", prog))
+
+data %>% head()
+```
+
+
+```{r}
+
+# F1 vs. min reads
+
+data %>% ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom_line(aes(group=prog, color=prog)) +
+    xlim(3,15) + #ylim(0.3,0.8) +
+    ggtitle("Depmap v1 fusions: F1 ~ min read support")
+
+
+```
+
+
+
+
+
+
+
