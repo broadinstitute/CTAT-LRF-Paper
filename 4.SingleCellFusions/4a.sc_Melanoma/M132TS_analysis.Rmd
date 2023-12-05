@@ -1,0 +1,334 @@
+---
+title: "M132TS_analysis"
+author: "bhaas"
+date: '2023-09-28'
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+```{r}
+MIN_CELLS = 3
+```
+
+
+# M132TS
+
+
+```{r}
+
+all_data = read.table("data/M132TS.melanoma_sc.filtered_cells_and_dedup_umis.tsv.gz", header=T, sep="\t", stringsAsFactors = F)
+
+head(all_data)
+
+
+```
+
+```{r}
+
+all_data %>% select(method) %>% unique()
+
+```
+
+```{r}
+# since starF and FI were run at max sensitivity, lets restrict fusions to those identified by ctat-LRF
+
+ctat_LRF_fusion_genes = all_data %>% filter(method == 'ctat-LR-fusion') %>% select(FusionName) %>% unique() %>% pull(FusionName)
+
+all_data = all_data %>% filter(FusionName %in% ctat_LRF_fusion_genes)
+```
+
+
+
+```{r}
+
+starF_fusions = all_data %>% filter(method=="STAR-Fusion")
+
+FI_fusions = all_data %>% filter(method=="FusionInspector")
+
+ctat_LRF_fusions = all_data %>% filter(method == "ctat-LR-fusion")
+
+
+```
+
+
+```{r}
+
+fusion_annots = read.table("data/M132TS.fusion_annots.gz", sep="\t", header=T, stringsAsFactors = F)
+
+```
+
+
+```{r}
+
+fusion_cell_counts_by_method = read.table("data/M132TS.melanoma_sc.filtered_cells_and_dedup_umis.cell_counts_by_method.tsv.gz",
+                                          header=T, sep="\t", stringsAsFactors = F)
+
+
+fusion_cell_counts_by_method  = fusion_cell_counts_by_method %>% filter(FusionName %in% ctat_LRF_fusion_genes)
+
+fusion_cell_counts_by_method %>% head()
+
+```
+
+```{r}
+
+fusion_cell_counts_by_method %>% select(FusionName, LeftBreakpoint, RightBreakpoint, method, leiden, cell_counts) %>%
+    spread(key=method, value=cell_counts) %>% 
+    arrange(desc(`ctat-LR-fusion`)) %>% head()
+
+```
+
+
+
+# plot counts of cells for these fusions:
+
+```{r}
+
+right_join(fusion_cell_counts_by_method, 
+          fusion_cell_counts_by_method %>% 
+                         filter(cell_counts >= MIN_CELLS)  %>% 
+                         select(FusionName, LeftBreakpoint, RightBreakpoint) 
+          ) %>%
+              rowwise() %>% mutate(fusion=paste(FusionName, LeftBreakpoint, RightBreakpoint, collapse=":")) %>%
+              ggplot(aes(x=fusion, y=cell_counts, fill=method)) + geom_bar(stat='identity', position='dodge') +
+              theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+```
+
+
+
+# Examine cell type representation by fusions
+
+
+```{r}
+
+fusion_frac_cell_types = all_data %>% select(FusionName, cell_barcode, leiden) %>% unique() %>%
+    group_by(FusionName, leiden) %>% tally(name='tot_cells_w_fusion') %>% 
+    mutate(frac_fusion_cells=prop.table(tot_cells_w_fusion)) %>%
+    arrange(desc(tot_cells_w_fusion))
+
+fusion_frac_cell_types %>% head()
+
+```
+
+
+
+
+```{r}
+
+fusions_of_interest = fusion_frac_cell_types %>% 
+    filter(tot_cells_w_fusion >= MIN_CELLS) %>%
+    arrange(desc(tot_cells_w_fusion)) %>%
+    filter(frac_fusion_cells >= 0.8)
+
+fusions_of_interest
+
+```
+
+
+```{r}
+
+fusions_of_interest = left_join(fusions_of_interest,
+          fusion_annots)
+
+fusions_of_interest
+```
+
+
+NUTM2A-AS1--RP11-203L2.4 is the only relevant inter-chromosomal.
+
+The others have few cells and are likely cis-spliced fusions.
+
+
+```{r}
+
+umap_base_data = read.table("data/M132TS.bc_to_umap_n_leiden.tsv.gz", header=T, sep="\t", stringsAsFactors = F)
+
+baseplot = umap_base_data %>% ggplot(aes(x=umap_1, y=umap_2)) + geom_point()
+
+baseplot + geom_point(aes(color=as.factor(leiden)))
+
+```
+
+
+```{r}
+
+ umap_base_data %>% ggplot(aes(x=umap_1, y=umap_2)) + geom_point(aes(color=CST3))
+
+```
+
+```{r}
+
+TUMOR_CLUSTERS = c(4,7)
+
+umap_base_data %>% mutate(tumor = leiden %in% TUMOR_CLUSTERS) %>%
+    ggplot(aes(x=umap_1, y=umap_2)) + geom_point(aes(color=tumor))
+
+
+```
+
+```{r}
+
+fusion_frac_tumor = all_data %>% 
+    mutate(tumor = leiden %in% TUMOR_CLUSTERS) %>%
+    select(FusionName, cell_barcode, tumor) %>% unique() %>%
+    group_by(FusionName, tumor) %>% tally(name='tot_cells_w_fusion') %>% 
+    mutate(frac_fusion_cells=prop.table(tot_cells_w_fusion)) %>%
+    arrange(desc(tot_cells_w_fusion))
+
+# redefine fusions of interest
+fusions_of_interest = fusion_frac_tumor %>% filter(tumor) %>% arrange(desc(tot_cells_w_fusion)) %>% filter(tot_cells_w_fusion >= MIN_CELLS) %>%
+    filter(frac_fusion_cells >= 0.8)
+
+fusions_of_interest
+
+```
+
+
+
+
+```{r}
+
+x = 0
+
+plots = list()
+
+for (fusion in  fusions_of_interest$FusionName) {
+    
+    p = baseplot + geom_point(data=all_data %>% filter(FusionName == fusion) %>% select(umap_1, umap_2, method) %>% unique(), 
+                              aes(color=method), alpha=0.5, size=rel(2)) + 
+        ggtitle(paste("M132TS, Fusion: ", fusion) )
+    
+    plot(p)   
+    
+    x = x+1
+    plots[[x]] = p
+}
+
+
+
+```
+
+
+
+
+```{r}
+
+
+pdf("M132TS.fusions_of_interest.pdf")
+for (p in plots) {
+    plot(p)
+}
+
+dev.off()
+
+```
+
+
+```{r}
+
+fusions_of_interest = left_join(fusions_of_interest,
+          fusion_annots)
+
+fusions_of_interest
+
+```
+
+```{r}
+
+write.table(fusions_of_interest, file="M132TS.fusions_of_interest.tsv", sep="\t", quote=F, row.names = F)
+
+
+```
+
+
+
+```{r}
+
+fusion_cell_counts_by_method %>% filter(FusionName %in% fusions_of_interest$FusionName) %>% 
+    select(FusionName, LeftBreakpoint, RightBreakpoint, method, leiden, cell_counts) %>%
+    spread(key=method, value=cell_counts) %>% 
+    arrange(desc(`ctat-LR-fusion`))
+
+```
+
+
+
+```{r}
+
+M132TS_fusions_of_interest_counts = all_data %>% filter(FusionName %in% fusions_of_interest$FusionName) %>% 
+        select(FusionName, method, cell_barcode) %>% unique() %>%
+        group_by(FusionName, method) %>% tally(name='cell_counts') 
+
+M132TS_fusions_of_interest_counts
+
+M132TS_fusions_of_interest_counts %>%
+              ggplot(aes(x=FusionName, y=cell_counts, fill=method)) + geom_bar(stat='identity', position='dodge') +
+              theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    ggtitle("M132TS Fusions of Interest: Cell Counts")
+
+
+```
+
+
+# focus on NUTM2A-AS1--RP11-203L2.4
+
+
+```{r}
+
+all_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4" ) %>% 
+        select(FusionName, method, cell_barcode) %>% unique() %>%
+        group_by(FusionName, method) %>% tally(name='cell_counts') %>%
+              ggplot(aes(x=FusionName, y=cell_counts, fill=method)) + geom_bar(stat='identity', position='dodge') +
+              theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    ggtitle("M132TS Fusions of Interest: Cell Counts")
+
+
+```
+
+
+
+
+
+
+
+
+```{r}
+
+ p = baseplot + geom_point(data=all_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4") %>% select(umap_1, umap_2, method) %>% unique(), 
+                              aes(color=method), alpha=0.5, size=rel(2)) + 
+        ggtitle(paste("M132TS, Fusion: ", fusion) )
+    
+    plot(p)   
+
+
+
+```
+
+
+```{r}
+
+all_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4") %>%
+    select(cell_barcode, method) %>% unique() %>%
+    group_by(cell_barcode) %>% arrange(method) %>%
+    mutate(methods = paste(method, collapse=",")) %>%
+    ungroup() %>%
+    select(cell_barcode, methods) %>% unique() %>%
+    group_by(methods) %>% tally(name='num_cells')
+
+
+```
+
+
+
+
+
+
+
+
