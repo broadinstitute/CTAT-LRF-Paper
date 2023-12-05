@@ -1,0 +1,141 @@
+---
+title: "CTAT_DepMap9Lines"
+author: "bhaas"
+date: '2023-12-05'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+```{r}
+
+data = read.table("data/DepMap_v1v2mrgd.ctatLRF_FI.consolidated.tsv.gz", header=T, sep="\t", com='') %>% 
+    rename(sample=X.sample, fusion = X.FusionName)
+
+
+data %>% head()
+
+```
+
+# compare long vs. short read fusion evidence, normalized by sequencing depth
+
+```{r}
+
+data %>% ggplot(aes(x=log10(LR_FFPM), y=log10(FFPM))) + geom_point() +
+    ggtitle("LR vs. SR fusion expression (FFPM)") +                                      
+  stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth") + 
+    geom_abline(intercept=0, slope=1, color='purple')
+
+
+```
+
+
+```{r}
+
+cor.test(x=log2(data$LR_FFPM), y=log2(data$FFPM), use='complete.obs')
+
+```
+
+
+# restrict to the TP fusions 
+
+```{r}
+
+TP_fusions = read.table("../3b.DepMap9Lines_Benchmarking/data/min_2.okPara_ignoreUnsure.results.scored", header=T, sep="\t", stringsAsFactors = F) %>% 
+    filter(pred_result == "TP") %>%
+    select(sample, fusion, pred_result) %>% unique()
+
+TP_fusions
+```
+
+```{r}
+
+data = left_join(data, TP_fusions,
+                 by=c('sample','fusion') )
+
+```
+
+
+```{r}
+
+# by read counts
+
+data %>% filter(pred_result == "TP") %>%
+     mutate(num_SR = est_J + est_S) %>%
+    group_by(sample, fusion) %>% arrange(desc(num_LR), desc(num_SR))  %>% mutate(fusion = paste(fusion, 'iso', row_number())) %>% ungroup() %>%
+    #mutate(fusion = paste(fusion, LeftBreakpoint, RightBreakpoint)) %>%
+   
+    #group_by(sample, fusion) %>% arrange(desc(num_LR), desc(num_SR)) %>% filter(row_number() == 1) %>% ungroup() %>%
+    select(sample, fusion, num_LR, num_SR) %>% 
+    gather(key=read_type, value=read_count, num_LR, num_SR) %>%
+    ggplot(aes(x=fusion, y=read_count)) + geom_bar(stat='identity', position = 'dodge', aes(fill=read_type)) +
+    
+    facet_grid(. ~ sample, scales = "free", space='free') +
+    scale_x_discrete(expand = c(0, 0.5))  +
+    
+    #facet_wrap(~sample, scale='free') +
+    # 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+```
+
+
+```{r}
+
+# label those fusions that have the most extreme difference with SR >> LR
+
+SR_enriched_fusion_isoforms = data %>% filter(pred_result == "TP") %>%
+     mutate(num_SR = est_J + est_S) %>%
+    group_by(sample, fusion) %>% arrange(desc(num_LR), desc(num_SR))  %>% 
+    mutate(fusion = paste(fusion, 'iso', row_number())) %>% ungroup() %>%
+    select(sample, fusion, LR_FFPM, FFPM) %>% 
+    rename(SR_FFPM = FFPM) %>%
+    mutate(SR_enrichment = SR_FFPM / LR_FFPM) %>%
+    arrange(desc(SR_enrichment))
+
+
+SR_enriched_fusion_isoforms %>% head()
+
+```
+
+
+
+```{r}
+
+data %>% filter(pred_result == "TP") %>%
+     mutate(num_SR = est_J + est_S) %>%
+    group_by(sample, fusion) %>% arrange(desc(num_LR), desc(num_SR))  %>% mutate(fusion = paste(fusion, 'iso', row_number())) %>% ungroup() %>%
+    select(sample, fusion, LR_FFPM, FFPM) %>% 
+    rename(SR_FFPM = FFPM) %>%
+    ggplot(aes(x=log10(LR_FFPM), y=log10(SR_FFPM))) + geom_point() +
+    stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth") + 
+    geom_abline(intercept=0, slope=1, color='purple') +
+    geom_point(data=SR_enriched_fusion_isoforms %>% filter(SR_enrichment>=3), color='red')  +
+    geom_text(data=SR_enriched_fusion_isoforms %>% filter(SR_enrichment>=3), aes(label=fusion))
+
+```
+
+
+```{r}
+
+SR_enriched_fusion_isoforms %>%
+    mutate(rn = row_number() ) %>%
+    ggplot(aes(x=rn, y=SR_enrichment)) + geom_point() + geom_abline(interceipt=1, slope=0, color='purple') +
+    scale_y_continuous(trans='log10') +
+    xlab("Fusion isoform ranked by SR_enrichment")
+   
+```
+
+
+
+
+
+
