@@ -1,0 +1,171 @@
+---
+title: "CTAT_SeraCareFusion"
+author: "bhaas"
+date: '2023-12-05'
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+# number of fusion reads for each control fusion
+
+```{r}
+
+control_fusions = read.table("data/SeraCare_fusion_targets.tsv", header=T, sep="\t")
+
+control_fusions 
+```
+
+
+```{r}
+
+
+rep1_data = read.table("data/ctatLRF_FI/SeraCareFusions_Isoseq.ctat-LR-fusion.fusion_predictions.abridged.tsv.gz", header=T, com='', sep="\t") %>%
+    mutate(dataset= 'ISO-seq')
+
+rep2_data = read.table("data/ctatLRF_FI/SeraCareFusions_MASseq-bc08.ctat-LR-fusion.fusion_predictions.abridged.tsv.gz", header=T, com='', sep="\t") %>%
+    mutate(dataset = 'MAS-seq-R1')
+
+rep3_data = read.table("data/ctatLRF_FI/SeraCareFusions_MASseq-bc09.ctat-LR-fusion.fusion_predictions.abridged.tsv.gz", header=T, com='', sep="\t") %>%
+    mutate(dataset = 'MAS-seq-R2')
+
+
+ctatLRF_FI_data = bind_rows(rep1_data, rep2_data, rep3_data) %>% rename(FusionName = X.FusionName, SR_FFPM = FFPM) %>%
+    mutate(num_SR = est_J + est_S) 
+
+ctatLRF_FI_data %>% head()
+
+
+```
+
+```{r}
+ctatLRF_FI_control_results = left_join( cross_join(control_fusions, data.frame(dataset=c('ISO-seq', 'MAS-seq-R1', 'MAS-seq-R2'))),
+                                    ctatLRF_FI_data %>% 
+                                        select(FusionName, LeftBreakpoint, RightBreakpoint, 
+                                               num_LR, LR_FFPM, num_SR, SR_FFPM, dataset),
+                                    by=c('FusionName', 'LeftBreakpoint', 'RightBreakpoint', 'dataset'))
+
+
+ctatLRF_FI_control_results =  ctatLRF_FI_control_results %>% mutate(num_SR = ifelse(is.na(num_SR), 0, num_SR))
+
+ctatLRF_FI_control_results
+
+```
+
+# examine number of long reads per control fusion
+
+```{r}
+
+# by read count
+
+ctatLRF_FI_control_results %>% ggplot(aes(x=FusionName, y=num_LR)) + 
+    geom_bar(stat='identity', position='dodge', aes(fill=dataset))   + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+
+```
+
+
+```{r}
+
+# by normalized read count
+
+ctatLRF_FI_control_results %>% ggplot(aes(x=FusionName, y=LR_FFPM)) + 
+    geom_bar(stat='identity', position='dodge', aes(fill=dataset))   + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+
+```
+
+
+# examine counts of long reads (ctatLRF) vs. short reads (FI) evidence
+
+```{r}
+
+ctatLRF_FI_control_results %>% gather(key=read_count_type, value=read_count, num_LR, num_SR) %>%
+    ggplot(aes(x=read_count_type, y=read_count)) +  
+    geom_bar(stat='identity', position = 'dodge', aes(color=dataset, fill=read_count_type)) +
+    facet_wrap(~FusionName) +
+      theme(axis.text.x = element_text(angle = 90, hjust = 1))  +
+          geom_text(position=position_dodge(width=0.9), aes(label=read_count, group=dataset))
+
+```
+
+# compare gene expression levels between long and short reads:
+
+```{r}
+
+LR_gene_expr = read.table("data/expr_quant/LR.salmon.gene.TMM.EXPR.matrix.gz", header=T, sep="\t") %>%
+    rename(gene_id=X)
+
+TruSeq_gene_expr = read.table("data/expr_quant/TruSeq.salmon.gene.TMM.EXPR.matrix.gz", header=T, sep="\t") %>%
+    rename(gene_id=X)
+
+LR_mean_gene_expr = LR_gene_expr %>% rowwise() %>%  mutate(mean_LR_gene_expr = mean(SCF_IsoSeq, SCF_bc08, SCF_bc09)) %>% select(gene_id, mean_LR_gene_expr)
+
+TruSeq_mean_gene_expr = TruSeq_gene_expr %>% rowwise() %>% mutate(mean_TruSeq_gene_expr = mean(SeraFusion_r1, SeraFusion_r2, SeraFusion_r3)) %>% select(gene_id, mean_TruSeq_gene_expr)
+
+mean_gene_expr = full_join(LR_mean_gene_expr, TruSeq_mean_gene_expr, by='gene_id') %>% filter(mean_LR_gene_expr > 0 & mean_TruSeq_gene_expr > 0)
+
+```
+
+
+```{r}
+
+# from: https://stackoverflow.com/questions/13094827/how-to-reproduce-smoothscatters-outlier-plotting-in-ggplot
+
+
+densVals <- function(x, y = NULL, nbin = 128, bandwidth, range.x) {
+  dat <- cbind(x, y)
+  # limit dat to strictly finite values
+  sel <- is.finite(x) & is.finite(y)
+  dat.sel <- dat[sel, ]
+  # density map with arbitrary graining along x and y
+  map   <- grDevices:::.smoothScatterCalcDensity(dat.sel, nbin, bandwidth)
+  map.x <- findInterval(dat.sel[, 1], map$x1)
+  map.y <- findInterval(dat.sel[, 2], map$x2)
+  # weighted mean of the fitted density map according to how close x and y are
+  # to the arbitrary grain of the map
+  den <- mapply(function(x, y) weighted.mean(x = c(
+    map$fhat[x, y], map$fhat[x + 1, y + 1],
+    map$fhat[x + 1, y], map$fhat[x, y + 1]), w = 1 / c(
+    map$x1[x] + map$x2[y], map$x1[x + 1] + map$x2[y + 1],
+    map$x1[x + 1] + map$x2[y], map$x1[x] + map$x2[y + 1])),
+    map.x, map.y)
+  # replace missing density estimates with NaN
+  res <- rep(NaN, length(sel))
+  res[sel] <- den
+  res
+}
+
+mean_gene_expr$point_density <- densVals(log10(mean_gene_expr$mean_LR_gene_expr), log10(mean_gene_expr$mean_TruSeq_gene_expr))
+
+mean_gene_expr  %>% ggplot(aes(x = log10(mean_LR_gene_expr), y=log10(mean_TruSeq_gene_expr))) +
+  stat_density2d(geom = "raster", aes(fill = ..density.. ^ 0.25), contour = FALSE) +
+  #scale_x_log10() + scale_y_log10() +
+  scale_fill_gradientn(colours = colorRampPalette(c("white", blues9))(256)) +
+  # select only the 100 sparesest points
+   geom_point(data = mean_gene_expr %>% arrange(point_density) %>% head(100), size = .5) +
+  stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth")
+
+```
+
+
+
+```{r}
+
+
+cor.test(log10(mean_gene_expr$mean_LR_gene_expr), log10(mean_gene_expr$mean_TruSeq_gene_expr))
+
+
+```
+
+
+
