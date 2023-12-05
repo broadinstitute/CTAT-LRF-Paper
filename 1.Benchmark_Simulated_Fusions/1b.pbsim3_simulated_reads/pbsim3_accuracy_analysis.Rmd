@@ -1,0 +1,164 @@
+---
+title: "pbsim3_accuracy_analysis"
+author: "bhaas"
+date: '2023-12-05'
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+# fusion pair accuracy
+
+```{r}
+
+max_F1_data = read.table("data/max_F1_summary.tsv", header=T, sep="\t") %>% 
+    filter(! grepl("flair", prog)) %>%
+ mutate(pass_count = as.numeric(str_replace(pass_count, "pass", ""))) 
+
+```
+
+
+```{r}
+
+# barplot
+
+p_barplot = max_F1_data %>% ggplot(aes(x=factor(pass_count), y=F1)) +
+        geom_bar(stat='identity', position='dodge', aes(fill=prog)) +
+        facet_grid(vars(analysisType), vars(coverage_level)) + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+
+p_barplot
+
+```
+
+
+```{r}
+
+
+
+mean_samples_F1 = max_F1_data %>% 
+    group_by(rep_num, coverage_level, pass_count, prog, analysisType) %>%
+    summarize(mean_F1 = mean(F1))
+
+
+mean_samples_F1 %>%
+        filter(analysisType %in% c('strict', 'allow_reverse')) %>%
+        ggplot() +
+        geom_point(aes(x=pass_count, y=mean_F1, color=prog)) +
+        geom_line(aes(x=pass_count, y=mean_F1, group=prog, color=prog)) +
+        facet_grid(vars(analysisType), vars(coverage_level))
+
+
+```
+
+
+# breakpoint results
+
+
+```{r}
+breakpoint_data = read.table("data/breakpoint_maxF1_data.tsv", sep="\t", header=T) %>%
+    mutate(pass_count = as.numeric(str_replace(pass_count, "pass", ""))) %>%
+    filter(prog != 'flairfusion')
+    
+
+
+breakpoint_data$coverage_level = factor(breakpoint_data$coverage_level, levels=c('cov5', 'cov50'))
+
+brkpt_accuracy_plot = breakpoint_data %>% ggplot() +
+        geom_point(aes(x=pass_count, y=F1, color=prog)) +
+        geom_line(aes(x=pass_count, y=F1, group=prog, color=prog)) +
+        facet_grid(vars(analysisType), vars(coverage_level)) +
+        ggtitle("Exact or Fuzzy Breakpoint Detection Accuracy") +
+        ylim(0,1)
+
+
+
+brkpt_accuracy_plot 
+
+```
+
+
+```{r}
+
+breakpoint_mean_F1_stats = breakpoint_data %>% group_by(coverage_level, pass_count, analysisType, prog) %>% 
+    summarize(mean_F1 = mean(F1, na.rm=T))
+
+
+breakpoint_mean_F1_stats %>% ggplot() +
+        geom_point(aes(x=pass_count, y=mean_F1, color=prog)) +
+        geom_line(aes(x=pass_count, y=mean_F1, group=prog, color=prog)) +
+        facet_grid(vars(analysisType), vars(coverage_level)) +
+        ggtitle("Exact or Fuzzy Breakpoint Detection Accuracy") +
+        ylim(0,1) 
+
+
+```
+                
+                
+# Combine gene-pair and breakpoint results                
+                
+                                                                                                                      
+```{r}
+
+combined_results = bind_rows(mean_samples_F1,
+                             breakpoint_mean_F1_stats)
+
+combined_results %>% head()
+
+
+
+```
+
+```{r}
+
+combined_results %>%
+        filter(analysisType != "allow_revNparalogs") %>%
+        ggplot() +
+        geom_point(aes(x=pass_count, y=mean_F1, color=prog)) +
+        geom_line(aes(x=pass_count, y=mean_F1, group=prog, color=prog)) +
+        facet_grid(vars(factor(analysisType, levels=c('strict', 'allow_reverse', 'Exact Brkpt', 'Fuzzy Brkpt'))), vars(coverage_level))
+
+```
+
+```{r}
+
+combined_results %>%
+        filter(analysisType != "allow_revNparalogs") %>%
+        mutate(pass_count = as.numeric(str_replace(pass_count, "pass", ""))) %>%
+        filter(pass_count == 20) %>%
+        mutate(analysisType = factor(analysisType, 
+                            levels=c('strict', 'allow_reverse', 'Exact Brkpt', 'Fuzzy Brkpt') )) %>%
+    ggplot() +
+    geom_jitter(aes(x=analysisType, y=mean_F1, color=prog, shape=prog), width=0.2, size=rel(2)) +
+
+    facet_wrap(~coverage_level) +
+     theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+    
+
+```
+
+```{r}
+
+# just cov5
+
+combined_results %>%
+        filter(coverage_level == 'cov5') %>%
+        filter(analysisType != "allow_revNparalogs") %>%
+        mutate(pass_count = as.numeric(str_replace(pass_count, "pass", ""))) %>%
+        filter(pass_count == 20) %>%
+        mutate(analysisType = factor(analysisType, 
+                            levels=c('strict', 'allow_reverse', 'Exact Brkpt', 'Fuzzy Brkpt') )) %>%
+    ggplot() +
+    geom_jitter(aes(x=analysisType, y=mean_F1, color=prog, shape=prog), width=0.2, size=rel(2)) +
+
+    facet_wrap(~coverage_level) +
+     theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+    
+    
+
+```
+
