@@ -50,6 +50,7 @@ HCC1187|TMX2--SMTNL1	JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker	4
 DMS53|ABR--CDK14	JAFFAL,LongGF,fusionseeker,pbfusion_v0.3.1	4
 VCAP|ADCK3--RNF187	JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker	4
 K562|MED15--RPL14	JAFFAL,LongGF,fusionseeker,pbfusion_v0.3.1	4
+HCC1187|PLXND1--TMCC1	JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker	4
 DMS53|LSAMP--RP11-384F7.2	JAFFAL,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1	4
 HCC1187|EXOSC10--LINC01535	JAFFAL,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1	4
 HCC1395|TBC1D16--AC012354.6	JAFFAL,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1	4
@@ -65,7 +66,9 @@ K562|C16orf87--ORC6	JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker	4
 HCC1187|NOTCH2--SEC22B	JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker	4
 HCC1395|RP11-661P17.1--SLCO3A1	JAFFAL,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1	4
 SKBR3|CSNK2A1--PREX1	JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker	4
+RT112|FGFR3--TACC3	JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker	4
 SKBR3|TBC1D31--ZNF704	JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker	4
+HCC1187|AGPAT5--MCPH1	JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker	4
 KIJK|SCMH1--NPM1	JAFFAL,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1	4
 HCC1395|CTF1--ZNF646	JAFFAL,LongGF,fusionseeker,pbfusion_v0.3.1	4
 KIJK|RP11-444D3.1--SOX5	JAFFAL,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1	4
@@ -147,3 +150,16 @@ VCAP|RP11-96H19.1--RP11-446N19.1	JAFFAL,ctat-LR-fusion.v0.11.0	2
 VCAP|RN7SL1--SLC35F6	JAFFAL,pbfusion_v0.3.1	2
 MJ|RN7SL2--STK17B	fusionseeker,pbfusion_v0.3.1	2
 HCC1395|FTH1--FUS	fusionseeker,pbfusion_v0.3.1	2
+SKBR3|AKAP13--BLOC1S6	pbfusion_v0.3.1	1
+K562|LRCH2--RP5-964N17.1	pbfusion_v0.3.1	1
+DMS53|KRT7--OR7E47P	pbfusion_v0.3.1	1
+HCC1187|CDH23--KLK5	pbfusion_v0.3.1	1
+SKBR3|COLEC10--SAMD12-AS1	pbfusion_v0.3.1	1
+HCC1395|RP11-115C10.1--ST3GAL4	pbfusion_v0.3.1	1
+HCC1395|AC017104.4--SLMAP	fusionseeker	1
+VCAP|CNNM4--PARD3B	fusionseeker	1
+K562|CCDC26--LINC00977	pbfusion_v0.3.1	1
+DMS53|JAK1--RP4-535B20.1	pbfusion_v0.3.1	1
+DMS53|LINC01420--UBQLN2	pbfusion_v0.3.1	1
+K562|RP11-1041F24.1--RP11-587P21.2	pbfusion_v0.3.1	1
+DMS53|AP003900.6--bP-2189O9.3	JAFFAL	1
