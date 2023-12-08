@@ -143,6 +143,24 @@ data %>% ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom
 ```
 
 
+```{r}
+
+# plot TP and FP ~ min sum frags.
+
+data %>% select(prog, min_sum_frags, TP, FP) %>% 
+    gather(key=pred_class_type, value=pred_class_value, TP, FP) %>%
+    ggplot(aes(x=min_sum_frags, y=pred_class_value)) + geom_point(aes(group=pred_class_type, color=pred_class_type)) +
+    facet_wrap(~prog) +
+    xlim(3,15)
+
+
+
+```
+
+
+
+
+
 
 # Examine COSMIC fusions among these cell lines, predicted with any number of reads as evidence.
 
