@@ -167,7 +167,9 @@ baseplot + geom_point(aes(color=as.factor(leiden)))
 
 TUMOR_CLUSTERS = c(4,7)
 
-umap_base_data %>% mutate(tumor = leiden %in% TUMOR_CLUSTERS) %>%
+umap_base_data = umap_base_data %>% mutate(tumor = leiden %in% TUMOR_CLUSTERS)
+
+umap_base_data %>%
     ggplot(aes(x=umap_1, y=umap_2)) + geom_point(aes(color=tumor))
 
 
@@ -175,16 +177,46 @@ umap_base_data %>% mutate(tumor = leiden %in% TUMOR_CLUSTERS) %>%
 
 ```{r}
 
-fusion_frac_tumor = all_data %>% 
-    mutate(tumor = leiden %in% TUMOR_CLUSTERS) %>%
-    select(FusionName, cell_barcode, tumor) %>% unique() %>%
-    group_by(FusionName, tumor) %>% tally(name='tot_cells_w_fusion') %>% 
-    mutate(frac_fusion_cells=prop.table(tot_cells_w_fusion)) %>%
-    arrange(desc(tot_cells_w_fusion))
 
-# redefine fusions of interest
-fusions_of_interest = fusion_frac_tumor %>% filter(tumor) %>% arrange(desc(tot_cells_w_fusion)) %>% filter(tot_cells_w_fusion >= MIN_CELLS) %>%
-    filter(frac_fusion_cells >= 0.8)
+
+umap_base_data %>% select(index, tumor) %>% unique() %>% nrow()
+
+# 6932 total cells
+    
+ umap_base_data %>% select(index, tumor) %>% unique() %>% group_by(tumor) %>% tally()
+ 
+# tumor #cells
+# FALSE	6231			
+# TRUE	701	
+
+NUM_TOTAL_CELLS = 6932
+NUM_TUMOR_CELLS = 701
+NUM_NORMAL_CELLS = 6231
+
+# so 10% are tumor cells
+```
+
+
+
+
+```{r}
+
+# label tumor cells
+all_data = all_data %>% 
+    mutate(tumor = leiden %in% TUMOR_CLUSTERS)
+
+fusion_frac_tumor = all_data %>%
+    select(FusionName, cell_barcode, tumor) %>% unique() %>%
+    group_by(FusionName, tumor) %>% tally(name='tot_cells_w_fusion') %>%
+    spread(key=tumor, value=tot_cells_w_fusion, fill = 0) %>%
+    rename(normal_cell_count=`FALSE`) %>% rename(tumor_cell_count=`TRUE`) %>%
+    mutate(frac_normal_cells = normal_cell_count / NUM_NORMAL_CELLS,
+           frac_tumor_cells = tumor_cell_count / NUM_TUMOR_CELLS) %>%
+    arrange(desc(frac_tumor_cells))
+
+
+
+fusions_of_interest = fusion_frac_tumor %>% filter(frac_tumor_cells > 0.01 | frac_normal_cells > 0.01)
 
 fusions_of_interest
 
@@ -263,8 +295,9 @@ fusion_cell_counts_by_method %>% filter(FusionName %in% fusions_of_interest$Fusi
 ```{r}
 
 M132TS_fusions_of_interest_counts = all_data %>% filter(FusionName %in% fusions_of_interest$FusionName) %>% 
+        filter(tumor) %>%
         select(FusionName, method, cell_barcode) %>% unique() %>%
-        group_by(FusionName, method) %>% tally(name='cell_counts') 
+        group_by(FusionName, method) %>% tally(name='cell_counts')
 
 M132TS_fusions_of_interest_counts
 
@@ -283,6 +316,7 @@ M132TS_fusions_of_interest_counts %>%
 ```{r}
 
 all_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4" ) %>% 
+        filter(tumor) %>%
         select(FusionName, method, cell_barcode) %>% unique() %>%
         group_by(FusionName, method) %>% tally(name='cell_counts') %>%
               ggplot(aes(x=FusionName, y=cell_counts, fill=method)) + geom_bar(stat='identity', position='dodge') +
@@ -292,7 +326,14 @@ all_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4" ) %>%
 
 ```
 
+```{r}
+all_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4" ) %>% 
+        filter(tumor) %>%
+        select(FusionName, method, cell_barcode) %>% unique() %>%
+        group_by(FusionName, method) %>% tally(name='cell_counts') %>%
+    mutate(frac_NUTM2A_AS1_fusion_positive = cell_counts / 265)
 
+```
 
 
 
@@ -314,7 +355,8 @@ all_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4" ) %>%
 
 ```{r}
 
-all_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4") %>%
+venn_dist = all_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4") %>%
+    filter(tumor) %>%
     select(cell_barcode, method) %>% unique() %>%
     group_by(cell_barcode) %>% arrange(method) %>%
     mutate(methods = paste(method, collapse=",")) %>%
@@ -322,11 +364,30 @@ all_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4") %>%
     select(cell_barcode, methods) %>% unique() %>%
     group_by(methods) %>% tally(name='num_cells')
 
+venn_dist = venn_dist %>% mutate(frac_pos_cells = num_cells/ 265)
+
+venn_dist 
+```
+
+```{r}
+
+# what fraction of fusion positive cells were by short reads only?
+venn_dist %>% filter(! grepl("ctat-LR-fusion", methods))
+
+venn_dist %>% filter(! grepl("ctat-LR-fusion", methods)) %>% summarize(sum(frac_pos_cells))
 
 ```
 
 
 
+```{r}
+
+# double check number of tumor cells with NUTM2A-AS1 fusion = 265
+
+venn_dist %>% summarize(sum(num_cells))
+
+
+```
 
 
 

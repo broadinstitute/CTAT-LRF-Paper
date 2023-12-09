@@ -226,36 +226,71 @@ baseplot + geom_point(aes(color=as.factor(leiden)))
 ``` r
 TUMOR_CLUSTERS = c(4,7)
 
-umap_base_data %>% mutate(tumor = leiden %in% TUMOR_CLUSTERS) %>%
+umap_base_data = umap_base_data %>% mutate(tumor = leiden %in% TUMOR_CLUSTERS)
+
+umap_base_data %>%
     ggplot(aes(x=umap_1, y=umap_2)) + geom_point(aes(color=tumor))
 ```
 
 ![](M132TS_analysis_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
 ``` r
-fusion_frac_tumor = all_data %>% 
-    mutate(tumor = leiden %in% TUMOR_CLUSTERS) %>%
-    select(FusionName, cell_barcode, tumor) %>% unique() %>%
-    group_by(FusionName, tumor) %>% tally(name='tot_cells_w_fusion') %>% 
-    mutate(frac_fusion_cells=prop.table(tot_cells_w_fusion)) %>%
-    arrange(desc(tot_cells_w_fusion))
+umap_base_data %>% select(index, tumor) %>% unique() %>% nrow()
+```
 
-# redefine fusions of interest
-fusions_of_interest = fusion_frac_tumor %>% filter(tumor) %>% arrange(desc(tot_cells_w_fusion)) %>% filter(tot_cells_w_fusion >= MIN_CELLS) %>%
-    filter(frac_fusion_cells >= 0.8)
+    ## [1] 6932
+
+``` r
+# 6932 total cells
+    
+ umap_base_data %>% select(index, tumor) %>% unique() %>% group_by(tumor) %>% tally()
+```
+
+    ## # A tibble: 2 × 2
+    ##   tumor     n
+    ##   <lgl> <int>
+    ## 1 FALSE  6231
+    ## 2 TRUE    701
+
+``` r
+# tumor #cells
+# FALSE 6231            
+# TRUE  701 
+
+NUM_TOTAL_CELLS = 6932
+NUM_TUMOR_CELLS = 701
+NUM_NORMAL_CELLS = 6231
+
+# so 10% are tumor cells
+```
+
+``` r
+# label tumor cells
+all_data = all_data %>% 
+    mutate(tumor = leiden %in% TUMOR_CLUSTERS)
+
+fusion_frac_tumor = all_data %>%
+    select(FusionName, cell_barcode, tumor) %>% unique() %>%
+    group_by(FusionName, tumor) %>% tally(name='tot_cells_w_fusion') %>%
+    spread(key=tumor, value=tot_cells_w_fusion, fill = 0) %>%
+    rename(normal_cell_count=`FALSE`) %>% rename(tumor_cell_count=`TRUE`) %>%
+    mutate(frac_normal_cells = normal_cell_count / NUM_NORMAL_CELLS,
+           frac_tumor_cells = tumor_cell_count / NUM_TUMOR_CELLS) %>%
+    arrange(desc(frac_tumor_cells))
+
+
+
+fusions_of_interest = fusion_frac_tumor %>% filter(frac_tumor_cells > 0.01 | frac_normal_cells > 0.01)
 
 fusions_of_interest
 ```
 
-    ## # A tibble: 5 × 4
-    ## # Groups:   FusionName [5]
-    ##   FusionName                tumor tot_cells_w_fusion frac_fusion_cells
-    ##   <chr>                     <lgl>              <int>             <dbl>
-    ## 1 NUTM2A-AS1--RP11-203L2.4  TRUE                 265             0.989
-    ## 2 RP1-34H18.1--NAV3         TRUE                   6             1    
-    ## 3 DPH6-AS1--RP11-684B21.1   TRUE                   5             1    
-    ## 4 RP11-14D22.2--PRICKLE2    TRUE                   5             1    
-    ## 5 RP1-34H18.1--RP11-781A6.1 TRUE                   3             1
+    ## # A tibble: 1 × 5
+    ## # Groups:   FusionName [1]
+    ##   FusionName               normal_cell_count tumor_cell_count frac_nor…¹ frac_…²
+    ##   <chr>                                <dbl>            <dbl>      <dbl>   <dbl>
+    ## 1 NUTM2A-AS1--RP11-203L2.4                 3              265   0.000481   0.378
+    ## # … with abbreviated variable names ¹​frac_normal_cells, ²​frac_tumor_cells
 
 ``` r
 x = 0
@@ -275,7 +310,7 @@ for (fusion in  fusions_of_interest$FusionName) {
 }
 ```
 
-![](M132TS_analysis_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->![](M132TS_analysis_files/figure-gfm/unnamed-chunk-17-2.png)<!-- -->![](M132TS_analysis_files/figure-gfm/unnamed-chunk-17-3.png)<!-- -->![](M132TS_analysis_files/figure-gfm/unnamed-chunk-17-4.png)<!-- -->![](M132TS_analysis_files/figure-gfm/unnamed-chunk-17-5.png)<!-- -->
+![](M132TS_analysis_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
 ``` r
 pdf("M132TS.fusions_of_interest.pdf")
@@ -300,15 +335,13 @@ fusions_of_interest = left_join(fusions_of_interest,
 fusions_of_interest
 ```
 
-    ## # A tibble: 5 × 5
-    ## # Groups:   FusionName [5]
-    ##   FusionName                tumor tot_cells_w_fusion frac_fusion_cells annots   
-    ##   <chr>                     <lgl>              <int>             <dbl> <chr>    
-    ## 1 NUTM2A-AS1--RP11-203L2.4  TRUE                 265             0.989 INTERCHR…
-    ## 2 RP1-34H18.1--NAV3         TRUE                   6             1     INTRACHR…
-    ## 3 DPH6-AS1--RP11-684B21.1   TRUE                   5             1     INTRACHR…
-    ## 4 RP11-14D22.2--PRICKLE2    TRUE                   5             1     INTRACHR…
-    ## 5 RP1-34H18.1--RP11-781A6.1 TRUE                   3             1     INTRACHR…
+    ## # A tibble: 1 × 6
+    ## # Groups:   FusionName [1]
+    ##   FusionName               normal_cell_count tumor_cell…¹ frac_…² frac_…³ annots
+    ##   <chr>                                <dbl>        <dbl>   <dbl>   <dbl> <chr> 
+    ## 1 NUTM2A-AS1--RP11-203L2.4                 3          265 4.81e-4   0.378 INTER…
+    ## # … with abbreviated variable names ¹​tumor_cell_count, ²​frac_normal_cells,
+    ## #   ³​frac_tumor_cells
 
 ``` r
 write.table(fusions_of_interest, file="M132TS.fusions_of_interest.tsv", sep="\t", quote=F, row.names = F)
@@ -321,29 +354,22 @@ fusion_cell_counts_by_method %>% filter(FusionName %in% fusions_of_interest$Fusi
     arrange(desc(`ctat-LR-fusion`))
 ```
 
-    ##                   FusionName   LeftBreakpoint  RightBreakpoint leiden
-    ## 1   NUTM2A-AS1--RP11-203L2.4 chr10:87326630:-  chr9:68822648:-      4
-    ## 2   NUTM2A-AS1--RP11-203L2.4 chr10:87326630:-  chr9:68824290:-      4
-    ## 3   NUTM2A-AS1--RP11-203L2.4 chr10:87326630:-  chr9:68822648:-      7
-    ## 4   NUTM2A-AS1--RP11-203L2.4 chr10:87326630:-  chr9:68824290:-      7
-    ## 5   NUTM2A-AS1--RP11-203L2.4 chr10:87307957:-  chr9:68822648:-      4
-    ## 6   NUTM2A-AS1--RP11-203L2.4 chr10:87307957:-  chr9:68824290:-      4
-    ## 7   NUTM2A-AS1--RP11-203L2.4 chr10:87307957:-  chr9:68822648:-      7
-    ## 8   NUTM2A-AS1--RP11-203L2.4 chr10:87326630:-  chr9:68825399:-      4
-    ## 9          RP1-34H18.1--NAV3 chr12:77326622:+ chr12:77940319:+      4
-    ## 10   DPH6-AS1--RP11-684B21.1 chr15:35711889:+ chr15:36049102:+      4
-    ## 11 RP1-34H18.1--RP11-781A6.1 chr12:77326622:+ chr12:77783263:+      4
-    ## 12   DPH6-AS1--RP11-684B21.1 chr15:35711889:+ chr15:36049102:+      7
-    ## 13  NUTM2A-AS1--RP11-203L2.4 chr10:87307957:-  chr9:68824290:-      7
-    ## 14  NUTM2A-AS1--RP11-203L2.4 chr10:87326630:-  chr9:68825399:-      7
-    ## 15    RP11-14D22.2--PRICKLE2  chr3:64444483:-  chr3:64198967:-      4
-    ## 16         RP1-34H18.1--NAV3 chr12:77326622:+ chr12:77940319:+      7
-    ## 17  NUTM2A-AS1--RP11-203L2.4 chr10:87326630:-  chr9:68822648:-      1
-    ## 18  NUTM2A-AS1--RP11-203L2.4 chr10:87326630:-  chr9:68822648:-      2
-    ## 19  NUTM2A-AS1--RP11-203L2.4 chr10:87326630:-  chr9:68822648:-      3
-    ## 20  NUTM2A-AS1--RP11-203L2.4 chr10:87326630:-  chr9:68822673:-      4
-    ## 21  NUTM2A-AS1--RP11-203L2.4 chr10:87326630:-  chr9:68843275:-      4
-    ## 22         RP1-34H18.1--NAV3 chr12:77572266:+ chr12:77940319:+      7
+    ##                  FusionName   LeftBreakpoint RightBreakpoint leiden
+    ## 1  NUTM2A-AS1--RP11-203L2.4 chr10:87326630:- chr9:68822648:-      4
+    ## 2  NUTM2A-AS1--RP11-203L2.4 chr10:87326630:- chr9:68824290:-      4
+    ## 3  NUTM2A-AS1--RP11-203L2.4 chr10:87326630:- chr9:68822648:-      7
+    ## 4  NUTM2A-AS1--RP11-203L2.4 chr10:87326630:- chr9:68824290:-      7
+    ## 5  NUTM2A-AS1--RP11-203L2.4 chr10:87307957:- chr9:68822648:-      4
+    ## 6  NUTM2A-AS1--RP11-203L2.4 chr10:87307957:- chr9:68824290:-      4
+    ## 7  NUTM2A-AS1--RP11-203L2.4 chr10:87307957:- chr9:68822648:-      7
+    ## 8  NUTM2A-AS1--RP11-203L2.4 chr10:87326630:- chr9:68825399:-      4
+    ## 9  NUTM2A-AS1--RP11-203L2.4 chr10:87307957:- chr9:68824290:-      7
+    ## 10 NUTM2A-AS1--RP11-203L2.4 chr10:87326630:- chr9:68825399:-      7
+    ## 11 NUTM2A-AS1--RP11-203L2.4 chr10:87326630:- chr9:68822648:-      1
+    ## 12 NUTM2A-AS1--RP11-203L2.4 chr10:87326630:- chr9:68822648:-      2
+    ## 13 NUTM2A-AS1--RP11-203L2.4 chr10:87326630:- chr9:68822648:-      3
+    ## 14 NUTM2A-AS1--RP11-203L2.4 chr10:87326630:- chr9:68822673:-      4
+    ## 15 NUTM2A-AS1--RP11-203L2.4 chr10:87326630:- chr9:68843275:-      4
     ##    ctat-LR-fusion FusionInspector STAR-Fusion
     ## 1             105              64          17
     ## 2              56              29          13
@@ -353,43 +379,30 @@ fusion_cell_counts_by_method %>% filter(FusionName %in% fusions_of_interest$Fusi
     ## 6              12              NA          NA
     ## 7               4               1          NA
     ## 8               4              NA          NA
-    ## 9               4              NA          NA
-    ## 10              3              NA          NA
-    ## 11              3              NA          NA
-    ## 12              2              NA          NA
-    ## 13              2              NA          NA
-    ## 14              2              NA          NA
-    ## 15              2               3           2
-    ## 16              1              NA          NA
-    ## 17             NA               1          NA
-    ## 18             NA               1           1
-    ## 19             NA               1          NA
-    ## 20             NA              NA           1
-    ## 21             NA               5           1
-    ## 22             NA              NA           1
+    ## 9               2              NA          NA
+    ## 10              2              NA          NA
+    ## 11             NA               1          NA
+    ## 12             NA               1           1
+    ## 13             NA               1          NA
+    ## 14             NA              NA           1
+    ## 15             NA               5           1
 
 ``` r
 M132TS_fusions_of_interest_counts = all_data %>% filter(FusionName %in% fusions_of_interest$FusionName) %>% 
+        filter(tumor) %>%
         select(FusionName, method, cell_barcode) %>% unique() %>%
-        group_by(FusionName, method) %>% tally(name='cell_counts') 
+        group_by(FusionName, method) %>% tally(name='cell_counts')
 
 M132TS_fusions_of_interest_counts
 ```
 
-    ## # A tibble: 10 × 3
-    ## # Groups:   FusionName [5]
-    ##    FusionName                method          cell_counts
-    ##    <chr>                     <chr>                 <int>
-    ##  1 DPH6-AS1--RP11-684B21.1   ctat-LR-fusion            5
-    ##  2 NUTM2A-AS1--RP11-203L2.4  FusionInspector         107
-    ##  3 NUTM2A-AS1--RP11-203L2.4  STAR-Fusion              34
-    ##  4 NUTM2A-AS1--RP11-203L2.4  ctat-LR-fusion          214
-    ##  5 RP1-34H18.1--NAV3         STAR-Fusion               1
-    ##  6 RP1-34H18.1--NAV3         ctat-LR-fusion            5
-    ##  7 RP1-34H18.1--RP11-781A6.1 ctat-LR-fusion            3
-    ##  8 RP11-14D22.2--PRICKLE2    FusionInspector           3
-    ##  9 RP11-14D22.2--PRICKLE2    STAR-Fusion               2
-    ## 10 RP11-14D22.2--PRICKLE2    ctat-LR-fusion            2
+    ## # A tibble: 3 × 3
+    ## # Groups:   FusionName [1]
+    ##   FusionName               method          cell_counts
+    ##   <chr>                    <chr>                 <int>
+    ## 1 NUTM2A-AS1--RP11-203L2.4 FusionInspector         104
+    ## 2 NUTM2A-AS1--RP11-203L2.4 STAR-Fusion              33
+    ## 3 NUTM2A-AS1--RP11-203L2.4 ctat-LR-fusion          214
 
 ``` r
 M132TS_fusions_of_interest_counts %>%
@@ -398,12 +411,13 @@ M132TS_fusions_of_interest_counts %>%
     ggtitle("M132TS Fusions of Interest: Cell Counts")
 ```
 
-![](M132TS_analysis_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
+![](M132TS_analysis_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
 
 # focus on NUTM2A-AS1–RP11-203L2.4
 
 ``` r
 all_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4" ) %>% 
+        filter(tumor) %>%
         select(FusionName, method, cell_barcode) %>% unique() %>%
         group_by(FusionName, method) %>% tally(name='cell_counts') %>%
               ggplot(aes(x=FusionName, y=cell_counts, fill=method)) + geom_bar(stat='identity', position='dodge') +
@@ -411,7 +425,24 @@ all_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4" ) %>%
     ggtitle("M132TS Fusions of Interest: Cell Counts")
 ```
 
-![](M132TS_analysis_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
+![](M132TS_analysis_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
+
+``` r
+all_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4" ) %>% 
+        filter(tumor) %>%
+        select(FusionName, method, cell_barcode) %>% unique() %>%
+        group_by(FusionName, method) %>% tally(name='cell_counts') %>%
+    mutate(frac_NUTM2A_AS1_fusion_positive = cell_counts / 265)
+```
+
+    ## # A tibble: 3 × 4
+    ## # Groups:   FusionName [1]
+    ##   FusionName               method          cell_counts frac_NUTM2A_AS1_fusion_…¹
+    ##   <chr>                    <chr>                 <int>                     <dbl>
+    ## 1 NUTM2A-AS1--RP11-203L2.4 FusionInspector         104                     0.392
+    ## 2 NUTM2A-AS1--RP11-203L2.4 STAR-Fusion              33                     0.125
+    ## 3 NUTM2A-AS1--RP11-203L2.4 ctat-LR-fusion          214                     0.808
+    ## # … with abbreviated variable name ¹​frac_NUTM2A_AS1_fusion_positive
 
 ``` r
  p = baseplot + geom_point(data=all_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4") %>% select(umap_1, umap_2, method) %>% unique(), 
@@ -421,24 +452,61 @@ all_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4" ) %>%
     plot(p)   
 ```
 
-![](M132TS_analysis_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
+![](M132TS_analysis_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
 
 ``` r
-all_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4") %>%
+venn_dist = all_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4") %>%
+    filter(tumor) %>%
     select(cell_barcode, method) %>% unique() %>%
     group_by(cell_barcode) %>% arrange(method) %>%
     mutate(methods = paste(method, collapse=",")) %>%
     ungroup() %>%
     select(cell_barcode, methods) %>% unique() %>%
     group_by(methods) %>% tally(name='num_cells')
+
+venn_dist = venn_dist %>% mutate(frac_pos_cells = num_cells/ 265)
+
+venn_dist 
 ```
 
-    ## # A tibble: 6 × 2
-    ##   methods                                    num_cells
-    ##   <chr>                                          <int>
-    ## 1 FusionInspector                                   39
-    ## 2 FusionInspector,STAR-Fusion                       14
-    ## 3 FusionInspector,STAR-Fusion,ctat-LR-fusion        19
-    ## 4 FusionInspector,ctat-LR-fusion                    35
-    ## 5 STAR-Fusion                                        1
-    ## 6 ctat-LR-fusion                                   160
+    ## # A tibble: 6 × 3
+    ##   methods                                    num_cells frac_pos_cells
+    ##   <chr>                                          <int>          <dbl>
+    ## 1 FusionInspector                                   37        0.140  
+    ## 2 FusionInspector,STAR-Fusion                       13        0.0491 
+    ## 3 FusionInspector,STAR-Fusion,ctat-LR-fusion        19        0.0717 
+    ## 4 FusionInspector,ctat-LR-fusion                    35        0.132  
+    ## 5 STAR-Fusion                                        1        0.00377
+    ## 6 ctat-LR-fusion                                   160        0.604
+
+``` r
+# what fraction of fusion positive cells were by short reads only?
+venn_dist %>% filter(! grepl("ctat-LR-fusion", methods))
+```
+
+    ## # A tibble: 3 × 3
+    ##   methods                     num_cells frac_pos_cells
+    ##   <chr>                           <int>          <dbl>
+    ## 1 FusionInspector                    37        0.140  
+    ## 2 FusionInspector,STAR-Fusion        13        0.0491 
+    ## 3 STAR-Fusion                         1        0.00377
+
+``` r
+venn_dist %>% filter(! grepl("ctat-LR-fusion", methods)) %>% summarize(sum(frac_pos_cells))
+```
+
+    ## # A tibble: 1 × 1
+    ##   `sum(frac_pos_cells)`
+    ##                   <dbl>
+    ## 1                 0.192
+
+``` r
+# double check number of tumor cells with NUTM2A-AS1 fusion = 265
+
+venn_dist %>% summarize(sum(num_cells))
+```
+
+    ## # A tibble: 1 × 1
+    ##   `sum(num_cells)`
+    ##              <int>
+    ## 1              265
