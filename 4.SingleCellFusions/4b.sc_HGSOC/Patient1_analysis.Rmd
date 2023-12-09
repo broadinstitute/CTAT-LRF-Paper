@@ -162,7 +162,7 @@ left_join(fusions_of_interest, Om_fusion_frac_cell_types, by='FusionName', suffi
 
 fusions_of_interest = left_join(fusions_of_interest, Tum_cell_counts_by_method_spread)
 
-fusion_annots = read.table("Patient1.fusion_annots", header=T, sep="\t", stringsAsFactors = F)
+fusion_annots = read.table("data/Patient1.fusion_annots.gz", header=T, sep="\t", stringsAsFactors = F)
 
 fusions_of_interest = left_join(fusions_of_interest, fusion_annots)
 

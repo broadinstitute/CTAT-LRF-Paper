@@ -21,7 +21,7 @@ MIN_CELLS = 3
 
 ```{r}
 
-all_data = read.table("Patient2_Tum.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.tsv", header=T, sep="\t", stringsAsFactors = F)
+all_data = read.table("data/Patient2_Tum.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.tsv.gz", header=T, sep="\t", stringsAsFactors = F)
 
 head(all_data)
 
@@ -48,14 +48,14 @@ ctat_LRF_fusions = all_data %>% filter(method == "ctat-LR-fusion")
 
 ```{r}
 
-fusion_annots = read.table("Patient2.fusion_annots", sep="\t", header=T, stringsAsFactors = F)
+fusion_annots = read.table("data/Patient2.fusion_annots.gz", sep="\t", header=T, stringsAsFactors = F)
 
 ```
 
 
 ```{r}
 
-fusion_cell_counts_by_method = read.table("Patient2_Tum.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.cell_counts_by_method.tsv",
+fusion_cell_counts_by_method = read.table("data/Patient2_Tum.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.cell_counts_by_method.tsv.gz",
                                           header=T, sep="\t", stringsAsFactors = F)
 
 
@@ -131,7 +131,7 @@ fusions_of_interest
 
 ```{r}
 
-write.table(fusions_of_interest, file="Patient2_Tum.fusions_of_interest.tsv", sep="\t", quote=F, row.names = F)
+write.table(fusions_of_interest, file="data/Patient2_Tum.fusions_of_interest.tsv.gz", sep="\t", quote=F, row.names = F)
 
 
 ```
@@ -151,9 +151,9 @@ fusion_cell_counts_by_method %>%
 
 ```{r}
 
-umap_base_data = read.table("data/Patient2_Tum/Patient2_Tum_UMAPcoords.txt", header=T, sep=",") %>%
+umap_base_data = read.table("data/Patient2_Tum_UMAPcoords.txt.gz", header=T, sep=",") %>%
     rename(barcodes=X)
-celltypes = read.table("data/Patient2_Tum/Patient2_Tum.bc_to_celltype.tsv", header=T, sep="\t")
+celltypes = read.table("data/Patient2_Tum.bc_to_celltype.tsv.gz", header=T, sep="\t")
 
 umap_base_data = full_join(umap_base_data, celltypes, by='barcodes')
 
