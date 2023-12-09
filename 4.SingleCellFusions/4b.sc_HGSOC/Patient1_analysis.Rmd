@@ -1,0 +1,273 @@
+---
+title: "Patient1_analysis"
+author: "bhaas"
+date: '2023-09-28'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+
+```{r}
+MIN_CELLS = 3
+```
+
+
+
+# P1 Om
+
+
+
+
+
+```{r}
+
+Om_data = read.table("Patient1_Om.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.tsv", header=T, sep="\t", stringsAsFactors = F)
+
+Om_data %>% head()
+
+```
+
+
+
+```{r}
+
+Om_cell_counts_by_method = read.table("Patient1_Om.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.cell_counts_by_method.tsv", 
+                                      header=T, sep="\t", stringsAsFactors = F)
+
+Om_cell_counts_by_method %>% head()
+
+```
+
+
+```{r}
+
+
+Om_cell_counts_by_method_spread = Om_cell_counts_by_method %>% select(FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, cell_counts) %>%
+    spread(key=method, value=cell_counts) %>% 
+    arrange(desc(`ctat-LR-fusion`))
+
+Om_cell_counts_by_method_spread %>% filter(`ctat-LR-fusion` >= MIN_CELLS)
+```
+
+```{r}
+
+Om_fusion_frac_cell_types = Om_data %>% select(FusionName, barcodes, celltype_final) %>% unique() %>%
+    group_by(FusionName, celltype_final) %>% tally(name='tot_cells_w_fusion') %>% 
+    mutate(frac_fusion_cells=prop.table(tot_cells_w_fusion)) %>%
+    arrange(desc(tot_cells_w_fusion))
+
+Om_fusion_frac_cell_types %>% filter(tot_cells_w_fusion >= MIN_CELLS)
+
+
+```
+
+
+
+
+# P1 Tumor
+
+
+```{r}
+
+Tum_data = read.table("Patient1_Tum.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.tsv", header=T, sep="\t", stringsAsFactors = F)
+
+Tum_data %>% head()
+
+```
+
+
+```{r}
+
+
+Tum_cell_counts_by_method = read.table("Patient1_Tum.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.cell_counts_by_method.tsv", 
+                                      header=T, sep="\t", stringsAsFactors = F)
+
+Tum_cell_counts_by_method %>% head()
+
+```
+
+```{r}
+
+Tum_cell_counts_by_method_spread = Tum_cell_counts_by_method %>% select(FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, cell_counts) %>%
+    spread(key=method, value=cell_counts) %>% 
+    arrange(desc(`ctat-LR-fusion`))
+
+Tum_cell_counts_by_method_spread %>% filter(`ctat-LR-fusion` >= MIN_CELLS)
+```
+
+
+
+# compare P1 Tum and Om fusions
+
+```{r}
+
+Tum_n_Om_joined_fusions = full_join(Tum_cell_counts_by_method_spread, Om_cell_counts_by_method_spread, 
+                                    by=c('FusionName', 'LeftBreakpoint', 'RightBreakpoint', 'celltype_final'),
+                                    suffix=c('.Tum', '.Om'))
+
+Tum_n_Om_joined_fusions %>% head()
+
+```
+
+```{r}
+
+Tum_n_Om_joined_fusions %>% select(FusionName, LeftBreakpoint, RightBreakpoint, celltype_final, `ctat-LR-fusion.Tum`, `ctat-LR-fusion.Om`) %>%
+    arrange(desc(`ctat-LR-fusion.Tum`)) %>%
+    filter(`ctat-LR-fusion.Tum` >= MIN_CELLS)
+
+
+```
+
+
+```{r}
+
+
+Tum_fusion_frac_cell_types = Tum_data %>% select(FusionName, barcodes, celltype_final) %>% unique() %>%
+    group_by(FusionName, celltype_final) %>% tally(name='tot_cells_w_fusion') %>% 
+    mutate(frac_fusion_cells=prop.table(tot_cells_w_fusion)) %>%
+    arrange(desc(tot_cells_w_fusion))
+
+Tum_fusion_frac_cell_types %>% head()
+
+
+```
+
+
+```{r}
+# identify tumor-enriched fusions:
+fusions_of_interest = Tum_fusion_frac_cell_types %>% filter(celltype_final == "HGSOC" & frac_fusion_cells >= 0.8) %>%
+    arrange(desc(tot_cells_w_fusion)) %>%
+    filter(tot_cells_w_fusion >= MIN_CELLS)
+
+fusions_of_interest
+```
+
+```{r}
+
+# see if these fusions are found in the Om sample
+
+left_join(fusions_of_interest, Om_fusion_frac_cell_types, by='FusionName', suffix=c('.Tum', '.Om'))
+
+
+```
+
+```{r}
+
+# see if we find these fusions using short reads:
+
+fusions_of_interest = left_join(fusions_of_interest, Tum_cell_counts_by_method_spread)
+
+fusion_annots = read.table("Patient1.fusion_annots", header=T, sep="\t", stringsAsFactors = F)
+
+fusions_of_interest = left_join(fusions_of_interest, fusion_annots)
+
+write.table(fusions_of_interest, file="Patient1_Tum.fusions_of_interest.tsv", sep="\t", row.names=F, quote=F)
+
+fusions_of_interest
+```
+
+
+# Examine umaps for fusions
+
+
+
+```{r}
+
+umap_base_data = read.table("data/Patient1_Tum/Patient1_Tum_UMAPcoords.txt", header=T, sep=",") %>%
+    rename(barcodes=X)
+celltypes = read.table("data/Patient1_Tum/Patient1_Tum.bc_to_celltype.tsv", header=T, sep="\t")
+
+umap_base_data = full_join(umap_base_data, celltypes, by='barcodes')
+
+baseplot = umap_base_data %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + geom_point(aes(color=celltype_final))
+
+baseplot
+
+```
+
+
+```{r}
+
+
+x = 0
+
+plots = list()
+
+for (fusion in  fusions_of_interest$FusionName) {
+    
+    p = baseplot + geom_point(data=Tum_data %>% filter(FusionName == fusion) %>% select(UMAP_1, UMAP_2) %>% unique(), 
+                              color='red') + 
+        ggtitle(paste("Patient 1 Tumor, Fusion: ", fusion) )
+    
+    plot(p)   
+    
+    x = x+1
+    plots[[x]] = p
+}
+
+
+
+```
+
+
+
+```{r}
+
+pdf("Patient1_Tum.fusions_of_interest.pdf")
+for (p in plots) {
+    plot(p)
+}
+
+dev.off()
+
+```
+
+
+```{r}
+
+fusion_of_interest_cell_counts = Tum_data %>% filter(FusionName %in%  fusions_of_interest$FusionName) %>% 
+        select(FusionName, method, barcodes) %>% unique() %>%
+        group_by(FusionName, method) %>% tally(name='cell_counts') 
+
+
+fusion_of_interest_cell_counts %>% spread(key=method, value=cell_counts) %>% arrange(desc(`ctat-LR-fusion`))
+
+
+
+
+```
+
+```{r}
+
+fusion_of_interest_cell_counts  %>%
+              ggplot(aes(x=FusionName, y=cell_counts, fill=method)) + geom_bar(stat='identity', position='dodge') +
+              theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    ggtitle("Patient1_Tum Fusions of Interest: Cell Counts")
+
+
+
+```
+
+```{r}
+
+# breakdown by combinations of methods per cell
+
+tumor_cell_counts_by_methods = Tum_data %>% filter(FusionName %in%  fusions_of_interest$FusionName) %>% 
+        select(FusionName, method, barcodes) %>% unique() %>%
+        group_by(FusionName, barcodes) %>% 
+        arrange(method) %>%
+        mutate(methods = paste(method, collapse=',')) %>%
+        ungroup() %>%
+        select(FusionName, methods, barcodes) %>% group_by(FusionName, methods) %>% tally()
+
+
+tumor_cell_counts_by_methods 
+
+
+```
+
