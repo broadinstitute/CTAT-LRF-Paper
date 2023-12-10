@@ -12,7 +12,7 @@ library(tidyverse)
 
 
 ```{r}
-MIN_CELLS = 3
+MIN_CELLS = 5
 ```
 
 
@@ -137,6 +137,10 @@ write.table(fusions_of_interest, file="data/Patient2_Tum.fusions_of_interest.tsv
 ```
 
 
+
+
+
+
 ```{r}
 
 fusion_cell_counts_by_method %>% 
@@ -149,6 +153,20 @@ fusion_cell_counts_by_method %>%
 ```
 
 
+
+```{r}
+fusion_cell_counts_by_method %>% 
+            filter(FusionName %in% fusions_of_interest$FusionName) %>%
+            select(FusionName, LeftBreakpoint, RightBreakpoint, cell_counts, method) %>%
+              rowwise() %>% mutate(fusion=paste(FusionName, LeftBreakpoint, RightBreakpoint, collapse=":")) %>%
+              ggplot(aes(x=fusion, y=cell_counts, fill=method)) + 
+                 geom_bar(stat='identity', position='dodge') +
+                 theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+
+
+
 ```{r}
 
 umap_base_data = read.table("data/Patient2_Tum_UMAPcoords.txt.gz", header=T, sep=",") %>%
@@ -157,6 +175,21 @@ celltypes = read.table("data/Patient2_Tum.bc_to_celltype.tsv.gz", header=T, sep=
 
 umap_base_data = full_join(umap_base_data, celltypes, by='barcodes')
 
+
+# number of cells
+num_total_cells = nrow(umap_base_data) 
+message("number total cells: ", num_total_cells)
+# 453 total cells
+
+umap_base_data %>% group_by(celltype_final) %>% tally(name='count_cell_type') %>% mutate(frac_tot_cells = count_cell_type/num_total_cells)
+
+# 208 HGSOC cells  (46% of total cells)
+
+```
+
+
+
+```{r}
 baseplot = umap_base_data %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + geom_point(aes(color=celltype_final))
 
 baseplot

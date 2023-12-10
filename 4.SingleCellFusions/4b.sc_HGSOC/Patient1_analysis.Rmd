@@ -13,7 +13,7 @@ library(tidyverse)
 
 
 ```{r}
-MIN_CELLS = 3
+MIN_CELLS = 5
 ```
 
 
@@ -126,7 +126,6 @@ Tum_n_Om_joined_fusions %>% select(FusionName, LeftBreakpoint, RightBreakpoint, 
 
 ```{r}
 
-
 Tum_fusion_frac_cell_types = Tum_data %>% select(FusionName, barcodes, celltype_final) %>% unique() %>%
     group_by(FusionName, celltype_final) %>% tally(name='tot_cells_w_fusion') %>% 
     mutate(frac_fusion_cells=prop.table(tot_cells_w_fusion)) %>%
@@ -184,6 +183,21 @@ celltypes = read.table("data/Patient1_Tum.bc_to_celltype.tsv.gz", header=T, sep=
 
 umap_base_data = full_join(umap_base_data, celltypes, by='barcodes')
 
+# number of cells
+num_total_cells = nrow(umap_base_data) 
+message("number total cells: ", num_total_cells)
+# 531 total cells
+
+umap_base_data %>% group_by(celltype_final) %>% tally(name='count_cell_type') %>% mutate(frac_tot_cells = count_cell_type/num_total_cells)
+
+# 95 HGSOC cells  (18% of total cells)
+
+```
+
+
+
+
+```{r}
 baseplot = umap_base_data %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + geom_point(aes(color=celltype_final))
 
 baseplot
@@ -270,4 +284,45 @@ tumor_cell_counts_by_methods
 
 
 ```
+
+
+```{r}
+p = baseplot +
+        
+    geom_point(data=Tum_data %>% filter(FusionName %in% c('SMG7--CH507-513H4.1', 'RAPGEF5--AGMO')) %>% select(FusionName, UMAP_1, UMAP_2) %>% unique(), 
+                              aes(shape=FusionName), alpha=0.7) +
+         ggtitle("Patient 1")
+
+
+p
+```
+
+
+
+
+```{r}
+
+tumor_cell_counts_by_methods  %>% filter(FusionName == "SMG7--CH507-513H4.1")
+
+```
+
+
+
+
+
+```{r}
+
+tumor_cell_counts_by_methods  %>% filter(FusionName == "RAPGEF5--AGMO")
+
+```
+
+
+```{r}
+
+tumor_cell_counts_by_methods  %>% filter(FusionName == "NTN1--CDRT15P2")
+
+```
+
+
+
 

@@ -13,14 +13,12 @@ library(tidyverse)
 
 
 ```{r}
-MIN_CELLS = 3
+MIN_CELLS = 5
 ```
 
 
 
 # P3 Om
-
-
 
 
 
@@ -192,6 +190,24 @@ celltypes = read.table("data/Patient3_Tum.bc_to_celltype.tsv.gz", header=T, sep=
 
 umap_base_data = full_join(umap_base_data, celltypes, by='barcodes')
 
+
+# number of cells
+num_total_cells = nrow(umap_base_data) 
+message("number total cells: ", num_total_cells)
+# 660 total cells
+
+umap_base_data %>% group_by(celltype_final) %>% tally(name='count_cell_type') %>% mutate(frac_tot_cells = count_cell_type/num_total_cells)
+
+# 38 HGSOC cells  (6% of total cells)
+
+```
+
+
+
+
+```{r}
+
+
 baseplot = umap_base_data %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + geom_point(aes(color=celltype_final))
 
 baseplot
@@ -270,13 +286,14 @@ fusion_of_interest_cell_counts  %>%
 
 # breakdown by combinations of methods per cell
 
-tumor_cell_counts_by_methods = Tum_data %>% filter(FusionName %in%  fusions_of_interest$FusionName) %>% 
+tumor_cell_counts_by_methods = Tum_data %>%
+    filter(FusionName %in%  fusions_of_interest$FusionName) %>% 
         select(FusionName, method, barcodes) %>% unique() %>%
         group_by(FusionName, barcodes) %>% 
         arrange(method) %>%
         mutate(methods = paste(method, collapse=',')) %>%
         ungroup() %>%
-        select(FusionName, methods, barcodes) %>% group_by(FusionName, methods) %>% tally()
+        select(FusionName, methods, barcodes) %>% group_by(FusionName, methods) %>% tally(name='cell_counts')
 
 
 tumor_cell_counts_by_methods 
@@ -285,10 +302,57 @@ tumor_cell_counts_by_methods
 ```
 
 
+```{r}
 
+# by isoform 
+tumor_cell_counts_by_methods_by_isoform =  Tum_data %>%
+            filter(FusionName %in% fusions_of_interest$FusionName) %>%
+            select(FusionName, LeftBreakpoint, RightBreakpoint, cell_barcode, method) %>%
+              rowwise() %>% mutate(fusion=paste(FusionName, LeftBreakpoint, RightBreakpoint, collapse=":")) %>% 
+              unique() %>%
+             group_by(fusion, method) %>%
+             tally(name='cell_counts')
+        
+
+tumor_cell_counts_by_methods_by_isoform 
+
+```
+
+
+```{r}
+
+tumor_cell_counts_by_methods_by_isoform %>%
+              ggplot(aes(x=fusion, y=cell_counts, fill=method)) + 
+                 geom_bar(stat='identity', position='dodge') +
+                 theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    ggtitle("Patient 3 Fusions of interest")
+
+
+```
 
  
 
 
+```{r}
+
+Tum_data %>% filter(FusionName %in% fusions_of_interest$FusionName) %>% select(FusionName, cell_barcode, celltype_final, UMAP_1, UMAP_2) %>% unique() %>%
+    arrange(UMAP_1, UMAP_2)
 
 
+```
+
+```{r}
+
+Tum_data %>% filter(FusionName %in% fusions_of_interest$FusionName) %>% 
+   select(FusionName, cell_barcode, celltype_final, UMAP_1, UMAP_2) %>%
+   unique() %>%
+   group_by(cell_barcode) %>%
+   mutate(fusions = paste(FusionName, collapse=",")) %>%
+   select(fusions, cell_barcode, celltype_final, UMAP_1, UMAP_2) %>% unique() %>% 
+    ungroup() %>%
+    filter(grepl(",", fusions))
+```
+
+
+
+   
