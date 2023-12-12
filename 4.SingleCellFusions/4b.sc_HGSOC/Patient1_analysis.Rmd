@@ -2,7 +2,7 @@
 title: "Patient1_analysis"
 author: "bhaas"
 date: '2023-09-28'
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
@@ -178,23 +178,32 @@ fusions_of_interest
 ```{r}
 
 umap_base_data = read.table("data/Patient1_Tum_UMAPcoords.txt.gz", header=T, sep=",") %>%
-    rename(barcodes=X)
+    rename(barcodes=X) %>%
+    filter(! is.na(UMAP_1)) #%>% filter(UMAP_1 != "NA")
+
 celltypes = read.table("data/Patient1_Tum.bc_to_celltype.tsv.gz", header=T, sep="\t")
 
-umap_base_data = full_join(umap_base_data, celltypes, by='barcodes')
+umap_base_data = left_join(umap_base_data, celltypes, by='barcodes')
 
 # number of cells
 num_total_cells = nrow(umap_base_data) 
 message("number total cells: ", num_total_cells)
-# 531 total cells
+# 497 total cells
 
 umap_base_data %>% group_by(celltype_final) %>% tally(name='count_cell_type') %>% mutate(frac_tot_cells = count_cell_type/num_total_cells)
 
-# 95 HGSOC cells  (18% of total cells)
+# 92 HGSOC cells  (19% of total cells)
 
 ```
 
+```{r}
+# add seurat clusters
 
+seurat_clusters = read.table("data/Patient1_Tum.umap_cluster_ids.tsv.gz", header=T, sep="\t")
+
+umap_base_data = full_join(umap_base_data, seurat_clusters, by='barcodes') %>% rename(cluster_id = seurat_clusters) 
+
+```
 
 
 ```{r}
@@ -322,6 +331,33 @@ tumor_cell_counts_by_methods  %>% filter(FusionName == "RAPGEF5--AGMO")
 tumor_cell_counts_by_methods  %>% filter(FusionName == "NTN1--CDRT15P2")
 
 ```
+
+
+```{r}
+
+
+baseplot = umap_base_data %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + geom_point(aes(color=factor(cluster_id)))
+
+
+x = 0
+
+#plots = list()
+
+for (fusion in  fusions_of_interest$FusionName) {
+    
+    p = baseplot + geom_point(data=Tum_data %>% filter(FusionName == fusion) %>% select(UMAP_1, UMAP_2) %>% unique(), 
+                              color='red') + 
+        ggtitle(paste("Patient 1 Tumor, Fusion: ", fusion) )
+    
+    plot(p)   
+    
+    x = x+1
+    #plots[[x]] = p
+}
+
+
+```
+
 
 
 

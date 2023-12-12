@@ -1,0 +1,4 @@
+FusionName	celltype_final	tot_cells_w_fusion	frac_fusion_cells	LeftBreakpoint	RightBreakpoint	ctat-LR-fusion	FusionInspector	STAR-Fusion	annots
+SMG7--CH507-513H4.1	HGSOC	26	1	chr1:183472649:+	chr21:8222961:+	26	NA	NA	INTERCHROMOSOMAL[chr1--chr21]
+RAPGEF5--AGMO	HGSOC	6	1	chr7:22125604:-	chr7:15201359:-	5	3	1	INTRACHROMOSOMAL[chr7:6.56Mb]
+NTN1--CDRT15P2	HGSOC	5	1	chr17:9023391:+	chr17:15765108:+	5	NA	NA	INTRACHROMOSOMAL[chr17:6.52Mb]
