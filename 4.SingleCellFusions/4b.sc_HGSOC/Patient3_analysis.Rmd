@@ -335,6 +335,8 @@ tumor_cell_counts_by_methods_by_isoform %>%
 
 ```{r}
 
+# co-expression of CBLC--CTC-232P5.1 and SNRNP70--ZIK1 in cells
+
 Tum_data %>% filter(FusionName %in% fusions_of_interest$FusionName) %>% select(FusionName, cell_barcode, celltype_final, UMAP_1, UMAP_2) %>% unique() %>%
     arrange(UMAP_1, UMAP_2)
 
@@ -342,6 +344,8 @@ Tum_data %>% filter(FusionName %in% fusions_of_interest$FusionName) %>% select(F
 ```
 
 ```{r}
+
+# co-expression of CBLC--CTC-232P5.1 and SNRNP70--ZIK1 in cells
 
 Tum_data %>% filter(FusionName %in% fusions_of_interest$FusionName) %>% 
    select(FusionName, cell_barcode, celltype_final, UMAP_1, UMAP_2) %>%

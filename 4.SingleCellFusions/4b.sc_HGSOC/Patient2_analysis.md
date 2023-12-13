@@ -9,7 +9,11 @@ MIN_CELLS = 5
 
 # P2 Tum
 
+Only a tumor sample for P2, no matching normal
+
 ``` r
+# parse fusion evidence support including cell barcode and umi 
+
 all_data = read.table("data/Patient2_Tum.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.tsv.gz", header=T, sep="\t", stringsAsFactors = F)
 
 head(all_data)
@@ -59,6 +63,8 @@ fusion_annots = read.table("data/Patient2.fusion_annots.gz", sep="\t", header=T,
 ```
 
 ``` r
+# counts of cells according to fusion breakpoint and method for detection
+
 fusion_cell_counts_by_method = read.table("data/Patient2_Tum.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.cell_counts_by_method.tsv.gz",
                                           header=T, sep="\t", stringsAsFactors = F)
 
@@ -82,6 +88,8 @@ fusion_cell_counts_by_method %>% head()
     ## 6          HGSOC Patient2_Tum          24
 
 ``` r
+# reorganizing cell counts of fusions by method for comparison
+
 fusion_cell_counts_by_method %>% select(FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, cell_counts) %>%
     spread(key=method, value=cell_counts) %>% 
     arrange(desc(`ctat-LR-fusion`)) %>% 
@@ -126,6 +134,8 @@ fusion_cell_counts_by_method %>% select(FusionName, LeftBreakpoint, RightBreakpo
 # plot counts of cells for these fusions:
 
 ``` r
+# examine counts of cells according to fusion and method lmited to those with at least the min number of cells
+
 right_join(fusion_cell_counts_by_method, 
           fusion_cell_counts_by_method %>% 
                          filter(cell_counts >= MIN_CELLS)  %>% 
@@ -148,6 +158,9 @@ right_join(fusion_cell_counts_by_method,
 # Examine cell type representation by fusions
 
 ``` r
+# counts of cells containing fusions and fraction of fusions iddentified according to that cell type
+
+
 fusion_frac_cell_types = all_data %>% select(FusionName, barcodes, celltype_final) %>% unique() %>%
     group_by(FusionName, celltype_final) %>% tally(name='tot_cells_w_fusion') %>% 
     mutate(frac_fusion_cells=prop.table(tot_cells_w_fusion)) %>%
@@ -177,6 +190,8 @@ fusion_frac_cell_types %>% filter(tot_cells_w_fusion >= MIN_CELLS)
     ## # … with abbreviated variable name ¹​frac_fusion_cells
 
 ``` r
+# restrict to fusions of interst:  those showing up in at least min cells and at least 80% representation within HGSOC
+
 fusions_of_interest = fusion_frac_cell_types %>% 
     filter(tot_cells_w_fusion >= MIN_CELLS) %>%
     arrange(desc(tot_cells_w_fusion)) %>%
@@ -205,6 +220,8 @@ fusions_of_interest
     ## # … with abbreviated variable name ¹​frac_fusion_cells
 
 ``` r
+# include fusion annotations
+
 fusions_of_interest = left_join(fusions_of_interest,
           fusion_annots)
 ```
@@ -239,6 +256,8 @@ write.table(fusions_of_interest, file="data/Patient2_Tum.fusions_of_interest.tsv
 ```
 
 ``` r
+# examine method of detection and cell counts for just the fusions of interest
+
 fusion_cell_counts_by_method %>% 
     filter(FusionName %in% fusions_of_interest$FusionName) %>%
     select(FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, cell_counts) %>%
@@ -320,6 +339,8 @@ fusion_cell_counts_by_method %>%
     ## 35             HGSOC             NA               6           5
 
 ``` r
+# plotting counts of cells according to method for fusions of interest
+
 fusion_cell_counts_by_method %>% 
             filter(FusionName %in% fusions_of_interest$FusionName) %>%
             select(FusionName, LeftBreakpoint, RightBreakpoint, cell_counts, method) %>%
@@ -331,7 +352,11 @@ fusion_cell_counts_by_method %>%
 
 ![](Patient2_analysis_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
+# Examine fusions of interest in UMAPs
+
 ``` r
+# parse UMAP info (from Dondi et al.) 
+
 umap_base_data = read.table("data/Patient2_Tum_UMAPcoords.txt.gz", header=T, sep=",") %>%
     rename(barcodes=X)
 celltypes = read.table("data/Patient2_Tum.bc_to_celltype.tsv.gz", header=T, sep="\t")
@@ -369,6 +394,8 @@ umap_base_data %>% group_by(celltype_final) %>% tally(name='count_cell_type') %>
 ```
 
 ``` r
+# base umap plot coloring by annotated cell type
+
 baseplot = umap_base_data %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + geom_point(aes(color=celltype_final))
 
 baseplot
@@ -379,6 +406,8 @@ baseplot
 ![](Patient2_analysis_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 ``` r
+# Examine each fusion of interest according to UMAP cell positioning
+
 x = 0
 
 plots = list()
@@ -454,6 +483,8 @@ for (fusion in  fusions_of_interest$FusionName) {
 ![](Patient2_analysis_files/figure-gfm/unnamed-chunk-17-13.png)<!-- -->
 
 ``` r
+# make a pdf containing these plots
+
 pdf("Patient2_Tum.fusions_of_interest.pdf")
 for (p in plots) {
     plot(p)
@@ -494,6 +525,8 @@ dev.off()
     ##                 2
 
 ``` r
+# examine counts of cells by method for the fusions of interest
+
 tumor_cell_counts = all_data %>% filter(FusionName %in%  fusions_of_interest$FusionName) %>% 
         select(FusionName, method, barcodes) %>% unique() %>%
         group_by(FusionName, method) %>% tally(name='cell_counts')
@@ -521,6 +554,8 @@ tumor_cell_counts %>% spread(key=method, value=cell_counts) %>% arrange(desc(`ct
     ## 13 CTD-2008L17.1--RP11-456O19.2                5               8             5
 
 ``` r
+# plot counts of cells by method for fusions of interest
+
 tumor_cell_counts %>%
               ggplot(aes(x=FusionName, y=cell_counts, fill=method)) + geom_bar(stat='identity', position='dodge') +
               theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
@@ -530,6 +565,8 @@ tumor_cell_counts %>%
 ![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
 ``` r
+# Examine Venn for cells detected according to combinations of methods.
+
 tumor_cell_counts_by_methods = all_data %>% filter(FusionName %in%  fusions_of_interest$FusionName) %>% 
         select(FusionName, method, barcodes) %>% unique() %>%
         group_by(FusionName, barcodes) %>% 
@@ -558,6 +595,10 @@ tumor_cell_counts_by_methods
     ## 10 IGF2BP2--TESPA1              FusionInspector,STAR-Fusion                    6
     ## # … with 22 more rows
 
+# Examine specific fusions of interest
+
+## IGF2BP2–TESPA1
+
 ``` r
 tumor_cell_counts_by_methods %>% filter(FusionName == "IGF2BP2--TESPA1")
 ```
@@ -573,6 +614,35 @@ tumor_cell_counts_by_methods %>% filter(FusionName == "IGF2BP2--TESPA1")
     ## 5 IGF2BP2--TESPA1 ctat-LR-fusion                                40
 
 ``` r
+fusion_cell_counts_by_method %>% 
+    filter(FusionName=="IGF2BP2--TESPA1") %>%
+    select(FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, cell_counts) %>%
+    spread(key=method, value=cell_counts) %>% 
+    arrange(desc(`ctat-LR-fusion`), desc(FusionInspector))
+```
+
+    ##        FusionName   LeftBreakpoint  RightBreakpoint    celltype_final
+    ## 1 IGF2BP2--TESPA1 chr3:185696612:- chr12:54950390:-             HGSOC
+    ## 2 IGF2BP2--TESPA1 chr3:185696612:- chr12:54950390:-         uncertain
+    ## 3 IGF2BP2--TESPA1 chr3:185696612:- chr12:54950390:-     Myeloid.cells
+    ## 4 IGF2BP2--TESPA1 chr3:185823153:- chr12:54950390:-             HGSOC
+    ## 5 IGF2BP2--TESPA1 chr3:185824783:- chr12:54950390:-             HGSOC
+    ## 6 IGF2BP2--TESPA1 chr3:185696609:- chr12:54950390:-             HGSOC
+    ## 7 IGF2BP2--TESPA1 chr3:185696612:- chr12:54950390:- Endothelial.cells
+    ## 8 IGF2BP2--TESPA1 chr3:185698299:- chr12:54950390:-             HGSOC
+    ##   ctat-LR-fusion FusionInspector STAR-Fusion
+    ## 1            174             138          16
+    ## 2              3               1          NA
+    ## 3              1              NA          NA
+    ## 4             NA              13           5
+    ## 5             NA               6           5
+    ## 6             NA               3          NA
+    ## 7             NA               1           1
+    ## 8             NA               1           1
+
+## SPATS2–TRA2B
+
+``` r
 tumor_cell_counts_by_methods %>% filter(FusionName == "SPATS2--TRA2B")
 ```
 
@@ -583,3 +653,37 @@ tumor_cell_counts_by_methods %>% filter(FusionName == "SPATS2--TRA2B")
     ## 1 SPATS2--TRA2B FusionInspector,STAR-Fusion,ctat-LR-fusion    18
     ## 2 SPATS2--TRA2B FusionInspector,ctat-LR-fusion                 8
     ## 3 SPATS2--TRA2B ctat-LR-fusion                                11
+
+``` r
+fusion_cell_counts_by_method %>% 
+    filter(FusionName=="SPATS2--TRA2B") %>%
+    select(FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, cell_counts) %>%
+    spread(key=method, value=cell_counts) %>% 
+    arrange(desc(`ctat-LR-fusion`), desc(FusionInspector))
+```
+
+    ##      FusionName   LeftBreakpoint  RightBreakpoint celltype_final ctat-LR-fusion
+    ## 1 SPATS2--TRA2B chr12:49461037:+ chr3:185931852:-          HGSOC             21
+    ##   FusionInspector STAR-Fusion
+    ## 1              10           6
+
+## Are SPATS2–TRA2B and IGF2BP2–TESPA1 found expressed in the same tumor cells?
+
+``` r
+all_data %>% filter(FusionName %in% c('SPATS2--TRA2B', 'IGF2BP2--TESPA1')) %>%
+    select(FusionName, cell_barcode) %>%
+    unique() %>%
+    group_by(cell_barcode) %>% 
+    arrange(FusionName) %>%
+    mutate(fusion_names = paste(FusionName, collapse=",")) %>%
+    ungroup() %>%
+    select(cell_barcode, fusion_names) %>% unique() %>%
+    group_by(fusion_names) %>% tally()
+```
+
+    ## # A tibble: 3 × 2
+    ##   fusion_names                      n
+    ##   <chr>                         <int>
+    ## 1 IGF2BP2--TESPA1                 162
+    ## 2 IGF2BP2--TESPA1,SPATS2--TRA2B    20
+    ## 3 SPATS2--TRA2B                     1
