@@ -10,6 +10,8 @@ MIN_CELLS = 5
 # P1 Om
 
 ``` r
+# Om sample fusion read evidence with cell barcodes and UMIs
+
 Om_data = read.table("data/Patient1_Om.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.tsv.gz", header=T, sep="\t", stringsAsFactors = F)
 
 Om_data %>% head()
@@ -38,6 +40,8 @@ Om_data %>% head()
     ## 6 Mesothelial.cells -0.4981933 -7.227113 Patient1_Om
 
 ``` r
+# Om sample counts of cells with fusions according to fusion detection method.
+
 Om_cell_counts_by_method = read.table("data/Patient1_Om.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.cell_counts_by_method.tsv.gz", 
                                       header=T, sep="\t", stringsAsFactors = F)
 
@@ -60,6 +64,8 @@ Om_cell_counts_by_method %>% head()
     ## 6        T.NK.cells Patient1_Om           8
 
 ``` r
+# reorganizing cell counts by method for comparing across methods and corresponding types of reads (long or short)
+
 Om_cell_counts_by_method_spread = Om_cell_counts_by_method %>% select(FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, cell_counts) %>%
     spread(key=method, value=cell_counts) %>% 
     arrange(desc(`ctat-LR-fusion`))
@@ -89,33 +95,38 @@ Om_cell_counts_by_method_spread %>% filter(`ctat-LR-fusion` >= MIN_CELLS)
     ## 9 Mesothelial.cells              5              NA          NA
 
 ``` r
+# determine how each fusion is distributed across different cell types.
+
 Om_fusion_frac_cell_types = Om_data %>% select(FusionName, barcodes, celltype_final) %>% unique() %>%
     group_by(FusionName, celltype_final) %>% tally(name='tot_cells_w_fusion') %>% 
     mutate(frac_fusion_cells=prop.table(tot_cells_w_fusion)) %>%
     arrange(desc(tot_cells_w_fusion))
 
-Om_fusion_frac_cell_types %>% filter(tot_cells_w_fusion >= MIN_CELLS)
+Om_fusion_frac_cell_types %>% filter(tot_cells_w_fusion >= MIN_CELLS) %>% arrange(FusionName, desc(tot_cells_w_fusion))
 ```
 
     ## # A tibble: 10 × 4
     ## # Groups:   FusionName [8]
     ##    FusionName                  celltype_final    tot_cells_w_fusion frac_fusio…¹
     ##    <chr>                       <chr>                          <int>        <dbl>
-    ##  1 RP11-208G20.2--PSPHP1       Mesothelial.cells                121       0.823 
-    ##  2 RP11-384F7.2--LSAMP         Mesothelial.cells                 30       0.882 
+    ##  1 RP1-34H18.1--NAV3           Mesothelial.cells                  5       0.714 
+    ##  2 RP11-208G20.2--PSPHP1       Mesothelial.cells                121       0.823 
     ##  3 RP11-208G20.2--PSPHP1       Fibroblasts                       17       0.116 
-    ##  4 YAF2--RYBP                  Mesothelial.cells                  9       0.643 
-    ##  5 RP11-208G20.2--PSPHP1       T.NK.cells                         8       0.0544
-    ##  6 RP11-96H19.1--RP11-446N19.1 Mesothelial.cells                  8       1     
-    ##  7 SAMD5--RP11-307P5.1         Mesothelial.cells                  8       1     
-    ##  8 RP11-444D3.1--SOX5          Fibroblasts                        6       0.75  
-    ##  9 RP1-34H18.1--NAV3           Mesothelial.cells                  5       0.714 
+    ##  4 RP11-208G20.2--PSPHP1       T.NK.cells                         8       0.0544
+    ##  5 RP11-384F7.2--LSAMP         Mesothelial.cells                 30       0.882 
+    ##  6 RP11-444D3.1--SOX5          Fibroblasts                        6       0.75  
+    ##  7 RP11-96H19.1--RP11-446N19.1 Mesothelial.cells                  8       1     
+    ##  8 SAMD5--RP11-307P5.1         Mesothelial.cells                  8       1     
+    ##  9 YAF2--RYBP                  Mesothelial.cells                  9       0.643 
     ## 10 YWHAE--CRK                  Mesothelial.cells                  5       1     
     ## # … with abbreviated variable name ¹​frac_fusion_cells
 
 # P1 Tumor
 
 ``` r
+# read in tumor fusion read evidence with cell barcode and UMIs
+
+
 Tum_data = read.table("data/Patient1_Tum.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.tsv.gz", header=T, sep="\t", stringsAsFactors = F)
 
 Tum_data %>% head()
@@ -144,6 +155,8 @@ Tum_data %>% head()
     ## 6 ACGCACGGTAGCTTGT        T.NK.cells  -1.632042 -6.182518 Patient1_Tum
 
 ``` r
+# read in cell counts by method
+
 Tum_cell_counts_by_method = read.table("data/Patient1_Tum.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.cell_counts_by_method.tsv.gz", 
                                       header=T, sep="\t", stringsAsFactors = F)
 
@@ -166,6 +179,9 @@ Tum_cell_counts_by_method %>% head()
     ## 6             HGSOC Patient1_Tum          26
 
 ``` r
+# organize fusion cell counts by method to compare methods
+
+
 Tum_cell_counts_by_method_spread = Tum_cell_counts_by_method %>% select(FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, cell_counts) %>%
     spread(key=method, value=cell_counts) %>% 
     arrange(desc(`ctat-LR-fusion`))
@@ -207,6 +223,8 @@ Tum_cell_counts_by_method_spread %>% filter(`ctat-LR-fusion` >= MIN_CELLS)
 # compare P1 Tum and Om fusions
 
 ``` r
+# join the Om and Tum fusion cell counts by method
+
 Tum_n_Om_joined_fusions = full_join(Tum_cell_counts_by_method_spread, Om_cell_counts_by_method_spread, 
                                     by=c('FusionName', 'LeftBreakpoint', 'RightBreakpoint', 'celltype_final'),
                                     suffix=c('.Tum', '.Om'))
@@ -237,6 +255,8 @@ Tum_n_Om_joined_fusions %>% head()
     ## 6                 NA             NA
 
 ``` r
+# examine those fusions with at least MIN_CELLS by long reads in the tumor sample
+
 Tum_n_Om_joined_fusions %>% select(FusionName, LeftBreakpoint, RightBreakpoint, celltype_final, `ctat-LR-fusion.Tum`, `ctat-LR-fusion.Om`) %>%
     arrange(desc(`ctat-LR-fusion.Tum`)) %>%
     filter(`ctat-LR-fusion.Tum` >= MIN_CELLS)
@@ -274,6 +294,8 @@ Tum_n_Om_joined_fusions %>% select(FusionName, LeftBreakpoint, RightBreakpoint, 
     ## 14                  5                17
 
 ``` r
+# examine distribution of fusion calles according to cell types
+
 Tum_fusion_frac_cell_types = Tum_data %>% select(FusionName, barcodes, celltype_final) %>% unique() %>%
     group_by(FusionName, celltype_final) %>% tally(name='tot_cells_w_fusion') %>% 
     mutate(frac_fusion_cells=prop.table(tot_cells_w_fusion)) %>%
@@ -295,6 +317,9 @@ Tum_fusion_frac_cell_types %>% head()
 
 ``` r
 # identify tumor-enriched fusions:
+# restrict to those where at least 80% of the fusion containing cells are tumor HGSOC cells
+
+
 fusions_of_interest = Tum_fusion_frac_cell_types %>% filter(celltype_final == "HGSOC" & frac_fusion_cells >= 0.8) %>%
     arrange(desc(tot_cells_w_fusion)) %>%
     filter(tot_cells_w_fusion >= MIN_CELLS)
@@ -309,6 +334,9 @@ fusions_of_interest
     ## 1 SMG7--CH507-513H4.1 HGSOC                          26                 1
     ## 2 RAPGEF5--AGMO       HGSOC                           6                 1
     ## 3 NTN1--CDRT15P2      HGSOC                           5                 1
+
+only 3 fusions of interest, each with at least 5 cells, and found
+entirely within the tumor cell fraction
 
 ``` r
 # see if these fusions are found in the Om sample
@@ -326,6 +354,10 @@ left_join(fusions_of_interest, Om_fusion_frac_cell_types, by='FusionName', suffi
     ## # … with abbreviated variable names ¹​tot_cells_w_fusion.Tum,
     ## #   ²​frac_fusion_cells.Tum, ³​celltype_final.Om, ⁴​tot_cells_w_fusion.Om,
     ## #   ⁵​frac_fusion_cells.Om
+
+None of these three fusions are found in the matched normal ‘Om’ sample
+
+# Examine read type support for these fusions of interest
 
 ``` r
 # see if we find these fusions using short reads:
@@ -359,6 +391,9 @@ fusions_of_interest
     ## # … with abbreviated variable names ¹​FusionName, ²​celltype_final,
     ## #   ³​tot_cells_w_fusion, ⁴​frac_fusion_cells, ⁵​LeftBreakpoint, ⁶​RightBreakpoint,
     ## #   ⁷​`ctat-LR-fusion`, ⁸​FusionInspector, ⁹​`STAR-Fusion`
+
+RAPGEF5–AGMO was found by short and long reads. The others were found
+only by the long reads.
 
 # Examine umaps for fusions
 
@@ -570,3 +605,7 @@ for (fusion in  fusions_of_interest$FusionName) {
 ```
 
 ![](Patient1_analysis_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-27-2.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-27-3.png)<!-- -->
+
+The SMG7 and RAPGEF5–AGMO fusions appear in different tumor subclusters.
+
+The NTN1 fusion is found across both subclusters.

@@ -21,10 +21,9 @@ MIN_CELLS = 5
 # P1 Om
 
 
-
-
-
 ```{r}
+
+# Om sample fusion read evidence with cell barcodes and UMIs
 
 Om_data = read.table("data/Patient1_Om.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.tsv.gz", header=T, sep="\t", stringsAsFactors = F)
 
@@ -36,6 +35,8 @@ Om_data %>% head()
 
 ```{r}
 
+# Om sample counts of cells with fusions according to fusion detection method.
+
 Om_cell_counts_by_method = read.table("data/Patient1_Om.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.cell_counts_by_method.tsv.gz", 
                                       header=T, sep="\t", stringsAsFactors = F)
 
@@ -46,6 +47,7 @@ Om_cell_counts_by_method %>% head()
 
 ```{r}
 
+# reorganizing cell counts by method for comparing across methods and corresponding types of reads (long or short)
 
 Om_cell_counts_by_method_spread = Om_cell_counts_by_method %>% select(FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, cell_counts) %>%
     spread(key=method, value=cell_counts) %>% 
@@ -56,12 +58,14 @@ Om_cell_counts_by_method_spread %>% filter(`ctat-LR-fusion` >= MIN_CELLS)
 
 ```{r}
 
+# determine how each fusion is distributed across different cell types.
+
 Om_fusion_frac_cell_types = Om_data %>% select(FusionName, barcodes, celltype_final) %>% unique() %>%
     group_by(FusionName, celltype_final) %>% tally(name='tot_cells_w_fusion') %>% 
     mutate(frac_fusion_cells=prop.table(tot_cells_w_fusion)) %>%
     arrange(desc(tot_cells_w_fusion))
 
-Om_fusion_frac_cell_types %>% filter(tot_cells_w_fusion >= MIN_CELLS)
+Om_fusion_frac_cell_types %>% filter(tot_cells_w_fusion >= MIN_CELLS) %>% arrange(FusionName, desc(tot_cells_w_fusion))
 
 
 ```
@@ -74,6 +78,9 @@ Om_fusion_frac_cell_types %>% filter(tot_cells_w_fusion >= MIN_CELLS)
 
 ```{r}
 
+# read in tumor fusion read evidence with cell barcode and UMIs
+
+
 Tum_data = read.table("data/Patient1_Tum.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.tsv.gz", header=T, sep="\t", stringsAsFactors = F)
 
 Tum_data %>% head()
@@ -83,6 +90,7 @@ Tum_data %>% head()
 
 ```{r}
 
+# read in cell counts by method
 
 Tum_cell_counts_by_method = read.table("data/Patient1_Tum.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.cell_counts_by_method.tsv.gz", 
                                       header=T, sep="\t", stringsAsFactors = F)
@@ -92,6 +100,9 @@ Tum_cell_counts_by_method %>% head()
 ```
 
 ```{r}
+
+# organize fusion cell counts by method to compare methods
+
 
 Tum_cell_counts_by_method_spread = Tum_cell_counts_by_method %>% select(FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, cell_counts) %>%
     spread(key=method, value=cell_counts) %>% 
@@ -106,6 +117,8 @@ Tum_cell_counts_by_method_spread %>% filter(`ctat-LR-fusion` >= MIN_CELLS)
 
 ```{r}
 
+# join the Om and Tum fusion cell counts by method
+
 Tum_n_Om_joined_fusions = full_join(Tum_cell_counts_by_method_spread, Om_cell_counts_by_method_spread, 
                                     by=c('FusionName', 'LeftBreakpoint', 'RightBreakpoint', 'celltype_final'),
                                     suffix=c('.Tum', '.Om'))
@@ -116,6 +129,8 @@ Tum_n_Om_joined_fusions %>% head()
 
 ```{r}
 
+# examine those fusions with at least MIN_CELLS by long reads in the tumor sample
+
 Tum_n_Om_joined_fusions %>% select(FusionName, LeftBreakpoint, RightBreakpoint, celltype_final, `ctat-LR-fusion.Tum`, `ctat-LR-fusion.Om`) %>%
     arrange(desc(`ctat-LR-fusion.Tum`)) %>%
     filter(`ctat-LR-fusion.Tum` >= MIN_CELLS)
@@ -125,6 +140,8 @@ Tum_n_Om_joined_fusions %>% select(FusionName, LeftBreakpoint, RightBreakpoint, 
 
 
 ```{r}
+
+# examine distribution of fusion calles according to cell types
 
 Tum_fusion_frac_cell_types = Tum_data %>% select(FusionName, barcodes, celltype_final) %>% unique() %>%
     group_by(FusionName, celltype_final) %>% tally(name='tot_cells_w_fusion') %>% 
@@ -139,12 +156,17 @@ Tum_fusion_frac_cell_types %>% head()
 
 ```{r}
 # identify tumor-enriched fusions:
+# restrict to those where at least 80% of the fusion containing cells are tumor HGSOC cells
+
+
 fusions_of_interest = Tum_fusion_frac_cell_types %>% filter(celltype_final == "HGSOC" & frac_fusion_cells >= 0.8) %>%
     arrange(desc(tot_cells_w_fusion)) %>%
     filter(tot_cells_w_fusion >= MIN_CELLS)
 
 fusions_of_interest
 ```
+
+only 3 fusions of interest, each with at least 5 cells, and found entirely within the tumor cell fraction
 
 ```{r}
 
@@ -154,6 +176,11 @@ left_join(fusions_of_interest, Om_fusion_frac_cell_types, by='FusionName', suffi
 
 
 ```
+
+None of these three fusions are found in the matched normal 'Om' sample
+
+
+# Examine read type support for these fusions of interest
 
 ```{r}
 
@@ -170,6 +197,8 @@ write.table(fusions_of_interest, file="Patient1_Tum.fusions_of_interest.tsv", se
 fusions_of_interest
 ```
 
+
+RAPGEF5--AGMO was found by short and long reads. The others were found only by the long reads.
 
 # Examine umaps for fusions
 
@@ -358,6 +387,10 @@ for (fusion in  fusions_of_interest$FusionName) {
 
 ```
 
+
+The SMG7 and RAPGEF5--AGMO fusions appear in different tumor subclusters.  
+
+The NTN1 fusion is found across both subclusters.
 
 
 
