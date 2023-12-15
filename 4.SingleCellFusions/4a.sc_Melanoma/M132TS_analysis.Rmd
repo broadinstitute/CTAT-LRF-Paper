@@ -544,6 +544,13 @@ none here.
 
 
 
+```{r}
+
+report_on_fusion("RP1-34H18.1--NAV3")
+
+```
+
+
 
 
 

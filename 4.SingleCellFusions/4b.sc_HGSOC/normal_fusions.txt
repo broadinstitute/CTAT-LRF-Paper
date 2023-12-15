@@ -1,4 +1,4 @@
-
+A
 
 ##########
 Patient 1:
@@ -17,7 +17,7 @@ Tum:
 # min 5 cells
 1	RP11-208G20.2--PSPHP1	INTRACHROMOSOMAL[chr7:96.59Mb]		
 3	RP11-384F7.2--LSAMP	INTRACHROMOSOMAL[chr3:0.53Mb]		
-5	RP1-34H18.1--NAV3	INTRACHROMOSOMAL[chr12:0.26Mb]
+5	RP1-34H18.1--NAV3	INTRACHROMOSOMAL[chr12:0.26Mb]    *** reported in normals: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9402576/
 
 
 Om:
@@ -92,6 +92,10 @@ RP11-444D3.1--SOX5 :  melanoma: 10 cells with RP11-444D3.1--SOX5 fusion, 70% are
 					  HGSOC P3: Tum: 5 fibroblasts, 1 HGSOC, 1 mesothelial, 1 uncertain
 
 
+           paper reporting this fusion related to cancer: PMID:30888986, 31039818
+           also found in normals: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9402576/
+    
+
 RP11-208G20.2--PSPHP1: not finding it in melanoma
 
                        HGSOC P1: Om: 25% of all cells and 82% of mesothelial cells
@@ -103,7 +107,7 @@ RP11-208G20.2--PSPHP1: not finding it in melanoma
 
     	the above is interesting because it would involve an ~100 mb deletion or other SV. 
 
-
+        *** actually not sure what this is... it's gnarly - probably some sequence not in the reference. Could check T2T or pangenome for it.
 
 
 

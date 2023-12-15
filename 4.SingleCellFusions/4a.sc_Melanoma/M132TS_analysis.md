@@ -4,15 +4,18 @@ bhaas
 2023-09-28
 
 ``` r
-MIN_CELLS = 3
+MIN_CELLS = 5
 ```
 
-# M132TS
+# melanoma tumor sample M132TS
 
 ``` r
-all_data = read.table("data/M132TS.melanoma_sc.filtered_cells_and_dedup_umis.tsv.gz", header=T, sep="\t", stringsAsFactors = F)
+# parse fusion read support info including cell barcodes and umis
 
-head(all_data)
+Tum_data = read.table("data/M132TS.melanoma_sc.filtered_cells_and_dedup_umis.tsv.gz", header=T, sep="\t", stringsAsFactors = F)%>%
+    mutate(celltype_final = ifelse(leiden %in% c(4,7), 'tumor', 'normal'))
+
+head(Tum_data)
 ```
 
     ##             FusionName   LeftBreakpoint  RightBreakpoint     cell_barcode
@@ -43,30 +46,20 @@ head(all_data)
     ## 4      5.759757      2  9.9445240 11.945428 -0.3304369 GCTTTCGTGCGTTCAA  M132TS
     ## 5      7.168479      4  0.4421482  7.784063  2.4039671 GGCCCAATGGTACGAG  M132TS
     ## 6     12.985540      4 -1.1218052  9.394082  2.3726925 TTGCGCTACGTTACTG  M132TS
-
-``` r
-all_data %>% select(method) %>% unique()
-```
-
-    ##             method
-    ## 1      STAR-Fusion
-    ## 2  FusionInspector
-    ## 11  ctat-LR-fusion
+    ##   celltype_final
+    ## 1          tumor
+    ## 2          tumor
+    ## 3          tumor
+    ## 4         normal
+    ## 5          tumor
+    ## 6          tumor
 
 ``` r
 # since starF and FI were run at max sensitivity, lets restrict fusions to those identified by ctat-LRF
 
-ctat_LRF_fusion_genes = all_data %>% filter(method == 'ctat-LR-fusion') %>% select(FusionName) %>% unique() %>% pull(FusionName)
+ctat_LRF_fusion_genes = Tum_data %>% filter(method == 'ctat-LR-fusion') %>% select(FusionName) %>% unique() %>% pull(FusionName)
 
-all_data = all_data %>% filter(FusionName %in% ctat_LRF_fusion_genes)
-```
-
-``` r
-starF_fusions = all_data %>% filter(method=="STAR-Fusion")
-
-FI_fusions = all_data %>% filter(method=="FusionInspector")
-
-ctat_LRF_fusions = all_data %>% filter(method == "ctat-LR-fusion")
+Tum_data = Tum_data %>% filter(FusionName %in% ctat_LRF_fusion_genes)
 ```
 
 ``` r
@@ -74,13 +67,136 @@ fusion_annots = read.table("data/M132TS.fusion_annots.gz", sep="\t", header=T, s
 ```
 
 ``` r
-fusion_cell_counts_by_method = read.table("data/M132TS.melanoma_sc.filtered_cells_and_dedup_umis.cell_counts_by_method.tsv.gz",
+Tum_umap_data = read.table("data/M132TS.bc_to_umap_n_leiden.tsv.gz", header=T, sep="\t", stringsAsFactors = F) 
+
+# number of cells
+num_tumor_cells = nrow(Tum_umap_data) 
+message("number tumor cells: ", num_tumor_cells)
+```
+
+    ## number tumor cells: 6932
+
+``` r
+# 6932 total cells
+
+Tum_umap_data %>% group_by(leiden) %>% tally(name='count_cell_cluster') %>% mutate(frac_tot_cells = count_cell_cluster/num_tumor_cells)
+```
+
+    ## # A tibble: 11 × 3
+    ##    leiden count_cell_cluster frac_tot_cells
+    ##     <int>              <int>          <dbl>
+    ##  1      0               1615        0.233  
+    ##  2      1               1264        0.182  
+    ##  3      2               1231        0.178  
+    ##  4      3               1169        0.169  
+    ##  5      4                584        0.0842 
+    ##  6      5                546        0.0788 
+    ##  7      6                305        0.0440 
+    ##  8      7                117        0.0169 
+    ##  9      8                 67        0.00967
+    ## 10      9                 17        0.00245
+    ## 11     10                 17        0.00245
+
+``` r
+# cluster ids 4,7 = tumor
+# 584 + 117 = 701 tumor cells
+```
+
+``` r
+Tum_cell_counts = Tum_data %>% select(FusionName, cell_barcode) %>% unique() %>% 
+    group_by(FusionName) %>%
+    tally(name='tot_cells_w_fusion') %>%
+    mutate(frac_tot_cells=tot_cells_w_fusion/num_tumor_cells)  %>%
+    arrange(desc(frac_tot_cells))
+
+Tum_cell_counts = left_join(Tum_cell_counts, fusion_annots)
+```
+
+    ## Joining with `by = join_by(FusionName)`
+
+``` r
+Tum_cell_counts %>% filter(tot_cells_w_fusion >= MIN_CELLS)
+```
+
+    ## # A tibble: 8 × 4
+    ##   FusionName               tot_cells_w_fusion frac_tot_cells annots             
+    ##   <chr>                                 <int>          <dbl> <chr>              
+    ## 1 NUTM2A-AS1--RP11-203L2.4                268       0.0387   INTERCHROMOSOMAL[c…
+    ## 2 ZNF292--PNRC1                            12       0.00173  INTRACHROMOSOMAL[c…
+    ## 3 RP11-444D3.1--SOX5                       10       0.00144  [SOX5:Oncogene];IN…
+    ## 4 BACH2--PNRC1                              9       0.00130  [BACH2:Oncogene];I…
+    ## 5 SRSF7--CXCR4                              8       0.00115  INTRACHROMOSOMAL[c…
+    ## 6 RP1-34H18.1--NAV3                         6       0.000866 INTRACHROMOSOMAL[c…
+    ## 7 DPH6-AS1--RP11-684B21.1                   5       0.000721 INTRACHROMOSOMAL[c…
+    ## 8 RP11-14D22.2--PRICKLE2                    5       0.000721 INTRACHROMOSOMAL[c…
+
+``` r
+fusions_min_cell_counts = Tum_cell_counts %>% filter(tot_cells_w_fusion >= MIN_CELLS) 
+
+fusions_min_cell_counts
+```
+
+    ## # A tibble: 8 × 4
+    ##   FusionName               tot_cells_w_fusion frac_tot_cells annots             
+    ##   <chr>                                 <int>          <dbl> <chr>              
+    ## 1 NUTM2A-AS1--RP11-203L2.4                268       0.0387   INTERCHROMOSOMAL[c…
+    ## 2 ZNF292--PNRC1                            12       0.00173  INTRACHROMOSOMAL[c…
+    ## 3 RP11-444D3.1--SOX5                       10       0.00144  [SOX5:Oncogene];IN…
+    ## 4 BACH2--PNRC1                              9       0.00130  [BACH2:Oncogene];I…
+    ## 5 SRSF7--CXCR4                              8       0.00115  INTRACHROMOSOMAL[c…
+    ## 6 RP1-34H18.1--NAV3                         6       0.000866 INTRACHROMOSOMAL[c…
+    ## 7 DPH6-AS1--RP11-684B21.1                   5       0.000721 INTRACHROMOSOMAL[c…
+    ## 8 RP11-14D22.2--PRICKLE2                    5       0.000721 INTRACHROMOSOMAL[c…
+
+``` r
+# examine distribution of fusion calls according to cell types
+
+Tum_fusion_frac_cell_types = Tum_data %>% select(FusionName, cell_barcode, celltype_final) %>% unique() %>%
+    group_by(FusionName, celltype_final) %>% tally(name='tot_cells_w_fusion') %>% 
+    mutate(frac_fusion_cells=prop.table(tot_cells_w_fusion)) %>%
+    arrange(desc(tot_cells_w_fusion))
+
+Tum_fusion_frac_cell_types %>% head()
+```
+
+    ## # A tibble: 6 × 4
+    ## # Groups:   FusionName [6]
+    ##   FusionName               celltype_final tot_cells_w_fusion frac_fusion_cells
+    ##   <chr>                    <chr>                       <int>             <dbl>
+    ## 1 NUTM2A-AS1--RP11-203L2.4 tumor                         265             0.989
+    ## 2 ZNF292--PNRC1            normal                         12             1    
+    ## 3 BACH2--PNRC1             normal                          9             1    
+    ## 4 SRSF7--CXCR4             normal                          8             1    
+    ## 5 RP11-444D3.1--SOX5       tumor                           7             0.7  
+    ## 6 RP1-34H18.1--NAV3        tumor                           6             1
+
+``` r
+Tum_data %>% select(method) %>% unique()
+```
+
+    ##              method
+    ## 1    ctat-LR-fusion
+    ## 57      STAR-Fusion
+    ## 113 FusionInspector
+
+``` r
+starF_fusions = Tum_data %>% filter(method=="STAR-Fusion")
+
+FI_fusions = Tum_data %>% filter(method=="FusionInspector")
+
+ctat_LRF_fusions = Tum_data %>% filter(method == "ctat-LR-fusion")
+```
+
+``` r
+# parse cell counts by detection method
+
+Tum_cell_counts_by_method = read.table("data/M132TS.melanoma_sc.filtered_cells_and_dedup_umis.cell_counts_by_method.tsv.gz",
                                           header=T, sep="\t", stringsAsFactors = F)
 
 
-fusion_cell_counts_by_method  = fusion_cell_counts_by_method %>% filter(FusionName %in% ctat_LRF_fusion_genes)
+Tum_cell_counts_by_method  = Tum_cell_counts_by_method %>% filter(FusionName %in% ctat_LRF_fusion_genes)
 
-fusion_cell_counts_by_method %>% head()
+Tum_cell_counts_by_method %>% head()
 ```
 
     ##                 FusionName   LeftBreakpoint RightBreakpoint          method
@@ -99,9 +215,13 @@ fusion_cell_counts_by_method %>% head()
     ## 6      4  M132TS          17
 
 ``` r
-fusion_cell_counts_by_method %>% select(FusionName, LeftBreakpoint, RightBreakpoint, method, leiden, cell_counts) %>%
+# reorganize to compare findings of cells according to fusion and method
+
+Tum_cell_counts_by_method_spread = Tum_cell_counts_by_method %>% select(FusionName, LeftBreakpoint, RightBreakpoint, method, leiden, cell_counts) %>%
     spread(key=method, value=cell_counts) %>% 
-    arrange(desc(`ctat-LR-fusion`)) %>% head()
+    arrange(desc(`ctat-LR-fusion`)) 
+
+Tum_cell_counts_by_method_spread %>% head()
 ```
 
     ##                 FusionName   LeftBreakpoint RightBreakpoint leiden
@@ -122,8 +242,8 @@ fusion_cell_counts_by_method %>% select(FusionName, LeftBreakpoint, RightBreakpo
 # plot counts of cells for these fusions:
 
 ``` r
-right_join(fusion_cell_counts_by_method, 
-          fusion_cell_counts_by_method %>% 
+right_join(Tum_cell_counts_by_method, 
+          Tum_cell_counts_by_method %>% 
                          filter(cell_counts >= MIN_CELLS)  %>% 
                          select(FusionName, LeftBreakpoint, RightBreakpoint) 
           ) %>%
@@ -134,17 +254,17 @@ right_join(fusion_cell_counts_by_method,
 
     ## Joining with `by = join_by(FusionName, LeftBreakpoint, RightBreakpoint)`
 
-    ## Warning in right_join(fusion_cell_counts_by_method, fusion_cell_counts_by_method %>% : Each row in `x` is expected to match at most 1 row in `y`.
+    ## Warning in right_join(Tum_cell_counts_by_method, Tum_cell_counts_by_method %>% : Each row in `x` is expected to match at most 1 row in `y`.
     ## ℹ Row 1 of `x` matches multiple rows.
     ## ℹ If multiple matches are expected, set `multiple = "all"` to silence this
     ##   warning.
 
-![](M132TS_analysis_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](M132TS_analysis_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 # Examine cell type representation by fusions
 
 ``` r
-fusion_frac_cell_types = all_data %>% select(FusionName, cell_barcode, leiden) %>% unique() %>%
+fusion_frac_cell_types = Tum_data %>% select(FusionName, cell_barcode, leiden) %>% unique() %>%
     group_by(FusionName, leiden) %>% tally(name='tot_cells_w_fusion') %>% 
     mutate(frac_fusion_cells=prop.table(tot_cells_w_fusion)) %>%
     arrange(desc(tot_cells_w_fusion))
@@ -164,23 +284,22 @@ fusion_frac_cell_types %>% head()
     ## 6 ZNF292--PNRC1                 0                  5             0.417
 
 ``` r
-fusions_of_interest = fusion_frac_cell_types %>% 
-    filter(tot_cells_w_fusion >= MIN_CELLS) %>%
+fusions_of_interest = Tum_fusion_frac_cell_types %>% 
+    filter(FusionName %in% fusions_min_cell_counts$FusionName) %>%
     arrange(desc(tot_cells_w_fusion)) %>%
-    filter(frac_fusion_cells >= 0.8)
+    filter(celltype_final == "tumor" & frac_fusion_cells >= 0.8)
 
 fusions_of_interest
 ```
 
-    ## # A tibble: 5 × 4
-    ## # Groups:   FusionName [5]
-    ##   FusionName                leiden tot_cells_w_fusion frac_fusion_cells
-    ##   <chr>                      <int>              <int>             <dbl>
-    ## 1 NUTM2A-AS1--RP11-203L2.4       4                221             0.825
-    ## 2 RP11-14D22.2--PRICKLE2         4                  5             1    
-    ## 3 RP1-34H18.1--RP11-781A6.1      4                  3             1    
-    ## 4 TRDV1--TRAJ47                  1                  3             1    
-    ## 5 YWHAZ--PABPC1                  0                  3             1
+    ## # A tibble: 4 × 4
+    ## # Groups:   FusionName [4]
+    ##   FusionName               celltype_final tot_cells_w_fusion frac_fusion_cells
+    ##   <chr>                    <chr>                       <int>             <dbl>
+    ## 1 NUTM2A-AS1--RP11-203L2.4 tumor                         265             0.989
+    ## 2 RP1-34H18.1--NAV3        tumor                           6             1    
+    ## 3 DPH6-AS1--RP11-684B21.1  tumor                           5             1    
+    ## 4 RP11-14D22.2--PRICKLE2   tumor                           5             1
 
 ``` r
 fusions_of_interest = left_join(fusions_of_interest,
@@ -193,49 +312,47 @@ fusions_of_interest = left_join(fusions_of_interest,
 fusions_of_interest
 ```
 
-    ## # A tibble: 5 × 5
-    ## # Groups:   FusionName [5]
-    ##   FusionName                leiden tot_cells_w_fusion frac_fusion_cells annots  
-    ##   <chr>                      <int>              <int>             <dbl> <chr>   
-    ## 1 NUTM2A-AS1--RP11-203L2.4       4                221             0.825 INTERCH…
-    ## 2 RP11-14D22.2--PRICKLE2         4                  5             1     INTRACH…
-    ## 3 RP1-34H18.1--RP11-781A6.1      4                  3             1     INTRACH…
-    ## 4 TRDV1--TRAJ47                  1                  3             1     INTRACH…
-    ## 5 YWHAZ--PABPC1                  0                  3             1     INTRACH…
+    ## # A tibble: 4 × 5
+    ## # Groups:   FusionName [4]
+    ##   FusionName               celltype_final tot_cells_w_fusion frac_fusio…¹ annots
+    ##   <chr>                    <chr>                       <int>        <dbl> <chr> 
+    ## 1 NUTM2A-AS1--RP11-203L2.4 tumor                         265        0.989 INTER…
+    ## 2 RP1-34H18.1--NAV3        tumor                           6        1     INTRA…
+    ## 3 DPH6-AS1--RP11-684B21.1  tumor                           5        1     INTRA…
+    ## 4 RP11-14D22.2--PRICKLE2   tumor                           5        1     INTRA…
+    ## # … with abbreviated variable name ¹​frac_fusion_cells
 
 NUTM2A-AS1–RP11-203L2.4 is the only relevant inter-chromosomal.
 
 The others have few cells and are likely cis-spliced fusions.
 
 ``` r
-umap_base_data = read.table("data/M132TS.bc_to_umap_n_leiden.tsv.gz", header=T, sep="\t", stringsAsFactors = F)
-
-baseplot = umap_base_data %>% ggplot(aes(x=umap_1, y=umap_2)) + geom_point()
+baseplot = Tum_umap_data %>% ggplot(aes(x=umap_1, y=umap_2)) + geom_point()
 
 baseplot + geom_point(aes(color=as.factor(leiden)))
 ```
 
-![](M132TS_analysis_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+![](M132TS_analysis_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
 ``` r
- umap_base_data %>% ggplot(aes(x=umap_1, y=umap_2)) + geom_point(aes(color=CST3))
+Tum_umap_data %>% ggplot(aes(x=umap_1, y=umap_2)) + geom_point(aes(color=CST3))
 ```
 
-![](M132TS_analysis_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](M132TS_analysis_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
 ``` r
 TUMOR_CLUSTERS = c(4,7)
 
-umap_base_data = umap_base_data %>% mutate(tumor = leiden %in% TUMOR_CLUSTERS)
+Tum_umap_data = Tum_umap_data %>% mutate(tumor = leiden %in% TUMOR_CLUSTERS)
 
-umap_base_data %>%
+Tum_umap_data %>%
     ggplot(aes(x=umap_1, y=umap_2)) + geom_point(aes(color=tumor))
 ```
 
-![](M132TS_analysis_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+![](M132TS_analysis_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
 
 ``` r
-umap_base_data %>% select(index, tumor) %>% unique() %>% nrow()
+Tum_umap_data %>% select(index, tumor) %>% unique() %>% nrow()
 ```
 
     ## [1] 6932
@@ -243,7 +360,7 @@ umap_base_data %>% select(index, tumor) %>% unique() %>% nrow()
 ``` r
 # 6932 total cells
     
- umap_base_data %>% select(index, tumor) %>% unique() %>% group_by(tumor) %>% tally()
+ Tum_umap_data %>% select(index, tumor) %>% unique() %>% group_by(tumor) %>% tally()
 ```
 
     ## # A tibble: 2 × 2
@@ -266,10 +383,10 @@ NUM_NORMAL_CELLS = 6231
 
 ``` r
 # label tumor cells
-all_data = all_data %>% 
+Tum_data = Tum_data %>% 
     mutate(tumor = leiden %in% TUMOR_CLUSTERS)
 
-fusion_frac_tumor = all_data %>%
+fusion_frac_tumor = Tum_data %>%
     select(FusionName, cell_barcode, tumor) %>% unique() %>%
     group_by(FusionName, tumor) %>% tally(name='tot_cells_w_fusion') %>%
     spread(key=tumor, value=tot_cells_w_fusion, fill = 0) %>%
@@ -299,7 +416,7 @@ plots = list()
 
 for (fusion in  fusions_of_interest$FusionName) {
     
-    p = baseplot + geom_point(data=all_data %>% filter(FusionName == fusion) %>% select(umap_1, umap_2, method) %>% unique(), 
+    p = baseplot + geom_point(data=Tum_data %>% filter(FusionName == fusion) %>% select(umap_1, umap_2, method) %>% unique(), 
                               aes(color=method), alpha=0.5, size=rel(2)) + 
         ggtitle(paste("M132TS, Fusion: ", fusion) )
     
@@ -310,7 +427,7 @@ for (fusion in  fusions_of_interest$FusionName) {
 }
 ```
 
-![](M132TS_analysis_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+![](M132TS_analysis_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
 
 ``` r
 pdf("M132TS.fusions_of_interest.pdf")
@@ -348,7 +465,7 @@ write.table(fusions_of_interest, file="M132TS.fusions_of_interest.tsv", sep="\t"
 ```
 
 ``` r
-fusion_cell_counts_by_method %>% filter(FusionName %in% fusions_of_interest$FusionName) %>% 
+Tum_cell_counts_by_method %>% filter(FusionName %in% fusions_of_interest$FusionName) %>% 
     select(FusionName, LeftBreakpoint, RightBreakpoint, method, leiden, cell_counts) %>%
     spread(key=method, value=cell_counts) %>% 
     arrange(desc(`ctat-LR-fusion`))
@@ -388,7 +505,7 @@ fusion_cell_counts_by_method %>% filter(FusionName %in% fusions_of_interest$Fusi
     ## 15             NA               5           1
 
 ``` r
-M132TS_fusions_of_interest_counts = all_data %>% filter(FusionName %in% fusions_of_interest$FusionName) %>% 
+M132TS_fusions_of_interest_counts = Tum_data %>% filter(FusionName %in% fusions_of_interest$FusionName) %>% 
         filter(tumor) %>%
         select(FusionName, method, cell_barcode) %>% unique() %>%
         group_by(FusionName, method) %>% tally(name='cell_counts')
@@ -411,12 +528,12 @@ M132TS_fusions_of_interest_counts %>%
     ggtitle("M132TS Fusions of Interest: Cell Counts")
 ```
 
-![](M132TS_analysis_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
+![](M132TS_analysis_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
 
 # focus on NUTM2A-AS1–RP11-203L2.4
 
 ``` r
-all_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4" ) %>% 
+Tum_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4" ) %>% 
         filter(tumor) %>%
         select(FusionName, method, cell_barcode) %>% unique() %>%
         group_by(FusionName, method) %>% tally(name='cell_counts') %>%
@@ -425,10 +542,10 @@ all_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4" ) %>%
     ggtitle("M132TS Fusions of Interest: Cell Counts")
 ```
 
-![](M132TS_analysis_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
+![](M132TS_analysis_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
 
 ``` r
-all_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4" ) %>% 
+Tum_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4" ) %>% 
         filter(tumor) %>%
         select(FusionName, method, cell_barcode) %>% unique() %>%
         group_by(FusionName, method) %>% tally(name='cell_counts') %>%
@@ -445,17 +562,17 @@ all_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4" ) %>%
     ## # … with abbreviated variable name ¹​frac_NUTM2A_AS1_fusion_positive
 
 ``` r
- p = baseplot + geom_point(data=all_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4") %>% select(umap_1, umap_2, method) %>% unique(), 
+ p = baseplot + geom_point(data=Tum_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4") %>% select(umap_1, umap_2, method) %>% unique(), 
                               aes(color=method), alpha=0.5, size=rel(2)) + 
         ggtitle(paste("M132TS, Fusion: ", fusion) )
     
     plot(p)   
 ```
 
-![](M132TS_analysis_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
+![](M132TS_analysis_files/figure-gfm/unnamed-chunk-30-1.png)<!-- -->
 
 ``` r
-venn_dist = all_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4") %>%
+venn_dist = Tum_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4") %>%
     filter(tumor) %>%
     select(cell_barcode, method) %>% unique() %>%
     group_by(cell_barcode) %>% arrange(method) %>%
@@ -510,3 +627,159 @@ venn_dist %>% summarize(sum(num_cells))
     ##   `sum(num_cells)`
     ##              <int>
     ## 1              265
+
+# Other fusions of interest in normal cells?
+
+``` r
+# examine how these fusions are distributed among cell clusters
+
+
+
+Tum_data %>% 
+    filter(FusionName %in% fusions_min_cell_counts) %>%
+    select(FusionName, cell_barcode, celltype_final) %>% 
+    unique() %>%
+    group_by(FusionName, celltype_final) %>% tally(name='fusion_cell_counts_per_cluster') %>% 
+    mutate(frac_fusion_cells=prop.table(fusion_cell_counts_per_cluster)) %>%
+    arrange(FusionName, desc(fusion_cell_counts_per_cluster)) 
+```
+
+    ## # A tibble: 0 × 4
+    ## # Groups:   FusionName [0]
+    ## # … with 4 variables: FusionName <chr>, celltype_final <chr>,
+    ## #   fusion_cell_counts_per_cluster <int>, frac_fusion_cells <dbl>
+
+``` r
+# just top cell type
+
+# examine how these fusions are distributed among cell clusters
+
+left_join(Tum_data %>% filter(FusionName %in% fusions_min_cell_counts$FusionName) %>% select(FusionName, cell_barcode, leiden) %>% 
+    unique() %>%
+    group_by(FusionName, leiden) %>% tally(name='fusion_cell_counts_per_cluster') %>% ungroup() %>%
+    mutate(frac_fusion_cells=prop.table(fusion_cell_counts_per_cluster)) %>%
+    arrange(FusionName, desc(fusion_cell_counts_per_cluster))  %>%
+    mutate(tumor_or_normal = (leiden %in% c(4,7))) %>%
+    group_by(FusionName) %>% arrange(desc(fusion_cell_counts_per_cluster)) %>% filter(row_number()==1) %>% ungroup() %>%
+        arrange(desc(fusion_cell_counts_per_cluster)),
+    
+    fusion_annots, by='FusionName')
+```
+
+    ## # A tibble: 8 × 6
+    ##   FusionName               leiden fusion_cell_counts_pe…¹ frac_…² tumor…³ annots
+    ##   <chr>                     <int>                   <int>   <dbl> <lgl>   <chr> 
+    ## 1 NUTM2A-AS1--RP11-203L2.4      4                     221 0.684   TRUE    INTER…
+    ## 2 RP11-444D3.1--SOX5            4                       7 0.0217  TRUE    [SOX5…
+    ## 3 BACH2--PNRC1                  0                       6 0.0186  FALSE   [BACH…
+    ## 4 RP11-14D22.2--PRICKLE2        4                       5 0.0155  TRUE    INTRA…
+    ## 5 ZNF292--PNRC1                 0                       5 0.0155  FALSE   INTRA…
+    ## 6 RP1-34H18.1--NAV3             4                       4 0.0124  TRUE    INTRA…
+    ## 7 DPH6-AS1--RP11-684B21.1       4                       3 0.00929 TRUE    INTRA…
+    ## 8 SRSF7--CXCR4                  0                       2 0.00619 FALSE   INTRA…
+    ## # … with abbreviated variable names ¹​fusion_cell_counts_per_cluster,
+    ## #   ²​frac_fusion_cells, ³​tumor_or_normal
+
+# exploring individual fusions
+
+``` r
+report_on_fusion = function(fusion_name) {
+    
+    print(Tum_cell_counts_by_method_spread %>% filter(FusionName == fusion_name))
+    
+    print(Tum_cell_counts %>% filter(FusionName == fusion_name) %>% mutate(type="Tum"))
+    
+    print(fusion_frac_cell_types %>% filter(FusionName == fusion_name) %>% mutate(type="Tum"))
+    
+    print(Tum_fusion_frac_cell_types %>% filter(FusionName == fusion_name) %>% mutate(type="Tum"))
+    
+}
+```
+
+``` r
+report_on_fusion("RP11-444D3.1--SOX5")
+```
+
+    ##           FusionName   LeftBreakpoint  RightBreakpoint leiden ctat-LR-fusion
+    ## 1 RP11-444D3.1--SOX5 chr12:24276141:- chr12:23896024:-      4              5
+    ## 2 RP11-444D3.1--SOX5 chr12:24277216:- chr12:23896024:-      4              1
+    ## 3 RP11-444D3.1--SOX5 chr12:24213343:- chr12:23896024:-      2             NA
+    ## 4 RP11-444D3.1--SOX5 chr12:24277216:- chr12:23896024:-      0             NA
+    ## 5 RP11-444D3.1--SOX5 chr12:24277216:- chr12:23896024:-      2             NA
+    ##   FusionInspector STAR-Fusion
+    ## 1              NA          NA
+    ## 2               1          NA
+    ## 3              NA           1
+    ## 4               1           1
+    ## 5               1          NA
+    ## # A tibble: 1 × 5
+    ##   FusionName         tot_cells_w_fusion frac_tot_cells annots              type 
+    ##   <chr>                           <int>          <dbl> <chr>               <chr>
+    ## 1 RP11-444D3.1--SOX5                 10        0.00144 [SOX5:Oncogene];IN… Tum  
+    ## # A tibble: 3 × 5
+    ## # Groups:   FusionName [1]
+    ##   FusionName         leiden tot_cells_w_fusion frac_fusion_cells type 
+    ##   <chr>               <int>              <int>             <dbl> <chr>
+    ## 1 RP11-444D3.1--SOX5      4                  7               0.7 Tum  
+    ## 2 RP11-444D3.1--SOX5      2                  2               0.2 Tum  
+    ## 3 RP11-444D3.1--SOX5      0                  1               0.1 Tum  
+    ## # A tibble: 2 × 5
+    ## # Groups:   FusionName [1]
+    ##   FusionName         celltype_final tot_cells_w_fusion frac_fusion_cells type 
+    ##   <chr>              <chr>                       <int>             <dbl> <chr>
+    ## 1 RP11-444D3.1--SOX5 tumor                           7               0.7 Tum  
+    ## 2 RP11-444D3.1--SOX5 normal                          3               0.3 Tum
+
+10 cells with RP11-444D3.1–SOX5 fusion, 70% are in tumor, 30% are in
+normal clusters.
+
+## RP11-208G20.2–PSPHP1
+
+``` r
+report_on_fusion("RP11-208G20.2--PSPHP1")
+```
+
+    ## [1] FusionName      LeftBreakpoint  RightBreakpoint leiden         
+    ## [5] ctat-LR-fusion  FusionInspector STAR-Fusion    
+    ## <0 rows> (or 0-length row.names)
+    ## # A tibble: 0 × 5
+    ## # … with 5 variables: FusionName <chr>, tot_cells_w_fusion <int>,
+    ## #   frac_tot_cells <dbl>, annots <chr>, type <chr>
+    ## # A tibble: 0 × 5
+    ## # Groups:   FusionName [0]
+    ## # … with 5 variables: FusionName <chr>, leiden <int>, tot_cells_w_fusion <int>,
+    ## #   frac_fusion_cells <dbl>, type <chr>
+    ## # A tibble: 0 × 5
+    ## # Groups:   FusionName [0]
+    ## # … with 5 variables: FusionName <chr>, celltype_final <chr>,
+    ## #   tot_cells_w_fusion <int>, frac_fusion_cells <dbl>, type <chr>
+
+none here.
+
+``` r
+report_on_fusion("RP1-34H18.1--NAV3")
+```
+
+    ##          FusionName   LeftBreakpoint  RightBreakpoint leiden ctat-LR-fusion
+    ## 1 RP1-34H18.1--NAV3 chr12:77326622:+ chr12:77940319:+      4              4
+    ## 2 RP1-34H18.1--NAV3 chr12:77326622:+ chr12:77940319:+      7              1
+    ## 3 RP1-34H18.1--NAV3 chr12:77572266:+ chr12:77940319:+      7             NA
+    ##   FusionInspector STAR-Fusion
+    ## 1              NA          NA
+    ## 2              NA          NA
+    ## 3              NA           1
+    ## # A tibble: 1 × 5
+    ##   FusionName        tot_cells_w_fusion frac_tot_cells annots               type 
+    ##   <chr>                          <int>          <dbl> <chr>                <chr>
+    ## 1 RP1-34H18.1--NAV3                  6       0.000866 INTRACHROMOSOMAL[ch… Tum  
+    ## # A tibble: 2 × 5
+    ## # Groups:   FusionName [1]
+    ##   FusionName        leiden tot_cells_w_fusion frac_fusion_cells type 
+    ##   <chr>              <int>              <int>             <dbl> <chr>
+    ## 1 RP1-34H18.1--NAV3      4                  4             0.667 Tum  
+    ## 2 RP1-34H18.1--NAV3      7                  2             0.333 Tum  
+    ## # A tibble: 1 × 5
+    ## # Groups:   FusionName [1]
+    ##   FusionName        celltype_final tot_cells_w_fusion frac_fusion_cells type 
+    ##   <chr>             <chr>                       <int>             <dbl> <chr>
+    ## 1 RP1-34H18.1--NAV3 tumor                           6                 1 Tum
