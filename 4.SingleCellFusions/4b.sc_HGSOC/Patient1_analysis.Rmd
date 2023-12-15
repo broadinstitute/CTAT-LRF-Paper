@@ -25,11 +25,64 @@ MIN_CELLS = 5
 
 # Om sample fusion read evidence with cell barcodes and UMIs
 
-Om_data = read.table("data/Patient1_Om.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.tsv.gz", header=T, sep="\t", stringsAsFactors = F)
+Om_data = read.table("data/Patient1_Om.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.tsv.gz", header=T, sep="\t", stringsAsFactors = F) %>% 
+    filter(! is.na(UMAP_1))
+
+nrow(Om_data)
 
 Om_data %>% head()
 
+
 ```
+
+```{r}
+# since starF and FI were run at max sensitivity, lets restrict fusions to those identified by ctat-LRF
+
+Om_ctat_LRF_fusion_genes = Om_data %>% filter(method == 'ctat-LR-fusion') %>% select(FusionName) %>% unique() %>% pull(FusionName)
+
+Om_data = Om_data %>% filter(FusionName %in% Om_ctat_LRF_fusion_genes)
+
+nrow(Om_data)
+
+```
+
+```{r}
+
+fusion_annots = read.table("data/Patient1.fusion_annots.gz", header=T, sep="\t", stringsAsFactors = F)
+
+```
+
+
+
+
+```{r}
+# Om sample composition
+
+Om_bc_to_celltype = read.table("data/Patient1_Om.bc_to_celltype.tsv.gz", header=T, sep="\t")
+Om_umap_coords = read.table("data/Patient1_Om_UMAPcoords.txt.gz", header=T, sep=",") %>% rename(barcodes=X)
+
+Om_umap_data = left_join(Om_umap_coords, Om_bc_to_celltype, by='barcodes')
+
+num_Om_cells = nrow(Om_umap_data)
+
+message("Have ", num_Om_cells, " Om cells")
+# 594 Om cells
+
+Om_data = Om_data %>% filter(barcodes %in% Om_umap_data$barcodes)
+nrow(Om_data)
+```
+
+```{r}
+
+Om_cell_counts = Om_data %>% select(FusionName, cell_barcode) %>% unique() %>% 
+    group_by(FusionName) %>%
+    tally(name='tot_cells_w_fusion') %>%
+    mutate(frac_tot_cells=tot_cells_w_fusion/num_Om_cells) %>%
+    arrange(desc(frac_tot_cells))
+
+Om_cell_counts %>% filter(tot_cells_w_fusion >= MIN_CELLS)
+```
+
 
 
 
@@ -72,7 +125,6 @@ Om_fusion_frac_cell_types %>% filter(tot_cells_w_fusion >= MIN_CELLS) %>% arrang
 
 
 
-
 # P1 Tumor
 
 
@@ -81,10 +133,61 @@ Om_fusion_frac_cell_types %>% filter(tot_cells_w_fusion >= MIN_CELLS) %>% arrang
 # read in tumor fusion read evidence with cell barcode and UMIs
 
 
-Tum_data = read.table("data/Patient1_Tum.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.tsv.gz", header=T, sep="\t", stringsAsFactors = F)
+Tum_data = read.table("data/Patient1_Tum.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.tsv.gz", header=T, sep="\t", stringsAsFactors = F) %>%
+    filter(! is.na(UMAP_1))
+
+nrow(Tum_data)
 
 Tum_data %>% head()
 
+```
+
+```{r}
+# since starF and FI were run at max sensitivity, lets restrict fusions to those identified by ctat-LRF
+
+Tum_ctat_LRF_fusion_genes = Tum_data %>% filter(method == 'ctat-LR-fusion') %>% select(FusionName) %>% unique() %>% pull(FusionName)
+
+Tum_data = Tum_data %>% filter(FusionName %in% Tum_ctat_LRF_fusion_genes)
+
+nrow(Tum_data)
+
+```
+
+
+
+```{r}
+
+Tum_umap_data = read.table("data/Patient1_Tum_UMAPcoords.txt.gz", header=T, sep=",") %>%
+    rename(barcodes=X) %>%
+    filter(! is.na(UMAP_1))
+
+celltypes = read.table("data/Patient1_Tum.bc_to_celltype.tsv.gz", header=T, sep="\t")
+
+Tum_umap_data = left_join(Tum_umap_data, celltypes, by='barcodes')
+
+# number of cells
+num_tumor_cells = nrow(Tum_umap_data) 
+message("number total cells: ", num_tumor_cells)
+# 497 total cells
+
+Tum_umap_data %>% group_by(celltype_final) %>% tally(name='count_cell_type') %>% mutate(frac_tot_cells = count_cell_type/num_tumor_cells)
+
+# 92 HGSOC cells  (19% of total cells)
+
+```
+
+
+```{r}
+
+Tum_cell_counts = Tum_data %>% select(FusionName, cell_barcode) %>% unique() %>% 
+    group_by(FusionName) %>%
+    tally(name='tot_cells_w_fusion') %>%
+    mutate(frac_tot_cells=tot_cells_w_fusion/num_tumor_cells)  %>%
+    arrange(desc(frac_tot_cells))
+
+left_join(Tum_cell_counts %>% filter(tot_cells_w_fusion >= MIN_CELLS),
+          fusion_annots,
+          by='FusionName')
 ```
 
 
@@ -141,7 +244,7 @@ Tum_n_Om_joined_fusions %>% select(FusionName, LeftBreakpoint, RightBreakpoint, 
 
 ```{r}
 
-# examine distribution of fusion calles according to cell types
+# examine distribution of fusion calls according to cell types
 
 Tum_fusion_frac_cell_types = Tum_data %>% select(FusionName, barcodes, celltype_final) %>% unique() %>%
     group_by(FusionName, celltype_final) %>% tally(name='tot_cells_w_fusion') %>% 
@@ -188,8 +291,6 @@ None of these three fusions are found in the matched normal 'Om' sample
 
 fusions_of_interest = left_join(fusions_of_interest, Tum_cell_counts_by_method_spread)
 
-fusion_annots = read.table("data/Patient1.fusion_annots.gz", header=T, sep="\t", stringsAsFactors = F)
-
 fusions_of_interest = left_join(fusions_of_interest, fusion_annots)
 
 write.table(fusions_of_interest, file="Patient1_Tum.fusions_of_interest.tsv", sep="\t", row.names=F, quote=F)
@@ -204,39 +305,19 @@ RAPGEF5--AGMO was found by short and long reads. The others were found only by t
 
 
 
-```{r}
-
-umap_base_data = read.table("data/Patient1_Tum_UMAPcoords.txt.gz", header=T, sep=",") %>%
-    rename(barcodes=X) %>%
-    filter(! is.na(UMAP_1)) #%>% filter(UMAP_1 != "NA")
-
-celltypes = read.table("data/Patient1_Tum.bc_to_celltype.tsv.gz", header=T, sep="\t")
-
-umap_base_data = left_join(umap_base_data, celltypes, by='barcodes')
-
-# number of cells
-num_total_cells = nrow(umap_base_data) 
-message("number total cells: ", num_total_cells)
-# 497 total cells
-
-umap_base_data %>% group_by(celltype_final) %>% tally(name='count_cell_type') %>% mutate(frac_tot_cells = count_cell_type/num_total_cells)
-
-# 92 HGSOC cells  (19% of total cells)
-
-```
 
 ```{r}
 # add seurat clusters
 
 seurat_clusters = read.table("data/Patient1_Tum.umap_cluster_ids.tsv.gz", header=T, sep="\t")
 
-umap_base_data = full_join(umap_base_data, seurat_clusters, by='barcodes') %>% rename(cluster_id = seurat_clusters) 
+Tum_umap_data = full_join(Tum_umap_data, seurat_clusters, by='barcodes') %>% rename(cluster_id = seurat_clusters) 
 
 ```
 
 
 ```{r}
-baseplot = umap_base_data %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + geom_point(aes(color=celltype_final))
+baseplot = Tum_umap_data %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + geom_point(aes(color=celltype_final))
 
 baseplot
 
@@ -365,7 +446,7 @@ tumor_cell_counts_by_methods  %>% filter(FusionName == "NTN1--CDRT15P2")
 ```{r}
 
 
-baseplot = umap_base_data %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + geom_point(aes(color=factor(cluster_id)))
+baseplot = Tum_umap_data %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + geom_point(aes(color=factor(cluster_id)))
 
 
 x = 0
@@ -391,6 +472,133 @@ for (fusion in  fusions_of_interest$FusionName) {
 The SMG7 and RAPGEF5--AGMO fusions appear in different tumor subclusters.  
 
 The NTN1 fusion is found across both subclusters.
+
+
+
+# fusions found in normal cells?
+
+```{r}
+
+left_join(Tum_n_Om_joined_fusions %>% filter(`ctat-LR-fusion.Tum` >= MIN_CELLS & `ctat-LR-fusion.Om` > 0),
+          fusion_annots) 
+
+
+```
+
+```{r}
+
+left_join(Tum_n_Om_joined_fusions %>% filter(`ctat-LR-fusion.Tum` >= MIN_CELLS & `ctat-LR-fusion.Om` > 0),
+          fusion_annots)  %>%
+    select(FusionName, annots) %>% unique()
+
+```
+
+
+```{r}
+
+# top celltype count only for each
+left_join(Tum_n_Om_joined_fusions %>% filter(`ctat-LR-fusion.Tum` >= MIN_CELLS & `ctat-LR-fusion.Om` > 0),
+          fusion_annots,
+          by='FusionName')   %>%
+    group_by(FusionName) %>% arrange(desc(`ctat-LR-fusion.Tum`)) %>% filter(row_number()==1) %>% ungroup() %>%
+    
+    select(FusionName, `ctat-LR-fusion.Tum`, celltype_final, annots) %>% unique()
+
+```
+
+
+
+```{r}
+
+report_on_fusion = function(fusion_name) {
+    
+    print(left_join(Tum_n_Om_joined_fusions %>% filter(FusionName == fusion_name),
+              fusion_annots, by='FusionName') )
+    
+    print(Om_cell_counts %>% filter(FusionName == fusion_name) %>% mutate(type="Om"))
+    
+    print(Om_fusion_frac_cell_types %>% filter(FusionName == fusion_name) %>% mutate(type="Om"))
+    
+    print(Tum_cell_counts %>% filter(FusionName == fusion_name) %>% mutate(type="Tum"))
+    
+    print(Tum_fusion_frac_cell_types %>% filter(FusionName == fusion_name) %>% mutate(type="Tum"))
+    
+}
+
+```
+
+
+
+
+##  RP11-208G20.2--PSPHP1
+
+```{r}
+
+report_on_fusion("RP11-208G20.2--PSPHP1")
+
+
+```
+
+
+##  RP11-384F7.2--LSAMP
+
+```{r}
+
+report_on_fusion("RP11-384F7.2--LSAMP")
+
+```
+
+
+## RP1-34H18.1--NAV3
+
+```{r}
+
+report_on_fusion("RP1-34H18.1--NAV3")
+
+
+```
+
+
+
+# normal fusions in the matched Om sample?
+
+
+```{r}
+
+# Om normal sample fusions
+
+left_join(Om_fusion_frac_cell_types %>% filter(tot_cells_w_fusion >= MIN_CELLS) %>% arrange(FusionName, desc(tot_cells_w_fusion)) %>%
+    group_by(FusionName) %>% arrange(desc(tot_cells_w_fusion)) %>% filter(row_number()==1) %>% ungroup(),
+    fusion_annots,
+    by='FusionName')
+
+
+```
+
+YWHAE--CRK is interesting as found before among different tumor data sets and involves a pair of known oncogenes.
+
+
+
+```{r}
+
+report_on_fusion("YWHAE--CRK")
+
+```
+
+## RP11-444D3.1--SOX5 
+```{r}
+
+report_on_fusion("RP11-444D3.1--SOX5")
+
+```
+
+
+
+
+
+
+
+
 
 
 

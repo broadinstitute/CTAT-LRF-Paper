@@ -14,9 +14,16 @@ Only a tumor sample for P2, no matching normal
 ``` r
 # parse fusion evidence support including cell barcode and umi 
 
-all_data = read.table("data/Patient2_Tum.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.tsv.gz", header=T, sep="\t", stringsAsFactors = F)
+Tum_data = read.table("data/Patient2_Tum.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.tsv.gz", header=T, sep="\t", stringsAsFactors = F) %>%
+    filter(! is.na(UMAP_1))
 
-head(all_data)
+nrow(Tum_data)
+```
+
+    ## [1] 6779
+
+``` r
+head(Tum_data)
 ```
 
     ##        FusionName    LeftBreakpoint  RightBreakpoint     cell_barcode
@@ -42,34 +49,136 @@ head(all_data)
     ## 6 CATCGGGTCGCCGATG             HGSOC -7.111355 -3.121639 Patient2_Tum
 
 ``` r
-all_data %>% select(method) %>% unique()
+# since starF and FI were run at max sensitivity, lets restrict fusions to those identified by ctat-LRF
+
+Tum_ctat_LRF_fusion_genes = Tum_data %>% filter(method == 'ctat-LR-fusion') %>% select(FusionName) %>% unique() %>% pull(FusionName)
+
+Tum_data = Tum_data %>% filter(FusionName %in% Tum_ctat_LRF_fusion_genes)
+
+nrow(Tum_data)
 ```
 
-    ##            method
-    ## 1     STAR-Fusion
-    ## 2  ctat-LR-fusion
-    ## 6 FusionInspector
-
-``` r
-starF_fusions = all_data %>% filter(method=="STAR-Fusion")
-
-FI_fusions = all_data %>% filter(method=="FusionInspector")
-
-ctat_LRF_fusions = all_data %>% filter(method == "ctat-LR-fusion")
-```
+    ## [1] 6184
 
 ``` r
 fusion_annots = read.table("data/Patient2.fusion_annots.gz", sep="\t", header=T, stringsAsFactors = F)
 ```
 
 ``` r
+# parse UMAP info (from Dondi et al.) 
+
+Tum_umap_data = read.table("data/Patient2_Tum_UMAPcoords.txt.gz", header=T, sep=",") %>%
+    rename(barcodes=X)
+celltypes = read.table("data/Patient2_Tum.bc_to_celltype.tsv.gz", header=T, sep="\t")
+
+Tum_umap_data = full_join(Tum_umap_data, celltypes, by='barcodes')
+
+
+# number of cells
+num_tumor_cells = nrow(Tum_umap_data) 
+message("number tumor cells: ", num_tumor_cells)
+```
+
+    ## number tumor cells: 453
+
+``` r
+# 453 total cells
+
+Tum_umap_data %>% group_by(celltype_final) %>% tally(name='count_cell_type') %>% mutate(frac_tot_cells = count_cell_type/num_tumor_cells)
+```
+
+    ## # A tibble: 8 × 3
+    ##   celltype_final    count_cell_type frac_tot_cells
+    ##   <chr>                       <int>          <dbl>
+    ## 1 B.cells                         4        0.00883
+    ## 2 Endothelial.cells               8        0.0177 
+    ## 3 Fibroblasts                     6        0.0132 
+    ## 4 HGSOC                         208        0.459  
+    ## 5 Mesothelial.cells               7        0.0155 
+    ## 6 Myeloid.cells                  26        0.0574 
+    ## 7 T.NK.cells                    177        0.391  
+    ## 8 uncertain                      17        0.0375
+
+``` r
+# 208 HGSOC cells  (46% of total cells)
+```
+
+``` r
+Tum_cell_counts = Tum_data %>% select(FusionName, cell_barcode) %>% unique() %>% 
+    group_by(FusionName) %>%
+    tally(name='tot_cells_w_fusion') %>%
+    mutate(frac_tot_cells=tot_cells_w_fusion/num_tumor_cells)  %>%
+    arrange(desc(frac_tot_cells))
+
+left_join(Tum_cell_counts %>% filter(tot_cells_w_fusion >= MIN_CELLS),
+          fusion_annots,
+          by='FusionName')
+```
+
+    ## # A tibble: 13 × 4
+    ##    FusionName                   tot_cells_w_fusion frac_tot_cells annots        
+    ##    <chr>                                     <int>          <dbl> <chr>         
+    ##  1 IGF2BP2--TESPA1                             178         0.393  INTERCHROMOSO…
+    ##  2 PSMB7--SCAI                                  52         0.115  INTRACHROMOSO…
+    ##  3 SRSF7--DHX57                                 34         0.0751 [CCLE_StarF20…
+    ##  4 SPATS2--TRA2B                                21         0.0464 INTERCHROMOSO…
+    ##  5 MIR4435-1HG--DARS                            20         0.0442 INTRACHROMOSO…
+    ##  6 CBL--KMT2A                                   16         0.0353 [CBL:Foundati…
+    ##  7 PLXNB2--DENND6B                              14         0.0309 [TCGA_StarF20…
+    ##  8 RP11-96H19.1--RP11-446N19.1                  14         0.0309 INTRACHROMOSO…
+    ##  9 DEK--CASC17                                  11         0.0243 [DEK:Oncogene…
+    ## 10 SLC7A6--ELMO3                                10         0.0221 INTRACHROMOSO…
+    ## 11 CTD-2008L17.1--RP11-456O19.2                  8         0.0177 INTRACHROMOSO…
+    ## 12 WDR59--AARS                                   8         0.0177 INTRACHROMOSO…
+    ## 13 DUXAP8--LA16c-60G3.6                          7         0.0155 INTRACHROMOSO…
+
+``` r
+# examine distribution of fusion calls according to cell types
+
+Tum_fusion_frac_cell_types = Tum_data %>% select(FusionName, barcodes, celltype_final) %>% unique() %>%
+    group_by(FusionName, celltype_final) %>% tally(name='tot_cells_w_fusion') %>% 
+    mutate(frac_fusion_cells=prop.table(tot_cells_w_fusion)) %>%
+    arrange(desc(tot_cells_w_fusion))
+
+Tum_fusion_frac_cell_types %>% head()
+```
+
+    ## # A tibble: 6 × 4
+    ## # Groups:   FusionName [6]
+    ##   FusionName        celltype_final tot_cells_w_fusion frac_fusion_cells
+    ##   <chr>             <chr>                       <int>             <dbl>
+    ## 1 IGF2BP2--TESPA1   HGSOC                         176             0.989
+    ## 2 PSMB7--SCAI       HGSOC                          51             0.981
+    ## 3 SRSF7--DHX57      HGSOC                          33             0.971
+    ## 4 SPATS2--TRA2B     HGSOC                          21             1    
+    ## 5 MIR4435-1HG--DARS HGSOC                          20             1    
+    ## 6 CBL--KMT2A        HGSOC                          16             1
+
+``` r
+Tum_data %>% select(method) %>% unique()
+```
+
+    ##             method
+    ## 1   ctat-LR-fusion
+    ## 15     STAR-Fusion
+    ## 19 FusionInspector
+
+``` r
+starF_fusions = Tum_data %>% filter(method=="STAR-Fusion")
+
+FI_fusions = Tum_data %>% filter(method=="FusionInspector")
+
+ctat_LRF_fusions = Tum_data %>% filter(method == "ctat-LR-fusion")
+```
+
+``` r
 # counts of cells according to fusion breakpoint and method for detection
 
-fusion_cell_counts_by_method = read.table("data/Patient2_Tum.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.cell_counts_by_method.tsv.gz",
+Tum_cell_counts_by_method = read.table("data/Patient2_Tum.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.cell_counts_by_method.tsv.gz",
                                           header=T, sep="\t", stringsAsFactors = F)
 
 
-fusion_cell_counts_by_method %>% head()
+Tum_cell_counts_by_method %>% head()
 ```
 
     ##        FusionName   LeftBreakpoint  RightBreakpoint          method
@@ -90,10 +199,12 @@ fusion_cell_counts_by_method %>% head()
 ``` r
 # reorganizing cell counts of fusions by method for comparison
 
-fusion_cell_counts_by_method %>% select(FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, cell_counts) %>%
+Tum_cell_counts_by_method_spread  = Tum_cell_counts_by_method %>% select(FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, cell_counts) %>%
     spread(key=method, value=cell_counts) %>% 
-    arrange(desc(`ctat-LR-fusion`)) %>% 
-    filter(`ctat-LR-fusion` >= MIN_CELLS)
+    arrange(desc(`ctat-LR-fusion`)) 
+
+
+Tum_cell_counts_by_method_spread  %>% filter(`ctat-LR-fusion` >= MIN_CELLS)
 ```
 
     ##                      FusionName    LeftBreakpoint   RightBreakpoint
@@ -136,8 +247,8 @@ fusion_cell_counts_by_method %>% select(FusionName, LeftBreakpoint, RightBreakpo
 ``` r
 # examine counts of cells according to fusion and method lmited to those with at least the min number of cells
 
-right_join(fusion_cell_counts_by_method, 
-          fusion_cell_counts_by_method %>% 
+right_join(Tum_cell_counts_by_method, 
+          Tum_cell_counts_by_method %>% 
                          filter(cell_counts >= MIN_CELLS)  %>% 
                          select(FusionName, LeftBreakpoint, RightBreakpoint) 
           ) %>%
@@ -148,12 +259,12 @@ right_join(fusion_cell_counts_by_method,
 
     ## Joining with `by = join_by(FusionName, LeftBreakpoint, RightBreakpoint)`
 
-    ## Warning in right_join(fusion_cell_counts_by_method, fusion_cell_counts_by_method %>% : Each row in `x` is expected to match at most 1 row in `y`.
+    ## Warning in right_join(Tum_cell_counts_by_method, Tum_cell_counts_by_method %>% : Each row in `x` is expected to match at most 1 row in `y`.
     ## ℹ Row 1 of `x` matches multiple rows.
     ## ℹ If multiple matches are expected, set `multiple = "all"` to silence this
     ##   warning.
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 # Examine cell type representation by fusions
 
@@ -161,7 +272,7 @@ right_join(fusion_cell_counts_by_method,
 # counts of cells containing fusions and fraction of fusions iddentified according to that cell type
 
 
-fusion_frac_cell_types = all_data %>% select(FusionName, barcodes, celltype_final) %>% unique() %>%
+fusion_frac_cell_types = Tum_data %>% select(FusionName, barcodes, celltype_final) %>% unique() %>%
     group_by(FusionName, celltype_final) %>% tally(name='tot_cells_w_fusion') %>% 
     mutate(frac_fusion_cells=prop.table(tot_cells_w_fusion)) %>%
     arrange(desc(tot_cells_w_fusion))
@@ -169,28 +280,27 @@ fusion_frac_cell_types = all_data %>% select(FusionName, barcodes, celltype_fina
 fusion_frac_cell_types %>% filter(tot_cells_w_fusion >= MIN_CELLS)
 ```
 
-    ## # A tibble: 14 × 4
-    ## # Groups:   FusionName [14]
+    ## # A tibble: 13 × 4
+    ## # Groups:   FusionName [13]
     ##    FusionName                   celltype_final tot_cells_w_fusion frac_fusion_…¹
     ##    <chr>                        <chr>                       <int>          <dbl>
-    ##  1 IGF2BP2--TESPA1              HGSOC                         176          0.967
+    ##  1 IGF2BP2--TESPA1              HGSOC                         176          0.989
     ##  2 PSMB7--SCAI                  HGSOC                          51          0.981
-    ##  3 SRSF7--DHX57                 HGSOC                          33          0.943
-    ##  4 YAF2--RYBP                   HGSOC                          24          0.706
-    ##  5 SPATS2--TRA2B                HGSOC                          21          1    
-    ##  6 MIR4435-1HG--DARS            HGSOC                          20          1    
-    ##  7 CBL--KMT2A                   HGSOC                          16          0.941
-    ##  8 PLXNB2--DENND6B              HGSOC                          14          1    
-    ##  9 RP11-96H19.1--RP11-446N19.1  HGSOC                          14          1    
-    ## 10 DEK--CASC17                  HGSOC                          11          1    
-    ## 11 SLC7A6--ELMO3                HGSOC                          10          1    
-    ## 12 CTD-2008L17.1--RP11-456O19.2 HGSOC                           8          0.889
-    ## 13 WDR59--AARS                  HGSOC                           8          1    
-    ## 14 DUXAP8--LA16c-60G3.6         HGSOC                           7          1    
+    ##  3 SRSF7--DHX57                 HGSOC                          33          0.971
+    ##  4 SPATS2--TRA2B                HGSOC                          21          1    
+    ##  5 MIR4435-1HG--DARS            HGSOC                          20          1    
+    ##  6 CBL--KMT2A                   HGSOC                          16          1    
+    ##  7 PLXNB2--DENND6B              HGSOC                          14          1    
+    ##  8 RP11-96H19.1--RP11-446N19.1  HGSOC                          14          1    
+    ##  9 DEK--CASC17                  HGSOC                          11          1    
+    ## 10 SLC7A6--ELMO3                HGSOC                          10          1    
+    ## 11 CTD-2008L17.1--RP11-456O19.2 HGSOC                           8          1    
+    ## 12 WDR59--AARS                  HGSOC                           8          1    
+    ## 13 DUXAP8--LA16c-60G3.6         HGSOC                           7          1    
     ## # … with abbreviated variable name ¹​frac_fusion_cells
 
 ``` r
-# restrict to fusions of interst:  those showing up in at least min cells and at least 80% representation within HGSOC
+# restrict to fusions of interest:  those showing up in at least min cells and at least 80% representation within any cell type
 
 fusions_of_interest = fusion_frac_cell_types %>% 
     filter(tot_cells_w_fusion >= MIN_CELLS) %>%
@@ -204,17 +314,17 @@ fusions_of_interest
     ## # Groups:   FusionName [13]
     ##    FusionName                   celltype_final tot_cells_w_fusion frac_fusion_…¹
     ##    <chr>                        <chr>                       <int>          <dbl>
-    ##  1 IGF2BP2--TESPA1              HGSOC                         176          0.967
+    ##  1 IGF2BP2--TESPA1              HGSOC                         176          0.989
     ##  2 PSMB7--SCAI                  HGSOC                          51          0.981
-    ##  3 SRSF7--DHX57                 HGSOC                          33          0.943
+    ##  3 SRSF7--DHX57                 HGSOC                          33          0.971
     ##  4 SPATS2--TRA2B                HGSOC                          21          1    
     ##  5 MIR4435-1HG--DARS            HGSOC                          20          1    
-    ##  6 CBL--KMT2A                   HGSOC                          16          0.941
+    ##  6 CBL--KMT2A                   HGSOC                          16          1    
     ##  7 PLXNB2--DENND6B              HGSOC                          14          1    
     ##  8 RP11-96H19.1--RP11-446N19.1  HGSOC                          14          1    
     ##  9 DEK--CASC17                  HGSOC                          11          1    
     ## 10 SLC7A6--ELMO3                HGSOC                          10          1    
-    ## 11 CTD-2008L17.1--RP11-456O19.2 HGSOC                           8          0.889
+    ## 11 CTD-2008L17.1--RP11-456O19.2 HGSOC                           8          1    
     ## 12 WDR59--AARS                  HGSOC                           8          1    
     ## 13 DUXAP8--LA16c-60G3.6         HGSOC                           7          1    
     ## # … with abbreviated variable name ¹​frac_fusion_cells
@@ -236,17 +346,17 @@ fusions_of_interest
     ## # Groups:   FusionName [13]
     ##    FusionName                   celltype_final tot_cells_w_fusion frac_…¹ annots
     ##    <chr>                        <chr>                       <int>   <dbl> <chr> 
-    ##  1 IGF2BP2--TESPA1              HGSOC                         176   0.967 INTER…
+    ##  1 IGF2BP2--TESPA1              HGSOC                         176   0.989 INTER…
     ##  2 PSMB7--SCAI                  HGSOC                          51   0.981 INTRA…
-    ##  3 SRSF7--DHX57                 HGSOC                          33   0.943 [CCLE…
+    ##  3 SRSF7--DHX57                 HGSOC                          33   0.971 [CCLE…
     ##  4 SPATS2--TRA2B                HGSOC                          21   1     INTER…
     ##  5 MIR4435-1HG--DARS            HGSOC                          20   1     INTRA…
-    ##  6 CBL--KMT2A                   HGSOC                          16   0.941 [CBL:…
+    ##  6 CBL--KMT2A                   HGSOC                          16   1     [CBL:…
     ##  7 PLXNB2--DENND6B              HGSOC                          14   1     [TCGA…
     ##  8 RP11-96H19.1--RP11-446N19.1  HGSOC                          14   1     INTRA…
     ##  9 DEK--CASC17                  HGSOC                          11   1     [DEK:…
     ## 10 SLC7A6--ELMO3                HGSOC                          10   1     INTRA…
-    ## 11 CTD-2008L17.1--RP11-456O19.2 HGSOC                           8   0.889 INTRA…
+    ## 11 CTD-2008L17.1--RP11-456O19.2 HGSOC                           8   1     INTRA…
     ## 12 WDR59--AARS                  HGSOC                           8   1     INTRA…
     ## 13 DUXAP8--LA16c-60G3.6         HGSOC                           7   1     INTRA…
     ## # … with abbreviated variable name ¹​frac_fusion_cells
@@ -258,7 +368,7 @@ write.table(fusions_of_interest, file="data/Patient2_Tum.fusions_of_interest.tsv
 ``` r
 # examine method of detection and cell counts for just the fusions of interest
 
-fusion_cell_counts_by_method %>% 
+Tum_cell_counts_by_method %>% 
     filter(FusionName %in% fusions_of_interest$FusionName) %>%
     select(FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, cell_counts) %>%
     spread(key=method, value=cell_counts) %>% 
@@ -341,7 +451,7 @@ fusion_cell_counts_by_method %>%
 ``` r
 # plotting counts of cells according to method for fusions of interest
 
-fusion_cell_counts_by_method %>% 
+Tum_cell_counts_by_method %>% 
             filter(FusionName %in% fusions_of_interest$FusionName) %>%
             select(FusionName, LeftBreakpoint, RightBreakpoint, cell_counts, method) %>%
               rowwise() %>% mutate(fusion=paste(FusionName, LeftBreakpoint, RightBreakpoint, collapse=":")) %>%
@@ -350,60 +460,21 @@ fusion_cell_counts_by_method %>%
                  theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
 # Examine fusions of interest in UMAPs
 
 ``` r
-# parse UMAP info (from Dondi et al.) 
-
-umap_base_data = read.table("data/Patient2_Tum_UMAPcoords.txt.gz", header=T, sep=",") %>%
-    rename(barcodes=X)
-celltypes = read.table("data/Patient2_Tum.bc_to_celltype.tsv.gz", header=T, sep="\t")
-
-umap_base_data = full_join(umap_base_data, celltypes, by='barcodes')
-
-
-# number of cells
-num_total_cells = nrow(umap_base_data) 
-message("number total cells: ", num_total_cells)
-```
-
-    ## number total cells: 453
-
-``` r
-# 453 total cells
-
-umap_base_data %>% group_by(celltype_final) %>% tally(name='count_cell_type') %>% mutate(frac_tot_cells = count_cell_type/num_total_cells)
-```
-
-    ## # A tibble: 8 × 3
-    ##   celltype_final    count_cell_type frac_tot_cells
-    ##   <chr>                       <int>          <dbl>
-    ## 1 B.cells                         4        0.00883
-    ## 2 Endothelial.cells               8        0.0177 
-    ## 3 Fibroblasts                     6        0.0132 
-    ## 4 HGSOC                         208        0.459  
-    ## 5 Mesothelial.cells               7        0.0155 
-    ## 6 Myeloid.cells                  26        0.0574 
-    ## 7 T.NK.cells                    177        0.391  
-    ## 8 uncertain                      17        0.0375
-
-``` r
-# 208 HGSOC cells  (46% of total cells)
-```
-
-``` r
 # base umap plot coloring by annotated cell type
 
-baseplot = umap_base_data %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + geom_point(aes(color=celltype_final))
+baseplot = Tum_umap_data %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + geom_point(aes(color=celltype_final))
 
 baseplot
 ```
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
 
 ``` r
 # Examine each fusion of interest according to UMAP cell positioning
@@ -414,7 +485,7 @@ plots = list()
 
 for (fusion in  fusions_of_interest$FusionName) {
     
-    p = baseplot + geom_point(data=all_data %>% filter(FusionName == fusion) %>% select(UMAP_1, UMAP_2) %>% unique(), 
+    p = baseplot + geom_point(data=Tum_data %>% filter(FusionName == fusion) %>% select(UMAP_1, UMAP_2) %>% unique(), 
                               color='red') + 
         ggtitle(paste("Patient 2 Tumor, Fusion: ", fusion) )
     
@@ -427,60 +498,55 @@ for (fusion in  fusions_of_interest$FusionName) {
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-    ## Warning: Removed 1 rows containing missing values (`geom_point()`).
-
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-17-2.png)<!-- -->
-
-    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
-    ## Removed 1 rows containing missing values (`geom_point()`).
-
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-17-3.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-2.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-17-4.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-3.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-17-5.png)<!-- -->
-
-    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
-    ## Removed 1 rows containing missing values (`geom_point()`).
-
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-17-6.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-4.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-17-7.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-5.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-17-8.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-6.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-17-9.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-7.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-17-10.png)<!-- -->
-
-    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
-    ## Removed 1 rows containing missing values (`geom_point()`).
-
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-17-11.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-8.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-17-12.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-9.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-17-13.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-10.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-11.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-12.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-13.png)<!-- -->
 
 ``` r
 # make a pdf containing these plots
@@ -492,29 +558,17 @@ for (p in plots) {
 ```
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
-
-    ## Warning: Removed 1 rows containing missing values (`geom_point()`).
-
-    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
-    ## Removed 34 rows containing missing values (`geom_point()`).
-
-    ## Warning: Removed 1 rows containing missing values (`geom_point()`).
-
-    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
-    ## Removed 34 rows containing missing values (`geom_point()`).
-    ## Removed 34 rows containing missing values (`geom_point()`).
-
-    ## Warning: Removed 1 rows containing missing values (`geom_point()`).
-
-    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
     ## Removed 34 rows containing missing values (`geom_point()`).
     ## Removed 34 rows containing missing values (`geom_point()`).
     ## Removed 34 rows containing missing values (`geom_point()`).
     ## Removed 34 rows containing missing values (`geom_point()`).
-
-    ## Warning: Removed 1 rows containing missing values (`geom_point()`).
-
-    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
     ## Removed 34 rows containing missing values (`geom_point()`).
 
 ``` r
@@ -527,7 +581,7 @@ dev.off()
 ``` r
 # examine counts of cells by method for the fusions of interest
 
-tumor_cell_counts = all_data %>% filter(FusionName %in%  fusions_of_interest$FusionName) %>% 
+tumor_cell_counts = Tum_data %>% filter(FusionName %in%  fusions_of_interest$FusionName) %>% 
         select(FusionName, method, barcodes) %>% unique() %>%
         group_by(FusionName, method) %>% tally(name='cell_counts')
 
@@ -539,19 +593,19 @@ tumor_cell_counts %>% spread(key=method, value=cell_counts) %>% arrange(desc(`ct
     ## # Groups:   FusionName [13]
     ##    FusionName                   `ctat-LR-fusion` FusionInspector `STAR-Fusion`
     ##    <chr>                                   <int>           <int>         <int>
-    ##  1 IGF2BP2--TESPA1                           178             142            26
+    ##  1 IGF2BP2--TESPA1                           175             141            26
     ##  2 PSMB7--SCAI                                50               7             5
-    ##  3 SRSF7--DHX57                               35               3             2
+    ##  3 SRSF7--DHX57                               34               3             2
     ##  4 SPATS2--TRA2B                              21              10             6
     ##  5 MIR4435-1HG--DARS                          20               1            NA
-    ##  6 CBL--KMT2A                                 17              NA            NA
+    ##  6 CBL--KMT2A                                 16              NA            NA
     ##  7 PLXNB2--DENND6B                            14              NA            NA
     ##  8 RP11-96H19.1--RP11-446N19.1                13               8            NA
     ##  9 DEK--CASC17                                11              NA            NA
     ## 10 SLC7A6--ELMO3                              10              NA            NA
     ## 11 WDR59--AARS                                 8               4             4
     ## 12 DUXAP8--LA16c-60G3.6                        7              NA            NA
-    ## 13 CTD-2008L17.1--RP11-456O19.2                5               8             5
+    ## 13 CTD-2008L17.1--RP11-456O19.2                5               7             5
 
 ``` r
 # plot counts of cells by method for fusions of interest
@@ -562,12 +616,12 @@ tumor_cell_counts %>%
     ggtitle("Patient2_Tum Fusions of Interest: Cell Counts")
 ```
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
 
 ``` r
 # Examine Venn for cells detected according to combinations of methods.
 
-tumor_cell_counts_by_methods = all_data %>% filter(FusionName %in%  fusions_of_interest$FusionName) %>% 
+tumor_cell_counts_by_methods = Tum_data %>% filter(FusionName %in%  fusions_of_interest$FusionName) %>% 
         select(FusionName, method, barcodes) %>% unique() %>%
         group_by(FusionName, barcodes) %>% 
         arrange(method) %>%
@@ -579,21 +633,21 @@ tumor_cell_counts_by_methods = all_data %>% filter(FusionName %in%  fusions_of_i
 tumor_cell_counts_by_methods 
 ```
 
-    ## # A tibble: 32 × 3
+    ## # A tibble: 30 × 3
     ## # Groups:   FusionName [13]
     ##    FusionName                   methods                                        n
     ##    <chr>                        <chr>                                      <int>
-    ##  1 CBL--KMT2A                   ctat-LR-fusion                                17
-    ##  2 CTD-2008L17.1--RP11-456O19.2 FusionInspector                                1
-    ##  3 CTD-2008L17.1--RP11-456O19.2 FusionInspector,STAR-Fusion                    6
-    ##  4 CTD-2008L17.1--RP11-456O19.2 FusionInspector,STAR-Fusion,ctat-LR-fusion     6
-    ##  5 CTD-2008L17.1--RP11-456O19.2 FusionInspector,ctat-LR-fusion                 4
-    ##  6 CTD-2008L17.1--RP11-456O19.2 ctat-LR-fusion                                 1
-    ##  7 DEK--CASC17                  ctat-LR-fusion                                11
-    ##  8 DUXAP8--LA16c-60G3.6         ctat-LR-fusion                                 7
-    ##  9 IGF2BP2--TESPA1              FusionInspector                                1
-    ## 10 IGF2BP2--TESPA1              FusionInspector,STAR-Fusion                    6
-    ## # … with 22 more rows
+    ##  1 CBL--KMT2A                   ctat-LR-fusion                                16
+    ##  2 CTD-2008L17.1--RP11-456O19.2 FusionInspector,STAR-Fusion                    6
+    ##  3 CTD-2008L17.1--RP11-456O19.2 FusionInspector,STAR-Fusion,ctat-LR-fusion     6
+    ##  4 CTD-2008L17.1--RP11-456O19.2 FusionInspector,ctat-LR-fusion                 4
+    ##  5 CTD-2008L17.1--RP11-456O19.2 ctat-LR-fusion                                 1
+    ##  6 DEK--CASC17                  ctat-LR-fusion                                11
+    ##  7 DUXAP8--LA16c-60G3.6         ctat-LR-fusion                                 7
+    ##  8 IGF2BP2--TESPA1              FusionInspector,STAR-Fusion                    6
+    ##  9 IGF2BP2--TESPA1              FusionInspector,STAR-Fusion,ctat-LR-fusion    69
+    ## 10 IGF2BP2--TESPA1              FusionInspector,ctat-LR-fusion               230
+    ## # … with 20 more rows
 
 # Examine specific fusions of interest
 
@@ -603,18 +657,17 @@ tumor_cell_counts_by_methods
 tumor_cell_counts_by_methods %>% filter(FusionName == "IGF2BP2--TESPA1")
 ```
 
-    ## # A tibble: 5 × 3
+    ## # A tibble: 4 × 3
     ## # Groups:   FusionName [1]
     ##   FusionName      methods                                        n
     ##   <chr>           <chr>                                      <int>
-    ## 1 IGF2BP2--TESPA1 FusionInspector                                1
-    ## 2 IGF2BP2--TESPA1 FusionInspector,STAR-Fusion                    6
-    ## 3 IGF2BP2--TESPA1 FusionInspector,STAR-Fusion,ctat-LR-fusion    69
-    ## 4 IGF2BP2--TESPA1 FusionInspector,ctat-LR-fusion               230
-    ## 5 IGF2BP2--TESPA1 ctat-LR-fusion                                40
+    ## 1 IGF2BP2--TESPA1 FusionInspector,STAR-Fusion                    6
+    ## 2 IGF2BP2--TESPA1 FusionInspector,STAR-Fusion,ctat-LR-fusion    69
+    ## 3 IGF2BP2--TESPA1 FusionInspector,ctat-LR-fusion               230
+    ## 4 IGF2BP2--TESPA1 ctat-LR-fusion                                37
 
 ``` r
-fusion_cell_counts_by_method %>% 
+Tum_cell_counts_by_method %>% 
     filter(FusionName=="IGF2BP2--TESPA1") %>%
     select(FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, cell_counts) %>%
     spread(key=method, value=cell_counts) %>% 
@@ -655,7 +708,7 @@ tumor_cell_counts_by_methods %>% filter(FusionName == "SPATS2--TRA2B")
     ## 3 SPATS2--TRA2B ctat-LR-fusion                                11
 
 ``` r
-fusion_cell_counts_by_method %>% 
+Tum_cell_counts_by_method %>% 
     filter(FusionName=="SPATS2--TRA2B") %>%
     select(FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, cell_counts) %>%
     spread(key=method, value=cell_counts) %>% 
@@ -670,7 +723,7 @@ fusion_cell_counts_by_method %>%
 ## Are SPATS2–TRA2B and IGF2BP2–TESPA1 found expressed in the same tumor cells?
 
 ``` r
-all_data %>% filter(FusionName %in% c('SPATS2--TRA2B', 'IGF2BP2--TESPA1')) %>%
+Tum_data %>% filter(FusionName %in% c('SPATS2--TRA2B', 'IGF2BP2--TESPA1')) %>%
     select(FusionName, cell_barcode) %>%
     unique() %>%
     group_by(cell_barcode) %>% 
@@ -684,6 +737,77 @@ all_data %>% filter(FusionName %in% c('SPATS2--TRA2B', 'IGF2BP2--TESPA1')) %>%
     ## # A tibble: 3 × 2
     ##   fusion_names                      n
     ##   <chr>                         <int>
-    ## 1 IGF2BP2--TESPA1                 162
+    ## 1 IGF2BP2--TESPA1                 158
     ## 2 IGF2BP2--TESPA1,SPATS2--TRA2B    20
     ## 3 SPATS2--TRA2B                     1
+
+# Are there interesting fusions in non-tumor cells?
+
+``` r
+fusion_frac_cell_types %>% filter(celltype_final != "HGSOC") %>% arrange(desc(tot_cells_w_fusion)) %>% head()
+```
+
+    ## # A tibble: 6 × 4
+    ## # Groups:   FusionName [6]
+    ##   FusionName       celltype_final    tot_cells_w_fusion frac_fusion_cells
+    ##   <chr>            <chr>                          <int>             <dbl>
+    ## 1 NCK2--KDM4C      T.NK.cells                         2                 1
+    ## 2 PTPN22--ARFGEF2  T.NK.cells                         2                 1
+    ## 3 AAGAB--CMIP      T.NK.cells                         1                 1
+    ## 4 AASDHPPT--COPS2  Mesothelial.cells                  1                 1
+    ## 5 ABCA7--CRIP1     T.NK.cells                         1                 1
+    ## 6 ABCB1--KIAA1324L T.NK.cells                         1                 1
+
+No fusions showing up in non-HGSOC cells at the min cell cutoff. The top
+two have 4 cells and are found mostly in HGSOC. Besides those, there’s a
+max of 2 cells having any other fusion transcript.
+
+``` r
+report_on_fusion = function(fusion_name) {
+    
+    print(Tum_cell_counts_by_method_spread %>% filter(FusionName == fusion_name))
+    
+    print(Tum_cell_counts %>% filter(FusionName == fusion_name) %>% mutate(type="Tum"))
+    
+    print(Tum_fusion_frac_cell_types %>% filter(FusionName == fusion_name) %>% mutate(type="Tum"))
+    
+}
+```
+
+# queries on specific fusions found in normal samples
+
+``` r
+report_on_fusion("RP11-444D3.1--SOX5")
+```
+
+    ##           FusionName   LeftBreakpoint  RightBreakpoint celltype_final
+    ## 1 RP11-444D3.1--SOX5 chr12:24276141:- chr12:23896024:-          HGSOC
+    ## 2 RP11-444D3.1--SOX5 chr12:24276141:- chr12:23896024:-     T.NK.cells
+    ##   ctat-LR-fusion FusionInspector STAR-Fusion
+    ## 1              1              NA          NA
+    ## 2              1              NA          NA
+    ## # A tibble: 1 × 4
+    ##   FusionName         tot_cells_w_fusion frac_tot_cells type 
+    ##   <chr>                           <int>          <dbl> <chr>
+    ## 1 RP11-444D3.1--SOX5                  2        0.00442 Tum  
+    ## # A tibble: 2 × 5
+    ## # Groups:   FusionName [1]
+    ##   FusionName         celltype_final tot_cells_w_fusion frac_fusion_cells type 
+    ##   <chr>              <chr>                       <int>             <dbl> <chr>
+    ## 1 RP11-444D3.1--SOX5 HGSOC                           1               0.5 Tum  
+    ## 2 RP11-444D3.1--SOX5 T.NK.cells                      1               0.5 Tum
+
+``` r
+report_on_fusion("RP11-208G20.2--PSPHP1")
+```
+
+    ## [1] FusionName      LeftBreakpoint  RightBreakpoint celltype_final 
+    ## [5] ctat-LR-fusion  FusionInspector STAR-Fusion    
+    ## <0 rows> (or 0-length row.names)
+    ## # A tibble: 0 × 4
+    ## # … with 4 variables: FusionName <chr>, tot_cells_w_fusion <int>,
+    ## #   frac_tot_cells <dbl>, type <chr>
+    ## # A tibble: 0 × 5
+    ## # Groups:   FusionName [0]
+    ## # … with 5 variables: FusionName <chr>, celltype_final <chr>,
+    ## #   tot_cells_w_fusion <int>, frac_fusion_cells <dbl>, type <chr>

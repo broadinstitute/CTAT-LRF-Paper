@@ -1,0 +1,119 @@
+
+
+##########
+Patient 1:
+#########
+
+Tum:
+
+    
+1	RP11-208G20.2--PSPHP1	INTRACHROMOSOMAL[chr7:96.59Mb]		
+3	RP11-384F7.2--LSAMP	INTRACHROMOSOMAL[chr3:0.53Mb]		
+5	RP1-34H18.1--NAV3	INTRACHROMOSOMAL[chr12:0.26Mb]		
+8	CTD-2008L17.1--RP11-456O19.2	INTRACHROMOSOMAL[chr18:0.02Mb];NEIGHBORS[18613]		
+10	RP11-444D3.1--SOX5	[SOX5:Oncogene];INTRACHROMOSOMAL[chr12:0.26Mb]
+
+
+# min 5 cells
+1	RP11-208G20.2--PSPHP1	INTRACHROMOSOMAL[chr7:96.59Mb]		
+3	RP11-384F7.2--LSAMP	INTRACHROMOSOMAL[chr3:0.53Mb]		
+5	RP1-34H18.1--NAV3	INTRACHROMOSOMAL[chr12:0.26Mb]
+
+
+Om:
+
+RP11-208G20.2--PSPHP1	Mesothelial.cells	121	0.8231293	
+RP11-384F7.2--LSAMP	Mesothelial.cells	30	0.8823529	
+YAF2--RYBP	Mesothelial.cells	9	0.6428571	INTERCHROMOSOMAL[chr12--chr3]
+RP11-96H19.1--RP11-446N19.1	Mesothelial.cells	8	1.0000000	
+SAMD5--RP11-307P5.1	Mesothelial.cells	8	1.0000000	INTRACHROMOSOMAL[chr6:0.09Mb];NEIGHBORS[90682]
+RP11-444D3.1--SOX5	Fibroblasts	6	0.7500000	
+RP1-34H18.1--NAV3	Mesothelial.cells	5	0.7142857	
+YWHAE--CRK	Mesothelial.cells	5	1.0000000   # [YWHAE:Oncogene];[CRK:Oncogene];[DEEPEST2019];INTRACHROMOSOMAL[chr17:0.02Mb];LOCAL_REARRANGEMENT:-:[20311]
+
+
+
+    
+
+###########
+Patient 3:
+###########
+
+    
+1	ZCCHC8--RSRC2       [YOSHIHARA_TCGA,DEEPEST2019,TumorFusionsNAR2018,ChimerSeq,TCGA_StarF2019,CCLE_StarF2019];INTRACHROMOSOMAL[chr12:0.00Mb];LOCAL_REARRANGEMENT:-:[2863]	
+3	RP11-208G20.2--PSPHP1	****** both   INTRACHROMOSOMAL[chr7:96.59Mb]
+9	RP11-384F7.2--LSAMP	 ******* both     INTRACHROMOSOMAL[chr3:0.53Mb]
+10	RP11-444D3.1--SOX5	  ****** both     [SOX5:Oncogene];INTRACHROMOSOMAL[chr12:0.26Mb]
+14	RP11-420N3.2--RBFOX1	INTRACHROMOSOMAL[chr16:0.42Mb]
+15	DSCR3--TTC3	[ChimerSeq];INTRACHROMOSOMAL[chr21:0.02Mb];LOCAL_INVERSION:-:+:[20308]
+16	RP11-96H19.1--RP11-446N19.1   INTRACHROMOSOMAL[chr12:0.12Mb]
+
+
+
+# min 4 cells
+ZCCHC8--RSRC2	105	
+RP11-208G20.2--PSPHP1	36  **** both	
+RP11-384F7.2--LSAMP	5	    **** both
+RP11-444D3.1--SOX5	5	
+
+
+
+#########
+Melanoma:
+#########
+
+NUTM2A-AS1--RP11-203L2.4	4	221	0.684210526	TRUE	
+RP11-444D3.1--SOX5	4	7	0.021671827	TRUE	
+BACH2--PNRC1	0	6	0.018575851	FALSE	
+RP11-14D22.2--PRICKLE2	4	5	0.015479876	TRUE	
+ZNF292--PNRC1	0	5	0.015479876	FALSE	
+RP1-34H18.1--NAV3	4	4	0.012383901	TRUE	
+DPH6-AS1--RP11-684B21.1	4	3	0.009287926	TRUE	
+SRSF7--CXCR4	0	2	0.006191950	FALSE	
+
+
+
+
+#################
+Curious findings:
+#################
+
+    
+
+
+RP11-444D3.1--SOX5 :  melanoma: 10 cells with RP11-444D3.1--SOX5 fusion, 70% are in tumor, 30% are in normal clusters.
+
+                      HGSOC P1:  Om: 6 fibroblasts and 2 mesothelial cells
+                      HGSOC P1: Tum: 7 HGSOC, 5 across other cell types.
+
+                      HGSOC P2: Tum: 1 HGSOC and 1 T.NK.cells
+
+    				  HGSOC P3: Om: 4 fibroblasts, 1 mesothelial
+					  HGSOC P3: Tum: 5 fibroblasts, 1 HGSOC, 1 mesothelial, 1 uncertain
+
+
+RP11-208G20.2--PSPHP1: not finding it in melanoma
+
+                       HGSOC P1: Om: 25% of all cells and 82% of mesothelial cells
+                       HGSOC P1: Tum: 24% of all cells, and mostly HGSOC, mesothelial, and T.NK
+
+                       HGSOC P2: Tum: not finding it.
+
+                       HGSOC P3: roughly 20% of Om and Tum cells, wide distribution of expression.
+
+    	the above is interesting because it would involve an ~100 mb deletion or other SV. 
+
+
+
+
+
+###########
+Fusions found with oncogenes in normal cells:
+
+P1 normals:  YWHAE--CRK in 5 mesothelial cells in the Om sample, only one HGSOC cell in the tumor sample.
+
+
+P3 normals: ZCCHC8--RSRC2
+
+
+    
