@@ -1,4 +1,4 @@
-DepMap Fusion Benchmarking
+DepMap Fusion Benchmarking (including Illumina supported fusions)
 ================
 bhaas
 2023-12-05
@@ -47,7 +47,7 @@ p = fusion_preds %>% group_by(sample, prog) %>% tally(name='num_fusions') %>%
 p 
 ```
 
-![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
 ``` r
 # get num truth counts (min 2 agree)
@@ -118,15 +118,15 @@ truth_data_counts
     ## # A tibble: 9 × 2
     ##   sample  num_truth_fusions
     ##   <chr>               <int>
-    ## 1 DMS53                  18
+    ## 1 DMS53                  21
     ## 2 HCC1187                16
-    ## 3 HCC1395                25
-    ## 4 K562                   16
+    ## 3 HCC1395                27
+    ## 4 K562                   20
     ## 5 KIJK                    7
     ## 6 MJ                      4
     ## 7 RT112                   9
-    ## 8 SKBR3                  22
-    ## 9 VCAP                   34
+    ## 8 SKBR3                  23
+    ## 9 VCAP                   36
 
 ``` r
 p2 = p + geom_hline(data=truth_data_counts, aes(yintercept=num_truth_fusions))
@@ -134,7 +134,7 @@ p2 = p + geom_hline(data=truth_data_counts, aes(yintercept=num_truth_fusions))
 p2
 ```
 
-![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ``` r
 # unnest prog names
@@ -220,7 +220,7 @@ scored_data %>% filter(pred_result %in% c("TP", "FP", "FN")) %>%
         theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
 ```
 
-![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 # accuracy analysis
 
@@ -234,12 +234,12 @@ data %>% head()
 ```
 
     ##                     prog min_sum_frags TP FP FN  TPR  PPV    F1
-    ## 1 ctat-LR-fusion.v0.11.0             3 96 16 55 0.64 0.86 0.734
-    ## 2 ctat-LR-fusion.v0.11.0             4 85 12 66 0.56 0.88 0.684
-    ## 3 ctat-LR-fusion.v0.11.0             5 72 12 79 0.48 0.86 0.616
-    ## 4 ctat-LR-fusion.v0.11.0             6 68 11 83 0.45 0.86 0.591
-    ## 5 ctat-LR-fusion.v0.11.0             7 65  9 86 0.43 0.88 0.578
-    ## 6 ctat-LR-fusion.v0.11.0             8 63  9 88 0.42 0.88 0.569
+    ## 1 ctat-LR-fusion.v0.11.0             3 98 14 65 0.60 0.88 0.714
+    ## 2 ctat-LR-fusion.v0.11.0             4 87 10 76 0.53 0.90 0.667
+    ## 3 ctat-LR-fusion.v0.11.0             5 74 10 89 0.45 0.88 0.595
+    ## 4 ctat-LR-fusion.v0.11.0             6 70  9 93 0.43 0.89 0.580
+    ## 5 ctat-LR-fusion.v0.11.0             7 66  8 97 0.40 0.89 0.552
+    ## 6 ctat-LR-fusion.v0.11.0             8 64  8 99 0.39 0.89 0.542
 
 ``` r
 # F1 vs. min reads
@@ -253,7 +253,7 @@ data %>% ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom
 
     ## Warning: Removed 195 rows containing missing values (`geom_line()`).
 
-![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 ``` r
 # plot TP and FP ~ min sum frags.
@@ -267,130 +267,4 @@ data %>% select(prog, min_sum_frags, TP, FP) %>%
 
     ## Warning: Removed 390 rows containing missing values (`geom_point()`).
 
-![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
-
-# Examine COSMIC fusions among these cell lines, predicted with any number of reads as evidence.
-
-``` r
-unfiltered_preds = read.table("data/preds.collected.gencode_mapped.wAnnot.gz", header=T, sep="\t") %>%
-    filter(! grepl("flair", prog))
-```
-
-``` r
-unfiltered_preds = unfiltered_preds %>% rowwise() %>% mutate(proxy_fusion_name = paste(sort(str_split(fusion, "--")[[1]]), collapse="--"))
-
-unfiltered_preds %>% head()
-```
-
-    ## # A tibble: 6 × 9
-    ## # Rowwise: 
-    ##   sample prog   fusion          breakpo…¹ num_r…² mappe…³ mappe…⁴ annots proxy…⁵
-    ##   <chr>  <chr>  <chr>           <chr>       <int> <chr>   <chr>   <chr>  <chr>  
-    ## 1 RT112  LongGF TACC3--FGFR3    chr4:173…     341 AC0167… FGFR3   TACC3… FGFR3-…
-    ## 2 RT112  LongGF CBX3--C15orf57  chr7:262…       7 CBX3,H… AC0910… CBX3-… C15orf…
-    ## 3 RT112  LongGF MT-ND2--MT-CO1  chrM:530…       3 MT-ND2  BC0188… MT-ND… MT-CO1…
-    ## 4 RT112  LongGF NOP14--WHSC1    chr4:296…       3 AB0004… AL1328… NOP14… NOP14-…
-    ## 5 RT112  LongGF MT-ND5--MT-ATP8 chrM:131…       3 MT-ND5… J01415… MT-ND… MT-ATP…
-    ## 6 RT112  LongGF MT-ND6--MT-ND5  chrM:146…       3 MT-ND6… MT-ND5… MT-ND… MT-ND5…
-    ## # … with abbreviated variable names ¹​breakpoint, ²​num_reads,
-    ## #   ³​mapped_gencode_A_gene_list, ⁴​mapped_gencode_B_gene_list,
-    ## #   ⁵​proxy_fusion_name
-
-``` r
-unfiltered_preds = unfiltered_preds %>% mutate(proxy_fusion_name = paste(sample, proxy_fusion_name, sep ="|"))
-
-unfiltered_preds %>% head()
-```
-
-    ## # A tibble: 6 × 9
-    ## # Rowwise: 
-    ##   sample prog   fusion          breakpo…¹ num_r…² mappe…³ mappe…⁴ annots proxy…⁵
-    ##   <chr>  <chr>  <chr>           <chr>       <int> <chr>   <chr>   <chr>  <chr>  
-    ## 1 RT112  LongGF TACC3--FGFR3    chr4:173…     341 AC0167… FGFR3   TACC3… RT112|…
-    ## 2 RT112  LongGF CBX3--C15orf57  chr7:262…       7 CBX3,H… AC0910… CBX3-… RT112|…
-    ## 3 RT112  LongGF MT-ND2--MT-CO1  chrM:530…       3 MT-ND2  BC0188… MT-ND… RT112|…
-    ## 4 RT112  LongGF NOP14--WHSC1    chr4:296…       3 AB0004… AL1328… NOP14… RT112|…
-    ## 5 RT112  LongGF MT-ND5--MT-ATP8 chrM:131…       3 MT-ND5… J01415… MT-ND… RT112|…
-    ## 6 RT112  LongGF MT-ND6--MT-ND5  chrM:146…       3 MT-ND6… MT-ND5… MT-ND… RT112|…
-    ## # … with abbreviated variable names ¹​breakpoint, ²​num_reads,
-    ## #   ³​mapped_gencode_A_gene_list, ⁴​mapped_gencode_B_gene_list,
-    ## #   ⁵​proxy_fusion_name
-
-``` r
-cosmic_fusions = unfiltered_preds %>% filter(grepl("Cosmic", annots)) %>% select(sample, proxy_fusion_name) %>% unique()
-
-cosmic_fusions 
-```
-
-    ## # A tibble: 10 × 2
-    ## # Rowwise: 
-    ##    sample  proxy_fusion_name     
-    ##    <chr>   <chr>                 
-    ##  1 RT112   RT112|FGFR3--TACC3    
-    ##  2 KIJK    KIJK|ALK--NPM1        
-    ##  3 VCAP    VCAP|ERG--TMPRSS2     
-    ##  4 HCC1395 HCC1395|CYP39A1--EIF3K
-    ##  5 HCC1395 HCC1395|PLA2R1--RBMS1 
-    ##  6 K562    K562|ABL1--BCR        
-    ##  7 HCC1187 HCC1187|AGPAT5--MCPH1 
-    ##  8 HCC1187 HCC1187|PLXND1--TMCC1 
-    ##  9 RT112   RT112|FBXL18--RNF216  
-    ## 10 HCC1187 HCC1187|GPBP1L1--MAST2
-
-``` r
-cosmic_fusion_preds= left_join(cosmic_fusions, 
-                                unfiltered_preds %>% select(proxy_fusion_name, prog, num_reads),
-                                by='proxy_fusion_name') %>%
-    # select only top-supported breakpoint entry, just in case.
-    group_by(sample, proxy_fusion_name, prog) %>% 
-        arrange(desc(num_reads)) %>% filter(row_number() == 1) %>% ungroup()
-```
-
-    ## Warning in left_join(cosmic_fusions, unfiltered_preds %>% select(proxy_fusion_name, : Each row in `x` is expected to match at most 1 row in `y`.
-    ## ℹ Row 1 of `x` matches multiple rows.
-    ## ℹ If multiple matches are expected, set `multiple = "all"` to silence this
-    ##   warning.
-
-``` r
-cosmic_fusion_preds
-```
-
-    ## # A tibble: 39 × 4
-    ##    sample  proxy_fusion_name     prog                   num_reads
-    ##    <chr>   <chr>                 <chr>                      <int>
-    ##  1 KIJK    KIJK|ALK--NPM1        pbfusion_v0.3.1              463
-    ##  2 KIJK    KIJK|ALK--NPM1        fusionseeker                 459
-    ##  3 KIJK    KIJK|ALK--NPM1        ctat-LR-fusion.v0.11.0       459
-    ##  4 KIJK    KIJK|ALK--NPM1        LongGF                       458
-    ##  5 KIJK    KIJK|ALK--NPM1        JAFFAL                       358
-    ##  6 RT112   RT112|FGFR3--TACC3    fusionseeker                 344
-    ##  7 RT112   RT112|FGFR3--TACC3    ctat-LR-fusion.v0.11.0       343
-    ##  8 RT112   RT112|FGFR3--TACC3    LongGF                       341
-    ##  9 RT112   RT112|FGFR3--TACC3    JAFFAL                       341
-    ## 10 HCC1187 HCC1187|AGPAT5--MCPH1 fusionseeker                  82
-    ## # … with 29 more rows
-
-``` r
-# limit to those found by at least 2 of the methods
-cosmic_fusion_preds_mult_methods = cosmic_fusion_preds %>% select(proxy_fusion_name, prog) %>% unique() %>% 
-    group_by(proxy_fusion_name) %>% tally() %>% filter(n>1) %>% pull(proxy_fusion_name)
-
-
-cosmic_fusion_preds_mult_methods
-```
-
-    ## [1] "HCC1187|AGPAT5--MCPH1"  "HCC1187|PLXND1--TMCC1"  "HCC1395|CYP39A1--EIF3K"
-    ## [4] "HCC1395|PLA2R1--RBMS1"  "K562|ABL1--BCR"         "KIJK|ALK--NPM1"        
-    ## [7] "RT112|FGFR3--TACC3"     "VCAP|ERG--TMPRSS2"
-
-``` r
-cosmic_fusion_preds %>%
-    filter(proxy_fusion_name %in% cosmic_fusion_preds_mult_methods) %>%
-    
-    ggplot(aes(x=proxy_fusion_name, y=prog)) + geom_tile(aes(fill=num_reads)) + 
-    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-    scale_fill_continuous(high = "#132B43", low = "#56B1F7", na.value="white") +
-    geom_text(aes(label=num_reads), color='white')
-```
-
-![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
