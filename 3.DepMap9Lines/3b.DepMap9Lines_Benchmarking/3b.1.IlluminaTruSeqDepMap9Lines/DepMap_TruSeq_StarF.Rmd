@@ -1,0 +1,98 @@
+---
+title: "DepMap_TruSeq_StarF"
+author: "bhaas"
+date: '2023-11-28'
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+```{r}
+
+StarF_data = read.table("data/DepMap.v1v2mrgd.StarF.consolidated.tsv.gz", header=T, sep="\t", com='') %>%
+    rename(sample = X.sample, FusionName = X.FusionName)
+
+StarF_data %>% head()
+
+```
+
+```{r}
+
+earlier_truth_set_file = "../data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.byProgAgree.min_2.truth_set"
+
+earlier_truth_set = read.table(earlier_truth_set_file, header=T, sep="\t") %>% mutate(type='shared')
+
+
+earlier_unique_set_file = "../data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.byProgAgree.min_2.unique_set"
+
+earlier_unique_set = read.table(earlier_unique_set_file, header=T, sep="\t") %>% mutate(type='unique')
+
+
+all_pred_fusions = bind_rows(earlier_truth_set, earlier_unique_set) 
+
+
+all_pred_fusions = all_pred_fusions %>% rowwise() %>% mutate(sample = str_split(proxy_fusion_name, "\\|")[[1]][1])
+all_pred_fusions = all_pred_fusions %>% rowwise() %>% mutate(FusionName = str_split(proxy_fusion_name, "\\|")[[1]][2])
+
+all_pred_fusions = all_pred_fusions %>% rowwise() %>% mutate(lex_ordered_fusion_name = paste0(sample, "|", paste0(collapse="--", sort(str_split(FusionName, "--")[[1]])))) 
+
+all_pred_fusions = all_pred_fusions %>% select(lex_ordered_fusion_name, type)
+
+```
+
+
+
+```{r}
+
+StarF_data = StarF_data %>% rowwise() %>% mutate(lex_ordered_fusion_name = paste0(sample, "|", paste0(collapse="--", sort(str_split(FusionName, "--")[[1]])))) 
+
+
+```
+
+
+```{r}
+
+StarF_overlapping_preds = inner_join(all_pred_fusions, StarF_data, by='lex_ordered_fusion_name')
+
+
+StarF_overlapping_preds = StarF_overlapping_preds %>% select(lex_ordered_fusion_name, type, sample, FusionName) %>% unique()
+
+StarF_overlapping_preds = StarF_overlapping_preds %>% rowwise() %>% mutate(proxy_fusion_name = paste0(sample, "|", FusionName)) %>%
+    select(proxy_fusion_name, type, sample, FusionName)
+
+StarF_overlapping_preds
+
+```
+
+
+```{r}
+
+
+table(StarF_overlapping_preds$type)
+
+```
+
+
+```{r}
+
+StarF_overlapping_preds %>% filter(type=="unique")
+
+
+```
+
+
+
+```{r}
+
+write.table(StarF_overlapping_preds, file="StarFusion_Illumina_supported_fusions.tsv", sep="\t", row.names=F, quote=F)
+
+
+```
+
+
+
+
