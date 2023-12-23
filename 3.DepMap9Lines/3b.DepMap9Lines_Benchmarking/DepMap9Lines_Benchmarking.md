@@ -77,13 +77,6 @@ truth_data %>% head()
 ``` r
 truth_data$sample_name = sapply(truth_data$proxy_fusion_name, function(x) { str_split(x, "\\|")[[1]][1]})
 
-
-# from Kirsty: 
-#   Just to confirm that the 9th cell line (HCC38) - has been corrected to DMS53 (ACH-000698). 
-
-truth_data = truth_data %>% mutate(sample_name = ifelse(sample_name=="HCC38", "DMS53", sample_name))
-
-
 head(truth_data)
 ```
 
@@ -112,21 +105,34 @@ head(truth_data)
 ``` r
 truth_data_counts = truth_data %>% rename(sample=sample_name) %>% group_by(sample) %>% tally(name='num_truth_fusions')
 
-truth_data_counts
+truth_data_counts %>% arrange(num_truth_fusions)
 ```
 
     ## # A tibble: 9 × 2
     ##   sample  num_truth_fusions
     ##   <chr>               <int>
-    ## 1 DMS53                  18
-    ## 2 HCC1187                16
-    ## 3 HCC1395                25
-    ## 4 K562                   16
-    ## 5 KIJK                    7
-    ## 6 MJ                      4
-    ## 7 RT112                   9
-    ## 8 SKBR3                  22
+    ## 1 MJ                      4
+    ## 2 KIJK                    7
+    ## 3 RT112                   9
+    ## 4 HCC1187                16
+    ## 5 K562                   16
+    ## 6 DMS53                  18
+    ## 7 SKBR3                  22
+    ## 8 HCC1395                25
     ## 9 VCAP                   34
+
+``` r
+truth_data_counts %>% summarise(sum_truth_fusions = sum(num_truth_fusions))
+```
+
+    ## # A tibble: 1 × 1
+    ##   sum_truth_fusions
+    ##               <int>
+    ## 1               151
+
+``` r
+# 151 proxy truth fusions
+```
 
 ``` r
 p2 = p + geom_hline(data=truth_data_counts, aes(yintercept=num_truth_fusions))
@@ -134,7 +140,7 @@ p2 = p + geom_hline(data=truth_data_counts, aes(yintercept=num_truth_fusions))
 p2
 ```
 
-![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 ``` r
 # unnest prog names
@@ -220,7 +226,7 @@ scored_data %>% filter(pred_result %in% c("TP", "FP", "FN")) %>%
         theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
 ```
 
-![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 # accuracy analysis
 
@@ -253,7 +259,7 @@ data %>% ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom
 
     ## Warning: Removed 195 rows containing missing values (`geom_line()`).
 
-![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 ``` r
 # plot TP and FP ~ min sum frags.
@@ -267,7 +273,7 @@ data %>% select(prog, min_sum_frags, TP, FP) %>%
 
     ## Warning: Removed 390 rows containing missing values (`geom_point()`).
 
-![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 # Examine COSMIC fusions among these cell lines, predicted with any number of reads as evidence.
 
@@ -393,4 +399,4 @@ cosmic_fusion_preds %>%
     geom_text(aes(label=num_reads), color='white')
 ```
 
-![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->

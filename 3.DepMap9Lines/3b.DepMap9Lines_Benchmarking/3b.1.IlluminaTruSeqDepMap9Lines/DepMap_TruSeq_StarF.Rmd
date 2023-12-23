@@ -13,6 +13,8 @@ library(tidyverse)
 
 ```{r}
 
+# parse STAR-Fusion predictions based on Illumina reads
+
 StarF_data = read.table("data/DepMap.v1v2mrgd.StarF.consolidated.tsv.gz", header=T, sep="\t", com='') %>%
     rename(sample = X.sample, FusionName = X.FusionName)
 
@@ -21,6 +23,8 @@ StarF_data %>% head()
 ```
 
 ```{r}
+
+# process earlier long-read defined proxy truth set info:
 
 earlier_truth_set_file = "../data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.byProgAgree.min_2.truth_set"
 
@@ -42,13 +46,20 @@ all_pred_fusions = all_pred_fusions %>% rowwise() %>% mutate(lex_ordered_fusion_
 
 all_pred_fusions = all_pred_fusions %>% select(lex_ordered_fusion_name, type)
 
+message("num shared fusions: ", nrow(earlier_truth_set))
+message("num unique fusions:", nrow(earlier_unique_set))
+
 ```
+
+
 
 
 
 ```{r}
 
-StarF_data = StarF_data %>% rowwise() %>% mutate(lex_ordered_fusion_name = paste0(sample, "|", paste0(collapse="--", sort(str_split(FusionName, "--")[[1]])))) 
+# add lex_ordered_fusion_name as attribute to STARF data
+StarF_data = StarF_data %>% rowwise() %>% 
+    mutate(lex_ordered_fusion_name = paste0(sample, "|", paste0(collapse="--", sort(str_split(FusionName, "--")[[1]])))) 
 
 
 ```
@@ -56,26 +67,82 @@ StarF_data = StarF_data %>% rowwise() %>% mutate(lex_ordered_fusion_name = paste
 
 ```{r}
 
-StarF_overlapping_preds = inner_join(all_pred_fusions, StarF_data, by='lex_ordered_fusion_name')
+# define those fusions in the truth set as illumina-supported or not.
+
+all_pred_fusions_illum_support_indicated = all_pred_fusions %>% mutate(Illumina_support = (lex_ordered_fusion_name %in% StarF_data$lex_ordered_fusion_name))
+
+
+all_pred_fusions_illum_support_indicated_summary = all_pred_fusions_illum_support_indicated %>% 
+    select(lex_ordered_fusion_name, type, Illumina_support) %>% unique() %>% 
+    group_by(type, Illumina_support) %>% tally()
+
+all_pred_fusions_illum_support_indicated_summary
+
+```
+
+
+
+
+```{r}
+
+StarF_overlapping_preds = inner_join(all_pred_fusions_illum_support_indicated, StarF_data, by='lex_ordered_fusion_name', multiple='all')
 
 
 StarF_overlapping_preds = StarF_overlapping_preds %>% select(lex_ordered_fusion_name, type, sample, FusionName) %>% unique()
 
+```
+
+
+
+
+```{r}
+
+full_join(StarF_overlapping_preds,
+          all_pred_fusions_illum_support_indicated %>% filter(Illumina_support),
+          by=c('lex_ordered_fusion_name',
+               'type')
+          ) %>% filter(type=='shared')
+
+```
+
+
+
+
+```{r}
+
+
 StarF_overlapping_preds = StarF_overlapping_preds %>% rowwise() %>% mutate(proxy_fusion_name = paste0(sample, "|", FusionName)) %>%
-    select(proxy_fusion_name, type, sample, FusionName)
+    select(proxy_fusion_name, type, sample, FusionName) %>% unique()
 
 StarF_overlapping_preds
 
 ```
 
 
+
+
+
 ```{r}
 
-
-table(StarF_overlapping_preds$type)
+full_join(StarF_overlapping_preds,
+          all_pred_fusions_illum_support_indicated %>% filter(Illumina_support),
+          by=c('proxy_fusion_name'='lex_ordered_fusion_name',
+               'type')
+          )
 
 ```
 
+
+```{r}
+
+StarF_overlapping_preds %>% filter(type=="shared")
+
+```
+
+
+VCAP|ANO10--SLMAP is found by STARF in both orientations:  SLMAP--ANO10 and ANO10--SLMAP
+
+so, 76 lexically sorted fusions here
 
 ```{r}
 
@@ -88,10 +155,13 @@ StarF_overlapping_preds %>% filter(type=="unique")
 
 ```{r}
 
-write.table(StarF_overlapping_preds, file="StarFusion_Illumina_supported_fusions.tsv", sep="\t", row.names=F, quote=F)
+write.table(StarF_overlapping_preds, 
+            file="StarFusion_Illumina_supported_fusions.tsv", sep="\t", row.names=F, quote=F)
 
 
 ```
+
+
 
 
 

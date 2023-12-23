@@ -50,20 +50,22 @@ truth_data %>% head()
 
 truth_data$sample_name = sapply(truth_data$proxy_fusion_name, function(x) { str_split(x, "\\|")[[1]][1]})
 
-
-# from Kirsty: 
-#   Just to confirm that the 9th cell line (HCC38) - has been corrected to DMS53 (ACH-000698). 
-
-truth_data = truth_data %>% mutate(sample_name = ifelse(sample_name=="HCC38", "DMS53", sample_name))
-
-
 head(truth_data)
 
 truth_data_counts = truth_data %>% rename(sample=sample_name) %>% group_by(sample) %>% tally(name='num_truth_fusions')
 
-truth_data_counts
+truth_data_counts %>% arrange(num_truth_fusions)
 
 ```
+
+```{r}
+
+truth_data_counts %>% summarise(sum_truth_fusions = sum(num_truth_fusions))
+
+# 151 proxy truth fusions
+
+```
+
 
 ```{r}
 

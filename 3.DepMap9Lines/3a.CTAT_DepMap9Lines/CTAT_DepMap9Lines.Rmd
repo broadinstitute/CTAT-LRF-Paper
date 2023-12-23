@@ -47,7 +47,8 @@ cor.test(x=log2(data$LR_FFPM), y=log2(data$FFPM), use='complete.obs')
 
 ```{r}
 
-TP_fusions = read.table("../3b.DepMap9Lines_Benchmarking/data/min_2.okPara_ignoreUnsure.results.scored", header=T, sep="\t", stringsAsFactors = F) %>% 
+TP_fusions = read.table("../3b.DepMap9Lines_Benchmarking/3b.2.IncludeIlluminaSupportedFusions/data/min_2.okPara_ignoreUnsure.results.scored", 
+                        header=T, sep="\t", stringsAsFactors = F) %>% 
     filter(pred_result == "TP") %>%
     select(sample, fusion, pred_result) %>% unique()
 
@@ -88,6 +89,40 @@ data %>% filter(pred_result == "TP") %>%
 
 ```{r}
 
+# by FFPM
+
+data %>% filter(pred_result == "TP") %>%
+     mutate(num_SR = est_J + est_S) %>%
+     rename(SR_FFPM = FFPM) %>%
+    group_by(sample, fusion) %>% arrange(desc(num_LR), desc(num_SR))  %>% mutate(fusion = paste(fusion, 'iso', row_number())) %>% ungroup() %>%
+    #mutate(fusion = paste(fusion, LeftBreakpoint, RightBreakpoint)) %>%
+   
+    #group_by(sample, fusion) %>% arrange(desc(num_LR), desc(num_SR)) %>% filter(row_number() == 1) %>% ungroup() %>%
+    select(sample, fusion, LR_FFPM, SR_FFPM) %>% 
+    gather(key=FFPM_type, value=FFPM, LR_FFPM, SR_FFPM) %>%
+    
+    mutate(FFPM = FFPM * 100) %>%
+    
+    ggplot(aes(x=fusion, y=FFPM)) + geom_bar(stat='identity', position = 'dodge', aes(fill=FFPM_type)) +
+    
+    facet_grid(. ~ sample, scales = "free", space='free') +
+    scale_x_discrete(expand = c(0, 0.5))  +
+    
+    scale_y_continuous(trans='log10') +
+    
+    #facet_wrap(~sample, scale='free') +
+    # 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    
+    ylab("FFPM * 100")
+
+```
+
+
+
+
+```{r}
+
 # label those fusions that have the most extreme difference with SR >> LR
 
 SR_enriched_fusion_isoforms = data %>% filter(pred_result == "TP") %>%
@@ -100,7 +135,7 @@ SR_enriched_fusion_isoforms = data %>% filter(pred_result == "TP") %>%
     arrange(desc(SR_enrichment))
 
 
-SR_enriched_fusion_isoforms %>% head()
+SR_enriched_fusion_isoforms %>% filter(SR_enrichment > 1)
 
 ```
 
@@ -134,6 +169,245 @@ SR_enriched_fusion_isoforms %>%
    
 ```
 
+# examine specific fusions and breakpoint splice support
+
+```{r}
+
+plot_fusion_expression_by_breakpoint = function(sample_name, fusion_name) {
+    
+    df = data %>% filter(sample == sample_name & fusion == fusion_name) %>% 
+        select(sample, fusion, LeftLocalBreakpoint, RightLocalBreakpoint, num_LR, est_J, LR_FFPM, FFPM) %>% 
+        arrange(sample, RightLocalBreakpoint, LeftLocalBreakpoint) %>%
+        mutate(num_LR = ifelse (is.na(num_LR), 0, num_LR)) %>%
+        mutate(LR_FFPM = ifelse(is.na(LR_FFPM), 0, LR_FFPM)) %>%
+        mutate(est_J = ifelse(is.na(est_J), 0, est_J)) %>%
+        rename(SR_FFPM = FFPM) #%>% mutate(SR_FFPM = ifelse(is.na(SR_FFPM), 0, SR_FFPM))
+    
+    print(df)
+    
+    
+    p1 = df %>% gather(key=readtype, value=readcount, num_LR, est_J) %>% 
+        filter(readcount > 0) %>%
+        ggplot(aes(x=RightLocalBreakpoint, y=LeftLocalBreakpoint) ) + 
+        ggtitle(paste(sample_name, fusion_name, "by read count")) +
+        geom_point(aes(color=readtype, size=readcount), alpha=0.5) +
+        facet_wrap(~readtype) 
+    
+    plot(p1)
+    
+    
+    p2 = df %>% gather(key=readtype, value=FFPM, LR_FFPM, SR_FFPM) %>% 
+        filter(FFPM > 0) %>%
+        ggplot(aes(x=RightLocalBreakpoint, y=LeftLocalBreakpoint) ) + 
+        ggtitle(paste(sample_name, fusion_name, "by FFPM")) +
+        geom_point(aes(color=readtype, size=FFPM), alpha=0.5) +
+        facet_wrap(~readtype) 
+    
+    plot(p2)
+    
+    p3 = df %>% gather(key=readtype, value=FFPM, LR_FFPM, SR_FFPM) %>% 
+        #filter(FFPM > 0) %>%
+        ggplot(aes(x=RightLocalBreakpoint, y=LeftLocalBreakpoint) ) + 
+        ggtitle(paste(sample_name, fusion_name, "by FFPM")) +
+        geom_point(aes(color=readtype, fill=readtype, size=FFPM), alpha=0.5) 
+    
+    plot(p3)
+    
+    
+    p4 = df %>% gather(key=readtype, value=FFPM, LR_FFPM, SR_FFPM) %>% 
+        mutate(breakpoint = paste(RightLocalBreakpoint, LeftLocalBreakpoint)) %>% 
+        ggplot(aes(x=breakpoint, y=FFPM, fill=readtype) ) + 
+        ggtitle(paste(sample_name, fusion_name, "by FFPM")) +
+        geom_bar(stat='identity', position='dodge')  +
+        theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    
+    plot(p4)
+    
+    lm_df = lm(df$SR_FFPM ~ df$LR_FFPM)
+    print(lm_df)
+    lm_y_intercept=lm_df$coefficients[1]
+    lm_slope=lm_df$coefficients[2]
+    
+    
+     p5 = df %>%
+        mutate(breakpoint = paste(RightLocalBreakpoint, LeftLocalBreakpoint)) %>% 
+        ggplot(aes(x=LR_FFPM, y=SR_FFPM) ) +  geom_point() +  geom_abline(slope=lm_slope, intercept = lm_y_intercept) +
+        ggtitle(paste(sample_name, fusion_name, "by FFPM")) 
+    
+    plot(p5)
+    
+    if(nrow(df)>2) {
+        print(cor.test(df$LR_FFPM, df$SR_FFPM))
+    }
+}
+
+```
+
+
+
+
+## TATDN1--GSDMB
+```{r}
+
+sample_name = "SKBR3"
+fusion_name = "TATDN1--GSDMB"
+
+plot_fusion_expression_by_breakpoint(sample_name, fusion_name)
+
+```
+
+## K562 BCR--ABL1
+
+```{r}
+
+
+
+plot_fusion_expression_by_breakpoint("K562", "BCR--ABL1")
+
+
+```
+
+
+
+```{r}
+
+# HCC1187	PUM1--TRERF1 
+
+plot_fusion_expression_by_breakpoint("HCC1187", "PUM1--TRERF1")
+
+
+```
+
+
+
+```{r}
+
+# VCAP	TMPRSS2--ERG
+
+plot_fusion_expression_by_breakpoint("VCAP", "TMPRSS2--ERG")
+
+
+```
+
+
+# Examine all fusions with multiple isoforms
+
+How many fusions do we have multiple isoforms with evidence?  How many with both short and long read support?
+
+Are expression values correlated among isoforms according to read types?
+
+Is the dominant isoform the same?
+
+
+
+```{r}
+
+# how many total TP fusions did ctatLRF find evidence for?
+
+data %>% filter(pred_result == "TP") %>% select(sample, fusion) %>% unique() %>% nrow()
+
+```
+
+```{r}
+
+min_multi_isoforms = 3
+
+```
+
+
+
+```{r}
+
+# how many have multiple fusion isoforms?
+
+mult_isoform_data = data %>% filter(pred_result == "TP") %>% group_by(sample, fusion) %>% filter(n()>=min_multi_isoforms) %>% ungroup()
+
+mult_isoform_data %>% select(sample, fusion) %>% unique() %>% nrow()
+
+
+```
+
+
+
+```{r}
+
+# how many have both LR and SR isoform support?
+
+mult_isoform_data_both_read_types = mult_isoform_data %>% filter(num_LR > 0 & est_J > 0) %>% group_by(sample, fusion) %>% filter(n()>min_multi_isoforms) %>% ungroup() 
+
+mult_iso_both_sample_fusion_names = mult_isoform_data_both_read_types %>% group_by(sample, fusion) %>% tally(name='num_multi_iso_both_types')
+
+# include isoformws supported uniquely by long or short in the downstream analysis here:
+mult_isoform_data_both_read_types = left_join(mult_iso_both_sample_fusion_names, mult_isoform_data, by=c('sample', 'fusion'))
+
+mult_iso_both_sample_fusion_names %>% arrange(desc(num_multi_iso_both_types))
+
+```
+
+
+## Compare read support for fusion isoforms across each fusion gene
+
+```{r}
+
+
+mult_isoform_data_both_read_types %>% ggplot(aes(x=log10(LR_FFPM), y=log10(FFPM))) + geom_point() +
+    ggtitle("restricted to fusion genes w/ multi isoforms supported by both read types")
+
+
+```
+
+
+
+```{r}
+
+for (i in seq(nrow(mult_iso_both_sample_fusion_names))) {
+    
+    sample_name = mult_iso_both_sample_fusion_names[i,1]$sample
+    fusion_name =  mult_iso_both_sample_fusion_names[i,2]$fusion
+    
+    loc_df = mult_isoform_data_both_read_types %>% 
+        filter(sample==sample_name & fusion==fusion_name) %>%
+        select(sample, fusion, LeftLocalBreakpoint, RightLocalBreakpoint, num_LR, est_J, LR_FFPM, FFPM) %>% 
+        arrange(sample, RightLocalBreakpoint, LeftLocalBreakpoint) %>%
+        rename(SR_FFPM = FFPM) 
+    
+    #print(loc_df)
+    
+    lm_loc_df = lm(loc_df$SR_FFPM ~ loc_df$LR_FFPM)
+    print(lm_loc_df)
+    lm_y_intercept=lm_loc_df$coefficients[1]
+    lm_slope=lm_loc_df$coefficients[2]
+    
+    p = loc_df %>%
+        mutate(breakpoint = paste(RightLocalBreakpoint, LeftLocalBreakpoint)) %>% 
+        ggplot(aes(x=LR_FFPM, y=SR_FFPM) ) +  geom_point() + geom_abline(slope=lm_slope, intercept = lm_y_intercept) +
+        ggtitle(paste(sample_name, fusion_name, "by FFPM")) 
+    
+    plot(p)
+    
+    if(nrow(loc_df)>2) {
+        print(cor.test(loc_df$LR_FFPM, loc_df$SR_FFPM))
+    }
+    
+    
+}
+
+
+```
+
+```{r}
+
+plot_fusion_expression_by_breakpoint("SKBR3", "CYTH1--EIF3H")
+
+
+```
+
+```{r}
+
+plot_fusion_expression_by_breakpoint("SKBR3", "SAMD12--MRPL13")
+
+
+```
 
 
 
