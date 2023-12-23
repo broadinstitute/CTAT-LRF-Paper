@@ -8,13 +8,21 @@ output: github_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(ggrepel)
 ```
 
 
 ```{r}
 
 data = read.table("data/DepMap_v1v2mrgd.ctatLRF_FI.consolidated.tsv.gz", header=T, sep="\t", com='') %>% 
-    rename(sample=X.sample, fusion = X.FusionName)
+    rename(sample=X.sample, fusion = X.FusionName, SR_FFPM = FFPM) %>%  
+    mutate(num_SR = est_J + est_S) %>%
+    group_by(sample, fusion) %>% arrange(desc(num_LR), desc(num_SR))  %>% mutate(fusion_iso = paste(fusion, 'iso', row_number())) %>% ungroup()
+  
+
+
+data$lexsort_fusion_name = sapply(data$fusion, function(x) { paste(sort(str_split(x, "--")[[1]]), collapse="--") })
+data = data %>% rowwise() %>% mutate(lexsort_fusion_name = paste0(sample, "|", lexsort_fusion_name))
 
 
 data %>% head()
@@ -25,8 +33,8 @@ data %>% head()
 
 ```{r}
 
-data %>% ggplot(aes(x=log10(LR_FFPM), y=log10(FFPM))) + geom_point() +
-    ggtitle("LR vs. SR fusion expression (FFPM)") +                                      
+data %>% ggplot(aes(x=log10(LR_FFPM), y=log10(SR_FFPM))) + geom_point() +
+    ggtitle("ctatLRF_FI-everything LR vs. SR fusion expression (FFPM)") +                                      
   stat_smooth(method = "lm", 
               formula = y ~ x, 
               geom = "smooth") + 
@@ -38,7 +46,7 @@ data %>% ggplot(aes(x=log10(LR_FFPM), y=log10(FFPM))) + geom_point() +
 
 ```{r}
 
-cor.test(x=log2(data$LR_FFPM), y=log2(data$FFPM), use='complete.obs')
+cor.test(x=log2(data$LR_FFPM), y=log2(data$SR_FFPM), use='complete.obs')
 
 ```
 
@@ -47,41 +55,66 @@ cor.test(x=log2(data$LR_FFPM), y=log2(data$FFPM), use='complete.obs')
 
 ```{r}
 
-TP_fusions = read.table("../3b.DepMap9Lines_Benchmarking/3b.2.IncludeIlluminaSupportedFusions/data/min_2.okPara_ignoreUnsure.results.scored", 
+TP_fusions = read.table("../3b.DepMap9Lines_Benchmarking/3b.2.IncludeIlluminaSupportedFusions/data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.byProgAgree.min_2.truth_set", 
                         header=T, sep="\t", stringsAsFactors = F) %>% 
-    filter(pred_result == "TP") %>%
-    select(sample, fusion, pred_result) %>% unique()
+    select(proxy_fusion_name)
+
+TP_fusions$sample = sapply(TP_fusions$proxy_fusion_name, function(x) { str_split(x, "\\|")[[1]][1] })
+ 
+TP_fusions$fusion = sapply(TP_fusions$proxy_fusion_name, function(x) { str_split(x, "\\|")[[1]][2] }) 
+
+TP_fusions$lexsort_fusion_name = sapply(TP_fusions$fusion, function(x) { paste(sort(str_split(x, "--")[[1]]), collapse="--") })
+TP_fusions = TP_fusions %>% rowwise() %>% mutate(lexsort_fusion_name = paste0(sample, "|", lexsort_fusion_name))
+
+nrow(TP_fusions)
 
 TP_fusions %>% head()
 ```
 
+
+
 ```{r}
 
-data = left_join(data, TP_fusions,
-                 by=c('sample','fusion') )
+data = inner_join(TP_fusions %>% select(lexsort_fusion_name),
+                  data,
+                 by='lexsort_fusion_name',
+                 multiple='all'
+                 )
+
+
+
+nrow(data)
+
+data %>% select(sample, fusion) %>% unique() %>% nrow()
+
+data %>% head()
 
 ```
+
+```{r}
+
+# how many genes and isoforms ahve both long and short read support:
+data %>% filter(num_LR > 0 && num_SR > 0) %>% nrow()
+
+data %>% filter(num_LR > 0 && num_SR > 0) %>% select(sample, fusion) %>% unique() %>% nrow()
+
+
+```
+
 
 
 ```{r}
 
 # by read counts
 
-data %>% filter(pred_result == "TP") %>%
-     mutate(num_SR = est_J + est_S) %>%
-    group_by(sample, fusion) %>% arrange(desc(num_LR), desc(num_SR))  %>% mutate(fusion = paste(fusion, 'iso', row_number())) %>% ungroup() %>%
-    #mutate(fusion = paste(fusion, LeftBreakpoint, RightBreakpoint)) %>%
-   
-    #group_by(sample, fusion) %>% arrange(desc(num_LR), desc(num_SR)) %>% filter(row_number() == 1) %>% ungroup() %>%
-    select(sample, fusion, num_LR, num_SR) %>% 
+data %>% 
+    select(sample, fusion_iso, num_LR, num_SR) %>% 
     gather(key=read_type, value=read_count, num_LR, num_SR) %>%
-    ggplot(aes(x=fusion, y=read_count)) + geom_bar(stat='identity', position = 'dodge', aes(fill=read_type)) +
+    ggplot(aes(x=fusion_iso, y=read_count)) + geom_bar(stat='identity', position = 'dodge', aes(fill=read_type)) +
     
     facet_grid(. ~ sample, scales = "free", space='free') +
     scale_x_discrete(expand = c(0, 0.5))  +
     
-    #facet_wrap(~sample, scale='free') +
-    # 
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 ```
@@ -91,27 +124,19 @@ data %>% filter(pred_result == "TP") %>%
 
 # by FFPM
 
-data %>% filter(pred_result == "TP") %>%
-     mutate(num_SR = est_J + est_S) %>%
-     rename(SR_FFPM = FFPM) %>%
-    group_by(sample, fusion) %>% arrange(desc(num_LR), desc(num_SR))  %>% mutate(fusion = paste(fusion, 'iso', row_number())) %>% ungroup() %>%
-    #mutate(fusion = paste(fusion, LeftBreakpoint, RightBreakpoint)) %>%
-   
-    #group_by(sample, fusion) %>% arrange(desc(num_LR), desc(num_SR)) %>% filter(row_number() == 1) %>% ungroup() %>%
-    select(sample, fusion, LR_FFPM, SR_FFPM) %>% 
+data %>% 
+    select(sample, fusion_iso, LR_FFPM, SR_FFPM) %>% 
     gather(key=FFPM_type, value=FFPM, LR_FFPM, SR_FFPM) %>%
     
     mutate(FFPM = FFPM * 100) %>%
     
-    ggplot(aes(x=fusion, y=FFPM)) + geom_bar(stat='identity', position = 'dodge', aes(fill=FFPM_type)) +
+    ggplot(aes(x=fusion_iso, y=FFPM)) + geom_bar(stat='identity', position = 'dodge', aes(fill=FFPM_type)) +
     
     facet_grid(. ~ sample, scales = "free", space='free') +
     scale_x_discrete(expand = c(0, 0.5))  +
     
     scale_y_continuous(trans='log10') +
     
-    #facet_wrap(~sample, scale='free') +
-    # 
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     
     ylab("FFPM * 100")
@@ -125,14 +150,13 @@ data %>% filter(pred_result == "TP") %>%
 
 # label those fusions that have the most extreme difference with SR >> LR
 
-SR_enriched_fusion_isoforms = data %>% filter(pred_result == "TP") %>%
-     mutate(num_SR = est_J + est_S) %>%
-    group_by(sample, fusion) %>% arrange(desc(num_LR), desc(num_SR))  %>% 
-    mutate(fusion = paste(fusion, 'iso', row_number())) %>% ungroup() %>%
-    select(sample, fusion, LR_FFPM, FFPM) %>% 
-    rename(SR_FFPM = FFPM) %>%
+SR_enriched_fusion_isoforms = data %>% 
+    filter(LR_FFPM > 0 & SR_FFPM > 0) %>%
+    select(sample, fusion, fusion_iso, LR_FFPM, SR_FFPM) %>% 
+    rowwise() %>%
     mutate(SR_enrichment = SR_FFPM / LR_FFPM) %>%
-    arrange(desc(SR_enrichment))
+    arrange(desc(SR_enrichment)) %>%
+    ungroup() %>% mutate(rank = row_number())
 
 
 SR_enriched_fusion_isoforms %>% filter(SR_enrichment > 1)
@@ -143,27 +167,36 @@ SR_enriched_fusion_isoforms %>% filter(SR_enrichment > 1)
 
 ```{r}
 
-data %>% filter(pred_result == "TP") %>%
-     mutate(num_SR = est_J + est_S) %>%
-    group_by(sample, fusion) %>% arrange(desc(num_LR), desc(num_SR))  %>% mutate(fusion = paste(fusion, 'iso', row_number())) %>% ungroup() %>%
-    select(sample, fusion, LR_FFPM, FFPM) %>% 
-    rename(SR_FFPM = FFPM) %>%
+data %>%     
+    select(sample, fusion_iso, LR_FFPM, SR_FFPM) %>% 
     ggplot(aes(x=log10(LR_FFPM), y=log10(SR_FFPM))) + geom_point() +
     stat_smooth(method = "lm", 
               formula = y ~ x, 
               geom = "smooth") + 
     geom_abline(intercept=0, slope=1, color='purple') +
     geom_point(data=SR_enriched_fusion_isoforms %>% filter(SR_enrichment>=3), color='red')  +
-    geom_text(data=SR_enriched_fusion_isoforms %>% filter(SR_enrichment>=3), aes(label=fusion))
+    geom_text_repel(data=SR_enriched_fusion_isoforms %>% filter(SR_enrichment>=3), aes(label=fusion)) +
+    ggtitle("CTAT-LR-FI FFPM Comparison for isoforms of TP fusions")
 
 ```
+
+
+
+```{r}
+
+
+cor.test(x=log2(data$LR_FFPM), y=log2(data$SR_FFPM), use='complete.obs')
+
+```
+
+
 
 
 ```{r}
 
 SR_enriched_fusion_isoforms %>%
     mutate(rn = row_number() ) %>%
-    ggplot(aes(x=rn, y=SR_enrichment)) + geom_point() + geom_abline(interceipt=1, slope=0, color='purple') +
+    ggplot(aes(x=rn, y=SR_enrichment)) + geom_point() + geom_hline(yintercept = 1.0, color='purple') +
     scale_y_continuous(trans='log10') +
     xlab("Fusion isoform ranked by SR_enrichment")
    
@@ -176,12 +209,11 @@ SR_enriched_fusion_isoforms %>%
 plot_fusion_expression_by_breakpoint = function(sample_name, fusion_name) {
     
     df = data %>% filter(sample == sample_name & fusion == fusion_name) %>% 
-        select(sample, fusion, LeftLocalBreakpoint, RightLocalBreakpoint, num_LR, est_J, LR_FFPM, FFPM) %>% 
+        select(sample, fusion, LeftLocalBreakpoint, RightLocalBreakpoint, num_LR, est_J, LR_FFPM, SR_FFPM) %>% 
         arrange(sample, RightLocalBreakpoint, LeftLocalBreakpoint) %>%
         mutate(num_LR = ifelse (is.na(num_LR), 0, num_LR)) %>%
         mutate(LR_FFPM = ifelse(is.na(LR_FFPM), 0, LR_FFPM)) %>%
-        mutate(est_J = ifelse(is.na(est_J), 0, est_J)) %>%
-        rename(SR_FFPM = FFPM) #%>% mutate(SR_FFPM = ifelse(is.na(SR_FFPM), 0, SR_FFPM))
+        mutate(est_J = ifelse(is.na(est_J), 0, est_J)) 
     
     print(df)
     
@@ -206,7 +238,6 @@ plot_fusion_expression_by_breakpoint = function(sample_name, fusion_name) {
     plot(p2)
     
     p3 = df %>% gather(key=readtype, value=FFPM, LR_FFPM, SR_FFPM) %>% 
-        #filter(FFPM > 0) %>%
         ggplot(aes(x=RightLocalBreakpoint, y=LeftLocalBreakpoint) ) + 
         ggtitle(paste(sample_name, fusion_name, "by FFPM")) +
         geom_point(aes(color=readtype, fill=readtype, size=FFPM), alpha=0.5) 
@@ -302,9 +333,13 @@ Is the dominant isoform the same?
 
 ```{r}
 
-# how many total TP fusions did ctatLRF find evidence for?
+# how many total TP fusions did ctatLRF find evidence for with both short and long reads?
 
-data %>% filter(pred_result == "TP") %>% select(sample, fusion) %>% unique() %>% nrow()
+fusions_w_both_long_and_short = data %>% 
+    filter(num_LR > 0 & num_SR > 0) %>%
+   select(sample, fusion) %>% unique()
+
+nrow(fusions_w_both_long_and_short)
 
 ```
 
@@ -320,7 +355,10 @@ min_multi_isoforms = 3
 
 # how many have multiple fusion isoforms?
 
-mult_isoform_data = data %>% filter(pred_result == "TP") %>% group_by(sample, fusion) %>% filter(n()>=min_multi_isoforms) %>% ungroup()
+mult_isoform_data = left_join(fusions_w_both_long_and_short, data, 
+                              by=c('sample', 'fusion'),
+                              multiple='all') %>% 
+    group_by(sample, fusion) %>% filter(n()>=min_multi_isoforms) %>% ungroup()
 
 mult_isoform_data %>% select(sample, fusion) %>% unique() %>% nrow()
 
@@ -350,8 +388,13 @@ mult_iso_both_sample_fusion_names %>% arrange(desc(num_multi_iso_both_types))
 ```{r}
 
 
-mult_isoform_data_both_read_types %>% ggplot(aes(x=log10(LR_FFPM), y=log10(FFPM))) + geom_point() +
-    ggtitle("restricted to fusion genes w/ multi isoforms supported by both read types")
+mult_isoform_data_both_read_types %>% 
+    ggplot(aes(x=log10(LR_FFPM), y=log10(SR_FFPM))) + geom_point(aes(color=fusion)) +
+    ggtitle("restricted to fusion genes w/ multi isoforms supported by both read types") +
+    stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth") +
+    facet_wrap(~fusion, scale='free')
 
 
 ```
@@ -367,9 +410,8 @@ for (i in seq(nrow(mult_iso_both_sample_fusion_names))) {
     
     loc_df = mult_isoform_data_both_read_types %>% 
         filter(sample==sample_name & fusion==fusion_name) %>%
-        select(sample, fusion, LeftLocalBreakpoint, RightLocalBreakpoint, num_LR, est_J, LR_FFPM, FFPM) %>% 
-        arrange(sample, RightLocalBreakpoint, LeftLocalBreakpoint) %>%
-        rename(SR_FFPM = FFPM) 
+        select(sample, fusion, LeftLocalBreakpoint, RightLocalBreakpoint, num_LR, est_J, LR_FFPM, SR_FFPM) %>% 
+        arrange(sample, RightLocalBreakpoint, LeftLocalBreakpoint) 
     
     #print(loc_df)
     
