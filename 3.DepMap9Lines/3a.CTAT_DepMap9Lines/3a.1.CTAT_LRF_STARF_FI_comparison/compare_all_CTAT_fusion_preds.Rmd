@@ -1,0 +1,123 @@
+---
+title: "compare_all_CTAT_fusion_preds"
+author: "bhaas"
+date: '2023-12-21'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+```{r}
+
+ctat_LR_FI_data = read.table("data/DepMap_v1v2mrgd.ctatLRF_FI.consolidated.tsv.gz", header=T, sep="\t", stringsAsFactors = F, com='') %>%
+    rename(sample = X.sample, FusionName = X.FusionName, SR_FFPM = FFPM) %>%
+    mutate(num_SR = est_J + est_S) %>%
+    mutate(num_SR = ifelse(is.na(num_SR), 0, num_SR))
+
+ctat_LR_FI_data  %>% head()
+
+```
+
+
+```{r}
+
+FI_data = read.table("data/DepMap.v1v2mrgd.FI.consolidated.tsv.gz", header=T, sep="\t", stringsAsFactors = F, com='') %>%
+    rename(sample = X.sample, FusionName = X.FusionName, SR_FFPM = FFPM) %>%
+    mutate(num_SR = est_J + est_S)
+
+head(FI_data) 
+
+```
+
+```{r}
+
+starF_data = read.table("data/DepMap.v1v2mrgd.StarF.consolidated.tsv.gz", header=T, sep="\t", stringsAsFactors = F, com='') %>%
+    rename(sample = X.sample, FusionName = X.FusionName, SR_FFPM = FFPM) %>%
+    mutate(num_SR = est_J + est_S)
+
+
+head(starF_data)
+
+```
+
+
+# combine data
+
+```{r}
+
+all_data = bind_rows(ctat_LR_FI_data  %>% select(sample, FusionName, LeftBreakpoint, RightBreakpoint, num_LR, LR_FFPM) %>% 
+                         rename(num_reads = num_LR, FFPM = LR_FFPM) %>% mutate(type='LRF'),
+                     
+                     ctat_LR_FI_data %>% select(sample, FusionName, LeftBreakpoint, RightBreakpoint, num_SR, SR_FFPM) %>% 
+                         rename(num_reads = num_SR, FFPM = SR_FFPM) %>% filter(num_reads > 0) %>%
+                         mutate(type='LRF_FI'),
+                     
+                     FI_data %>% select(sample, FusionName, LeftBreakpoint, RightBreakpoint, num_SR, SR_FFPM) %>% 
+                         rename(num_reads = num_SR, FFPM = SR_FFPM) %>%
+                         mutate(type='FI'),
+                     
+                     starF_data %>% select(sample, FusionName, LeftBreakpoint, RightBreakpoint, num_SR, SR_FFPM) %>% 
+                         rename(num_reads = num_SR, FFPM = SR_FFPM) %>%
+                         mutate(type='STARF')
+                     
+                     )
+
+
+
+all_data %>% head()
+
+```
+
+
+```{r}
+
+all_data_spread = all_data %>% select(sample, FusionName, LeftBreakpoint, RightBreakpoint, num_reads, type) %>%
+    spread(key=type, value=num_reads, fill=0)
+
+all_data_spread %>% head()
+
+```
+
+
+# restrict to the proxy TP depmap fusions
+
+
+```{r}
+
+TP_fusions = read.table("data/min_2.okPara_ignoreUnsure.results.scored", sep="\t", header=T, stringsAsFactors = F) %>%
+    filter(pred_result == "TP") %>%
+    filter(prog == "ctat-LR-fusion.v0.11.0") %>%
+    select(sample, fusion) %>% unique() %>%
+    rename(FusionName = fusion)
+
+TP_fusions 
+
+
+
+```
+
+```{r}
+
+TP_fusions = left_join(TP_fusions, all_data_spread,
+          by=c('sample', 'FusionName') )
+
+TP_fusions %>% arrange(desc(LRF))
+```
+
+
+```{r}
+ TP_fusions %>%
+    filter(LRF == 0)
+
+
+```
+
+
+
+
+
+
