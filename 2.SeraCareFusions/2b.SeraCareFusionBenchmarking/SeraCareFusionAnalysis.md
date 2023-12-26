@@ -10,13 +10,13 @@ data = read.table("data/seracarefusion.allow_rev.combined_results.ROC.tsv", head
 head(data)
 ```
 
-    ##   seqtype                   prog min_sum_frags TP  FP FN  TPR  PPV    F1
-    ## 1 ISO-seq ctat-LR-fusion.v0.11.0             1 16 907  0 1.00 0.02 0.039
-    ## 2 ISO-seq ctat-LR-fusion.v0.11.0             2 16  90  0 1.00 0.15 0.261
-    ## 3 ISO-seq ctat-LR-fusion.v0.11.0             3 16  10  0 1.00 0.62 0.765
-    ## 4 ISO-seq ctat-LR-fusion.v0.11.0             8 16   2  0 1.00 0.89 0.942
-    ## 5 ISO-seq ctat-LR-fusion.v0.11.0            19 16   1  0 1.00 0.94 0.969
-    ## 6 ISO-seq ctat-LR-fusion.v0.11.0            20 15   1  1 0.94 0.94 0.940
+    ##   seqtype         prog min_sum_frags TP FP FN  TPR  PPV    F1
+    ## 1 ISO-seq fusionseeker             3 15 77  1 0.94 0.16 0.273
+    ## 2 ISO-seq fusionseeker             4 15 11  1 0.94 0.58 0.717
+    ## 3 ISO-seq fusionseeker             5 15  7  1 0.94 0.68 0.789
+    ## 4 ISO-seq fusionseeker             6 15  6  1 0.94 0.71 0.809
+    ## 5 ISO-seq fusionseeker             8 15  5  1 0.94 0.75 0.834
+    ## 6 ISO-seq fusionseeker             9 15  4  1 0.94 0.79 0.858
 
 ``` r
 TP_plot = data %>% 
@@ -46,55 +46,55 @@ fusion_preds = bind_rows(Isoseq_fusions, Masseq_L1_fusions, Masseq_L2_fusions)
 fusion_preds %>% head()
 ```
 
-    ##   pred_class  sample        prog           fusion
-    ## 1         TP ISO-seq flairfusion       RET--KIF5B
-    ## 2         TP ISO-seq flairfusion     FGFR3--TACC3
-    ## 3         TP ISO-seq flairfusion      TPM3--NTRK1
-    ## 4         TP ISO-seq flairfusion        EML4--ALK
-    ## 5         TP ISO-seq flairfusion      ETV6--NTRK3
-    ## 6         FP ISO-seq flairfusion ARHGEF3--CNTNAP2
+    ##   pred_class  sample         prog            fusion
+    ## 1         TP ISO-seq fusionseeker        KIF5B--RET
+    ## 2         TP ISO-seq fusionseeker     SLC34A2--ROS1
+    ## 3         TP ISO-seq fusionseeker      TACC3--FGFR3
+    ## 4         FP ISO-seq fusionseeker AC096579.13--IGKC
+    ## 5         TP ISO-seq fusionseeker       LMNA--NTRK1
+    ## 6         TP ISO-seq fusionseeker        CD74--ROS1
     ##                       breakpoint num_reads
-    ## 1 chr10:43116730--chr10:32017142        67
-    ## 2     chr4:1806936--chr4:1739701        58
-    ## 3 chr1:154173203--chr1:156876172        37
-    ## 4   chr2:42295520--chr2:29223530        26
-    ## 5 chr12:11869969--chr15:87940756        20
-    ## 6  chr3:56731592--chr7:147842581         4
-    ##                                                                 mapped_gencode_A_gene_list
-    ## 1                                                                                      RET
-    ## 2                                                                                    FGFR3
-    ## 3 AP006222.1,BC073144,MIR190B,Metazoa_SRP,OK/SW-cl.5,RN7SL431P,SRGAP2,SRGAP2B,SRGAP2D,TPM3
-    ## 4                                                                          AC083949.1,EML4
-    ## 5                          AC007537.1,BC038742,BCL2L14,ETV6,MIR1244-4,PTMAP9,RP11-267J23.4
-    ## 6                        AC097358.2,ARHGEF3,ARHGEF3-AS1,RP11-157F20.3,RP11-51O17.1,SPATA12
-    ##                                                           mapped_gencode_B_gene_list
-    ## 1                                                                              KIF5B
-    ## 2                                                                   AC016773.1,TACC3
-    ## 3                               AP006222.1,INSRR,NTRK1,SH2D2A,SRGAP2,SRGAP2B,SRGAP2D
-    ## 4              AC093756.1,AC106870.1,AC106870.2,AC106899.1,ALK,Metazoa_SRP,RN7SL516P
-    ## 5 AC021677.1,AC021677.2,AL109700,MED28P6,NTRK3,NTRK3-AS1,RP11-356B18.1,RP11-356B18.2
-    ## 6                                                            CNTNAP2,RF00012,U3,U3.1
-    ##                                                                                                                                                                                                                                                                                                                                         annots
-    ## 1                                                                                                                                                                                              [RET:FoundationOne_panel,RET:OncomapV4_panel,RET:Oncogene,RET:ArcherDX_panel,RET:OncocartaV1_panel];[ChimerPub];INTRACHROMOSOMAL[chr10:11.02Mb]
-    ## 2 [FGFR3:Oncogene,FGFR3:ArcherDX_panel,FGFR3:FoundationOne_panel,FGFR3:OncomapV4_panel,FGFR3:OncocartaV1_panel];[TACC3:Oncogene];[ChimerKB,ChimerSeq,TCGA_StarF2019,CCLE_StarF2019,YOSHIHARA_TCGA,Klijn_CellLines,DEEPEST2019,GUO2018CR_TCGA,ChimerPub,TumorFusionsNAR2018,Cosmic];INTRACHROMOSOMAL[chr4:0.05Mb];LOCAL_REARRANGEMENT:+:[48131]
-    ## 3                                                                              [TPM3:Oncogene];[NTRK1:FoundationOne_panel,NTRK1:ArcherDX_panel,NTRK1:Oncogene];[ChimerKB,ChimerSeq,TCGA_StarF2019,CCLE_StarF2019,HaasMedCancer,Klijn_CellLines,chimerdb_pubmed,DEEPEST2019,ChimerPub,TumorFusionsNAR2018,Cosmic];INTRACHROMOSOMAL[chr1:2.62Mb]
-    ## 4                                                     [EML4:Oncogene];[ALK:Oncogene,ALK:FoundationOne_panel,ALK:ArcherDX_panel];[ChimerKB,ChimerSeq,TCGA_StarF2019,CCLE_StarF2019,YOSHIHARA_TCGA,HaasMedCancer,Klijn_CellLines,chimerdb_pubmed,DEEPEST2019,GUO2018CR_TCGA,ChimerPub,TumorFusionsNAR2018,Cosmic];INTRACHROMOSOMAL[chr2:12.25Mb]
-    ## 5      [ETV6:FoundationOne_panel,ETV6:Oncogene,ETV6:ArcherDX_panel];[NTRK3:Oncogene,NTRK3:ArcherDX_panel,NTRK3:FoundationOne_panel];[ChimerKB,Larsson_TCGA,ChimerSeq,TCGA_StarF2019,YOSHIHARA_TCGA,HaasMedCancer,chimerdb_pubmed,chimerdb_omim,DEEPEST2019,GUO2018CR_TCGA,ChimerPub,TumorFusionsNAR2018,Cosmic];INTERCHROMOSOMAL[chr12--chr15]
-    ## 6                                                                                                                                                                                                                                                                                                                 INTERCHROMOSOMAL[chr3--chr7]
-    ##   selected_fusion                                               explanation
-    ## 1      KIF5B--RET first encounter of TP flairfusion,KIF5B--RET (RET--KIF5B)
-    ## 2    FGFR3--TACC3            first encounter of TP flairfusion,FGFR3--TACC3
-    ## 3     TPM3--NTRK1             first encounter of TP flairfusion,TPM3--NTRK1
-    ## 4       EML4--ALK               first encounter of TP flairfusion,EML4--ALK
-    ## 5     ETV6--NTRK3             first encounter of TP flairfusion,ETV6--NTRK3
-    ## 6               . first encounter of FP fusion flairfusion,ARHGEF3--CNTNAP2
-    ##   dataset
-    ## 1  ISOseq
-    ## 2  ISOseq
-    ## 3  ISOseq
-    ## 4  ISOseq
-    ## 5  ISOseq
-    ## 6  ISOseq
+    ## 1 chr10:32017142--chr10:43114478        66
+    ## 2  chr4:25664329--chr6:117324416        59
+    ## 3     chr4:1739701--chr4:1806935        58
+    ## 4   chr2:88861257--chr2:88897782        57
+    ## 5 chr1:156130774--chr1:156874903        52
+    ## 6 chr5:150404679--chr6:117324416        51
+    ##                                                                                                                                     mapped_gencode_A_gene_list
+    ## 1                                                                                                                                                        KIF5B
+    ## 2                                                                                                                                                      SLC34A2
+    ## 3                                                                                                                                             AC016773.1,TACC3
+    ## 4 AC096579.13,AC096579.15,AC096579.7,AC244205.1,AC244205.2,AK128525,CR623415,IGKC,IGKJ2,IGKJ3,IGKJ4,IGKJ5,IGKV1-12,IGKV1-8,IGKV3-11,Ig[kappa],MIR4436A,abParts
+    ## 5                                                                                                                       AP006222.1,LMNA,SRGAP2,SRGAP2B,SRGAP2D
+    ## 6                                                                                                                                              AL732372.2,CD74
+    ##                                                                                                                                                                                                                                                                                                                                                                                          mapped_gencode_B_gene_list
+    ## 1                                                                                                                                                                                                                                                                                                                                                                                                               RET
+    ## 2                                                                                                                                                                                                                                                                                                                                                       7SK,7SK.155,7SK.232,GOPC,RN7SKP18,RN7SKP51,ROS1,RP1-179P9.3
+    ## 3                                                                                                                                                                                                                                                                                                                                                                                                             FGFR3
+    ## 4 AC096579.13,AC096579.15,AC096579.7,AC096767.2,AC244255.1,AK128525,IGKC,IGKJ1,IGKJ2,IGKJ3,IGKJ4,IGKJ5,IGKV1-12,IGKV1-13,IGKV1-16,IGKV1-17,IGKV1-22,IGKV1-27,IGKV1-5,IGKV1-6,IGKV1-8,IGKV1-9,IGKV2-10,IGKV2-14,IGKV2-18,IGKV2-19,IGKV2-23,IGKV2-24,IGKV2-26,IGKV2-28,IGKV2-29,IGKV2-30,IGKV2-4,IGKV3-11,IGKV3-15,IGKV3-20,IGKV3-25,IGKV3-7,IGKV4-1,IGKV5-2,IGKV6-21,IGKV7-3,Ig[kappa],PGBD4P5,RP11-421K23.1,abParts
+    ## 5                                                                                                                                                                                                                                                                                                                                                              AP006222.1,INSRR,NTRK1,SH2D2A,SRGAP2,SRGAP2B,SRGAP2D
+    ## 6                                                                                                                                                                                                                                                                                                                                                       7SK,7SK.155,7SK.232,GOPC,RN7SKP18,RN7SKP51,ROS1,RP1-179P9.3
+    ##                                                                                                                                                                                                                                          annots
+    ## 1                                                                     [RET:FoundationOne_panel,RET:OncomapV4_panel,RET:Oncogene,RET:ArcherDX_panel,RET:OncocartaV1_panel];[ChimerKB,ChimerPub,Cosmic,ChimerSeq];INTRACHROMOSOMAL[chr10:11.02Mb]
+    ## 2               [SLC34A2:Oncogene];[ROS1:Oncogene,ROS1:FoundationOne_panel,ROS1:ArcherDX_panel];[ChimerKB,ChimerSeq,TCGA_StarF2019,CCLE_StarF2019,Klijn_CellLines,GUO2018CR_TCGA,chimerdb_pubmed,ChimerPub,Cosmic];INTERCHROMOSOMAL[chr4--chr6]
+    ## 3                                                     [TACC3:Oncogene];[FGFR3:Oncogene,FGFR3:ArcherDX_panel,FGFR3:FoundationOne_panel,FGFR3:OncomapV4_panel,FGFR3:OncocartaV1_panel];[ChimerPub];INTRACHROMOSOMAL[chr4:0.05Mb];NEIGHBORS[48131]
+    ## 4                                                                                                                                                                                                                                             .
+    ## 5                                                                                                      [NTRK1:FoundationOne_panel,NTRK1:ArcherDX_panel,NTRK1:Oncogene];[ChimerKB,ChimerPub,Cosmic,TCGA_StarF2019];INTRACHROMOSOMAL[chr1:0.68Mb]
+    ## 6 [CD74:Oncogene];[ROS1:Oncogene,ROS1:FoundationOne_panel,ROS1:ArcherDX_panel];[ChimerKB,ChimerSeq,TCGA_StarF2019,Klijn_CellLines,chimerdb_pubmed,DEEPEST2019,GUO2018CR_TCGA,ChimerPub,TumorFusionsNAR2018,Cosmic];INTERCHROMOSOMAL[chr5--chr6]
+    ##   selected_fusion
+    ## 1      KIF5B--RET
+    ## 2   SLC34A2--ROS1
+    ## 3    FGFR3--TACC3
+    ## 4               .
+    ## 5     LMNA--NTRK1
+    ## 6      CD74--ROS1
+    ##                                                      explanation dataset
+    ## 1                  first encounter of TP fusionseeker,KIF5B--RET  ISOseq
+    ## 2               first encounter of TP fusionseeker,SLC34A2--ROS1  ISOseq
+    ## 3 first encounter of TP fusionseeker,FGFR3--TACC3 (TACC3--FGFR3)  ISOseq
+    ## 4    first encounter of FP fusion fusionseeker,AC096579.13--IGKC  ISOseq
+    ## 5                 first encounter of TP fusionseeker,LMNA--NTRK1  ISOseq
+    ## 6                  first encounter of TP fusionseeker,CD74--ROS1  ISOseq
 
 ``` r
 control_fusions = read.table("data/SeraCare_fusion_targets.tsv", header=T, sep="\t") %>% select(FusionName)
@@ -137,346 +137,394 @@ control_fusions_found
 ```
 
     ##          FusionName                   prog   dataset found
-    ## 1        KIF5B--RET            flairfusion    ISOseq  TRUE
-    ## 2        KIF5B--RET ctat-LR-fusion.v0.11.0    ISOseq  TRUE
-    ## 3        KIF5B--RET           fusionseeker    ISOseq  TRUE
-    ## 4        KIF5B--RET                 LongGF    ISOseq  TRUE
-    ## 5        KIF5B--RET                 JAFFAL    ISOseq  TRUE
-    ## 6        KIF5B--RET     flairfusion_v1mods    ISOseq  TRUE
-    ## 7        KIF5B--RET        pbfusion_v0.3.1    ISOseq  TRUE
-    ## 8        KIF5B--RET            flairfusion MASseq_L1  TRUE
-    ## 9        KIF5B--RET ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
-    ## 10       KIF5B--RET           fusionseeker MASseq_L1  TRUE
+    ## 1        KIF5B--RET           fusionseeker    ISOseq  TRUE
+    ## 2        KIF5B--RET        pbfusion_v0.4.0    ISOseq  TRUE
+    ## 3        KIF5B--RET                 LongGF    ISOseq  TRUE
+    ## 4        KIF5B--RET        pbfusion_v0.3.1    ISOseq  TRUE
+    ## 5        KIF5B--RET ctat-LR-fusion.v0.11.0    ISOseq  TRUE
+    ## 6        KIF5B--RET            flairfusion    ISOseq  TRUE
+    ## 7        KIF5B--RET     flairfusion_v1mods    ISOseq  TRUE
+    ## 8        KIF5B--RET                 JAFFAL    ISOseq  TRUE
+    ## 9        KIF5B--RET           fusionseeker MASseq_L1  TRUE
+    ## 10       KIF5B--RET        pbfusion_v0.4.0 MASseq_L1  TRUE
     ## 11       KIF5B--RET                 LongGF MASseq_L1  TRUE
-    ## 12       KIF5B--RET                 JAFFAL MASseq_L1  TRUE
-    ## 13       KIF5B--RET     flairfusion_v1mods MASseq_L1  TRUE
-    ## 14       KIF5B--RET        pbfusion_v0.3.1 MASseq_L1  TRUE
-    ## 15       KIF5B--RET            flairfusion MASseq_L2  TRUE
-    ## 16       KIF5B--RET ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
+    ## 12       KIF5B--RET        pbfusion_v0.3.1 MASseq_L1  TRUE
+    ## 13       KIF5B--RET ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
+    ## 14       KIF5B--RET            flairfusion MASseq_L1  TRUE
+    ## 15       KIF5B--RET     flairfusion_v1mods MASseq_L1  TRUE
+    ## 16       KIF5B--RET                 JAFFAL MASseq_L1  TRUE
     ## 17       KIF5B--RET           fusionseeker MASseq_L2  TRUE
-    ## 18       KIF5B--RET                 LongGF MASseq_L2  TRUE
-    ## 19       KIF5B--RET                 JAFFAL MASseq_L2  TRUE
-    ## 20       KIF5B--RET     flairfusion_v1mods MASseq_L2  TRUE
-    ## 21       KIF5B--RET        pbfusion_v0.3.1 MASseq_L2  TRUE
-    ## 22    SLC34A2--ROS1            flairfusion    ISOseq FALSE
-    ## 23    SLC34A2--ROS1 ctat-LR-fusion.v0.11.0    ISOseq  TRUE
-    ## 24    SLC34A2--ROS1           fusionseeker    ISOseq  TRUE
-    ## 25    SLC34A2--ROS1                 LongGF    ISOseq  TRUE
-    ## 26    SLC34A2--ROS1                 JAFFAL    ISOseq  TRUE
-    ## 27    SLC34A2--ROS1     flairfusion_v1mods    ISOseq FALSE
+    ## 18       KIF5B--RET        pbfusion_v0.4.0 MASseq_L2  TRUE
+    ## 19       KIF5B--RET                 LongGF MASseq_L2  TRUE
+    ## 20       KIF5B--RET        pbfusion_v0.3.1 MASseq_L2  TRUE
+    ## 21       KIF5B--RET ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
+    ## 22       KIF5B--RET            flairfusion MASseq_L2  TRUE
+    ## 23       KIF5B--RET     flairfusion_v1mods MASseq_L2  TRUE
+    ## 24       KIF5B--RET                 JAFFAL MASseq_L2  TRUE
+    ## 25    SLC34A2--ROS1           fusionseeker    ISOseq  TRUE
+    ## 26    SLC34A2--ROS1        pbfusion_v0.4.0    ISOseq  TRUE
+    ## 27    SLC34A2--ROS1                 LongGF    ISOseq  TRUE
     ## 28    SLC34A2--ROS1        pbfusion_v0.3.1    ISOseq  TRUE
-    ## 29    SLC34A2--ROS1            flairfusion MASseq_L1 FALSE
-    ## 30    SLC34A2--ROS1 ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
-    ## 31    SLC34A2--ROS1           fusionseeker MASseq_L1  TRUE
-    ## 32    SLC34A2--ROS1                 LongGF MASseq_L1  TRUE
-    ## 33    SLC34A2--ROS1                 JAFFAL MASseq_L1  TRUE
-    ## 34    SLC34A2--ROS1     flairfusion_v1mods MASseq_L1 FALSE
-    ## 35    SLC34A2--ROS1        pbfusion_v0.3.1 MASseq_L1  TRUE
-    ## 36    SLC34A2--ROS1            flairfusion MASseq_L2 FALSE
-    ## 37    SLC34A2--ROS1 ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
-    ## 38    SLC34A2--ROS1           fusionseeker MASseq_L2  TRUE
-    ## 39    SLC34A2--ROS1                 LongGF MASseq_L2  TRUE
-    ## 40    SLC34A2--ROS1                 JAFFAL MASseq_L2  TRUE
-    ## 41    SLC34A2--ROS1     flairfusion_v1mods MASseq_L2 FALSE
-    ## 42    SLC34A2--ROS1        pbfusion_v0.3.1 MASseq_L2  TRUE
-    ## 43     FGFR3--TACC3            flairfusion    ISOseq  TRUE
-    ## 44     FGFR3--TACC3 ctat-LR-fusion.v0.11.0    ISOseq  TRUE
-    ## 45     FGFR3--TACC3           fusionseeker    ISOseq FALSE
-    ## 46     FGFR3--TACC3                 LongGF    ISOseq FALSE
-    ## 47     FGFR3--TACC3                 JAFFAL    ISOseq  TRUE
-    ## 48     FGFR3--TACC3     flairfusion_v1mods    ISOseq  TRUE
-    ## 49     FGFR3--TACC3        pbfusion_v0.3.1    ISOseq FALSE
-    ## 50     FGFR3--TACC3            flairfusion MASseq_L1  TRUE
-    ## 51     FGFR3--TACC3 ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
-    ## 52     FGFR3--TACC3           fusionseeker MASseq_L1 FALSE
-    ## 53     FGFR3--TACC3                 LongGF MASseq_L1 FALSE
-    ## 54     FGFR3--TACC3                 JAFFAL MASseq_L1  TRUE
-    ## 55     FGFR3--TACC3     flairfusion_v1mods MASseq_L1  TRUE
-    ## 56     FGFR3--TACC3        pbfusion_v0.3.1 MASseq_L1 FALSE
-    ## 57     FGFR3--TACC3            flairfusion MASseq_L2  TRUE
-    ## 58     FGFR3--TACC3 ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
-    ## 59     FGFR3--TACC3           fusionseeker MASseq_L2 FALSE
-    ## 60     FGFR3--TACC3                 LongGF MASseq_L2 FALSE
-    ## 61     FGFR3--TACC3                 JAFFAL MASseq_L2  TRUE
-    ## 62     FGFR3--TACC3     flairfusion_v1mods MASseq_L2  TRUE
-    ## 63     FGFR3--TACC3        pbfusion_v0.3.1 MASseq_L2 FALSE
-    ## 64      LMNA--NTRK1            flairfusion    ISOseq FALSE
-    ## 65      LMNA--NTRK1 ctat-LR-fusion.v0.11.0    ISOseq  TRUE
-    ## 66      LMNA--NTRK1           fusionseeker    ISOseq  TRUE
-    ## 67      LMNA--NTRK1                 LongGF    ISOseq  TRUE
-    ## 68      LMNA--NTRK1                 JAFFAL    ISOseq  TRUE
-    ## 69      LMNA--NTRK1     flairfusion_v1mods    ISOseq FALSE
-    ## 70      LMNA--NTRK1        pbfusion_v0.3.1    ISOseq  TRUE
-    ## 71      LMNA--NTRK1            flairfusion MASseq_L1 FALSE
-    ## 72      LMNA--NTRK1 ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
-    ## 73      LMNA--NTRK1           fusionseeker MASseq_L1  TRUE
-    ## 74      LMNA--NTRK1                 LongGF MASseq_L1  TRUE
-    ## 75      LMNA--NTRK1                 JAFFAL MASseq_L1  TRUE
-    ## 76      LMNA--NTRK1     flairfusion_v1mods MASseq_L1 FALSE
-    ## 77      LMNA--NTRK1        pbfusion_v0.3.1 MASseq_L1  TRUE
-    ## 78      LMNA--NTRK1            flairfusion MASseq_L2 FALSE
-    ## 79      LMNA--NTRK1 ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
-    ## 80      LMNA--NTRK1           fusionseeker MASseq_L2  TRUE
-    ## 81      LMNA--NTRK1                 LongGF MASseq_L2  TRUE
-    ## 82      LMNA--NTRK1                 JAFFAL MASseq_L2  TRUE
-    ## 83      LMNA--NTRK1     flairfusion_v1mods MASseq_L2 FALSE
-    ## 84      LMNA--NTRK1        pbfusion_v0.3.1 MASseq_L2  TRUE
-    ## 85       CD74--ROS1            flairfusion    ISOseq FALSE
-    ## 86       CD74--ROS1 ctat-LR-fusion.v0.11.0    ISOseq  TRUE
-    ## 87       CD74--ROS1           fusionseeker    ISOseq  TRUE
-    ## 88       CD74--ROS1                 LongGF    ISOseq  TRUE
-    ## 89       CD74--ROS1                 JAFFAL    ISOseq  TRUE
-    ## 90       CD74--ROS1     flairfusion_v1mods    ISOseq FALSE
-    ## 91       CD74--ROS1        pbfusion_v0.3.1    ISOseq  TRUE
-    ## 92       CD74--ROS1            flairfusion MASseq_L1 FALSE
-    ## 93       CD74--ROS1 ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
-    ## 94       CD74--ROS1           fusionseeker MASseq_L1  TRUE
-    ## 95       CD74--ROS1                 LongGF MASseq_L1  TRUE
-    ## 96       CD74--ROS1                 JAFFAL MASseq_L1  TRUE
-    ## 97       CD74--ROS1     flairfusion_v1mods MASseq_L1 FALSE
-    ## 98       CD74--ROS1        pbfusion_v0.3.1 MASseq_L1  TRUE
-    ## 99       CD74--ROS1            flairfusion MASseq_L2 FALSE
-    ## 100      CD74--ROS1 ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
-    ## 101      CD74--ROS1           fusionseeker MASseq_L2  TRUE
-    ## 102      CD74--ROS1                 LongGF MASseq_L2  TRUE
-    ## 103      CD74--ROS1                 JAFFAL MASseq_L2  TRUE
-    ## 104      CD74--ROS1     flairfusion_v1mods MASseq_L2 FALSE
-    ## 105      CD74--ROS1        pbfusion_v0.3.1 MASseq_L2  TRUE
-    ## 106    TMPRSS2--ERG            flairfusion    ISOseq FALSE
-    ## 107    TMPRSS2--ERG ctat-LR-fusion.v0.11.0    ISOseq  TRUE
-    ## 108    TMPRSS2--ERG           fusionseeker    ISOseq FALSE
-    ## 109    TMPRSS2--ERG                 LongGF    ISOseq FALSE
-    ## 110    TMPRSS2--ERG                 JAFFAL    ISOseq  TRUE
-    ## 111    TMPRSS2--ERG     flairfusion_v1mods    ISOseq FALSE
-    ## 112    TMPRSS2--ERG        pbfusion_v0.3.1    ISOseq  TRUE
-    ## 113    TMPRSS2--ERG            flairfusion MASseq_L1 FALSE
-    ## 114    TMPRSS2--ERG ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
-    ## 115    TMPRSS2--ERG           fusionseeker MASseq_L1 FALSE
-    ## 116    TMPRSS2--ERG                 LongGF MASseq_L1 FALSE
-    ## 117    TMPRSS2--ERG                 JAFFAL MASseq_L1  TRUE
-    ## 118    TMPRSS2--ERG     flairfusion_v1mods MASseq_L1 FALSE
-    ## 119    TMPRSS2--ERG        pbfusion_v0.3.1 MASseq_L1  TRUE
-    ## 120    TMPRSS2--ERG            flairfusion MASseq_L2 FALSE
-    ## 121    TMPRSS2--ERG ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
-    ## 122    TMPRSS2--ERG           fusionseeker MASseq_L2 FALSE
-    ## 123    TMPRSS2--ERG                 LongGF MASseq_L2 FALSE
-    ## 124    TMPRSS2--ERG                 JAFFAL MASseq_L2  TRUE
-    ## 125    TMPRSS2--ERG     flairfusion_v1mods MASseq_L2 FALSE
-    ## 126    TMPRSS2--ERG        pbfusion_v0.3.1 MASseq_L2  TRUE
-    ## 127      NCOA4--RET            flairfusion    ISOseq FALSE
-    ## 128      NCOA4--RET ctat-LR-fusion.v0.11.0    ISOseq  TRUE
-    ## 129      NCOA4--RET           fusionseeker    ISOseq  TRUE
-    ## 130      NCOA4--RET                 LongGF    ISOseq  TRUE
-    ## 131      NCOA4--RET                 JAFFAL    ISOseq  TRUE
-    ## 132      NCOA4--RET     flairfusion_v1mods    ISOseq FALSE
-    ## 133      NCOA4--RET        pbfusion_v0.3.1    ISOseq  TRUE
-    ## 134      NCOA4--RET            flairfusion MASseq_L1 FALSE
-    ## 135      NCOA4--RET ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
-    ## 136      NCOA4--RET           fusionseeker MASseq_L1  TRUE
-    ## 137      NCOA4--RET                 LongGF MASseq_L1  TRUE
-    ## 138      NCOA4--RET                 JAFFAL MASseq_L1  TRUE
-    ## 139      NCOA4--RET     flairfusion_v1mods MASseq_L1 FALSE
-    ## 140      NCOA4--RET        pbfusion_v0.3.1 MASseq_L1  TRUE
-    ## 141      NCOA4--RET            flairfusion MASseq_L2 FALSE
-    ## 142      NCOA4--RET ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
-    ## 143      NCOA4--RET           fusionseeker MASseq_L2  TRUE
-    ## 144      NCOA4--RET                 LongGF MASseq_L2  TRUE
-    ## 145      NCOA4--RET                 JAFFAL MASseq_L2  TRUE
-    ## 146      NCOA4--RET     flairfusion_v1mods MASseq_L2 FALSE
-    ## 147      NCOA4--RET        pbfusion_v0.3.1 MASseq_L2  TRUE
-    ## 148 FGFR3--BAIAP2L1            flairfusion    ISOseq FALSE
-    ## 149 FGFR3--BAIAP2L1 ctat-LR-fusion.v0.11.0    ISOseq  TRUE
-    ## 150 FGFR3--BAIAP2L1           fusionseeker    ISOseq  TRUE
-    ## 151 FGFR3--BAIAP2L1                 LongGF    ISOseq  TRUE
-    ## 152 FGFR3--BAIAP2L1                 JAFFAL    ISOseq  TRUE
-    ## 153 FGFR3--BAIAP2L1     flairfusion_v1mods    ISOseq FALSE
-    ## 154 FGFR3--BAIAP2L1        pbfusion_v0.3.1    ISOseq  TRUE
-    ## 155 FGFR3--BAIAP2L1            flairfusion MASseq_L1 FALSE
-    ## 156 FGFR3--BAIAP2L1 ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
-    ## 157 FGFR3--BAIAP2L1           fusionseeker MASseq_L1  TRUE
-    ## 158 FGFR3--BAIAP2L1                 LongGF MASseq_L1  TRUE
-    ## 159 FGFR3--BAIAP2L1                 JAFFAL MASseq_L1  TRUE
-    ## 160 FGFR3--BAIAP2L1     flairfusion_v1mods MASseq_L1 FALSE
-    ## 161 FGFR3--BAIAP2L1        pbfusion_v0.3.1 MASseq_L1  TRUE
-    ## 162 FGFR3--BAIAP2L1            flairfusion MASseq_L2 FALSE
-    ## 163 FGFR3--BAIAP2L1 ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
-    ## 164 FGFR3--BAIAP2L1           fusionseeker MASseq_L2  TRUE
-    ## 165 FGFR3--BAIAP2L1                 LongGF MASseq_L2  TRUE
-    ## 166 FGFR3--BAIAP2L1                 JAFFAL MASseq_L2  TRUE
-    ## 167 FGFR3--BAIAP2L1     flairfusion_v1mods MASseq_L2 FALSE
-    ## 168 FGFR3--BAIAP2L1        pbfusion_v0.3.1 MASseq_L2  TRUE
-    ## 169     TPM3--NTRK1            flairfusion    ISOseq  TRUE
-    ## 170     TPM3--NTRK1 ctat-LR-fusion.v0.11.0    ISOseq  TRUE
-    ## 171     TPM3--NTRK1           fusionseeker    ISOseq  TRUE
-    ## 172     TPM3--NTRK1                 LongGF    ISOseq  TRUE
-    ## 173     TPM3--NTRK1                 JAFFAL    ISOseq FALSE
-    ## 174     TPM3--NTRK1     flairfusion_v1mods    ISOseq  TRUE
-    ## 175     TPM3--NTRK1        pbfusion_v0.3.1    ISOseq  TRUE
-    ## 176     TPM3--NTRK1            flairfusion MASseq_L1  TRUE
-    ## 177     TPM3--NTRK1 ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
-    ## 178     TPM3--NTRK1           fusionseeker MASseq_L1  TRUE
-    ## 179     TPM3--NTRK1                 LongGF MASseq_L1  TRUE
-    ## 180     TPM3--NTRK1                 JAFFAL MASseq_L1 FALSE
-    ## 181     TPM3--NTRK1     flairfusion_v1mods MASseq_L1  TRUE
-    ## 182     TPM3--NTRK1        pbfusion_v0.3.1 MASseq_L1  TRUE
-    ## 183     TPM3--NTRK1            flairfusion MASseq_L2  TRUE
-    ## 184     TPM3--NTRK1 ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
-    ## 185     TPM3--NTRK1           fusionseeker MASseq_L2  TRUE
-    ## 186     TPM3--NTRK1                 LongGF MASseq_L2  TRUE
-    ## 187     TPM3--NTRK1                 JAFFAL MASseq_L2 FALSE
-    ## 188     TPM3--NTRK1     flairfusion_v1mods MASseq_L2  TRUE
-    ## 189     TPM3--NTRK1        pbfusion_v0.3.1 MASseq_L2  TRUE
-    ## 190      CCDC6--RET            flairfusion    ISOseq FALSE
-    ## 191      CCDC6--RET ctat-LR-fusion.v0.11.0    ISOseq  TRUE
-    ## 192      CCDC6--RET           fusionseeker    ISOseq  TRUE
-    ## 193      CCDC6--RET                 LongGF    ISOseq FALSE
-    ## 194      CCDC6--RET                 JAFFAL    ISOseq  TRUE
-    ## 195      CCDC6--RET     flairfusion_v1mods    ISOseq FALSE
-    ## 196      CCDC6--RET        pbfusion_v0.3.1    ISOseq  TRUE
-    ## 197      CCDC6--RET            flairfusion MASseq_L1  TRUE
-    ## 198      CCDC6--RET ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
-    ## 199      CCDC6--RET           fusionseeker MASseq_L1  TRUE
-    ## 200      CCDC6--RET                 LongGF MASseq_L1 FALSE
-    ## 201      CCDC6--RET                 JAFFAL MASseq_L1  TRUE
-    ## 202      CCDC6--RET     flairfusion_v1mods MASseq_L1  TRUE
-    ## 203      CCDC6--RET        pbfusion_v0.3.1 MASseq_L1  TRUE
-    ## 204      CCDC6--RET            flairfusion MASseq_L2  TRUE
-    ## 205      CCDC6--RET ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
-    ## 206      CCDC6--RET           fusionseeker MASseq_L2  TRUE
-    ## 207      CCDC6--RET                 LongGF MASseq_L2 FALSE
-    ## 208      CCDC6--RET                 JAFFAL MASseq_L2  TRUE
-    ## 209      CCDC6--RET     flairfusion_v1mods MASseq_L2  TRUE
-    ## 210      CCDC6--RET        pbfusion_v0.3.1 MASseq_L2  TRUE
-    ## 211     PAX8--PPARG            flairfusion    ISOseq FALSE
-    ## 212     PAX8--PPARG ctat-LR-fusion.v0.11.0    ISOseq  TRUE
-    ## 213     PAX8--PPARG           fusionseeker    ISOseq  TRUE
-    ## 214     PAX8--PPARG                 LongGF    ISOseq  TRUE
-    ## 215     PAX8--PPARG                 JAFFAL    ISOseq  TRUE
-    ## 216     PAX8--PPARG     flairfusion_v1mods    ISOseq FALSE
-    ## 217     PAX8--PPARG        pbfusion_v0.3.1    ISOseq  TRUE
-    ## 218     PAX8--PPARG            flairfusion MASseq_L1 FALSE
-    ## 219     PAX8--PPARG ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
-    ## 220     PAX8--PPARG           fusionseeker MASseq_L1  TRUE
-    ## 221     PAX8--PPARG                 LongGF MASseq_L1  TRUE
-    ## 222     PAX8--PPARG                 JAFFAL MASseq_L1  TRUE
-    ## 223     PAX8--PPARG     flairfusion_v1mods MASseq_L1 FALSE
-    ## 224     PAX8--PPARG        pbfusion_v0.3.1 MASseq_L1  TRUE
-    ## 225     PAX8--PPARG            flairfusion MASseq_L2 FALSE
-    ## 226     PAX8--PPARG ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
-    ## 227     PAX8--PPARG           fusionseeker MASseq_L2  TRUE
-    ## 228     PAX8--PPARG                 LongGF MASseq_L2  TRUE
-    ## 229     PAX8--PPARG                 JAFFAL MASseq_L2  TRUE
-    ## 230     PAX8--PPARG     flairfusion_v1mods MASseq_L2 FALSE
-    ## 231     PAX8--PPARG        pbfusion_v0.3.1 MASseq_L2  TRUE
-    ## 232    EGFR--SEPT14            flairfusion    ISOseq FALSE
-    ## 233    EGFR--SEPT14 ctat-LR-fusion.v0.11.0    ISOseq  TRUE
-    ## 234    EGFR--SEPT14           fusionseeker    ISOseq  TRUE
-    ## 235    EGFR--SEPT14                 LongGF    ISOseq  TRUE
-    ## 236    EGFR--SEPT14                 JAFFAL    ISOseq  TRUE
-    ## 237    EGFR--SEPT14     flairfusion_v1mods    ISOseq FALSE
-    ## 238    EGFR--SEPT14        pbfusion_v0.3.1    ISOseq  TRUE
-    ## 239    EGFR--SEPT14            flairfusion MASseq_L1 FALSE
-    ## 240    EGFR--SEPT14 ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
-    ## 241    EGFR--SEPT14           fusionseeker MASseq_L1  TRUE
-    ## 242    EGFR--SEPT14                 LongGF MASseq_L1  TRUE
-    ## 243    EGFR--SEPT14                 JAFFAL MASseq_L1  TRUE
-    ## 244    EGFR--SEPT14     flairfusion_v1mods MASseq_L1 FALSE
-    ## 245    EGFR--SEPT14        pbfusion_v0.3.1 MASseq_L1  TRUE
-    ## 246    EGFR--SEPT14            flairfusion MASseq_L2 FALSE
-    ## 247    EGFR--SEPT14 ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
-    ## 248    EGFR--SEPT14           fusionseeker MASseq_L2  TRUE
-    ## 249    EGFR--SEPT14                 LongGF MASseq_L2  TRUE
-    ## 250    EGFR--SEPT14                 JAFFAL MASseq_L2  TRUE
-    ## 251    EGFR--SEPT14     flairfusion_v1mods MASseq_L2 FALSE
-    ## 252    EGFR--SEPT14        pbfusion_v0.3.1 MASseq_L2  TRUE
-    ## 253   SLC45A3--BRAF            flairfusion    ISOseq FALSE
-    ## 254   SLC45A3--BRAF ctat-LR-fusion.v0.11.0    ISOseq  TRUE
-    ## 255   SLC45A3--BRAF           fusionseeker    ISOseq  TRUE
-    ## 256   SLC45A3--BRAF                 LongGF    ISOseq FALSE
-    ## 257   SLC45A3--BRAF                 JAFFAL    ISOseq  TRUE
-    ## 258   SLC45A3--BRAF     flairfusion_v1mods    ISOseq FALSE
-    ## 259   SLC45A3--BRAF        pbfusion_v0.3.1    ISOseq  TRUE
-    ## 260   SLC45A3--BRAF            flairfusion MASseq_L1 FALSE
-    ## 261   SLC45A3--BRAF ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
-    ## 262   SLC45A3--BRAF           fusionseeker MASseq_L1  TRUE
-    ## 263   SLC45A3--BRAF                 LongGF MASseq_L1 FALSE
-    ## 264   SLC45A3--BRAF                 JAFFAL MASseq_L1  TRUE
-    ## 265   SLC45A3--BRAF     flairfusion_v1mods MASseq_L1 FALSE
-    ## 266   SLC45A3--BRAF        pbfusion_v0.3.1 MASseq_L1  TRUE
-    ## 267   SLC45A3--BRAF            flairfusion MASseq_L2 FALSE
-    ## 268   SLC45A3--BRAF ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
-    ## 269   SLC45A3--BRAF           fusionseeker MASseq_L2  TRUE
-    ## 270   SLC45A3--BRAF                 LongGF MASseq_L2 FALSE
-    ## 271   SLC45A3--BRAF                 JAFFAL MASseq_L2  TRUE
-    ## 272   SLC45A3--BRAF     flairfusion_v1mods MASseq_L2 FALSE
-    ## 273   SLC45A3--BRAF        pbfusion_v0.3.1 MASseq_L2  TRUE
-    ## 274       EML4--ALK            flairfusion    ISOseq  TRUE
-    ## 275       EML4--ALK ctat-LR-fusion.v0.11.0    ISOseq  TRUE
-    ## 276       EML4--ALK           fusionseeker    ISOseq  TRUE
-    ## 277       EML4--ALK                 LongGF    ISOseq  TRUE
-    ## 278       EML4--ALK                 JAFFAL    ISOseq  TRUE
-    ## 279       EML4--ALK     flairfusion_v1mods    ISOseq  TRUE
-    ## 280       EML4--ALK        pbfusion_v0.3.1    ISOseq  TRUE
-    ## 281       EML4--ALK            flairfusion MASseq_L1  TRUE
-    ## 282       EML4--ALK ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
-    ## 283       EML4--ALK           fusionseeker MASseq_L1  TRUE
-    ## 284       EML4--ALK                 LongGF MASseq_L1  TRUE
-    ## 285       EML4--ALK                 JAFFAL MASseq_L1  TRUE
-    ## 286       EML4--ALK     flairfusion_v1mods MASseq_L1  TRUE
-    ## 287       EML4--ALK        pbfusion_v0.3.1 MASseq_L1  TRUE
-    ## 288       EML4--ALK            flairfusion MASseq_L2  TRUE
-    ## 289       EML4--ALK ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
-    ## 290       EML4--ALK           fusionseeker MASseq_L2  TRUE
-    ## 291       EML4--ALK                 LongGF MASseq_L2  TRUE
-    ## 292       EML4--ALK                 JAFFAL MASseq_L2  TRUE
-    ## 293       EML4--ALK     flairfusion_v1mods MASseq_L2  TRUE
-    ## 294       EML4--ALK        pbfusion_v0.3.1 MASseq_L2  TRUE
-    ## 295     ETV6--NTRK3            flairfusion    ISOseq  TRUE
-    ## 296     ETV6--NTRK3 ctat-LR-fusion.v0.11.0    ISOseq  TRUE
-    ## 297     ETV6--NTRK3           fusionseeker    ISOseq  TRUE
-    ## 298     ETV6--NTRK3                 LongGF    ISOseq  TRUE
-    ## 299     ETV6--NTRK3                 JAFFAL    ISOseq  TRUE
-    ## 300     ETV6--NTRK3     flairfusion_v1mods    ISOseq  TRUE
-    ## 301     ETV6--NTRK3        pbfusion_v0.3.1    ISOseq  TRUE
-    ## 302     ETV6--NTRK3            flairfusion MASseq_L1  TRUE
-    ## 303     ETV6--NTRK3 ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
-    ## 304     ETV6--NTRK3           fusionseeker MASseq_L1  TRUE
-    ## 305     ETV6--NTRK3                 LongGF MASseq_L1  TRUE
-    ## 306     ETV6--NTRK3                 JAFFAL MASseq_L1  TRUE
-    ## 307     ETV6--NTRK3     flairfusion_v1mods MASseq_L1  TRUE
-    ## 308     ETV6--NTRK3        pbfusion_v0.3.1 MASseq_L1  TRUE
-    ## 309     ETV6--NTRK3            flairfusion MASseq_L2  TRUE
-    ## 310     ETV6--NTRK3 ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
-    ## 311     ETV6--NTRK3           fusionseeker MASseq_L2  TRUE
-    ## 312     ETV6--NTRK3                 LongGF MASseq_L2  TRUE
-    ## 313     ETV6--NTRK3                 JAFFAL MASseq_L2  TRUE
-    ## 314     ETV6--NTRK3     flairfusion_v1mods MASseq_L2  TRUE
-    ## 315     ETV6--NTRK3        pbfusion_v0.3.1 MASseq_L2  TRUE
-    ## 316      TFG--NTRK1            flairfusion    ISOseq FALSE
-    ## 317      TFG--NTRK1 ctat-LR-fusion.v0.11.0    ISOseq  TRUE
-    ## 318      TFG--NTRK1           fusionseeker    ISOseq  TRUE
-    ## 319      TFG--NTRK1                 LongGF    ISOseq FALSE
-    ## 320      TFG--NTRK1                 JAFFAL    ISOseq  TRUE
-    ## 321      TFG--NTRK1     flairfusion_v1mods    ISOseq FALSE
-    ## 322      TFG--NTRK1        pbfusion_v0.3.1    ISOseq  TRUE
-    ## 323      TFG--NTRK1            flairfusion MASseq_L1 FALSE
-    ## 324      TFG--NTRK1 ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
-    ## 325      TFG--NTRK1           fusionseeker MASseq_L1  TRUE
-    ## 326      TFG--NTRK1                 LongGF MASseq_L1 FALSE
-    ## 327      TFG--NTRK1                 JAFFAL MASseq_L1  TRUE
-    ## 328      TFG--NTRK1     flairfusion_v1mods MASseq_L1 FALSE
-    ## 329      TFG--NTRK1        pbfusion_v0.3.1 MASseq_L1  TRUE
-    ## 330      TFG--NTRK1            flairfusion MASseq_L2 FALSE
-    ## 331      TFG--NTRK1 ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
-    ## 332      TFG--NTRK1           fusionseeker MASseq_L2  TRUE
-    ## 333      TFG--NTRK1                 LongGF MASseq_L2 FALSE
-    ## 334      TFG--NTRK1                 JAFFAL MASseq_L2  TRUE
-    ## 335      TFG--NTRK1     flairfusion_v1mods MASseq_L2 FALSE
-    ## 336      TFG--NTRK1        pbfusion_v0.3.1 MASseq_L2  TRUE
+    ## 29    SLC34A2--ROS1 ctat-LR-fusion.v0.11.0    ISOseq  TRUE
+    ## 30    SLC34A2--ROS1            flairfusion    ISOseq FALSE
+    ## 31    SLC34A2--ROS1     flairfusion_v1mods    ISOseq FALSE
+    ## 32    SLC34A2--ROS1                 JAFFAL    ISOseq  TRUE
+    ## 33    SLC34A2--ROS1           fusionseeker MASseq_L1  TRUE
+    ## 34    SLC34A2--ROS1        pbfusion_v0.4.0 MASseq_L1  TRUE
+    ## 35    SLC34A2--ROS1                 LongGF MASseq_L1  TRUE
+    ## 36    SLC34A2--ROS1        pbfusion_v0.3.1 MASseq_L1  TRUE
+    ## 37    SLC34A2--ROS1 ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
+    ## 38    SLC34A2--ROS1            flairfusion MASseq_L1 FALSE
+    ## 39    SLC34A2--ROS1     flairfusion_v1mods MASseq_L1 FALSE
+    ## 40    SLC34A2--ROS1                 JAFFAL MASseq_L1  TRUE
+    ## 41    SLC34A2--ROS1           fusionseeker MASseq_L2  TRUE
+    ## 42    SLC34A2--ROS1        pbfusion_v0.4.0 MASseq_L2  TRUE
+    ## 43    SLC34A2--ROS1                 LongGF MASseq_L2  TRUE
+    ## 44    SLC34A2--ROS1        pbfusion_v0.3.1 MASseq_L2  TRUE
+    ## 45    SLC34A2--ROS1 ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
+    ## 46    SLC34A2--ROS1            flairfusion MASseq_L2 FALSE
+    ## 47    SLC34A2--ROS1     flairfusion_v1mods MASseq_L2 FALSE
+    ## 48    SLC34A2--ROS1                 JAFFAL MASseq_L2  TRUE
+    ## 49     FGFR3--TACC3           fusionseeker    ISOseq  TRUE
+    ## 50     FGFR3--TACC3        pbfusion_v0.4.0    ISOseq  TRUE
+    ## 51     FGFR3--TACC3                 LongGF    ISOseq  TRUE
+    ## 52     FGFR3--TACC3        pbfusion_v0.3.1    ISOseq FALSE
+    ## 53     FGFR3--TACC3 ctat-LR-fusion.v0.11.0    ISOseq  TRUE
+    ## 54     FGFR3--TACC3            flairfusion    ISOseq  TRUE
+    ## 55     FGFR3--TACC3     flairfusion_v1mods    ISOseq  TRUE
+    ## 56     FGFR3--TACC3                 JAFFAL    ISOseq  TRUE
+    ## 57     FGFR3--TACC3           fusionseeker MASseq_L1  TRUE
+    ## 58     FGFR3--TACC3        pbfusion_v0.4.0 MASseq_L1  TRUE
+    ## 59     FGFR3--TACC3                 LongGF MASseq_L1  TRUE
+    ## 60     FGFR3--TACC3        pbfusion_v0.3.1 MASseq_L1 FALSE
+    ## 61     FGFR3--TACC3 ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
+    ## 62     FGFR3--TACC3            flairfusion MASseq_L1  TRUE
+    ## 63     FGFR3--TACC3     flairfusion_v1mods MASseq_L1  TRUE
+    ## 64     FGFR3--TACC3                 JAFFAL MASseq_L1  TRUE
+    ## 65     FGFR3--TACC3           fusionseeker MASseq_L2  TRUE
+    ## 66     FGFR3--TACC3        pbfusion_v0.4.0 MASseq_L2  TRUE
+    ## 67     FGFR3--TACC3                 LongGF MASseq_L2  TRUE
+    ## 68     FGFR3--TACC3        pbfusion_v0.3.1 MASseq_L2 FALSE
+    ## 69     FGFR3--TACC3 ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
+    ## 70     FGFR3--TACC3            flairfusion MASseq_L2  TRUE
+    ## 71     FGFR3--TACC3     flairfusion_v1mods MASseq_L2  TRUE
+    ## 72     FGFR3--TACC3                 JAFFAL MASseq_L2  TRUE
+    ## 73      LMNA--NTRK1           fusionseeker    ISOseq  TRUE
+    ## 74      LMNA--NTRK1        pbfusion_v0.4.0    ISOseq  TRUE
+    ## 75      LMNA--NTRK1                 LongGF    ISOseq  TRUE
+    ## 76      LMNA--NTRK1        pbfusion_v0.3.1    ISOseq  TRUE
+    ## 77      LMNA--NTRK1 ctat-LR-fusion.v0.11.0    ISOseq  TRUE
+    ## 78      LMNA--NTRK1            flairfusion    ISOseq FALSE
+    ## 79      LMNA--NTRK1     flairfusion_v1mods    ISOseq FALSE
+    ## 80      LMNA--NTRK1                 JAFFAL    ISOseq  TRUE
+    ## 81      LMNA--NTRK1           fusionseeker MASseq_L1  TRUE
+    ## 82      LMNA--NTRK1        pbfusion_v0.4.0 MASseq_L1  TRUE
+    ## 83      LMNA--NTRK1                 LongGF MASseq_L1  TRUE
+    ## 84      LMNA--NTRK1        pbfusion_v0.3.1 MASseq_L1  TRUE
+    ## 85      LMNA--NTRK1 ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
+    ## 86      LMNA--NTRK1            flairfusion MASseq_L1 FALSE
+    ## 87      LMNA--NTRK1     flairfusion_v1mods MASseq_L1 FALSE
+    ## 88      LMNA--NTRK1                 JAFFAL MASseq_L1  TRUE
+    ## 89      LMNA--NTRK1           fusionseeker MASseq_L2  TRUE
+    ## 90      LMNA--NTRK1        pbfusion_v0.4.0 MASseq_L2  TRUE
+    ## 91      LMNA--NTRK1                 LongGF MASseq_L2  TRUE
+    ## 92      LMNA--NTRK1        pbfusion_v0.3.1 MASseq_L2  TRUE
+    ## 93      LMNA--NTRK1 ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
+    ## 94      LMNA--NTRK1            flairfusion MASseq_L2 FALSE
+    ## 95      LMNA--NTRK1     flairfusion_v1mods MASseq_L2 FALSE
+    ## 96      LMNA--NTRK1                 JAFFAL MASseq_L2  TRUE
+    ## 97       CD74--ROS1           fusionseeker    ISOseq  TRUE
+    ## 98       CD74--ROS1        pbfusion_v0.4.0    ISOseq  TRUE
+    ## 99       CD74--ROS1                 LongGF    ISOseq  TRUE
+    ## 100      CD74--ROS1        pbfusion_v0.3.1    ISOseq  TRUE
+    ## 101      CD74--ROS1 ctat-LR-fusion.v0.11.0    ISOseq  TRUE
+    ## 102      CD74--ROS1            flairfusion    ISOseq FALSE
+    ## 103      CD74--ROS1     flairfusion_v1mods    ISOseq FALSE
+    ## 104      CD74--ROS1                 JAFFAL    ISOseq  TRUE
+    ## 105      CD74--ROS1           fusionseeker MASseq_L1  TRUE
+    ## 106      CD74--ROS1        pbfusion_v0.4.0 MASseq_L1  TRUE
+    ## 107      CD74--ROS1                 LongGF MASseq_L1  TRUE
+    ## 108      CD74--ROS1        pbfusion_v0.3.1 MASseq_L1  TRUE
+    ## 109      CD74--ROS1 ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
+    ## 110      CD74--ROS1            flairfusion MASseq_L1 FALSE
+    ## 111      CD74--ROS1     flairfusion_v1mods MASseq_L1 FALSE
+    ## 112      CD74--ROS1                 JAFFAL MASseq_L1  TRUE
+    ## 113      CD74--ROS1           fusionseeker MASseq_L2  TRUE
+    ## 114      CD74--ROS1        pbfusion_v0.4.0 MASseq_L2  TRUE
+    ## 115      CD74--ROS1                 LongGF MASseq_L2  TRUE
+    ## 116      CD74--ROS1        pbfusion_v0.3.1 MASseq_L2  TRUE
+    ## 117      CD74--ROS1 ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
+    ## 118      CD74--ROS1            flairfusion MASseq_L2 FALSE
+    ## 119      CD74--ROS1     flairfusion_v1mods MASseq_L2 FALSE
+    ## 120      CD74--ROS1                 JAFFAL MASseq_L2  TRUE
+    ## 121    TMPRSS2--ERG           fusionseeker    ISOseq FALSE
+    ## 122    TMPRSS2--ERG        pbfusion_v0.4.0    ISOseq  TRUE
+    ## 123    TMPRSS2--ERG                 LongGF    ISOseq FALSE
+    ## 124    TMPRSS2--ERG        pbfusion_v0.3.1    ISOseq  TRUE
+    ## 125    TMPRSS2--ERG ctat-LR-fusion.v0.11.0    ISOseq  TRUE
+    ## 126    TMPRSS2--ERG            flairfusion    ISOseq FALSE
+    ## 127    TMPRSS2--ERG     flairfusion_v1mods    ISOseq FALSE
+    ## 128    TMPRSS2--ERG                 JAFFAL    ISOseq  TRUE
+    ## 129    TMPRSS2--ERG           fusionseeker MASseq_L1 FALSE
+    ## 130    TMPRSS2--ERG        pbfusion_v0.4.0 MASseq_L1  TRUE
+    ## 131    TMPRSS2--ERG                 LongGF MASseq_L1 FALSE
+    ## 132    TMPRSS2--ERG        pbfusion_v0.3.1 MASseq_L1  TRUE
+    ## 133    TMPRSS2--ERG ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
+    ## 134    TMPRSS2--ERG            flairfusion MASseq_L1 FALSE
+    ## 135    TMPRSS2--ERG     flairfusion_v1mods MASseq_L1 FALSE
+    ## 136    TMPRSS2--ERG                 JAFFAL MASseq_L1  TRUE
+    ## 137    TMPRSS2--ERG           fusionseeker MASseq_L2 FALSE
+    ## 138    TMPRSS2--ERG        pbfusion_v0.4.0 MASseq_L2  TRUE
+    ## 139    TMPRSS2--ERG                 LongGF MASseq_L2 FALSE
+    ## 140    TMPRSS2--ERG        pbfusion_v0.3.1 MASseq_L2  TRUE
+    ## 141    TMPRSS2--ERG ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
+    ## 142    TMPRSS2--ERG            flairfusion MASseq_L2 FALSE
+    ## 143    TMPRSS2--ERG     flairfusion_v1mods MASseq_L2 FALSE
+    ## 144    TMPRSS2--ERG                 JAFFAL MASseq_L2  TRUE
+    ## 145      NCOA4--RET           fusionseeker    ISOseq  TRUE
+    ## 146      NCOA4--RET        pbfusion_v0.4.0    ISOseq  TRUE
+    ## 147      NCOA4--RET                 LongGF    ISOseq  TRUE
+    ## 148      NCOA4--RET        pbfusion_v0.3.1    ISOseq  TRUE
+    ## 149      NCOA4--RET ctat-LR-fusion.v0.11.0    ISOseq  TRUE
+    ## 150      NCOA4--RET            flairfusion    ISOseq FALSE
+    ## 151      NCOA4--RET     flairfusion_v1mods    ISOseq FALSE
+    ## 152      NCOA4--RET                 JAFFAL    ISOseq  TRUE
+    ## 153      NCOA4--RET           fusionseeker MASseq_L1  TRUE
+    ## 154      NCOA4--RET        pbfusion_v0.4.0 MASseq_L1  TRUE
+    ## 155      NCOA4--RET                 LongGF MASseq_L1  TRUE
+    ## 156      NCOA4--RET        pbfusion_v0.3.1 MASseq_L1  TRUE
+    ## 157      NCOA4--RET ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
+    ## 158      NCOA4--RET            flairfusion MASseq_L1 FALSE
+    ## 159      NCOA4--RET     flairfusion_v1mods MASseq_L1 FALSE
+    ## 160      NCOA4--RET                 JAFFAL MASseq_L1  TRUE
+    ## 161      NCOA4--RET           fusionseeker MASseq_L2  TRUE
+    ## 162      NCOA4--RET        pbfusion_v0.4.0 MASseq_L2  TRUE
+    ## 163      NCOA4--RET                 LongGF MASseq_L2  TRUE
+    ## 164      NCOA4--RET        pbfusion_v0.3.1 MASseq_L2  TRUE
+    ## 165      NCOA4--RET ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
+    ## 166      NCOA4--RET            flairfusion MASseq_L2 FALSE
+    ## 167      NCOA4--RET     flairfusion_v1mods MASseq_L2 FALSE
+    ## 168      NCOA4--RET                 JAFFAL MASseq_L2  TRUE
+    ## 169 FGFR3--BAIAP2L1           fusionseeker    ISOseq  TRUE
+    ## 170 FGFR3--BAIAP2L1        pbfusion_v0.4.0    ISOseq  TRUE
+    ## 171 FGFR3--BAIAP2L1                 LongGF    ISOseq  TRUE
+    ## 172 FGFR3--BAIAP2L1        pbfusion_v0.3.1    ISOseq  TRUE
+    ## 173 FGFR3--BAIAP2L1 ctat-LR-fusion.v0.11.0    ISOseq  TRUE
+    ## 174 FGFR3--BAIAP2L1            flairfusion    ISOseq FALSE
+    ## 175 FGFR3--BAIAP2L1     flairfusion_v1mods    ISOseq FALSE
+    ## 176 FGFR3--BAIAP2L1                 JAFFAL    ISOseq  TRUE
+    ## 177 FGFR3--BAIAP2L1           fusionseeker MASseq_L1  TRUE
+    ## 178 FGFR3--BAIAP2L1        pbfusion_v0.4.0 MASseq_L1  TRUE
+    ## 179 FGFR3--BAIAP2L1                 LongGF MASseq_L1  TRUE
+    ## 180 FGFR3--BAIAP2L1        pbfusion_v0.3.1 MASseq_L1  TRUE
+    ## 181 FGFR3--BAIAP2L1 ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
+    ## 182 FGFR3--BAIAP2L1            flairfusion MASseq_L1 FALSE
+    ## 183 FGFR3--BAIAP2L1     flairfusion_v1mods MASseq_L1 FALSE
+    ## 184 FGFR3--BAIAP2L1                 JAFFAL MASseq_L1  TRUE
+    ## 185 FGFR3--BAIAP2L1           fusionseeker MASseq_L2  TRUE
+    ## 186 FGFR3--BAIAP2L1        pbfusion_v0.4.0 MASseq_L2  TRUE
+    ## 187 FGFR3--BAIAP2L1                 LongGF MASseq_L2  TRUE
+    ## 188 FGFR3--BAIAP2L1        pbfusion_v0.3.1 MASseq_L2  TRUE
+    ## 189 FGFR3--BAIAP2L1 ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
+    ## 190 FGFR3--BAIAP2L1            flairfusion MASseq_L2 FALSE
+    ## 191 FGFR3--BAIAP2L1     flairfusion_v1mods MASseq_L2 FALSE
+    ## 192 FGFR3--BAIAP2L1                 JAFFAL MASseq_L2  TRUE
+    ## 193     TPM3--NTRK1           fusionseeker    ISOseq  TRUE
+    ## 194     TPM3--NTRK1        pbfusion_v0.4.0    ISOseq  TRUE
+    ## 195     TPM3--NTRK1                 LongGF    ISOseq  TRUE
+    ## 196     TPM3--NTRK1        pbfusion_v0.3.1    ISOseq  TRUE
+    ## 197     TPM3--NTRK1 ctat-LR-fusion.v0.11.0    ISOseq  TRUE
+    ## 198     TPM3--NTRK1            flairfusion    ISOseq  TRUE
+    ## 199     TPM3--NTRK1     flairfusion_v1mods    ISOseq  TRUE
+    ## 200     TPM3--NTRK1                 JAFFAL    ISOseq FALSE
+    ## 201     TPM3--NTRK1           fusionseeker MASseq_L1  TRUE
+    ## 202     TPM3--NTRK1        pbfusion_v0.4.0 MASseq_L1  TRUE
+    ## 203     TPM3--NTRK1                 LongGF MASseq_L1  TRUE
+    ## 204     TPM3--NTRK1        pbfusion_v0.3.1 MASseq_L1  TRUE
+    ## 205     TPM3--NTRK1 ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
+    ## 206     TPM3--NTRK1            flairfusion MASseq_L1  TRUE
+    ## 207     TPM3--NTRK1     flairfusion_v1mods MASseq_L1  TRUE
+    ## 208     TPM3--NTRK1                 JAFFAL MASseq_L1 FALSE
+    ## 209     TPM3--NTRK1           fusionseeker MASseq_L2  TRUE
+    ## 210     TPM3--NTRK1        pbfusion_v0.4.0 MASseq_L2  TRUE
+    ## 211     TPM3--NTRK1                 LongGF MASseq_L2  TRUE
+    ## 212     TPM3--NTRK1        pbfusion_v0.3.1 MASseq_L2  TRUE
+    ## 213     TPM3--NTRK1 ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
+    ## 214     TPM3--NTRK1            flairfusion MASseq_L2  TRUE
+    ## 215     TPM3--NTRK1     flairfusion_v1mods MASseq_L2  TRUE
+    ## 216     TPM3--NTRK1                 JAFFAL MASseq_L2 FALSE
+    ## 217      CCDC6--RET           fusionseeker    ISOseq  TRUE
+    ## 218      CCDC6--RET        pbfusion_v0.4.0    ISOseq  TRUE
+    ## 219      CCDC6--RET                 LongGF    ISOseq FALSE
+    ## 220      CCDC6--RET        pbfusion_v0.3.1    ISOseq  TRUE
+    ## 221      CCDC6--RET ctat-LR-fusion.v0.11.0    ISOseq  TRUE
+    ## 222      CCDC6--RET            flairfusion    ISOseq FALSE
+    ## 223      CCDC6--RET     flairfusion_v1mods    ISOseq FALSE
+    ## 224      CCDC6--RET                 JAFFAL    ISOseq  TRUE
+    ## 225      CCDC6--RET           fusionseeker MASseq_L1  TRUE
+    ## 226      CCDC6--RET        pbfusion_v0.4.0 MASseq_L1  TRUE
+    ## 227      CCDC6--RET                 LongGF MASseq_L1 FALSE
+    ## 228      CCDC6--RET        pbfusion_v0.3.1 MASseq_L1  TRUE
+    ## 229      CCDC6--RET ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
+    ## 230      CCDC6--RET            flairfusion MASseq_L1  TRUE
+    ## 231      CCDC6--RET     flairfusion_v1mods MASseq_L1  TRUE
+    ## 232      CCDC6--RET                 JAFFAL MASseq_L1  TRUE
+    ## 233      CCDC6--RET           fusionseeker MASseq_L2  TRUE
+    ## 234      CCDC6--RET        pbfusion_v0.4.0 MASseq_L2  TRUE
+    ## 235      CCDC6--RET                 LongGF MASseq_L2 FALSE
+    ## 236      CCDC6--RET        pbfusion_v0.3.1 MASseq_L2  TRUE
+    ## 237      CCDC6--RET ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
+    ## 238      CCDC6--RET            flairfusion MASseq_L2  TRUE
+    ## 239      CCDC6--RET     flairfusion_v1mods MASseq_L2  TRUE
+    ## 240      CCDC6--RET                 JAFFAL MASseq_L2  TRUE
+    ## 241     PAX8--PPARG           fusionseeker    ISOseq  TRUE
+    ## 242     PAX8--PPARG        pbfusion_v0.4.0    ISOseq  TRUE
+    ## 243     PAX8--PPARG                 LongGF    ISOseq  TRUE
+    ## 244     PAX8--PPARG        pbfusion_v0.3.1    ISOseq  TRUE
+    ## 245     PAX8--PPARG ctat-LR-fusion.v0.11.0    ISOseq  TRUE
+    ## 246     PAX8--PPARG            flairfusion    ISOseq FALSE
+    ## 247     PAX8--PPARG     flairfusion_v1mods    ISOseq FALSE
+    ## 248     PAX8--PPARG                 JAFFAL    ISOseq  TRUE
+    ## 249     PAX8--PPARG           fusionseeker MASseq_L1  TRUE
+    ## 250     PAX8--PPARG        pbfusion_v0.4.0 MASseq_L1  TRUE
+    ## 251     PAX8--PPARG                 LongGF MASseq_L1  TRUE
+    ## 252     PAX8--PPARG        pbfusion_v0.3.1 MASseq_L1  TRUE
+    ## 253     PAX8--PPARG ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
+    ## 254     PAX8--PPARG            flairfusion MASseq_L1 FALSE
+    ## 255     PAX8--PPARG     flairfusion_v1mods MASseq_L1 FALSE
+    ## 256     PAX8--PPARG                 JAFFAL MASseq_L1  TRUE
+    ## 257     PAX8--PPARG           fusionseeker MASseq_L2  TRUE
+    ## 258     PAX8--PPARG        pbfusion_v0.4.0 MASseq_L2  TRUE
+    ## 259     PAX8--PPARG                 LongGF MASseq_L2  TRUE
+    ## 260     PAX8--PPARG        pbfusion_v0.3.1 MASseq_L2  TRUE
+    ## 261     PAX8--PPARG ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
+    ## 262     PAX8--PPARG            flairfusion MASseq_L2 FALSE
+    ## 263     PAX8--PPARG     flairfusion_v1mods MASseq_L2 FALSE
+    ## 264     PAX8--PPARG                 JAFFAL MASseq_L2  TRUE
+    ## 265    EGFR--SEPT14           fusionseeker    ISOseq  TRUE
+    ## 266    EGFR--SEPT14        pbfusion_v0.4.0    ISOseq  TRUE
+    ## 267    EGFR--SEPT14                 LongGF    ISOseq  TRUE
+    ## 268    EGFR--SEPT14        pbfusion_v0.3.1    ISOseq  TRUE
+    ## 269    EGFR--SEPT14 ctat-LR-fusion.v0.11.0    ISOseq  TRUE
+    ## 270    EGFR--SEPT14            flairfusion    ISOseq FALSE
+    ## 271    EGFR--SEPT14     flairfusion_v1mods    ISOseq FALSE
+    ## 272    EGFR--SEPT14                 JAFFAL    ISOseq  TRUE
+    ## 273    EGFR--SEPT14           fusionseeker MASseq_L1  TRUE
+    ## 274    EGFR--SEPT14        pbfusion_v0.4.0 MASseq_L1  TRUE
+    ## 275    EGFR--SEPT14                 LongGF MASseq_L1  TRUE
+    ## 276    EGFR--SEPT14        pbfusion_v0.3.1 MASseq_L1  TRUE
+    ## 277    EGFR--SEPT14 ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
+    ## 278    EGFR--SEPT14            flairfusion MASseq_L1 FALSE
+    ## 279    EGFR--SEPT14     flairfusion_v1mods MASseq_L1 FALSE
+    ## 280    EGFR--SEPT14                 JAFFAL MASseq_L1  TRUE
+    ## 281    EGFR--SEPT14           fusionseeker MASseq_L2  TRUE
+    ## 282    EGFR--SEPT14        pbfusion_v0.4.0 MASseq_L2  TRUE
+    ## 283    EGFR--SEPT14                 LongGF MASseq_L2  TRUE
+    ## 284    EGFR--SEPT14        pbfusion_v0.3.1 MASseq_L2  TRUE
+    ## 285    EGFR--SEPT14 ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
+    ## 286    EGFR--SEPT14            flairfusion MASseq_L2 FALSE
+    ## 287    EGFR--SEPT14     flairfusion_v1mods MASseq_L2 FALSE
+    ## 288    EGFR--SEPT14                 JAFFAL MASseq_L2  TRUE
+    ## 289   SLC45A3--BRAF           fusionseeker    ISOseq  TRUE
+    ## 290   SLC45A3--BRAF        pbfusion_v0.4.0    ISOseq  TRUE
+    ## 291   SLC45A3--BRAF                 LongGF    ISOseq FALSE
+    ## 292   SLC45A3--BRAF        pbfusion_v0.3.1    ISOseq  TRUE
+    ## 293   SLC45A3--BRAF ctat-LR-fusion.v0.11.0    ISOseq  TRUE
+    ## 294   SLC45A3--BRAF            flairfusion    ISOseq FALSE
+    ## 295   SLC45A3--BRAF     flairfusion_v1mods    ISOseq FALSE
+    ## 296   SLC45A3--BRAF                 JAFFAL    ISOseq  TRUE
+    ## 297   SLC45A3--BRAF           fusionseeker MASseq_L1  TRUE
+    ## 298   SLC45A3--BRAF        pbfusion_v0.4.0 MASseq_L1  TRUE
+    ## 299   SLC45A3--BRAF                 LongGF MASseq_L1 FALSE
+    ## 300   SLC45A3--BRAF        pbfusion_v0.3.1 MASseq_L1  TRUE
+    ## 301   SLC45A3--BRAF ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
+    ## 302   SLC45A3--BRAF            flairfusion MASseq_L1 FALSE
+    ## 303   SLC45A3--BRAF     flairfusion_v1mods MASseq_L1 FALSE
+    ## 304   SLC45A3--BRAF                 JAFFAL MASseq_L1  TRUE
+    ## 305   SLC45A3--BRAF           fusionseeker MASseq_L2  TRUE
+    ## 306   SLC45A3--BRAF        pbfusion_v0.4.0 MASseq_L2  TRUE
+    ## 307   SLC45A3--BRAF                 LongGF MASseq_L2 FALSE
+    ## 308   SLC45A3--BRAF        pbfusion_v0.3.1 MASseq_L2  TRUE
+    ## 309   SLC45A3--BRAF ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
+    ## 310   SLC45A3--BRAF            flairfusion MASseq_L2 FALSE
+    ## 311   SLC45A3--BRAF     flairfusion_v1mods MASseq_L2 FALSE
+    ## 312   SLC45A3--BRAF                 JAFFAL MASseq_L2  TRUE
+    ## 313       EML4--ALK           fusionseeker    ISOseq  TRUE
+    ## 314       EML4--ALK        pbfusion_v0.4.0    ISOseq  TRUE
+    ## 315       EML4--ALK                 LongGF    ISOseq  TRUE
+    ## 316       EML4--ALK        pbfusion_v0.3.1    ISOseq  TRUE
+    ## 317       EML4--ALK ctat-LR-fusion.v0.11.0    ISOseq  TRUE
+    ## 318       EML4--ALK            flairfusion    ISOseq  TRUE
+    ## 319       EML4--ALK     flairfusion_v1mods    ISOseq  TRUE
+    ## 320       EML4--ALK                 JAFFAL    ISOseq  TRUE
+    ## 321       EML4--ALK           fusionseeker MASseq_L1  TRUE
+    ## 322       EML4--ALK        pbfusion_v0.4.0 MASseq_L1  TRUE
+    ## 323       EML4--ALK                 LongGF MASseq_L1  TRUE
+    ## 324       EML4--ALK        pbfusion_v0.3.1 MASseq_L1  TRUE
+    ## 325       EML4--ALK ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
+    ## 326       EML4--ALK            flairfusion MASseq_L1  TRUE
+    ## 327       EML4--ALK     flairfusion_v1mods MASseq_L1  TRUE
+    ## 328       EML4--ALK                 JAFFAL MASseq_L1  TRUE
+    ## 329       EML4--ALK           fusionseeker MASseq_L2  TRUE
+    ## 330       EML4--ALK        pbfusion_v0.4.0 MASseq_L2  TRUE
+    ## 331       EML4--ALK                 LongGF MASseq_L2  TRUE
+    ## 332       EML4--ALK        pbfusion_v0.3.1 MASseq_L2  TRUE
+    ## 333       EML4--ALK ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
+    ## 334       EML4--ALK            flairfusion MASseq_L2  TRUE
+    ## 335       EML4--ALK     flairfusion_v1mods MASseq_L2  TRUE
+    ## 336       EML4--ALK                 JAFFAL MASseq_L2  TRUE
+    ## 337     ETV6--NTRK3           fusionseeker    ISOseq  TRUE
+    ## 338     ETV6--NTRK3        pbfusion_v0.4.0    ISOseq  TRUE
+    ## 339     ETV6--NTRK3                 LongGF    ISOseq  TRUE
+    ## 340     ETV6--NTRK3        pbfusion_v0.3.1    ISOseq  TRUE
+    ## 341     ETV6--NTRK3 ctat-LR-fusion.v0.11.0    ISOseq  TRUE
+    ## 342     ETV6--NTRK3            flairfusion    ISOseq  TRUE
+    ## 343     ETV6--NTRK3     flairfusion_v1mods    ISOseq  TRUE
+    ## 344     ETV6--NTRK3                 JAFFAL    ISOseq  TRUE
+    ## 345     ETV6--NTRK3           fusionseeker MASseq_L1  TRUE
+    ## 346     ETV6--NTRK3        pbfusion_v0.4.0 MASseq_L1  TRUE
+    ## 347     ETV6--NTRK3                 LongGF MASseq_L1  TRUE
+    ## 348     ETV6--NTRK3        pbfusion_v0.3.1 MASseq_L1  TRUE
+    ## 349     ETV6--NTRK3 ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
+    ## 350     ETV6--NTRK3            flairfusion MASseq_L1  TRUE
+    ## 351     ETV6--NTRK3     flairfusion_v1mods MASseq_L1  TRUE
+    ## 352     ETV6--NTRK3                 JAFFAL MASseq_L1  TRUE
+    ## 353     ETV6--NTRK3           fusionseeker MASseq_L2  TRUE
+    ## 354     ETV6--NTRK3        pbfusion_v0.4.0 MASseq_L2  TRUE
+    ## 355     ETV6--NTRK3                 LongGF MASseq_L2  TRUE
+    ## 356     ETV6--NTRK3        pbfusion_v0.3.1 MASseq_L2  TRUE
+    ## 357     ETV6--NTRK3 ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
+    ## 358     ETV6--NTRK3            flairfusion MASseq_L2  TRUE
+    ## 359     ETV6--NTRK3     flairfusion_v1mods MASseq_L2  TRUE
+    ## 360     ETV6--NTRK3                 JAFFAL MASseq_L2  TRUE
+    ## 361      TFG--NTRK1           fusionseeker    ISOseq  TRUE
+    ## 362      TFG--NTRK1        pbfusion_v0.4.0    ISOseq  TRUE
+    ## 363      TFG--NTRK1                 LongGF    ISOseq FALSE
+    ## 364      TFG--NTRK1        pbfusion_v0.3.1    ISOseq  TRUE
+    ## 365      TFG--NTRK1 ctat-LR-fusion.v0.11.0    ISOseq  TRUE
+    ## 366      TFG--NTRK1            flairfusion    ISOseq FALSE
+    ## 367      TFG--NTRK1     flairfusion_v1mods    ISOseq FALSE
+    ## 368      TFG--NTRK1                 JAFFAL    ISOseq  TRUE
+    ## 369      TFG--NTRK1           fusionseeker MASseq_L1  TRUE
+    ## 370      TFG--NTRK1        pbfusion_v0.4.0 MASseq_L1  TRUE
+    ## 371      TFG--NTRK1                 LongGF MASseq_L1 FALSE
+    ## 372      TFG--NTRK1        pbfusion_v0.3.1 MASseq_L1  TRUE
+    ## 373      TFG--NTRK1 ctat-LR-fusion.v0.11.0 MASseq_L1  TRUE
+    ## 374      TFG--NTRK1            flairfusion MASseq_L1 FALSE
+    ## 375      TFG--NTRK1     flairfusion_v1mods MASseq_L1 FALSE
+    ## 376      TFG--NTRK1                 JAFFAL MASseq_L1  TRUE
+    ## 377      TFG--NTRK1           fusionseeker MASseq_L2  TRUE
+    ## 378      TFG--NTRK1        pbfusion_v0.4.0 MASseq_L2  TRUE
+    ## 379      TFG--NTRK1                 LongGF MASseq_L2 FALSE
+    ## 380      TFG--NTRK1        pbfusion_v0.3.1 MASseq_L2  TRUE
+    ## 381      TFG--NTRK1 ctat-LR-fusion.v0.11.0 MASseq_L2  TRUE
+    ## 382      TFG--NTRK1            flairfusion MASseq_L2 FALSE
+    ## 383      TFG--NTRK1     flairfusion_v1mods MASseq_L2 FALSE
+    ## 384      TFG--NTRK1                 JAFFAL MASseq_L2  TRUE
 
 ``` r
 control_fusions_found %>%  filter(! grepl("flairfusion", prog)) %>%
-    mutate(prog = factor(prog, levels = c('ctat-LR-fusion.v0.11.0', 'fusionseeker', 'LongGF', 'JAFFAL', 'pbfusion_v0.3.1'))) %>%
+    mutate(prog = factor(prog, levels = c('ctat-LR-fusion.v0.11.0', 'fusionseeker', 'LongGF', 'JAFFAL', 'pbfusion_v0.3.1', 'pbfusion_v0.4.0'))) %>%
     mutate(prog_data = paste(prog, dataset)) %>%
     ggplot(aes(x=FusionName, y=reorder(prog_data, desc(prog_data)))) +
     geom_tile(aes(fill=found), color='black') + 

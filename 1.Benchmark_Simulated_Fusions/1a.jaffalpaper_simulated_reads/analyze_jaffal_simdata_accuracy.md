@@ -19,6 +19,7 @@ data = bind_rows(strict_results,
 ``` r
 data = data %>% filter(prog %in% c(
                                    'pbfusion_v0.3.1',
+                                   'pbfusion_v0.4.0',
                                    'fusionseeker_s1',
                                    'LongGF',
                                    'JAFFAL',
