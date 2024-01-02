@@ -1,0 +1,195 @@
+---
+title: "consolidate_fusion_predictions"
+author: "bhaas"
+date: '2023-09-28'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(spgs)
+```
+
+
+```{r}
+
+# making output files as:  sample_name + filename_core + operation 
+filename_core = "melanoma_sc"
+
+
+```
+
+
+```{r}
+
+
+
+get_StarF_data = function(starF_preds_file) {
+    
+    
+    starF_data = read.table(starF_preds_file, sep="\t", header=T, stringsAsFactors = F, com='')
+
+    starF_data = starF_data %>% 
+        rename(FusionName=X.FusionName) %>%
+        select(FusionName, LeftBreakpoint, RightBreakpoint, JunctionReads) %>%
+        mutate(JunctionReads = str_split(JunctionReads, ",")) %>%
+        unnest(JunctionReads) %>%
+        separate(JunctionReads, c('cell_barcode', 'umi', 'read_name'), "\\^") %>%
+        mutate(method = "STAR-Fusion")
+    
+    return(starF_data)
+        
+}
+    
+
+
+
+get_FI_data = function(FI_preds_file) {
+    
+    FI_data = read.table(FI_preds_file, sep="\t", stringsAsFactors = F, header=T, com='')
+    
+    FI_data = FI_data %>% 
+        rename(FusionName=X.FusionName) %>%
+        select(FusionName, LeftBreakpoint, RightBreakpoint, JunctionReads) %>%
+        mutate(JunctionReads = str_split(JunctionReads, ",")) %>%
+        unnest(JunctionReads) %>%
+        separate(JunctionReads, c('cell_barcode', 'umi', 'read_name'), "\\^") %>%
+        mutate(method="FusionInspector")
+    
+    return(FI_data)
+}
+
+
+get_ctat_LRF_data = function(ctat_LRF_preds_file) {
+    
+    ctat_LRF_data = read.table(ctat_LRF_preds_file, sep="\t", stringsAsFactors = F, header=T, com='')
+    
+    ctat_LRF_data = ctat_LRF_data %>% 
+        rename(FusionName=X.FusionName, JunctionReads=LR_accessions) %>%
+        select(FusionName, LeftBreakpoint, RightBreakpoint, JunctionReads) %>%
+        mutate(JunctionReads = str_split(JunctionReads, ",")) %>%
+        unnest(JunctionReads) %>%
+        separate(JunctionReads, c('cell_barcode', 'umi', 'read_name'), "\\^") %>%
+        mutate(method="ctat-LR-fusion") 
+        
+    
+    return(ctat_LRF_data)
+}
+
+
+get_cell_type_and_umap_info = function(umap_and_cell_types_file) {
+    
+    cell_type_and_umap_info = read.table(umap_and_cell_types_file, header=T, sep="\t", stringsAsFactors = F)
+    
+    cell_type_and_umap_info = cell_type_and_umap_info %>% rename(barcodes=index)
+    
+    cell_type_and_umap_info = cell_type_and_umap_info%>% mutate(rev_barcode = reverseComplement(barcodes, case='upper'))
+    
+    return(cell_type_and_umap_info)
+    
+}
+
+```
+
+
+```{r}
+
+consolidate_data = function(starF_preds_file, FI_preds_file, ctat_LRF_preds_file,  umap_and_cell_types_file, 
+                            sample_name,
+                            use_RC_barcodes=FALSE) {
+    
+    starF_data = get_StarF_data(starF_preds_file)
+    
+    FI_data = get_FI_data(FI_preds_file)
+    
+    ctat_LRF_data = get_ctat_LRF_data(ctat_LRF_preds_file)
+    
+    all_fusions = bind_rows(starF_data,
+                        FI_data,
+                        ctat_LRF_data)
+
+    cell_type_and_umap_info = get_cell_type_and_umap_info(umap_and_cell_types_file)
+    
+    if (use_RC_barcodes) {
+        all_fusions = left_join(all_fusions, cell_type_and_umap_info, by=c('cell_barcode'='rev_barcode'))
+    } else {
+        all_fusions = left_join(all_fusions, cell_type_and_umap_info, by=c('cell_barcode'='barcodes'))
+    }
+    
+    all_fusions = all_fusions %>%  mutate(dataset=sample_name) %>% arrange(FusionName)
+    
+    all_output_filename = paste(c(sample_name, filename_core, "all_ev_reads.tsv"), collapse='.')        
+    message('writing: ', all_output_filename)
+    write.table(all_fusions, file=all_output_filename, row.names=F, sep="\t", quote=F)
+    
+    # remove filtered cells
+    all_fusions = all_fusions %>% filter(! is.na(leiden))
+    all_output_filename = paste(c(sample_name, filename_core, "filtered_cells_only.tsv"), collapse='.')        
+    message('writing: ', all_output_filename)
+    write.table(all_fusions, file=all_output_filename, row.names=F, sep="\t", quote=F)
+
+    # distill umis
+    all_fusions = all_fusions %>% group_by(cell_barcode, FusionName, umi, method) %>% filter(row_number()==1) %>% ungroup()
+    all_output_filename = paste(c(sample_name, filename_core, "filtered_cells_and_dedup_umis.tsv"), collapse='.')        
+    message('writing: ', all_output_filename)
+    write.table(all_fusions, file=all_output_filename, row.names=F, sep="\t", quote=F)
+    
+    # fusion breakpoint cell summary support.
+    all_fusions = all_fusions %>% select(FusionName, LeftBreakpoint, RightBreakpoint, method, cell_barcode, leiden, dataset) %>%
+        unique() %>%
+        group_by(FusionName, LeftBreakpoint, RightBreakpoint, method, leiden, dataset) %>% tally(name='cell_counts') %>%
+        arrange(desc(cell_counts))
+    
+    all_output_filename = paste(c(sample_name, filename_core, "filtered_cells_and_dedup_umis.cell_counts_by_method.tsv"), collapse='.')        
+    message('writing: ', all_output_filename)
+    write.table(all_fusions, file=all_output_filename, row.names=F, sep="\t", quote=F)
+    
+    
+    return(all_fusions)
+}
+
+```
+
+
+```{r}
+
+# M131TS
+
+starF_preds_file = "data/M131TS/M131TS_Illumina10x.star-fusion.fusion_predictions.tsv.gz"
+FI_preds_file = "data/M131TS/M131TS.Illumina10x.FusionInspector.fusions.no_counter.tsv.gz"
+ctat_LRF_preds_file = "data/M131TS/M131TS.ctat-LR-fusion.fusion_predictions.tsv.gz"
+umap_and_cell_types_file = "data/M131TS/M131TS.bc_to_umap_n_leiden.tsv"
+
+M131TS_fusions = consolidate_data(starF_preds_file, FI_preds_file, ctat_LRF_preds_file, 
+                                       umap_and_cell_types_file,
+                                       'M131TS',
+                                        use_RC_barcodes=FALSE
+                                  
+                                       )
+
+```
+
+
+```{r}
+
+# M132TS
+
+starF_preds_file = "data/M132TS/M132TS.Illumina10x.star-fusion.fusion_predictions.tsv.gz"
+FI_preds_file = "data/M132TS/M132TS.Illumina10x.FusionInspector.fusions.no_counter.tsv.gz"
+ctat_LRF_preds_file = "data/M132TS/M132TS.ctat-LR-fusion.fusion_predictions.tsv.gz"
+umap_and_cell_types_file = "data/M132TS/M132TS.bc_to_umap_n_leiden.tsv"
+
+M132TS_fusions = consolidate_data(starF_preds_file, FI_preds_file, ctat_LRF_preds_file, 
+                                       umap_and_cell_types_file,
+                                       'M132TS',
+                                       use_RC_barcodes=FALSE
+                                       )
+
+```
+
+
+
+
+
+
