@@ -23,7 +23,7 @@ data = data %>% filter(prog %in% c(
                                    'fusionseeker_s1',
                                    'LongGF',
                                    'JAFFAL',
-                                   'ctat-LR-fusion.v0.10.0')
+                                   'ctat-LR-fusion.v0.12.0')
                        )
 ```
 
