@@ -67,12 +67,12 @@ truth_data %>% head()
     ## 5       VCAP|ANO10--SLMAP
     ## 6    SKBR3|SUMF1--LRRFIP2
     ##                                                          prog_names num_progs
-    ## 1 JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 2 JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 3 JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 4 JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 5 JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 6 JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 1 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 2 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 3 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 4 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 5 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 6 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
 
 ``` r
 truth_data$sample_name = sapply(truth_data$proxy_fusion_name, function(x) { str_split(x, "\\|")[[1]][1]})
@@ -95,12 +95,12 @@ head(truth_data)
     ## 5       VCAP|ANO10--SLMAP
     ## 6    SKBR3|SUMF1--LRRFIP2
     ##                                                          prog_names num_progs
-    ## 1 JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 2 JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 3 JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 4 JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 5 JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 6 JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 1 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 2 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 3 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 4 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 5 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 6 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
     ##   sample_name
     ## 1     HCC1395
     ## 2     HCC1395
@@ -125,7 +125,7 @@ truth_data_counts
     ## 5 KIJK                    7
     ## 6 MJ                      4
     ## 7 RT112                   9
-    ## 8 SKBR3                  23
+    ## 8 SKBR3                  22
     ## 9 VCAP                   36
 
 ``` r
@@ -149,7 +149,7 @@ truth_data %>% head()
     ##   <chr>                   <chr>                      <int> <chr>      
     ## 1 HCC1395|EIF3K--CYP39A1  JAFFAL                         5 HCC1395    
     ## 2 HCC1395|EIF3K--CYP39A1  LongGF                         5 HCC1395    
-    ## 3 HCC1395|EIF3K--CYP39A1  ctat-LR-fusion.v0.11.0         5 HCC1395    
+    ## 3 HCC1395|EIF3K--CYP39A1  ctat-LR-fusion.v0.12.0         5 HCC1395    
     ## 4 HCC1395|EIF3K--CYP39A1  fusionseeker                   5 HCC1395    
     ## 5 HCC1395|EIF3K--CYP39A1  pbfusion_v0.3.1                5 HCC1395    
     ## 6 HCC1395|OSBPL9--CCDC178 JAFFAL                         5 HCC1395
@@ -233,13 +233,13 @@ data = read.table("data/min_2.okPara_ignoreUnsure.results.scored.ROC", header=T,
 data %>% head()
 ```
 
-    ##                     prog min_sum_frags TP FP FN  TPR  PPV    F1
-    ## 1 ctat-LR-fusion.v0.11.0             3 98 14 65 0.60 0.88 0.714
-    ## 2 ctat-LR-fusion.v0.11.0             4 87 10 76 0.53 0.90 0.667
-    ## 3 ctat-LR-fusion.v0.11.0             5 74 10 89 0.45 0.88 0.595
-    ## 4 ctat-LR-fusion.v0.11.0             6 70  9 93 0.43 0.89 0.580
-    ## 5 ctat-LR-fusion.v0.11.0             7 66  8 97 0.40 0.89 0.552
-    ## 6 ctat-LR-fusion.v0.11.0             8 64  8 99 0.39 0.89 0.542
+    ##           prog min_sum_frags  TP  FP FN  TPR  PPV    F1
+    ## 1 fusionseeker             3 131 353 31 0.81 0.27 0.405
+    ## 2 fusionseeker             4 103 220 59 0.64 0.32 0.427
+    ## 3 fusionseeker             5  83 134 79 0.51 0.38 0.436
+    ## 4 fusionseeker             6  78 104 84 0.48 0.43 0.454
+    ## 5 fusionseeker             7  70  79 92 0.43 0.47 0.449
+    ## 6 fusionseeker             8  69  64 93 0.43 0.52 0.471
 
 ``` r
 # F1 vs. min reads
@@ -249,9 +249,9 @@ data %>% ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom
     ggtitle("Depmap v1 fusions: F1 ~ min read support") 
 ```
 
-    ## Warning: Removed 195 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 196 rows containing missing values (`geom_point()`).
 
-    ## Warning: Removed 195 rows containing missing values (`geom_line()`).
+    ## Warning: Removed 196 rows containing missing values (`geom_line()`).
 
 ![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
@@ -265,6 +265,6 @@ data %>% select(prog, min_sum_frags, TP, FP) %>%
     xlim(3,15)
 ```
 
-    ## Warning: Removed 390 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 392 rows containing missing values (`geom_point()`).
 
 ![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
