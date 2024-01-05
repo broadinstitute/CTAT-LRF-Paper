@@ -67,7 +67,7 @@ fusion_annots = read.table("data/M132TS.fusion_annots.gz", sep="\t", header=T, s
 ```
 
 ``` r
-Tum_umap_data = read.table("data/M132TS.bc_to_umap_n_leiden.tsv.gz", header=T, sep="\t", stringsAsFactors = F) 
+Tum_umap_data = read.table("data/M132TS.bc_to_umap_n_leiden.tsv", header=T, sep="\t", stringsAsFactors = F) 
 
 # number of cells
 num_tumor_cells = nrow(Tum_umap_data) 

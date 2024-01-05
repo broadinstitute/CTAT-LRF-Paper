@@ -152,33 +152,17 @@ consolidate_data = function(starF_preds_file, FI_preds_file, ctat_LRF_preds_file
 ```
 
 
-```{r}
 
-# M131TS
-
-starF_preds_file = "data/M131TS/M131TS_Illumina10x.star-fusion.fusion_predictions.tsv.gz"
-FI_preds_file = "data/M131TS/M131TS.Illumina10x.FusionInspector.fusions.no_counter.tsv.gz"
-ctat_LRF_preds_file = "data/M131TS/M131TS.ctat-LR-fusion.fusion_predictions.tsv.gz"
-umap_and_cell_types_file = "data/M131TS/M131TS.bc_to_umap_n_leiden.tsv"
-
-M131TS_fusions = consolidate_data(starF_preds_file, FI_preds_file, ctat_LRF_preds_file, 
-                                       umap_and_cell_types_file,
-                                       'M131TS',
-                                        use_RC_barcodes=FALSE
-                                  
-                                       )
-
-```
 
 
 ```{r}
 
 # M132TS
 
-starF_preds_file = "data/M132TS/M132TS.Illumina10x.star-fusion.fusion_predictions.tsv.gz"
-FI_preds_file = "data/M132TS/M132TS.Illumina10x.FusionInspector.fusions.no_counter.tsv.gz"
-ctat_LRF_preds_file = "data/M132TS/M132TS.ctat-LR-fusion.fusion_predictions.tsv.gz"
-umap_and_cell_types_file = "data/M132TS/M132TS.bc_to_umap_n_leiden.tsv"
+starF_preds_file = "data/M132TS.Illumina10x.star-fusion.fusion_predictions.tsv.gz"
+FI_preds_file = "data/M132TS.Illumina10x.FusionInspector.fusions.no_counter.tsv.gz"
+ctat_LRF_preds_file = "data/M132TS.ctat-LR-fusion.fusion_predictions.tsv.gz"
+umap_and_cell_types_file = "data/M132TS.bc_to_umap_n_leiden.tsv"
 
 M132TS_fusions = consolidate_data(starF_preds_file, FI_preds_file, ctat_LRF_preds_file, 
                                        umap_and_cell_types_file,
