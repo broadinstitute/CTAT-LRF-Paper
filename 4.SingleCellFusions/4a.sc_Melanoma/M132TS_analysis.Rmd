@@ -525,7 +525,6 @@ report_on_fusion = function(fusion_name) {
 report_on_fusion("RP11-444D3.1--SOX5")
 
 
-
 ```
 
 
