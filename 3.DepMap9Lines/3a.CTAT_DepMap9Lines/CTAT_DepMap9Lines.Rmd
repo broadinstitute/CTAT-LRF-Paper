@@ -14,8 +14,36 @@ library(ggrepel)
 
 ```{r}
 
-data = read.table("data/DepMap_v1v2mrgd.ctatLRF_FI.consolidated.tsv.gz", header=T, sep="\t", com='') %>% 
-    rename(sample=X.sample, fusion = X.FusionName, SR_FFPM = FFPM) %>%  
+files = paste0("data/", list.files("data/", "*abridged.tsv.gz"))
+
+files
+```
+
+
+```{r}
+
+data = NULL
+
+for (filename in files) {
+    
+    message("-parsing: ", filename)
+    df = read.table(filename, header=T, sep="\t", com='') 
+    samplename = str_replace(filename, "data/DepMap_v1v2mrgd_", "")
+    samplename = str_replace(samplename, ".ctat-LR-fusion.fusion_predictions.abridged.tsv.gz", "")
+    df$sample = samplename
+    
+    data = rbind(data, df)
+}
+
+
+```
+
+
+
+```{r}
+
+data = data %>% 
+    rename(fusion = X.FusionName, SR_FFPM = FFPM) %>%  
     mutate(num_SR = est_J + est_S) %>%
     group_by(sample, fusion) %>% arrange(desc(num_LR), desc(num_SR))  %>% mutate(fusion_iso = paste(fusion, 'iso', row_number())) %>% ungroup()
   
