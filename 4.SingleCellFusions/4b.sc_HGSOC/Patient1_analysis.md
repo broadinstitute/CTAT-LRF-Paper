@@ -59,6 +59,10 @@ nrow(Om_data)
     ## [1] 2166
 
 ``` r
+fusion_annots = read.table("data/Patient1.fusion_annots.gz", header=T, sep="\t", stringsAsFactors = F)
+```
+
+``` r
 # Om sample composition
 
 Om_bc_to_celltype = read.table("data/Patient1_Om.bc_to_celltype.tsv.gz", header=T, sep="\t")
@@ -285,22 +289,21 @@ Tum_cell_counts = Tum_data %>% select(FusionName, cell_barcode) %>% unique() %>%
     mutate(frac_tot_cells=tot_cells_w_fusion/num_tumor_cells)  %>%
     arrange(desc(frac_tot_cells))
 
-Tum_cell_counts %>% filter(tot_cells_w_fusion >= MIN_CELLS)
+left_join(Tum_cell_counts %>% filter(tot_cells_w_fusion >= MIN_CELLS),
+          fusion_annots,
+          by='FusionName')
 ```
 
-    ## # A tibble: 7 × 3
-    ##   FusionName            tot_cells_w_fusion frac_tot_cells
-    ##   <chr>                              <int>          <dbl>
-    ## 1 RP11-208G20.2--PSPHP1                117         0.235 
-    ## 2 SMG7--CH507-513H4.1                   26         0.0523
-    ## 3 RP11-384F7.2--LSAMP                   20         0.0402
-    ## 4 RP11-444D3.1--SOX5                    11         0.0221
-    ## 5 RP1-34H18.1--NAV3                      7         0.0141
-    ## 6 RAPGEF5--AGMO                          6         0.0121
-    ## 7 NTN1--CDRT15P2                         5         0.0101
-
-note, FAU–RP1-269O5.3 can likely be ignored - only picked up by FI in
-max sensitivity mode as abundant. No long read support.
+    ## # A tibble: 7 × 4
+    ##   FusionName            tot_cells_w_fusion frac_tot_cells annots                
+    ##   <chr>                              <int>          <dbl> <chr>                 
+    ## 1 RP11-208G20.2--PSPHP1                117         0.235  INTRACHROMOSOMAL[chr7…
+    ## 2 SMG7--CH507-513H4.1                   26         0.0523 INTERCHROMOSOMAL[chr1…
+    ## 3 RP11-384F7.2--LSAMP                   20         0.0402 INTRACHROMOSOMAL[chr3…
+    ## 4 RP11-444D3.1--SOX5                    11         0.0221 [SOX5:Oncogene];INTRA…
+    ## 5 RP1-34H18.1--NAV3                      7         0.0141 INTRACHROMOSOMAL[chr1…
+    ## 6 RAPGEF5--AGMO                          6         0.0121 INTRACHROMOSOMAL[chr7…
+    ## 7 NTN1--CDRT15P2                         5         0.0101 INTRACHROMOSOMAL[chr1…
 
 ``` r
 # read in cell counts by method
@@ -516,8 +519,6 @@ fusions_of_interest = left_join(fusions_of_interest, Tum_cell_counts_by_method_s
     ## Joining with `by = join_by(FusionName, celltype_final)`
 
 ``` r
-fusion_annots = read.table("data/Patient1.fusion_annots.gz", header=T, sep="\t", stringsAsFactors = F)
-
 fusions_of_interest = left_join(fusions_of_interest, fusion_annots)
 ```
 
@@ -559,7 +560,7 @@ baseplot = Tum_umap_data %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + geom_point(aes(co
 baseplot
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
 
 ``` r
 x = 0
@@ -579,7 +580,7 @@ for (fusion in  fusions_of_interest$FusionName) {
 }
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-23-2.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-23-3.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-24-2.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-24-3.png)<!-- -->
 
 ``` r
 pdf("Patient1_Tum.fusions_of_interest.pdf")
@@ -617,7 +618,7 @@ fusion_of_interest_cell_counts  %>%
     ggtitle("Patient1_Tum Fusions of Interest: Cell Counts")
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
 
 ``` r
 # breakdown by combinations of methods per cell
@@ -656,7 +657,7 @@ p = baseplot +
 p
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->
 
 ``` r
 tumor_cell_counts_by_methods  %>% filter(FusionName == "SMG7--CH507-513H4.1")
@@ -712,7 +713,7 @@ for (fusion in  fusions_of_interest$FusionName) {
 }
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-32-1.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-32-2.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-32-3.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-33-1.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-33-2.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-33-3.png)<!-- -->
 
 The SMG7 and RAPGEF5–AGMO fusions appear in different tumor subclusters.
 
