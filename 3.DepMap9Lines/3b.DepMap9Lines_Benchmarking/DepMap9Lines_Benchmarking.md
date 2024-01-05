@@ -67,12 +67,12 @@ truth_data %>% head()
     ## 5       VCAP|ANO10--SLMAP
     ## 6    SKBR3|SUMF1--LRRFIP2
     ##                                                          prog_names num_progs
-    ## 1 JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 2 JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 3 JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 4 JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 5 JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 6 JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 1 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 2 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 3 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 4 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 5 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 6 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
 
 ``` r
 truth_data$sample_name = sapply(truth_data$proxy_fusion_name, function(x) { str_split(x, "\\|")[[1]][1]})
@@ -88,12 +88,12 @@ head(truth_data)
     ## 5       VCAP|ANO10--SLMAP
     ## 6    SKBR3|SUMF1--LRRFIP2
     ##                                                          prog_names num_progs
-    ## 1 JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 2 JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 3 JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 4 JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 5 JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 6 JAFFAL,LongGF,ctat-LR-fusion.v0.11.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 1 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 2 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 3 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 4 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 5 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 6 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
     ##   sample_name
     ## 1     HCC1395
     ## 2     HCC1395
@@ -117,7 +117,7 @@ truth_data_counts %>% arrange(num_truth_fusions)
     ## 4 HCC1187                16
     ## 5 K562                   16
     ## 6 DMS53                  18
-    ## 7 SKBR3                  22
+    ## 7 SKBR3                  21
     ## 8 HCC1395                25
     ## 9 VCAP                   34
 
@@ -128,7 +128,7 @@ truth_data_counts %>% summarise(sum_truth_fusions = sum(num_truth_fusions))
     ## # A tibble: 1 × 1
     ##   sum_truth_fusions
     ##               <int>
-    ## 1               151
+    ## 1               150
 
 ``` r
 # 151 proxy truth fusions
@@ -155,7 +155,7 @@ truth_data %>% head()
     ##   <chr>                   <chr>                      <int> <chr>      
     ## 1 HCC1395|EIF3K--CYP39A1  JAFFAL                         5 HCC1395    
     ## 2 HCC1395|EIF3K--CYP39A1  LongGF                         5 HCC1395    
-    ## 3 HCC1395|EIF3K--CYP39A1  ctat-LR-fusion.v0.11.0         5 HCC1395    
+    ## 3 HCC1395|EIF3K--CYP39A1  ctat-LR-fusion.v0.12.0         5 HCC1395    
     ## 4 HCC1395|EIF3K--CYP39A1  fusionseeker                   5 HCC1395    
     ## 5 HCC1395|EIF3K--CYP39A1  pbfusion_v0.3.1                5 HCC1395    
     ## 6 HCC1395|OSBPL9--CCDC178 JAFFAL                         5 HCC1395
@@ -239,13 +239,13 @@ data = read.table("data/min_2.okPara_ignoreUnsure.results.scored.ROC", header=T,
 data %>% head()
 ```
 
-    ##                     prog min_sum_frags TP FP FN  TPR  PPV    F1
-    ## 1 ctat-LR-fusion.v0.11.0             3 96 16 55 0.64 0.86 0.734
-    ## 2 ctat-LR-fusion.v0.11.0             4 85 12 66 0.56 0.88 0.684
-    ## 3 ctat-LR-fusion.v0.11.0             5 72 12 79 0.48 0.86 0.616
-    ## 4 ctat-LR-fusion.v0.11.0             6 68 11 83 0.45 0.86 0.591
-    ## 5 ctat-LR-fusion.v0.11.0             7 65  9 86 0.43 0.88 0.578
-    ## 6 ctat-LR-fusion.v0.11.0             8 63  9 88 0.42 0.88 0.569
+    ##           prog min_sum_frags  TP  FP FN  TPR  PPV    F1
+    ## 1 fusionseeker             3 124 361 26 0.83 0.26 0.396
+    ## 2 fusionseeker             4  99 224 51 0.66 0.31 0.422
+    ## 3 fusionseeker             5  79 138 71 0.53 0.36 0.429
+    ## 4 fusionseeker             6  74 108 76 0.49 0.41 0.446
+    ## 5 fusionseeker             7  66  83 84 0.44 0.44 0.440
+    ## 6 fusionseeker             8  65  68 85 0.43 0.49 0.458
 
 ``` r
 # F1 vs. min reads
@@ -255,9 +255,9 @@ data %>% ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom
     ggtitle("Depmap v1 fusions: F1 ~ min read support") 
 ```
 
-    ## Warning: Removed 195 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 196 rows containing missing values (`geom_point()`).
 
-    ## Warning: Removed 195 rows containing missing values (`geom_line()`).
+    ## Warning: Removed 196 rows containing missing values (`geom_line()`).
 
 ![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
@@ -271,7 +271,7 @@ data %>% select(prog, min_sum_frags, TP, FP) %>%
     xlim(3,15)
 ```
 
-    ## Warning: Removed 390 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 392 rows containing missing values (`geom_point()`).
 
 ![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
@@ -366,11 +366,11 @@ cosmic_fusion_preds
     ##    <chr>   <chr>                 <chr>                      <int>
     ##  1 KIJK    KIJK|ALK--NPM1        pbfusion_v0.3.1              463
     ##  2 KIJK    KIJK|ALK--NPM1        fusionseeker                 459
-    ##  3 KIJK    KIJK|ALK--NPM1        ctat-LR-fusion.v0.11.0       459
+    ##  3 KIJK    KIJK|ALK--NPM1        ctat-LR-fusion.v0.12.0       459
     ##  4 KIJK    KIJK|ALK--NPM1        LongGF                       458
     ##  5 KIJK    KIJK|ALK--NPM1        JAFFAL                       358
     ##  6 RT112   RT112|FGFR3--TACC3    fusionseeker                 344
-    ##  7 RT112   RT112|FGFR3--TACC3    ctat-LR-fusion.v0.11.0       343
+    ##  7 RT112   RT112|FGFR3--TACC3    ctat-LR-fusion.v0.12.0       343
     ##  8 RT112   RT112|FGFR3--TACC3    LongGF                       341
     ##  9 RT112   RT112|FGFR3--TACC3    JAFFAL                       341
     ## 10 HCC1187 HCC1187|AGPAT5--MCPH1 fusionseeker                  82
