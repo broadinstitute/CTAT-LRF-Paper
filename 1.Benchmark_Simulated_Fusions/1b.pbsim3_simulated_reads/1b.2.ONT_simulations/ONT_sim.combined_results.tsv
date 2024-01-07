@@ -1,0 +1,21 @@
+coverage_level	prog	analysisType	mean_F1
+cov50	JAFFAL	allow_reverse	0.971
+cov50	JAFFAL	strict	0.971
+cov50	LongGF	allow_reverse	0.9718
+cov50	LongGF	strict	0.499
+cov50	ctat-LR-fusion.v0.12.0	allow_reverse	0.98
+cov50	ctat-LR-fusion.v0.12.0	strict	0.98
+cov50	fusionseeker_s1	allow_reverse	0.984
+cov50	fusionseeker_s1	strict	0.502
+cov50	pbfusion_v0.4.0	allow_reverse	0.977
+cov50	pbfusion_v0.4.0	strict	0.977
+cov50	JAFFAL	Exact Brkpt	0.931
+cov50	LongGF	Exact Brkpt	0.012
+cov50	ctat-LR-fusion.v0.12.0	Exact Brkpt	0.955
+cov50	fusionseeker_s1	Exact Brkpt	0.0208
+cov50	pbfusion_v0.4.0	Exact Brkpt	0.066
+cov50	JAFFAL	Fuzzy Brkpt	0.944
+cov50	LongGF	Fuzzy Brkpt	0.914
+cov50	ctat-LR-fusion.v0.12.0	Fuzzy Brkpt	0.955
+cov50	fusionseeker_s1	Fuzzy Brkpt	0.938
+cov50	pbfusion_v0.4.0	Fuzzy Brkpt	0.922

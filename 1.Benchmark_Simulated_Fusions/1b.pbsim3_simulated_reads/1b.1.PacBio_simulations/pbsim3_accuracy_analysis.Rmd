@@ -162,6 +162,26 @@ combined_results %>%
 
 ```
 
+
+```{r}
+
+write.table(combined_results %>%
+        filter(coverage_level == 'cov50') %>%
+        filter(analysisType != "allow_revNparalogs") %>%
+        mutate(pass_count = as.numeric(str_replace(pass_count, "pass", ""))) %>%
+        filter(pass_count == 20) %>%
+        mutate(analysisType = factor(analysisType, 
+                            levels=c('strict', 'allow_reverse', 'Exact Brkpt', 'Fuzzy Brkpt') )),
+    
+    file="PacBio_sim.combined_results.tsv", sep="\t", quote=F, row.names=F)
+
+
+```
+
+
+
+
+
 ```{r}
 
 
