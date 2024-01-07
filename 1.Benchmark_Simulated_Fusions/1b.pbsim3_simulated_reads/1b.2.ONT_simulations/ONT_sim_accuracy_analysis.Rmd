@@ -1,0 +1,176 @@
+---
+title: "ONT_sim_accuracy_analysis"
+author: "bhaas"
+date: '2023-12-05'
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+# fusion pair accuracy
+
+```{r}
+
+max_F1_data = read.table("data/max_F1_summary.tsv", header=T, sep="\t") %>% 
+    filter(! grepl("flair", prog)) 
+
+max_F1_data %>% head()
+
+```
+
+
+```{r}
+
+# barplot
+
+p_barplot = max_F1_data %>% ggplot(aes(x=factor(prog), y=F1)) +
+        geom_bar(stat='identity', position='dodge', aes(fill=sample_count)) +
+        facet_grid(vars(analysisType), vars(coverage_level)) + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+
+p_barplot
+
+```
+
+
+```{r}
+
+
+
+mean_samples_F1 = max_F1_data %>% 
+    group_by(coverage_level, prog, analysisType) %>%
+    summarize(mean_F1 = mean(F1))
+
+
+mean_samples_F1 %>%
+        filter(analysisType %in% c('strict', 'allow_reverse')) %>%
+        ggplot() +
+        geom_col(aes(x=prog, y=mean_F1, fill=prog)) +
+        facet_grid(vars(analysisType), vars(coverage_level)) + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+
+
+```
+
+
+# breakpoint results
+
+
+```{r}
+breakpoint_data = read.table("data/breakpoint_maxF1_data.tsv", sep="\t", header=T) %>%
+    filter(prog != 'flairfusion')
+    
+
+
+breakpoint_data$coverage_level = factor(breakpoint_data$coverage_level, levels=c('cov5', 'cov50'))
+
+brkpt_accuracy_plot = breakpoint_data %>% ggplot(aes(x=prog, y=F1, fill=sample_count)) +
+        geom_bar(stat='identity', position='dodge', aes(fill=sample_count)) +
+        facet_grid(vars(analysisType), vars(coverage_level)) +
+        ggtitle("Exact or Fuzzy Breakpoint Detection Accuracy") +
+        ylim(0,1) +
+        theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+
+
+
+brkpt_accuracy_plot 
+
+```
+
+
+```{r}
+
+breakpoint_mean_F1_stats = breakpoint_data %>% group_by(coverage_level, analysisType, prog) %>% 
+    summarize(mean_F1 = mean(F1, na.rm=T))
+
+
+breakpoint_mean_F1_stats %>% ggplot() +
+        geom_col(aes(x=prog, y=mean_F1, fill=prog)) +
+        facet_grid(vars(analysisType), vars(coverage_level)) +
+        ggtitle("Exact or Fuzzy Breakpoint Detection Accuracy") +
+        ylim(0,1)  +
+        theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+
+
+```
+                
+                
+# Combine gene-pair and breakpoint results                
+                
+                                                                                                                      
+```{r}
+
+combined_results = bind_rows(mean_samples_F1,
+                             breakpoint_mean_F1_stats)
+
+combined_results %>% head()
+
+
+
+```
+
+`
+
+```{r}
+
+combined_results %>%
+        filter(analysisType != "allow_revNparalogs") %>%
+        mutate(analysisType = factor(analysisType, 
+                            levels=c('strict', 'allow_reverse', 'Exact Brkpt', 'Fuzzy Brkpt') )) %>%
+    ggplot() +
+    geom_jitter(aes(x=analysisType, y=mean_F1, color=prog, shape=prog), width=0.2, size=rel(2)) +
+
+    facet_wrap(~coverage_level) +
+     theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+    
+
+```
+
+```{r}
+
+# just cov50
+
+combined_results %>%
+        filter(coverage_level == 'cov50') %>%
+        filter(analysisType != "allow_revNparalogs") %>%
+        mutate(analysisType = factor(analysisType, 
+                            levels=c('strict', 'allow_reverse', 'Exact Brkpt', 'Fuzzy Brkpt') )) %>%
+    ggplot() +
+    geom_jitter(aes(x=analysisType, y=mean_F1, color=prog, shape=prog), width=0.2, size=rel(2)) +
+
+    facet_wrap(~coverage_level) +
+     theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+    
+    
+
+```
+
+```{r}
+
+
+# excluding pbfusion v0.4.0 for main fig since ordering issues were corrected after we brought it to their attention. 
+# will include the pbvusion v0.4.0 update results in the supp.
+
+# just cov50
+
+combined_results %>%
+        filter(coverage_level == 'cov50') %>%
+        filter(analysisType != "allow_revNparalogs") %>%
+        mutate(analysisType = factor(analysisType, 
+                            levels=c('strict', 'allow_reverse', 'Exact Brkpt', 'Fuzzy Brkpt') )) %>%
+    ggplot() +
+    geom_jitter(aes(x=analysisType, y=mean_F1, color=prog, shape=prog), width=0.2, size=rel(2)) +
+
+    facet_wrap(~coverage_level) +
+     theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+    
+
+```
+
+
+
+
