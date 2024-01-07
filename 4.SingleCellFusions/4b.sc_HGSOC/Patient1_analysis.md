@@ -1080,3 +1080,96 @@ report_on_fusion("RP11-444D3.1--SOX5")
     ## 3 RP11-444D3.1--SOX5 B.cells                            1           0.0909 Tum  
     ## 4 RP11-444D3.1--SOX5 Mesothelial.cells                  1           0.0909 Tum  
     ## # … with abbreviated variable name ¹​frac_fusion_cells
+
+# Tumor heterogeneity explored
+
+``` r
+tumor_umap = read.table("data/Patient1_Tum_only/Patient1_Tum_Cancer_only.csv", header=T, sep=",") %>%
+    rename(barcodes=X)
+
+tumor_umap %>% head()
+```
+
+    ##           barcodes    UMAP_1     UMAP_2 seurat_clusters
+    ## 1 AAACCCATCTATCGGA -3.442050  0.6151850               1
+    ## 2 AAACGCTAGGAGGTTC -3.058180  0.2626778               1
+    ## 3 AAAGTGATCCAACTGA  3.485466 -0.6378570               0
+    ## 4 AACCCAATCGACTCCT -0.136903 -2.3959574               0
+    ## 5 AATAGAGTCTGAACGT  2.998702  0.1273344               0
+    ## 6 ACGTAACCATTGGCAT -2.252501  0.2677264               1
+
+``` r
+tumor_umap = left_join(tumor_umap, 
+                       Tum_data, 
+                       by='barcodes', 
+                       suffix=c('.tum_only', '.allcells'))
+```
+
+    ## Warning in left_join(tumor_umap, Tum_data, by = "barcodes", suffix = c(".tum_only", : Each row in `x` is expected to match at most 1 row in `y`.
+    ## ℹ Row 2 of `x` matches multiple rows.
+    ## ℹ If multiple matches are expected, set `multiple = "all"` to silence this
+    ##   warning.
+
+``` r
+tumor_umap %>% head()
+```
+
+    ##           barcodes UMAP_1.tum_only UMAP_2.tum_only seurat_clusters
+    ## 1 AAACCCATCTATCGGA        -3.44205       0.6151850               1
+    ## 2 AAACGCTAGGAGGTTC        -3.05818       0.2626778               1
+    ## 3 AAACGCTAGGAGGTTC        -3.05818       0.2626778               1
+    ## 4 AAACGCTAGGAGGTTC        -3.05818       0.2626778               1
+    ## 5 AAACGCTAGGAGGTTC        -3.05818       0.2626778               1
+    ## 6 AAACGCTAGGAGGTTC        -3.05818       0.2626778               1
+    ##              FusionName   LeftBreakpoint RightBreakpoint     cell_barcode
+    ## 1                  <NA>             <NA>            <NA>             <NA>
+    ## 2 RP11-208G20.2--PSPHP1  chr7:55761799:+ chr7:55773181:+ GAACCTCCTAGCGTTT
+    ## 3           RPL27A--ST5  chr11:8684081:+ chr11:8697636:- GAACCTCCTAGCGTTT
+    ## 4           RPL27A--ST5  chr11:8684081:+ chr11:8697636:- GAACCTCCTAGCGTTT
+    ## 5   SMG7--CH507-513H4.1 chr1:183472649:+ chr21:8222961:+ GAACCTCCTAGCGTTT
+    ## 6   SMG7--CH507-513H4.1 chr1:183472649:+ chr21:8222961:+ GAACCTCCTAGCGTTT
+    ##            umi                          read_name         method celltype_final
+    ## 1         <NA>                               <NA>           <NA>           <NA>
+    ## 2 GGCTAAGGAACC m64141e_210226_034232/13294995/ccs ctat-LR-fusion          HGSOC
+    ## 3 GATATAGGGTTC m64141e_210226_034232/15011873/ccs ctat-LR-fusion          HGSOC
+    ## 4 GATACAGGGTTC  m64141e_210226_034232/1108806/ccs ctat-LR-fusion          HGSOC
+    ## 5 TACAATTGAATT  m64141e_210205_142336/6880956/ccs ctat-LR-fusion          HGSOC
+    ## 6 TGGGATATAACA  m64141e_210205_142336/1559269/ccs ctat-LR-fusion          HGSOC
+    ##   UMAP_1.allcells UMAP_2.allcells      dataset
+    ## 1              NA              NA         <NA>
+    ## 2        3.564836        10.72496 Patient1_Tum
+    ## 3        3.564836        10.72496 Patient1_Tum
+    ## 4        3.564836        10.72496 Patient1_Tum
+    ## 5        3.564836        10.72496 Patient1_Tum
+    ## 6        3.564836        10.72496 Patient1_Tum
+
+``` r
+tumor_umap %>% select(barcodes, UMAP_1.allcells, UMAP_2.allcells) %>% unique() %>% 
+    ggplot(aes(x=UMAP_1.allcells, y=UMAP_2.allcells)) +
+    geom_point() + ggtitle("UMAP for tumor subset in all-cells umap")
+```
+
+    ## Warning: Removed 20 rows containing missing values (`geom_point()`).
+
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-46-1.png)<!-- -->
+
+``` r
+tum_only_umap_baseplot = tumor_umap %>% select(barcodes, UMAP_1.tum_only, UMAP_2.tum_only, seurat_clusters) %>% unique() %>% 
+    ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only, shape=as.factor(seurat_clusters))) +
+    geom_point(size=rel(2)) + ggtitle("UMAP for tumor subset in tum-only umap")
+
+
+tum_only_umap_baseplot
+```
+
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-47-1.png)<!-- -->
+
+``` r
+tum_only_umap_baseplot + 
+    geom_point(data=tumor_umap %>% filter(FusionName %in% c('SMG7--CH507-513H4.1', 'RAPGEF5--AGMO', 'NTN1--CDRT15P2')) %>% 
+                   select(FusionName, UMAP_1.tum_only, UMAP_2.tum_only, seurat_clusters) %>% unique(), 
+                              aes(color=FusionName), size=rel(5), alpha=0.3) +
+         ggtitle("Patient 1 Tumor Cells Only")
+```
+
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-48-1.png)<!-- -->
