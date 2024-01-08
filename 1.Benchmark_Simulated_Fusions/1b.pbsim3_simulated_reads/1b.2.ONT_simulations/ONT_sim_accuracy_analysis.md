@@ -175,3 +175,13 @@ combined_results %>%
 ```
 
 ![](ONT_sim_accuracy_analysis_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+
+``` r
+write.table(combined_results %>%
+        filter(coverage_level == 'cov50') %>%
+        filter(analysisType != "allow_revNparalogs") %>%
+        mutate(analysisType = factor(analysisType, 
+                            levels=c('strict', 'allow_reverse', 'Exact Brkpt', 'Fuzzy Brkpt') )),
+        
+        file = "ONT_sim.combined_results.tsv", sep="\t", row.names=F, quote=F)
+```
