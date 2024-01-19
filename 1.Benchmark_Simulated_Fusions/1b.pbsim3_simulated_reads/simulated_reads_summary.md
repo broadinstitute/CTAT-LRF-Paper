@@ -77,3 +77,23 @@ combined_data %>%
 ```
 
 ![](simulated_reads_summary_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+``` r
+# mention updated pbfusion v0.4.0 as later updated for improved performance compared to earlier version.
+
+
+paperfig = combined_data %>%
+    filter(prog != "pbfusion_v0.4.0") %>%
+    mutate(analysisType = factor(analysisType, 
+                            levels=c('strict', 'allow_reverse', 'Exact Brkpt', 'Fuzzy Brkpt') )) %>%
+    mutate(seqTech = factor(seqTech, levels=c("PacBio", "ONT"))) %>%
+     ggplot() +
+     geom_jitter(aes(x=analysisType, y=mean_F1, color=prog, shape=prog), width=0.2, size=rel(2)) +
+     facet_wrap(~seqTech) +
+     theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+
+
+paperfig
+```
+
+![](simulated_reads_summary_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
