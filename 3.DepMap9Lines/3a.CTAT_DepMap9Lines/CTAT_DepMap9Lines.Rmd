@@ -57,6 +57,14 @@ data %>% head()
 
 ```
 
+```{r}
+
+write.table(data, file="DepMap_v1v2mrgd.ctatLRF_FI.consolidated.tsv", quote=F, sep="\t", row.names=F)
+
+
+```
+
+
 # compare long vs. short read fusion evidence, normalized by sequencing depth
 
 ```{r}

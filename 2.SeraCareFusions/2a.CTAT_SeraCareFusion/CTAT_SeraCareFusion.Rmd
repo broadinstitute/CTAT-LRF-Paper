@@ -22,6 +22,7 @@ control_fusions
 
 ```{r}
 
+# read in the ctat-LRF fusion predictions for each of the three samples
 
 rep1_data = read.table("data/ctatLRF_FI/SeraCareFusions_Isoseq.ctat-LR-fusion.fusion_predictions.tsv.gz", header=T, com='', sep="\t") %>%
     mutate(dataset= 'ISO-seq')
@@ -42,6 +43,9 @@ ctatLRF_FI_data %>% head()
 ```
 
 ```{r}
+
+# restrict fusion calls to the 16 control fusions
+
 ctatLRF_FI_control_results = left_join( cross_join(control_fusions, data.frame(dataset=c('ISO-seq', 'MAS-seq-R1', 'MAS-seq-R2'))),
                                     ctatLRF_FI_data %>% 
                                         select(FusionName, LeftBreakpoint, RightBreakpoint, 
@@ -95,6 +99,24 @@ ctatLRF_FI_control_results %>% gather(key=read_count_type, value=read_count, num
           geom_text(position=position_dodge(width=0.9), aes(label=read_count, group=dataset))
 
 ```
+
+```{r}
+# How many fusions are missing short read evidence in at least one of the replicates?
+
+ctatLRF_FI_control_results %>% filter(num_SR == 0) %>% select(FusionName) %>% unique()
+
+# for 9/16 control fusions, missing SR evidence in at least one replicate
+
+```
+
+```{r}
+# what's the range of long read support observed?
+
+ctatLRF_FI_control_results %>% summarize(max_LR_support=max(num_LR), min_LR_support = min(num_LR))
+
+# 20 to 139 long read support for control fusions
+```
+
 
 # compare gene expression levels between long and short reads:
 

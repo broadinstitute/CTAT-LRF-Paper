@@ -30,8 +30,20 @@ Comparison of control fusions found by various predictors for SeraCare fusion mi
     
 ## Long Read Fusion Isoform Detection from MAS-Iso-seq of Nine Cancer Cell Lines
 
+Comparing fusion prediction results for DepMap cell lines for various predictors:
+    
 - 3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/DepMap9Lines_Benchmarking.Rmd (Figure 4a,b,c, and Supplementary Figure S2a)
 
+Evaluate Illumina read support for fusion predictions as per STAR-Fusion:
+
+- 3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.1.IlluminaTruSeqDepMap9Lines/DepMap_TruSeq_StarF.Rmd
+
+Revisit benchmarking including the 17 additional illumina-supported fusions into the truth set:
+
+- 3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.IncludeIlluminaSupportedFusions/DepMap9Lines_Benchmarking.incl_Illumina_supported.Rmd
+
+Compare fusion support and isoform detection from short vs. long RNA-seq reads:
+    
 - 3.DepMap9Lines/3a.CTAT_DepMap9Lines/CTAT_DepMap9Lines.Rmd (Figure 4d, Supplementary Figure S2b, S3, and S4)
 
 

@@ -30,6 +30,8 @@ control_fusions
     ## 16      TFG--NTRK1      TFG chr3:100732672:+     NTRK1 chr1:156874571:+
 
 ``` r
+# read in the ctat-LRF fusion predictions for each of the three samples
+
 rep1_data = read.table("data/ctatLRF_FI/SeraCareFusions_Isoseq.ctat-LR-fusion.fusion_predictions.tsv.gz", header=T, com='', sep="\t") %>%
     mutate(dataset= 'ISO-seq')
 
@@ -146,6 +148,8 @@ ctatLRF_FI_data %>% head()
     ## 6       9.358            1               True ISO-seq     NA
 
 ``` r
+# restrict fusion calls to the 16 control fusions
+
 ctatLRF_FI_control_results = left_join( cross_join(control_fusions, data.frame(dataset=c('ISO-seq', 'MAS-seq-R1', 'MAS-seq-R2'))),
                                     ctatLRF_FI_data %>% 
                                         select(FusionName, LeftBreakpoint, RightBreakpoint, 
@@ -292,6 +296,40 @@ ctatLRF_FI_control_results %>% gather(key=read_count_type, value=read_count, num
 
 ![](CTAT_SeraCareFusion_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
+``` r
+# How many fusions are missing short read evidence in at least one of the replicates?
+
+ctatLRF_FI_control_results %>% filter(num_SR == 0) %>% select(FusionName) %>% unique()
+```
+
+    ##         FusionName
+    ## 1     FGFR3--TACC3
+    ## 3      LMNA--NTRK1
+    ## 4     TMPRSS2--ERG
+    ## 6       NCOA4--RET
+    ## 7  FGFR3--BAIAP2L1
+    ## 8      TPM3--NTRK1
+    ## 9        EML4--ALK
+    ## 10     ETV6--NTRK3
+    ## 11      TFG--NTRK1
+
+``` r
+# for 9/16 control fusions, missing SR evidence in at least one replicate
+```
+
+``` r
+# what's the range of long read support observed?
+
+ctatLRF_FI_control_results %>% summarize(max_LR_support=max(num_LR), min_LR_support = min(num_LR))
+```
+
+    ##   max_LR_support min_LR_support
+    ## 1            139             20
+
+``` r
+# 20 to 139 long read support for control fusions
+```
+
 # compare gene expression levels between long and short reads:
 
 ``` r
@@ -350,8 +388,11 @@ mean_gene_expr  %>% ggplot(aes(x = log10(mean_LR_gene_expr), y=log10(mean_TruSeq
 
     ## Warning: The dot-dot notation (`..density..`) was deprecated in ggplot2 3.4.0.
     ## ℹ Please use `after_stat(density)` instead.
+    ## This warning is displayed once every 8 hours.
+    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+    ## generated.
 
-![](CTAT_SeraCareFusion_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](CTAT_SeraCareFusion_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 ``` r
 cor.test(log10(mean_gene_expr$mean_LR_gene_expr), log10(mean_gene_expr$mean_TruSeq_gene_expr))

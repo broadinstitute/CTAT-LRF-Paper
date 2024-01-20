@@ -56,6 +56,8 @@ truth_data_counts = truth_data %>% rename(sample=sample_name) %>% group_by(sampl
 
 truth_data_counts %>% arrange(num_truth_fusions)
 
+# as few as 4 in MJ and as many aas 34 in VCaP
+
 ```
 
 ```{r}

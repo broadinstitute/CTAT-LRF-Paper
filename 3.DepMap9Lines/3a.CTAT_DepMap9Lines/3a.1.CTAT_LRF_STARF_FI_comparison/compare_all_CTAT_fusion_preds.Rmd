@@ -11,11 +11,13 @@ library(tidyverse)
 ```
 
 
+Compare fusion splicing isoform support according to read evidence type
+
+
 ```{r}
 
-ctat_LR_FI_data = read.table("data/DepMap_v1v2mrgd.ctatLRF_FI.consolidated.tsv.gz", header=T, sep="\t", stringsAsFactors = F, com='') %>%
-    rename(sample = X.sample, FusionName = X.FusionName, SR_FFPM = FFPM) %>%
-    mutate(num_SR = est_J + est_S) %>%
+ctat_LR_FI_data = read.table("../DepMap_v1v2mrgd.ctatLRF_FI.consolidated.tsv.gz", header=T, sep="\t", stringsAsFactors = F, com='') %>%
+    rename(FusionName = fusion) %>% 
     mutate(num_SR = ifelse(is.na(num_SR), 0, num_SR))
 
 ctat_LR_FI_data  %>% head()
@@ -90,7 +92,7 @@ all_data_spread %>% head()
 
 TP_fusions = read.table("data/min_2.okPara_ignoreUnsure.results.scored", sep="\t", header=T, stringsAsFactors = F) %>%
     filter(pred_result == "TP") %>%
-    filter(prog == "ctat-LR-fusion.v0.11.0") %>%
+    filter(prog == "ctat-LR-fusion.v0.12.0") %>%
     select(sample, fusion) %>% unique() %>%
     rename(FusionName = fusion)
 
@@ -110,6 +112,9 @@ TP_fusions %>% arrange(desc(LRF))
 
 
 ```{r}
+
+# TP fusion splicing isoforms identified with short reads but no long reads
+
  TP_fusions %>%
     filter(LRF == 0)
 

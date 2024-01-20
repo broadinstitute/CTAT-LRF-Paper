@@ -74,7 +74,7 @@ control_fusions_found = full_join(cross_join(control_fusions, progs),
     mutate(found = (! is.na(found)))
 
 
-control_fusions_found 
+control_fusions_found %>% head()
 ```
 
 
@@ -120,6 +120,12 @@ control_fusions_found %>%  filter(! grepl("flairfusion", prog)) %>%
 ```
 
 
+```{r}
 
+fusion_preds %>% filter(fusion == "TMPRSS2--ERG") %>%
+    filter(prog == "ctat-LR-fusion.v0.12.0")
+
+# found with 45, 98, and 104 long reads support by CTAT-LRF
+```
 
 
