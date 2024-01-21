@@ -118,20 +118,20 @@ left_join(Tum_cell_counts %>% filter(tot_cells_w_fusion >= MIN_CELLS),
     ## # A tibble: 14 × 4
     ##    FusionName                   tot_cells_w_fusion frac_tot_cells annots        
     ##    <chr>                                     <int>          <dbl> <chr>         
-    ##  1 IGF2BP2--TESPA1                             178         0.393  INTERCHROMOSO…
-    ##  2 PSMB7--SCAI                                  52         0.115  INTRACHROMOSO…
-    ##  3 SRSF7--DHX57                                 34         0.0751 [CCLE_StarF20…
-    ##  4 RP5-940J5.9--GAPDH                           26         0.0574 INTRACHROMOSO…
-    ##  5 SPATS2--TRA2B                                21         0.0464 INTERCHROMOSO…
-    ##  6 MIR4435-1HG--DARS                            20         0.0442 INTRACHROMOSO…
-    ##  7 CBL--KMT2A                                   16         0.0353 [CBL:Foundati…
-    ##  8 PLXNB2--DENND6B                              14         0.0309 [TCGA_StarF20…
-    ##  9 RP11-96H19.1--RP11-446N19.1                  14         0.0309 INTRACHROMOSO…
-    ## 10 DEK--CASC17                                  11         0.0243 [DEK:Oncogene…
-    ## 11 SLC7A6--ELMO3                                10         0.0221 INTRACHROMOSO…
-    ## 12 CTD-2008L17.1--RP11-456O19.2                  8         0.0177 INTRACHROMOSO…
-    ## 13 WDR59--AARS                                   8         0.0177 INTRACHROMOSO…
-    ## 14 DUXAP8--LA16c-60G3.6                          7         0.0155 INTRACHROMOSO…
+    ##  1 IGF2BP2--TESPA1                             178         0.393  IGF2BP2--TESP…
+    ##  2 PSMB7--SCAI                                  52         0.115  PSMB7--SCAI:{…
+    ##  3 SRSF7--DHX57                                 34         0.0751 SRSF7--DHX57:…
+    ##  4 RP5-940J5.9--GAPDH                           26         0.0574 RP5-940J5.9--…
+    ##  5 SPATS2--TRA2B                                21         0.0464 SPATS2--TRA2B…
+    ##  6 MIR4435-1HG--DARS                            20         0.0442 MIR4435-1HG--…
+    ##  7 CBL--KMT2A                                   16         0.0353 CBL--KMT2A:{K…
+    ##  8 PLXNB2--DENND6B                              14         0.0309 PLXNB2--DENND…
+    ##  9 RP11-96H19.1--RP11-446N19.1                  14         0.0309 RP11-96H19.1-…
+    ## 10 DEK--CASC17                                  11         0.0243 DEK--CASC17:{…
+    ## 11 SLC7A6--ELMO3                                10         0.0221 SLC7A6--ELMO3…
+    ## 12 CTD-2008L17.1--RP11-456O19.2                  8         0.0177 CTD-2008L17.1…
+    ## 13 WDR59--AARS                                   8         0.0177 WDR59--AARS:{…
+    ## 14 DUXAP8--LA16c-60G3.6                          7         0.0155 DUXAP8--LA16c…
 
 ``` r
 # examine distribution of fusion calls according to cell types
@@ -266,10 +266,11 @@ right_join(Tum_cell_counts_by_method,
 
     ## Joining with `by = join_by(FusionName, LeftBreakpoint, RightBreakpoint)`
 
-    ## Warning in right_join(Tum_cell_counts_by_method, Tum_cell_counts_by_method %>% : Each row in `x` is expected to match at most 1 row in `y`.
-    ## ℹ Row 1 of `x` matches multiple rows.
-    ## ℹ If multiple matches are expected, set `multiple = "all"` to silence this
-    ##   warning.
+    ## Warning in right_join(Tum_cell_counts_by_method, Tum_cell_counts_by_method %>% : Detected an unexpected many-to-many relationship between `x` and `y`.
+    ## ℹ Row 1 of `x` matches multiple rows in `y`.
+    ## ℹ Row 1 of `y` matches multiple rows in `x`.
+    ## ℹ If a many-to-many relationship is expected, set `relationship =
+    ##   "many-to-many"` to silence this warning.
 
 ![](Patient2_analysis_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
@@ -289,23 +290,22 @@ fusion_frac_cell_types %>% filter(tot_cells_w_fusion >= MIN_CELLS)
 
     ## # A tibble: 14 × 4
     ## # Groups:   FusionName [14]
-    ##    FusionName                   celltype_final tot_cells_w_fusion frac_fusion_…¹
-    ##    <chr>                        <chr>                       <int>          <dbl>
-    ##  1 IGF2BP2--TESPA1              HGSOC                         176          0.989
-    ##  2 PSMB7--SCAI                  HGSOC                          51          0.981
-    ##  3 SRSF7--DHX57                 HGSOC                          33          0.971
-    ##  4 SPATS2--TRA2B                HGSOC                          21          1    
-    ##  5 MIR4435-1HG--DARS            HGSOC                          20          1    
-    ##  6 RP5-940J5.9--GAPDH           HGSOC                          19          0.731
-    ##  7 CBL--KMT2A                   HGSOC                          16          1    
-    ##  8 PLXNB2--DENND6B              HGSOC                          14          1    
-    ##  9 RP11-96H19.1--RP11-446N19.1  HGSOC                          14          1    
-    ## 10 DEK--CASC17                  HGSOC                          11          1    
-    ## 11 SLC7A6--ELMO3                HGSOC                          10          1    
-    ## 12 CTD-2008L17.1--RP11-456O19.2 HGSOC                           8          1    
-    ## 13 WDR59--AARS                  HGSOC                           8          1    
-    ## 14 DUXAP8--LA16c-60G3.6         HGSOC                           7          1    
-    ## # … with abbreviated variable name ¹​frac_fusion_cells
+    ##    FusionName                celltype_final tot_cells_w_fusion frac_fusion_cells
+    ##    <chr>                     <chr>                       <int>             <dbl>
+    ##  1 IGF2BP2--TESPA1           HGSOC                         176             0.989
+    ##  2 PSMB7--SCAI               HGSOC                          51             0.981
+    ##  3 SRSF7--DHX57              HGSOC                          33             0.971
+    ##  4 SPATS2--TRA2B             HGSOC                          21             1    
+    ##  5 MIR4435-1HG--DARS         HGSOC                          20             1    
+    ##  6 RP5-940J5.9--GAPDH        HGSOC                          19             0.731
+    ##  7 CBL--KMT2A                HGSOC                          16             1    
+    ##  8 PLXNB2--DENND6B           HGSOC                          14             1    
+    ##  9 RP11-96H19.1--RP11-446N1… HGSOC                          14             1    
+    ## 10 DEK--CASC17               HGSOC                          11             1    
+    ## 11 SLC7A6--ELMO3             HGSOC                          10             1    
+    ## 12 CTD-2008L17.1--RP11-456O… HGSOC                           8             1    
+    ## 13 WDR59--AARS               HGSOC                           8             1    
+    ## 14 DUXAP8--LA16c-60G3.6      HGSOC                           7             1
 
 ``` r
 # restrict to fusions of interest:  those showing up in at least min cells and at least 80% representation within any cell type
@@ -320,22 +320,25 @@ fusions_of_interest
 
     ## # A tibble: 13 × 4
     ## # Groups:   FusionName [13]
-    ##    FusionName                   celltype_final tot_cells_w_fusion frac_fusion_…¹
-    ##    <chr>                        <chr>                       <int>          <dbl>
-    ##  1 IGF2BP2--TESPA1              HGSOC                         176          0.989
-    ##  2 PSMB7--SCAI                  HGSOC                          51          0.981
-    ##  3 SRSF7--DHX57                 HGSOC                          33          0.971
-    ##  4 SPATS2--TRA2B                HGSOC                          21          1    
-    ##  5 MIR4435-1HG--DARS            HGSOC                          20          1    
-    ##  6 CBL--KMT2A                   HGSOC                          16          1    
-    ##  7 PLXNB2--DENND6B              HGSOC                          14          1    
-    ##  8 RP11-96H19.1--RP11-446N19.1  HGSOC                          14          1    
-    ##  9 DEK--CASC17                  HGSOC                          11          1    
-    ## 10 SLC7A6--ELMO3                HGSOC                          10          1    
-    ## 11 CTD-2008L17.1--RP11-456O19.2 HGSOC                           8          1    
-    ## 12 WDR59--AARS                  HGSOC                           8          1    
-    ## 13 DUXAP8--LA16c-60G3.6         HGSOC                           7          1    
-    ## # … with abbreviated variable name ¹​frac_fusion_cells
+    ##    FusionName                celltype_final tot_cells_w_fusion frac_fusion_cells
+    ##    <chr>                     <chr>                       <int>             <dbl>
+    ##  1 IGF2BP2--TESPA1           HGSOC                         176             0.989
+    ##  2 PSMB7--SCAI               HGSOC                          51             0.981
+    ##  3 SRSF7--DHX57              HGSOC                          33             0.971
+    ##  4 SPATS2--TRA2B             HGSOC                          21             1    
+    ##  5 MIR4435-1HG--DARS         HGSOC                          20             1    
+    ##  6 CBL--KMT2A                HGSOC                          16             1    
+    ##  7 PLXNB2--DENND6B           HGSOC                          14             1    
+    ##  8 RP11-96H19.1--RP11-446N1… HGSOC                          14             1    
+    ##  9 DEK--CASC17               HGSOC                          11             1    
+    ## 10 SLC7A6--ELMO3             HGSOC                          10             1    
+    ## 11 CTD-2008L17.1--RP11-456O… HGSOC                           8             1    
+    ## 12 WDR59--AARS               HGSOC                           8             1    
+    ## 13 DUXAP8--LA16c-60G3.6      HGSOC                           7             1
+
+``` r
+# 13 fusions of interest
+```
 
 ``` r
 # include fusion annotations
@@ -352,25 +355,24 @@ fusions_of_interest
 
     ## # A tibble: 13 × 5
     ## # Groups:   FusionName [13]
-    ##    FusionName                   celltype_final tot_cells_w_fusion frac_…¹ annots
-    ##    <chr>                        <chr>                       <int>   <dbl> <chr> 
-    ##  1 IGF2BP2--TESPA1              HGSOC                         176   0.989 INTER…
-    ##  2 PSMB7--SCAI                  HGSOC                          51   0.981 INTRA…
-    ##  3 SRSF7--DHX57                 HGSOC                          33   0.971 [CCLE…
-    ##  4 SPATS2--TRA2B                HGSOC                          21   1     INTER…
-    ##  5 MIR4435-1HG--DARS            HGSOC                          20   1     INTRA…
-    ##  6 CBL--KMT2A                   HGSOC                          16   1     [CBL:…
-    ##  7 PLXNB2--DENND6B              HGSOC                          14   1     [TCGA…
-    ##  8 RP11-96H19.1--RP11-446N19.1  HGSOC                          14   1     INTRA…
-    ##  9 DEK--CASC17                  HGSOC                          11   1     [DEK:…
-    ## 10 SLC7A6--ELMO3                HGSOC                          10   1     INTRA…
-    ## 11 CTD-2008L17.1--RP11-456O19.2 HGSOC                           8   1     INTRA…
-    ## 12 WDR59--AARS                  HGSOC                           8   1     INTRA…
-    ## 13 DUXAP8--LA16c-60G3.6         HGSOC                           7   1     INTRA…
-    ## # … with abbreviated variable name ¹​frac_fusion_cells
+    ##    FusionName         celltype_final tot_cells_w_fusion frac_fusion_cells annots
+    ##    <chr>              <chr>                       <int>             <dbl> <chr> 
+    ##  1 IGF2BP2--TESPA1    HGSOC                         176             0.989 IGF2B…
+    ##  2 PSMB7--SCAI        HGSOC                          51             0.981 PSMB7…
+    ##  3 SRSF7--DHX57       HGSOC                          33             0.971 SRSF7…
+    ##  4 SPATS2--TRA2B      HGSOC                          21             1     SPATS…
+    ##  5 MIR4435-1HG--DARS  HGSOC                          20             1     MIR44…
+    ##  6 CBL--KMT2A         HGSOC                          16             1     CBL--…
+    ##  7 PLXNB2--DENND6B    HGSOC                          14             1     PLXNB…
+    ##  8 RP11-96H19.1--RP1… HGSOC                          14             1     RP11-…
+    ##  9 DEK--CASC17        HGSOC                          11             1     DEK--…
+    ## 10 SLC7A6--ELMO3      HGSOC                          10             1     SLC7A…
+    ## 11 CTD-2008L17.1--RP… HGSOC                           8             1     CTD-2…
+    ## 12 WDR59--AARS        HGSOC                           8             1     WDR59…
+    ## 13 DUXAP8--LA16c-60G… HGSOC                           7             1     DUXAP…
 
 ``` r
-write.table(fusions_of_interest, file="data/Patient2_Tum.fusions_of_interest.tsv.gz", sep="\t", quote=F, row.names = F)
+write.table(fusions_of_interest, file="Patient2_Tum.fusions_of_interest.tsv", sep="\t", quote=F, row.names = F)
 ```
 
 ``` r
@@ -657,7 +659,7 @@ tumor_cell_counts_by_methods
     ##  8 IGF2BP2--TESPA1              FusionInspector,STAR-Fusion                    4
     ##  9 IGF2BP2--TESPA1              FusionInspector,STAR-Fusion,ctat-LR-fusion    72
     ## 10 IGF2BP2--TESPA1              FusionInspector,ctat-LR-fusion               230
-    ## # … with 20 more rows
+    ## # ℹ 20 more rows
 
 # Examine specific fusions of interest
 
@@ -817,9 +819,36 @@ report_on_fusion("RP11-208G20.2--PSPHP1")
     ## [5] ctat-LR-fusion  FusionInspector STAR-Fusion    
     ## <0 rows> (or 0-length row.names)
     ## # A tibble: 0 × 4
-    ## # … with 4 variables: FusionName <chr>, tot_cells_w_fusion <int>,
+    ## # ℹ 4 variables: FusionName <chr>, tot_cells_w_fusion <int>,
     ## #   frac_tot_cells <dbl>, type <chr>
     ## # A tibble: 0 × 5
     ## # Groups:   FusionName [0]
-    ## # … with 5 variables: FusionName <chr>, celltype_final <chr>,
+    ## # ℹ 5 variables: FusionName <chr>, celltype_final <chr>,
     ## #   tot_cells_w_fusion <int>, frac_fusion_cells <dbl>, type <chr>
+
+``` r
+report_on_fusion("PSMB7--SCAI")
+```
+
+    ##    FusionName   LeftBreakpoint  RightBreakpoint celltype_final ctat-LR-fusion
+    ## 1 PSMB7--SCAI chr9:124405317:- chr9:125056007:-          HGSOC             28
+    ## 2 PSMB7--SCAI chr9:124405317:- chr9:125066058:-          HGSOC             26
+    ## 3 PSMB7--SCAI chr9:124412352:- chr9:125056007:-          HGSOC              8
+    ## 4 PSMB7--SCAI chr9:124405317:- chr9:125029739:-          HGSOC              2
+    ## 5 PSMB7--SCAI chr9:124405317:- chr9:125066058:-     T.NK.cells              1
+    ##   FusionInspector STAR-Fusion
+    ## 1               2           2
+    ## 2               3           2
+    ## 3               2           1
+    ## 4              NA          NA
+    ## 5              NA          NA
+    ## # A tibble: 1 × 4
+    ##   FusionName  tot_cells_w_fusion frac_tot_cells type 
+    ##   <chr>                    <int>          <dbl> <chr>
+    ## 1 PSMB7--SCAI                 52          0.115 Tum  
+    ## # A tibble: 2 × 5
+    ## # Groups:   FusionName [1]
+    ##   FusionName  celltype_final tot_cells_w_fusion frac_fusion_cells type 
+    ##   <chr>       <chr>                       <int>             <dbl> <chr>
+    ## 1 PSMB7--SCAI HGSOC                          51            0.981  Tum  
+    ## 2 PSMB7--SCAI T.NK.cells                      1            0.0192 Tum

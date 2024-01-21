@@ -473,6 +473,12 @@ report_on_fusion("RP11-208G20.2--PSPHP1")
 
 ```
 
+```{r}
+
+report_on_fusion("PSMB7--SCAI")
+
+```
+
 
 
 
