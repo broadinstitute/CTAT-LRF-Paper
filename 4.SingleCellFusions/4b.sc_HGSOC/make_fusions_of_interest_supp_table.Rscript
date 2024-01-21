@@ -1,0 +1,18 @@
+#!/usr/bin/env Rscript
+
+
+library(tidyverse)
+
+P1_fusions = read.table("Patient1_Tum.fusions_of_interest.tsv", header=T, sep="\t")
+P1_fusions = cbind(sample="Patient1_Tum", P1_fusions)
+    
+P2_fusions = read.table("Patient2_Tum.fusions_of_interest.tsv", header=T, sep="\t")
+P2_fusions = cbind(sample="Patient2_Tum", P2_fusions)
+    
+P3_fusions = read.table("Patient3_Tum.fusions_of_interest.tsv", header=T, sep="\t")
+P3_fusions = cbind(sample="Patient3_Tum", P3_fusions)
+    
+supp_table = bind_rows(P1_fusions, P2_fusions, P3_fusions)
+
+write.table(supp_table, file="scHGSOC_fusions_of_interest.tsv", sep="\t", row.names=F, quote=F)
+
