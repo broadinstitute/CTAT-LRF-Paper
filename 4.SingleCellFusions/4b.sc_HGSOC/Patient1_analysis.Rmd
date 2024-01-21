@@ -266,6 +266,11 @@ fusions_of_interest = Tum_fusion_frac_cell_types %>% filter(celltype_final == "H
     arrange(desc(tot_cells_w_fusion)) %>%
     filter(tot_cells_w_fusion >= MIN_CELLS)
 
+
+
+write.table(left_join(fusions_of_interest, fusion_annots), file="Patient1_Tum.fusions_of_interest.tsv", sep="\t", row.names=F, quote=F)
+
+
 fusions_of_interest
 ```
 
@@ -292,8 +297,6 @@ None of these three fusions are found in the matched normal 'Om' sample
 fusions_of_interest = left_join(fusions_of_interest, Tum_cell_counts_by_method_spread)
 
 fusions_of_interest = left_join(fusions_of_interest, fusion_annots)
-
-write.table(fusions_of_interest, file="Patient1_Tum.fusions_of_interest.tsv", sep="\t", row.names=F, quote=F)
 
 fusions_of_interest
 ```
@@ -396,7 +399,7 @@ tumor_cell_counts_by_methods = Tum_data %>% filter(FusionName %in%  fusions_of_i
         arrange(method) %>%
         mutate(methods = paste(method, collapse=',')) %>%
         ungroup() %>%
-        select(FusionName, methods, barcodes) %>% group_by(FusionName, methods) %>% tally()
+        select(FusionName, methods, barcodes) %>% unique() %>% group_by(FusionName, methods) %>% tally()
 
 
 tumor_cell_counts_by_methods 
@@ -404,6 +407,10 @@ tumor_cell_counts_by_methods
 
 ```
 
+For RAPGEF5::AGMO, half (3/6) of the cells were detected only by long reads, and 1/6 exclusively by short reads.
+ 
+Fusions SMG7::CH507-513H4.1 and NTN1::CDRT15P2 were only detected by long reads.   
+ 
 
 ```{r}
 p = baseplot +

@@ -55,7 +55,11 @@ Melanoma single cell analysis
 
 HGSOC single cell analysis
 
+Analysis of HGSOC Patient-1
+    
 - 4.SingleCellFusions/4b.sc_HGSOC/Patient1_analysis.Rmd (Figure 6)
+
+Analysis of HGSOC Patient-2
 
 
 

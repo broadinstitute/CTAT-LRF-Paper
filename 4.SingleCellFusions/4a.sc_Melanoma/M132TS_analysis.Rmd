@@ -440,6 +440,8 @@ venn_dist = venn_dist %>% mutate(frac_pos_cells = num_cells/ 265)
 
 venn_dist 
 ```
+60% identified by ctat-LRF only.
+
 
 ```{r}
 
@@ -449,7 +451,7 @@ venn_dist %>% filter(! grepl("ctat-LR-fusion", methods))
 venn_dist %>% filter(! grepl("ctat-LR-fusion", methods)) %>% summarize(sum(frac_pos_cells))
 
 ```
-
+~20% by short reads alone
 
 
 ```{r}

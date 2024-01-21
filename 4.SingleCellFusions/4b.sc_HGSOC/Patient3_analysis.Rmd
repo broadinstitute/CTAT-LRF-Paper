@@ -243,6 +243,11 @@ fusions_of_interest = Tum_fusion_frac_cell_types %>% filter(celltype_final == "H
     arrange(desc(tot_cells_w_fusion)) %>%
     filter(tot_cells_w_fusion >= MIN_CELLS)
 
+
+
+write.table(left_join(fusions_of_interest, fusion_annots), file="Patient3_Tum.fusions_of_interest.tsv", sep="\t", row.names=F, quote=F)
+
+
 fusions_of_interest
 ```
 
@@ -268,8 +273,6 @@ fusions_of_interest
 ```{r}
 
 fusions_of_interest = left_join(fusions_of_interest, fusion_annots)
-
-write.table(fusions_of_interest, file="data/Patient3_Tum.fusions_of_interest.tsv.gz", sep="\t", row.names=F, quote=F)
 
 fusions_of_interest
 ```

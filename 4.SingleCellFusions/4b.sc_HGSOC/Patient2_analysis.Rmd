@@ -206,6 +206,8 @@ fusions_of_interest = fusion_frac_cell_types %>%
 
 fusions_of_interest
 
+# 13 fusions of interest
+
 ```
 
 
@@ -221,7 +223,7 @@ fusions_of_interest
 
 ```{r}
 
-write.table(fusions_of_interest, file="data/Patient2_Tum.fusions_of_interest.tsv.gz", sep="\t", quote=F, row.names = F)
+write.table(fusions_of_interest, file="Patient2_Tum.fusions_of_interest.tsv", sep="\t", quote=F, row.names = F)
 
 
 ```

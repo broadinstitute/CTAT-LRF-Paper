@@ -65,6 +65,30 @@ write.table(data, file="DepMap_v1v2mrgd.ctatLRF_FI.consolidated.tsv", quote=F, s
 ```
 
 
+```{r}
+
+# how many fusion gene pairs
+data %>% select(sample, fusion) %>% unique() %>% nrow()
+# 112
+
+# how many fusion splicing isoforms
+data %>% select(sample, fusion, LeftBreakpoint, RightBreakpoint) %>% unique() %>% nrow()
+# 217
+
+```
+
+```{r}
+
+# How many fusion gene pairs and isoforms if require both long and short read support for breakpoints?
+data %>% filter(num_LR > 0 & num_SR > 0) %>% select(sample, fusion) %>% unique() %>% nrow()
+# 93
+
+data %>% filter(num_LR > 0 & num_SR > 0) %>% select(sample, fusion, LeftBreakpoint, RightBreakpoint) %>% unique() %>% nrow()
+# 149
+
+```
+
+
 # compare long vs. short read fusion evidence, normalized by sequencing depth
 
 ```{r}
@@ -129,7 +153,7 @@ data %>% head()
 
 ```{r}
 
-# how many genes and isoforms ahve both long and short read support:
+# how many genes and isoforms have both long and short read support:
 data %>% filter(num_LR > 0 && num_SR > 0) %>% nrow()
 
 data %>% filter(num_LR > 0 && num_SR > 0) %>% select(sample, fusion) %>% unique() %>% nrow()
@@ -415,6 +439,8 @@ mult_iso_both_sample_fusion_names = mult_isoform_data_both_read_types %>% group_
 mult_isoform_data_both_read_types = left_join(mult_iso_both_sample_fusion_names, mult_isoform_data, by=c('sample', 'fusion'))
 
 mult_iso_both_sample_fusion_names %>% arrange(desc(num_multi_iso_both_types))
+
+# 5 fusions with at least 3 splicing isoforms each:
 
 ```
 
