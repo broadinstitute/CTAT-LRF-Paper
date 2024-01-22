@@ -135,7 +135,7 @@ data %>% head()
 # F1 vs. min reads
 
 data %>% ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom_line(aes(group=prog, color=prog)) +
-    xlim(3,15) + ylim(0.3,0.8) +
+    xlim(3,10) + ylim(0.3,0.8) +
     ggtitle("Depmap v1 fusions: F1 ~ min read support") 
 
 
@@ -152,7 +152,7 @@ data %>% select(prog, min_sum_frags, TP, FP) %>%
     gather(key=pred_class_type, value=pred_class_value, TP, FP) %>%
     ggplot(aes(x=min_sum_frags, y=pred_class_value)) + geom_point(aes(group=pred_class_type, color=pred_class_type)) +
     facet_wrap(~prog) +
-    xlim(3,15)
+    xlim(3,10)
 
 
 
