@@ -15,7 +15,7 @@ library(tidyverse)
 
 ```{r}
 
-fusion_preds = read.table("data/preds.collected.gencode_mapped.wAnnot.filt", header=T, sep="\t", stringsAsFactors = F) %>%
+fusion_preds = read.table("data/preds.collected.gencode_mapped.wAnnot.filt.pass", header=T, sep="\t", stringsAsFactors = F) %>%
     filter(! grepl("flair", prog))
 
 fusion_preds %>% head()
@@ -38,7 +38,7 @@ p
 
 # get num truth counts (min 2 agree)
 
-truth_data = read.table("data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.byProgAgree.min_2.truth_set",
+truth_data = read.table("data/preds.collected.gencode_mapped.wAnnot.filt.pass.proxy_assignments.byProgAgree.min_2.truth_set",
                   header=T, sep="\t", stringsAsFactors = F)
 
 
@@ -146,6 +146,25 @@ data %>% ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom
 
 ```
 
+```{r}
+
+
+# F1 vs. min reads
+
+# exclude pbfusion v0.4.0 for the paper fig
+
+data %>% 
+    filter(prog != "pbfusion_v0.4.0") %>%
+    ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom_line(aes(group=prog, color=prog)) +
+    xlim(3,15) + ylim(0.3,0.8) +
+    ggtitle("Depmap v1 fusions: F1 ~ min read support") 
+
+
+
+
+```
+
+
 
 ```{r}
 
@@ -162,6 +181,25 @@ data %>% select(prog, min_sum_frags, TP, FP) %>%
 ```
 
 
+
+
+
+```{r}
+
+# exclude pbfusion v0.4.0
+
+
+
+data %>% select(prog, min_sum_frags, TP, FP) %>% 
+    filter(prog != "pbfusion_v0.4.0") %>%
+    gather(key=pred_class_type, value=pred_class_value, TP, FP) %>%
+    ggplot(aes(x=min_sum_frags, y=pred_class_value)) + geom_point(aes(group=pred_class_type, color=pred_class_type)) +
+    facet_wrap(~prog) +
+    xlim(3,15)
+
+
+
+```
 
 
 
