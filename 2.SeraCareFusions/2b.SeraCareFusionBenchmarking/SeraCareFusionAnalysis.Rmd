@@ -102,7 +102,7 @@ pbfusion v0.4.0 does find KIF5B--RET but breakpoint coordinates aren't one-to-on
 
 ```{r}
 
-control_fusions_found %>%  filter(! grepl("flairfusion", prog)) %>%
+seracare_prog_compare_plot = control_fusions_found %>%  filter(! grepl("flairfusion", prog)) %>%
     filter(prog != "pbfusion_v0.4.0") %>%
     mutate(prog = factor(prog, levels = c('ctat-LR-fusion.v0.12.0', 'fusionseeker', 'LongGF', 'JAFFAL', 'pbfusion_v0.3.1'))) %>%
     mutate(prog_data = paste(prog, dataset)) %>%
@@ -116,8 +116,17 @@ control_fusions_found %>%  filter(! grepl("flairfusion", prog)) %>%
 
 
 
+seracare_prog_compare_plot
+```
+
+
+```{r}
+
+ggsave(seracare_prog_compare_plot, file="seracare_prog_compare_plot.heatmap.svg", width=7, height=4)
+
 
 ```
+
 
 
 ```{r}

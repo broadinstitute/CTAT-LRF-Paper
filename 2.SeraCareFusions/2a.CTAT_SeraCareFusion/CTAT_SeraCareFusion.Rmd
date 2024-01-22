@@ -91,14 +91,24 @@ ctatLRF_FI_control_results %>% ggplot(aes(x=FusionName, y=LR_FFPM)) +
 
 ```{r}
 
-ctatLRF_FI_control_results %>% gather(key=read_count_type, value=read_count, num_LR, num_SR) %>%
+paperfig_LR_vs_SR = ctatLRF_FI_control_results %>% gather(key=read_count_type, value=read_count, num_LR, num_SR) %>%
     ggplot(aes(x=read_count_type, y=read_count)) +  
     geom_bar(stat='identity', position = 'dodge', aes(color=dataset, fill=read_count_type)) +
     facet_wrap(~FusionName) +
       theme(axis.text.x = element_text(angle = 90, hjust = 1))  +
           geom_text(position=position_dodge(width=0.9), aes(label=read_count, group=dataset))
 
+paperfig_LR_vs_SR
+
 ```
+
+
+```{r}
+
+ggsave(paperfig_LR_vs_SR, file="seracare_LR_vs_SR_barplot.svg", width=9, height=7)
+
+```
+
 
 ```{r}
 # How many fusions are missing short read evidence in at least one of the replicates?
@@ -167,7 +177,7 @@ densVals <- function(x, y = NULL, nbin = 128, bandwidth, range.x) {
 
 mean_gene_expr$point_density <- densVals(log10(mean_gene_expr$mean_LR_gene_expr), log10(mean_gene_expr$mean_TruSeq_gene_expr))
 
-mean_gene_expr  %>% ggplot(aes(x = log10(mean_LR_gene_expr), y=log10(mean_TruSeq_gene_expr))) +
+mean_gene_expr_plot = mean_gene_expr  %>% ggplot(aes(x = log10(mean_LR_gene_expr), y=log10(mean_TruSeq_gene_expr))) +
   stat_density2d(geom = "raster", aes(fill = ..density.. ^ 0.25), contour = FALSE) +
   #scale_x_log10() + scale_y_log10() +
   scale_fill_gradientn(colours = colorRampPalette(c("white", blues9))(256)) +
@@ -176,6 +186,17 @@ mean_gene_expr  %>% ggplot(aes(x = log10(mean_LR_gene_expr), y=log10(mean_TruSeq
   stat_smooth(method = "lm", 
               formula = y ~ x, 
               geom = "smooth")
+
+
+mean_gene_expr_plot
+
+```
+
+```{r}
+
+ggsave(mean_gene_expr_plot, file="SeraCare_LR_vs_SR_gene_expr_scatter_density_plot.svg", width=7, height=4)
+
+
 
 ```
 
