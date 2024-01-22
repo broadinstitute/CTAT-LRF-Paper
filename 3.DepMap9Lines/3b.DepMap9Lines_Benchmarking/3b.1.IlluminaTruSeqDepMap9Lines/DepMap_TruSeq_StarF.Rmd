@@ -26,12 +26,12 @@ StarF_data %>% head()
 
 # process earlier long-read defined proxy truth set info:
 
-earlier_truth_set_file = "../data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.byProgAgree.min_2.truth_set"
+earlier_truth_set_file = "../data/preds.collected.gencode_mapped.wAnnot.filt.pass.proxy_assignments.byProgAgree.min_2.truth_set"
 
 earlier_truth_set = read.table(earlier_truth_set_file, header=T, sep="\t") %>% mutate(type='shared')
 
 
-earlier_unique_set_file = "../data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.byProgAgree.min_2.unique_set"
+earlier_unique_set_file = "../data/preds.collected.gencode_mapped.wAnnot.filt.pass.proxy_assignments.byProgAgree.min_2.unique_set"
 
 earlier_unique_set = read.table(earlier_unique_set_file, header=T, sep="\t") %>% mutate(type='unique')
 

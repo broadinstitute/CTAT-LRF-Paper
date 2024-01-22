@@ -15,7 +15,7 @@ library(tidyverse)
 
 ```{r}
 
-fusion_preds = read.table("data/preds.collected.gencode_mapped.wAnnot.filt", header=T, sep="\t", stringsAsFactors = F) %>%
+fusion_preds = read.table("data/preds.collected.gencode_mapped.wAnnot.filt.pass", header=T, sep="\t", stringsAsFactors = F) %>%
     filter(! grepl("flair", prog))
 
 fusion_preds %>% head()
@@ -38,7 +38,7 @@ p
 
 # get num truth counts (min 2 agree)
 
-truth_data = read.table("data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.byProgAgree.min_2.truth_set",
+truth_data = read.table("data/preds.collected.gencode_mapped.wAnnot.filt.pass.proxy_assignments.byProgAgree.min_2.truth_set",
                   header=T, sep="\t", stringsAsFactors = F)
 
 
@@ -141,6 +141,7 @@ data %>% ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom
 
 
 ```
+
 
 
 ```{r}
