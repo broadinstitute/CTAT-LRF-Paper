@@ -71,13 +71,17 @@ truth_data_counts %>% summarise(sum_truth_fusions = sum(num_truth_fusions))
 
 ```{r}
 
-p2 = p + geom_hline(data=truth_data_counts, aes(yintercept=num_truth_fusions))
+p_fusion_counts_barplot = p + geom_hline(data=truth_data_counts, aes(yintercept=num_truth_fusions))
 
-p2
+p_fusion_counts_barplot
 
 ```
 
+```{r}
 
+ggsave(p_fusion_counts_barplot, file="depmap_fusion_counts_per_prog.barplot.svg", width=7, height=5)
+
+```
 
 
 
@@ -153,16 +157,22 @@ data %>% ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom
 
 # exclude pbfusion v0.4.0 for the paper fig
 
-data %>% 
+depmap_accuracy_lineplot = data %>% 
     filter(prog != "pbfusion_v0.4.0") %>%
     ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom_line(aes(group=prog, color=prog)) +
-    xlim(3,10) + ylim(0.3,0.8) +
+    xlim(3,10) + ylim(0.4,0.8) +
     ggtitle("Depmap v1 fusions: F1 ~ min read support") 
 
+depmap_accuracy_lineplot
+```
 
 
+```{r}
+
+ggsave(depmap_accuracy_lineplot, file="depmap_accuracy_lineplot.svg", width=7, height=4)
 
 ```
+
 
 
 
@@ -190,17 +200,23 @@ data %>% select(prog, min_sum_frags, TP, FP) %>%
 
 
 
-data %>% select(prog, min_sum_frags, TP, FP) %>% 
+depmap_TP_vs_FP_scatterplot = data %>% select(prog, min_sum_frags, TP, FP) %>% 
     filter(prog != "pbfusion_v0.4.0") %>%
     gather(key=pred_class_type, value=pred_class_value, TP, FP) %>%
     ggplot(aes(x=min_sum_frags, y=pred_class_value)) + geom_point(aes(group=pred_class_type, color=pred_class_type)) +
     facet_wrap(~prog) +
     xlim(3,15)
 
-
+depmap_TP_vs_FP_scatterplot
 
 ```
 
+
+```{r}
+
+ggsave(depmap_TP_vs_FP_scatterplot, file="depmap_TP_vs_FP_scatterplot.svg", width=7, height=5)
+
+```
 
 
 
@@ -266,7 +282,7 @@ cosmic_fusion_preds_mult_methods
 
 ```{r}
 
-cosmic_fusion_preds %>%
+ depmap_cosmic_fusions_heatmap =   cosmic_fusion_preds %>%
     filter(proxy_fusion_name %in% cosmic_fusion_preds_mult_methods) %>%
     
     ggplot(aes(x=proxy_fusion_name, y=prog)) + geom_tile(aes(fill=num_reads)) + 
@@ -274,7 +290,14 @@ cosmic_fusion_preds %>%
     scale_fill_continuous(high = "#132B43", low = "#56B1F7", na.value="white") +
     geom_text(aes(label=num_reads), color='white')
 
+ depmap_cosmic_fusions_heatmap
+
 ```
 
+```{r}
 
+ggsave(depmap_cosmic_fusions_heatmap, file="depmap_cosmic_fusions_heatmap.svg", width=7, height=5)
+
+
+```
 
