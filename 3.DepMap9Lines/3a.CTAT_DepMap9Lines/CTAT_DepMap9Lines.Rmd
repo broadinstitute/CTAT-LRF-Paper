@@ -219,7 +219,7 @@ SR_enriched_fusion_isoforms %>% filter(SR_enrichment > 1)
 
 ```{r}
 
-data %>%     
+depmap_LR_vs_SR_fusion_FFPM_scatterplot = data %>%     
     select(sample, fusion_iso, LR_FFPM, SR_FFPM) %>% 
     ggplot(aes(x=log10(LR_FFPM), y=log10(SR_FFPM))) + geom_point() +
     stat_smooth(method = "lm", 
@@ -227,11 +227,20 @@ data %>%
               geom = "smooth") + 
     geom_abline(intercept=0, slope=1, color='purple') +
     geom_point(data=SR_enriched_fusion_isoforms %>% filter(SR_enrichment>=3), color='red')  +
-    geom_text_repel(data=SR_enriched_fusion_isoforms %>% filter(SR_enrichment>=3), aes(label=fusion)) +
+    geom_text_repel(data=SR_enriched_fusion_isoforms %>% filter(SR_enrichment>=3), aes(label=fusion_iso)) +
     ggtitle("CTAT-LR-FI FFPM Comparison for isoforms of TP fusions")
+
+
+depmap_LR_vs_SR_fusion_FFPM_scatterplot
 
 ```
 
+```{r}
+
+ggsave(depmap_LR_vs_SR_fusion_FFPM_scatterplot, file="depmap_LR_vs_SR_fusion_FFPM_scatterplot.svg", width=7, height=5)
+
+
+```
 
 
 ```{r}
