@@ -41,6 +41,21 @@ combined_data = bind_rows(pacbio_summary_data, ONT_summary_data)
 combined_data %>% head()
 ```
 
+
+```{r}
+
+combined_data$prog = factor(combined_data$prog, levels = c('ctat-LR-fusion.v0.12.0',
+                                                           'JAFFAL',
+                                                           'LongGF',
+                                                           'fusionseeker_s1',
+                                                           'pbfusion_v0.3.1',
+                                                           'pbfusion_v0.4.0') )
+
+
+```
+
+
+
 ```{r}
 
 combined_data %>%
@@ -77,4 +92,13 @@ paperfig
 
 
 ```
+
+```{r}
+
+ggsave(paperfig, filename="pbsim3_bmark.paperfig.pdf", width=8, height=5)
+
+
+```
+
+
 

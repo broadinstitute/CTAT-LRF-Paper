@@ -56,7 +56,7 @@ truth_data_counts = truth_data %>% rename(sample=sample_name) %>% group_by(sampl
 
 truth_data_counts %>% arrange(num_truth_fusions)
 
-# as few as 4 in MJ and as many aas 34 in VCaP
+# as few as 2 in MJ and as many aas 33 in VCaP
 
 ```
 
@@ -64,7 +64,7 @@ truth_data_counts %>% arrange(num_truth_fusions)
 
 truth_data_counts %>% summarise(sum_truth_fusions = sum(num_truth_fusions))
 
-# 150 proxy truth fusions
+# 137 proxy truth fusions
 
 ```
 

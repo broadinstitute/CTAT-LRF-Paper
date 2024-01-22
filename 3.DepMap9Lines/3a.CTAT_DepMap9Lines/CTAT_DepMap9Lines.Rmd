@@ -65,26 +65,16 @@ write.table(data, file="DepMap_v1v2mrgd.ctatLRF_FI.consolidated.tsv", quote=F, s
 ```
 
 
-```{r}
 
-# how many fusion gene pairs
-data %>% select(sample, fusion) %>% unique() %>% nrow()
-# 112
-
-# how many fusion splicing isoforms
-data %>% select(sample, fusion, LeftBreakpoint, RightBreakpoint) %>% unique() %>% nrow()
-# 217
-
-```
 
 ```{r}
 
 # How many fusion gene pairs and isoforms if require both long and short read support for breakpoints?
 data %>% filter(num_LR > 0 & num_SR > 0) %>% select(sample, fusion) %>% unique() %>% nrow()
-# 93
+# 204
 
 data %>% filter(num_LR > 0 & num_SR > 0) %>% select(sample, fusion, LeftBreakpoint, RightBreakpoint) %>% unique() %>% nrow()
-# 149
+# 268
 
 ```
 
@@ -108,6 +98,8 @@ data %>% ggplot(aes(x=log10(LR_FFPM), y=log10(SR_FFPM))) + geom_point() +
 
 cor.test(x=log2(data$LR_FFPM), y=log2(data$SR_FFPM), use='complete.obs')
 
+# R=0.71
+
 ```
 
 
@@ -115,7 +107,7 @@ cor.test(x=log2(data$LR_FFPM), y=log2(data$SR_FFPM), use='complete.obs')
 
 ```{r}
 
-TP_fusions = read.table("../3b.DepMap9Lines_Benchmarking/3b.2.IncludeIlluminaSupportedFusions/data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.byProgAgree.min_2.truth_set", 
+TP_fusions = read.table("../3b.DepMap9Lines_Benchmarking/3b.2.IncludeIlluminaSupportedFusions/data/preds.collected.gencode_mapped.wAnnot.filt.pass.proxy_assignments.byProgAgree.min_2.truth_set", 
                         header=T, sep="\t", stringsAsFactors = F) %>% 
     select(proxy_fusion_name)
 
@@ -153,7 +145,7 @@ data %>% head()
 
 ```{r}
 
-# how many genes and isoforms have both long and short read support:
+# how many TP genes and isoforms have both long and short read support:
 data %>% filter(num_LR > 0 && num_SR > 0) %>% nrow()
 
 data %>% filter(num_LR > 0 && num_SR > 0) %>% select(sample, fusion) %>% unique() %>% nrow()
