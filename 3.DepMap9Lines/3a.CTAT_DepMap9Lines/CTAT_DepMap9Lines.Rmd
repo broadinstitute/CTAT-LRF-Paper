@@ -255,13 +255,24 @@ cor.test(x=log2(data$LR_FFPM), y=log2(data$SR_FFPM), use='complete.obs')
 
 ```{r}
 
-SR_enriched_fusion_isoforms %>%
+depmap_SR_enrichment_rankings_plot = SR_enriched_fusion_isoforms %>%
     mutate(rn = row_number() ) %>%
     ggplot(aes(x=rn, y=SR_enrichment)) + geom_point() + geom_hline(yintercept = 1.0, color='purple') +
     scale_y_continuous(trans='log10') +
     xlab("Fusion isoform ranked by SR_enrichment")
    
+depmap_SR_enrichment_rankings_plot
+
 ```
+
+
+```{r}
+
+ggsave(depmap_SR_enrichment_rankings_plot, file="depmap_SR_enrichment_rankings_plot.svg", width=5, height=3)
+
+
+```
+
 
 # examine specific fusions and breakpoint splice support
 
@@ -451,7 +462,7 @@ mult_iso_both_sample_fusion_names %>% arrange(desc(num_multi_iso_both_types))
 ```{r}
 
 
-mult_isoform_data_both_read_types %>% 
+depmap_fusion_isoform_expr_LR_SR_comparison_plot =  mult_isoform_data_both_read_types %>% 
     ggplot(aes(x=log10(LR_FFPM), y=log10(SR_FFPM))) + geom_point(aes(color=fusion)) +
     ggtitle("restricted to fusion genes w/ multi isoforms supported by both read types") +
     stat_smooth(method = "lm", 
@@ -459,9 +470,15 @@ mult_isoform_data_both_read_types %>%
               geom = "smooth") +
     facet_wrap(~fusion, scale='free')
 
-
+depmap_fusion_isoform_expr_LR_SR_comparison_plot
 ```
 
+```{r}
+
+ggsave(depmap_fusion_isoform_expr_LR_SR_comparison_plot, file="depmap_fusion_isoform_expr_LR_SR_comparison_plot.svg", width=9, height=5)
+
+
+```
 
 
 ```{r}
@@ -530,6 +547,10 @@ colnames(fusion_gene_structures) = c('fusion_name', 'feature_type', 'lend', 'ren
 
 plot_fusion_expression_by_breakpoint_incl_gene_structures = function(sample_name, fusion_name) {
     
+    
+    ret_plots = list()
+    
+    
     df = data %>% filter(sample == sample_name & fusion == fusion_name) %>% 
         select(sample, fusion, LeftLocalBreakpoint, RightLocalBreakpoint, num_LR, est_J, LR_FFPM, SR_FFPM) %>% 
         arrange(sample, RightLocalBreakpoint, LeftLocalBreakpoint) %>%
@@ -573,7 +594,7 @@ plot_fusion_expression_by_breakpoint_incl_gene_structures = function(sample_name
 
     ## draw geneA
     geneA_minY = geneB_lend - 0.95*padding
-    geneA_maxY = geneA_minY + 0.02*geneB_length
+    geneA_maxY = geneA_minY + 0.03*geneB_length
 
     p1 = p + geom_rect(data=geneA_info, aes(xmin=lend, xmax=rend, ymin=geneA_minY, ymax=geneA_maxY), fill=NA, color='black', alpha=0.5)
 
@@ -600,9 +621,11 @@ plot_fusion_expression_by_breakpoint_incl_gene_structures = function(sample_name
 
     
     plot(p1)
+    ret_plots[[1]] = p1
     
     p1 = p1 + facet_wrap(~readtype) 
     plot(p1)
+    ret_plots[[2]] = p1
     
     
     # zoom in around breakpoints
@@ -618,7 +641,7 @@ plot_fusion_expression_by_breakpoint_incl_gene_structures = function(sample_name
     
      ## draw geneA (along X-axis)
     geneA_minY = min_right_breakpoint - 0.95*padding
-    geneA_maxY = geneA_minY + 0.02* (max_left_breakpoint - min_left_breakpoint + 2*padding)
+    geneA_maxY = geneA_minY + 0.03* (max_right_breakpoint - min_right_breakpoint + 2*padding)
 
     p2 = p + geom_rect(data=geneA_info, aes(xmin=lend, xmax=rend, ymin=geneA_minY, ymax=geneA_maxY), fill=NA, color='black', alpha=0.5)
 
@@ -641,9 +664,14 @@ plot_fusion_expression_by_breakpoint_incl_gene_structures = function(sample_name
         xlim(min_left_breakpoint-padding, max_left_breakpoint+padding)
     
     plot(p2)
+    ret_plots[[3]] = p2
     
     p2 = p2 + facet_wrap(~readtype)
     plot(p2)
+    ret_plots[[4]] = p2
+    
+    
+    return(ret_plots)
     
 }
 
@@ -659,7 +687,11 @@ plot_fusion_expression_by_breakpoint_incl_gene_structures("K562", "BCR--ABL1")
 
 ```{r}
 
-plot_fusion_expression_by_breakpoint_incl_gene_structures("VCAP", "TMPRSS2--ERG")
+plots = plot_fusion_expression_by_breakpoint_incl_gene_structures("VCAP", "TMPRSS2--ERG")
+
+ggsave(plots[[2]], file="depmap_VCaP_TMPRSS2--ERG_LR_vs_SR_isoforms.svg", width=9, height=6)
+
+ggsave(plots[[4]], file="depmap_VCaP_TMPRSS2--ERG_LR_vs_SR_isoforms.zoomed.svg", width=9, height=6)
 
 
 
@@ -678,7 +710,11 @@ plot_fusion_expression_by_breakpoint_incl_gene_structures("SKBR3", "CYTH1--EIF3H
 ```{r}
 
 
-plot_fusion_expression_by_breakpoint_incl_gene_structures("SKBR3", "TATDN1--GSDMB")
+plots = plot_fusion_expression_by_breakpoint_incl_gene_structures("SKBR3", "TATDN1--GSDMB")
+
+ggsave(plots[[2]], file="depmap_SKBR3_TATDN1--GSDMB_LR_vs_SR_isoforms.svg", width=9, height=6)
+
+ggsave(plots[[4]], file="depmap_SKBR3_TATDN1--GSDMB_LR_vs_SR_isoforms.zoomed.svg", width=9, height=6)
 
 
 

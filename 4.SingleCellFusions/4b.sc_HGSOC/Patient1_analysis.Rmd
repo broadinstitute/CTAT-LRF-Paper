@@ -423,6 +423,12 @@ p = baseplot +
 p
 ```
 
+```{r}
+
+ggsave(p, file="HGSOC_Patient1_umap.svg", width=7, height=5)
+
+
+```
 
 
 
@@ -645,11 +651,19 @@ tum_only_umap_baseplot
 ```{r}
 
 
-tum_only_umap_baseplot + 
+tumor_cells_only_fig = tum_only_umap_baseplot + 
     geom_point(data=tumor_umap %>% filter(FusionName %in% c('SMG7--CH507-513H4.1', 'RAPGEF5--AGMO', 'NTN1--CDRT15P2')) %>% 
                    select(FusionName, UMAP_1.tum_only, UMAP_2.tum_only, seurat_clusters) %>% unique(), 
                               aes(color=FusionName), size=rel(5), alpha=0.3) +
          ggtitle("Patient 1 Tumor Cells Only")
+
+tumor_cells_only_fig
+```
+
+
+```{r}
+
+ggsave(tumor_cells_only_fig, file="scHGSOC_Patient1_tumor_cells_only_fig.svg", width=7, height=5)
 
 
 ```

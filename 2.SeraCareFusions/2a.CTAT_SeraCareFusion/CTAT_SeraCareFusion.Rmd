@@ -65,24 +65,36 @@ ctatLRF_FI_control_results
 
 # by read count
 
-ctatLRF_FI_control_results %>% ggplot(aes(x=FusionName, y=num_LR)) + 
+seracare_read_count_barplot = ctatLRF_FI_control_results %>% ggplot(aes(x=FusionName, y=num_LR)) + 
     geom_bar(stat='identity', position='dodge', aes(fill=dataset))   + 
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-
+seracare_read_count_barplot
 
 ```
 
+```{r}
+
+ggsave(seracare_read_count_barplot, file="seracare_read_count_barplot.svg", width=9, height=5)
+
+```
 
 ```{r}
 
 # by normalized read count
 
-ctatLRF_FI_control_results %>% ggplot(aes(x=FusionName, y=LR_FFPM)) + 
+seracare_FFPM_barplot = ctatLRF_FI_control_results %>% ggplot(aes(x=FusionName, y=LR_FFPM)) + 
     geom_bar(stat='identity', position='dodge', aes(fill=dataset))   + 
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 
+seracare_FFPM_barplot
+
+```
+
+```{r}
+
+ggsave(seracare_FFPM_barplot, file="seracare_FFPM_barplot.svg", width=9, height=5)
 
 ```
 
