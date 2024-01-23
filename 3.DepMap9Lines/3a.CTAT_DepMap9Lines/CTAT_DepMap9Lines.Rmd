@@ -701,10 +701,31 @@ ggsave(plots[[4]], file="depmap_VCaP_TMPRSS2--ERG_LR_vs_SR_isoforms.zoomed.svg",
 ```{r}
 
 
-plot_fusion_expression_by_breakpoint_incl_gene_structures("SKBR3", "CYTH1--EIF3H")
+plots = plot_fusion_expression_by_breakpoint_incl_gene_structures("SKBR3", "CYTH1--EIF3H")
+
+ggsave(plots[[1]], file="depmap_SKBR3_CYTH1--EIF3H_LR_vs_SR_isoforms.svg", width=9, height=6)
+
+
 
 
 ```
+
+
+```{r}
+
+
+cyth1_eif3h_cor_plot =  mult_isoform_data_both_read_types %>% 
+    filter(fusion=="CYTH1--EIF3H") %>%
+    ggplot(aes(x=log10(LR_FFPM), y=log10(SR_FFPM))) + geom_point(aes(color=fusion), size=rel(3), color='black') +
+    ggtitle("restricted to fusion genes w/ multi isoforms supported by both read types") +
+    stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth") 
+cyth1_eif3h_cor_plot 
+
+ggsave(cyth1_eif3h_cor_plot, file="cyth1_eif3h_LR_SR_correlation_plot.svg", width=5, height=4)
+```
+
 
 
 ```{r}
