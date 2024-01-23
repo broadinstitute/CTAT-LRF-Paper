@@ -424,6 +424,14 @@ Tum_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4" ) %>%
 
 ```
 
+```{r}
+
+ggsave(p, file="M132TS_NUTM2A-AS1_fusion_umap.svg", width=7, height=4)
+
+
+```
+
+
 
 ```{r}
 
