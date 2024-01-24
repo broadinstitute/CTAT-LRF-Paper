@@ -212,6 +212,22 @@ data %>% select(prog, min_sum_frags, TP, FP) %>%
 
 
 
+```{r}
+
+# precision / recall 
+
+data %>% ggplot(aes(x=TPR, y=PPV)) + 
+    geom_point(aes(groups=prog, color=prog)) +
+    geom_line(aes(color=prog)) 
+    
+
+
+
+```
+
+
+
+
 
 
 ```{r}
@@ -237,6 +253,30 @@ depmap_TP_vs_FP_scatterplot
 ggsave(depmap_TP_vs_FP_scatterplot, file="depmap_TP_vs_FP_scatterplot.svg", width=7, height=5)
 
 ```
+
+
+
+```{r}
+
+# precision / recall 
+
+depmap_precision_recall_plot = data %>%
+      filter(prog != "pbfusion_v0.4.0") %>%
+    ggplot(aes(x=TPR, y=PPV)) + 
+    geom_point(aes(groups=prog, color=prog)) +
+    geom_line(aes(color=prog)) 
+    
+depmap_precision_recall_plot
+
+```
+
+
+```{r}
+
+ggsave(depmap_precision_recall_plot, file="depmap_precision_recall_plot.svg", width=5, height=3)
+
+```
+
 
 
 
