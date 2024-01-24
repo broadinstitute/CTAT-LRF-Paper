@@ -11,8 +11,16 @@ library(tidyverse)
 ```
 
 
+Benchmarking analysis for the JAFFAL simulated fusion reads.
+
+Analysis was performed here:
+https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/simulated_data/sim_jaffal
+
+Results are analyzed below:
 
 ```{r}
+
+# parse accuracy statistics from benchmarking:
 
 strict_results = read.table("data/strict.combined_results.ROC.tsv", header=T, sep="\t", stringsAsFactors = F)
 strict_results$analysisType="strict"
@@ -21,21 +29,10 @@ allow_reverse_results = read.table("data/allow_reverse.combined_results.ROC.tsv"
 allow_reverse_results$analysisType="allow_reverse"
 
 
-```
-
-```{r}
 
 data = bind_rows(strict_results,
                  allow_reverse_results)
 
-
-```
-
-
-
-
-
-```{r}
 
 data = data %>% filter(prog %in% c(
                                    'pbfusion_v0.3.1',
@@ -47,46 +44,7 @@ data = data %>% filter(prog %in% c(
                        )
 
 
-```
-
-
-```{r}
-
-data$analysisType = factor(data$analysisType, levels=c('strict', 'allow_reverse'))
-
-data %>% 
-    mutate(analysis_seqtype = paste(analysisType, seqtype)) %>%
-    ggplot(aes(x=TPR, y=PPV)) + geom_point(aes(groups=prog, color=prog)) +
-    facet_grid(vars(analysis_seqtype), vars(divergence))
-
-
-
-```
-
-
-```{r}
-
-
-
-data %>% 
-    filter(analysisType == "allow_reverse") %>% 
-    filter(prog != "pbfusion_v0.4.0") %>%
-    mutate(analysis_seqtype = paste(analysisType, seqtype)) %>%
-    ggplot(aes(x=TPR, y=PPV)) + 
-    geom_point(aes(groups=prog, color=prog)) +
-    geom_line(aes(color=prog)) +
-    facet_grid(vars(analysis_seqtype), vars(divergence)) +
-    ylim(0.8,1)
-
-```
-
-
-
-
-
-
-
-```{r}
+# extract the maximum F1 value for each program and target data set: 
 
 max_F1_data = data %>% group_by(analysisType, prog, seqtype, divergence) %>% 
     arrange(desc(F1)) %>% filter(row_number() == 1) %>% ungroup()
