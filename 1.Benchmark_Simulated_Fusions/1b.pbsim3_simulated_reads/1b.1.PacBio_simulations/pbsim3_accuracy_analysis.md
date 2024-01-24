@@ -3,7 +3,16 @@ pbsim3_accuracy_analysis
 bhaas
 2023-12-05
 
-# fusion pair accuracy
+# PacBio simulated fusion reads using pbsim3 (attaining HiFi accuracy)
+
+Benchmarking analysis including all predicted fusions from the various
+methods are available here:
+
+<https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/simulated_data/pbio_pbsim3_part5>
+
+Analysis of the results are below:
+
+## max F1 comparison for fusion pair accuracy
 
 ``` r
 max_F1_data = read.table("data/max_F1_summary.tsv", header=T, sep="\t") %>% 
@@ -44,7 +53,7 @@ mean_samples_F1 %>%
 
 ![](pbsim3_accuracy_analysis_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
-# breakpoint results
+## max F1 compare for fusion breakpoint accuracy
 
 ``` r
 breakpoint_data = read.table("data/breakpoint_maxF1_data.tsv", sep="\t", header=T) %>%

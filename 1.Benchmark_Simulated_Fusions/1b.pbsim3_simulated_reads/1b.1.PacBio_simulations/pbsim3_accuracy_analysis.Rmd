@@ -10,53 +10,14 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
 
+# PacBio simulated fusion reads using pbsim3 (attaining HiFi accuracy)
 
-# fusion pair accuracy
+Benchmarking analysis including all predicted fusions from the various methods are available here:
 
-```{r}
-
-all_data = read.table("data/all_combined_results.ROC.tsv", header=T, sep="\t") %>% 
-    filter(! grepl("flair", prog)) %>%
- mutate(pass_count = as.numeric(str_replace(pass_count, "pass", ""))) 
+https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/simulated_data/pbio_pbsim3_part5
 
 
-```
-
-```{r}
-
-# each evaluation corresponds to combo of:  rep_num, coverage_level, pass_count, sample_count, analysisType, prog
-
-# plot grid of prog vs. analysis type with each series as { rep_num, coverage_level, pass_count, sample_count}
-
-all_data %>% mutate(series = paste(rep_num, coverage_level, pass_count, sample_count) ) %>%
-    ggplot(aes(x=TPR, y=PPV)) + 
-    geom_point(aes(groups=series, color=series)) + 
-    geom_line(aes(color=series) ) +
-    facet_grid(vars(prog), vars(analysisType), scale='free')
-    
-
-
-```
-
-
-
-```{r}
-
-all_data %>% 
-    #filter(coverage_level == "cov50" & pass_count == 20 & analysisType=="allow_reverse") %>%
-    group_by(rep_num, coverage_level, pass_count, prog, analysisType, min_sum_frags) %>% 
-    summarize(mean_TPR = mean(TPR), mean_PPV = mean(PPV)) %>%
-    mutate(series = paste(rep_num, coverage_level, pass_count) ) %>%
-    ggplot(aes(x=mean_TPR, y=mean_PPV)) + 
-    geom_point(aes(groups=series, color=series)) + 
-    geom_line(aes(color=series) ) +
-    facet_grid(vars(prog), vars(analysisType))
-
-
-
-```
-
-
+Analysis of the results are below:
 
 ## max F1 comparison for fusion pair accuracy
 
@@ -86,7 +47,6 @@ p_barplot
 ```{r}
 
 
-
 mean_samples_F1 = max_F1_data %>% 
     group_by(rep_num, coverage_level, pass_count, prog, analysisType) %>%
     summarize(mean_F1 = mean(F1))
@@ -101,14 +61,6 @@ mean_samples_F1 %>%
 
 
 ```
-
-
-# breakpoint results
-
-
-
-
-
 
 ## max F1 compare for fusion breakpoint accuracy
 ```{r}
