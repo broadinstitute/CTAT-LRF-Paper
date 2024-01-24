@@ -3,7 +3,16 @@ ONT_sim_accuracy_analysis
 bhaas
 2023-12-05
 
-# fusion pair accuracy
+# ONT simulated reads using pbsim3 and R10.4.1 chemistry
+
+Predictions from various methods evaluated on these data and the
+benchmarking scripts are available here:
+
+<https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/simulated_data/ONT_pbsim3_part5>
+
+Results are analyzed below:
+
+## fusion pair accuracy
 
 ``` r
 max_F1_data = read.table("data/max_F1_summary.tsv", header=T, sep="\t") %>% 
@@ -60,7 +69,7 @@ mean_samples_F1 %>%
 
 ![](ONT_sim_accuracy_analysis_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
-# breakpoint results
+## breakpoint results
 
 ``` r
 breakpoint_data = read.table("data/breakpoint_maxF1_data.tsv", sep="\t", header=T) %>%
