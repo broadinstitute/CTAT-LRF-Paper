@@ -10,6 +10,15 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
 
+
+Here we build a summary figure for the pacbio HiFi and ONT R10.4.1 chemistry simulated reads (via pbsim3).
+
+See the subdirectories for the individual analyses:
+    1b.1.PacBio_simulations 
+       and
+    1b.2.ONT_simulations
+
+
 ```{r}
 
 pacbio_summary_data = read.table("1b.1.PacBio_simulations/PacBio_sim.combined_results.tsv", header=T, sep="\t")
