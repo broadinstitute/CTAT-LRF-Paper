@@ -10,6 +10,16 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
 
+
+Fusion prediction results and benchmarking for SeraCare fusion v4 mix are available here:
+https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/SeraCareFusions
+
+Analysis performed below:
+
+The Iso-seq labeled sample is actually MAS-Iso-seq 'monomer' type.
+The other two MAS-Iso-seq used the 8-concatemer arrays followed by deconcatenation.
+
+
 # number of fusion reads for each control fusion
 
 ```{r}
