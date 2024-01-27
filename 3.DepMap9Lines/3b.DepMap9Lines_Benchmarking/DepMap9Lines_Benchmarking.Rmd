@@ -101,7 +101,7 @@ p_fusion_counts_barplot
 # pbfusion v0.4.0 isn't part of the main paper (came out later)
 
 p_fusion_counts_barplot = fusion_preds %>% 
-    filter(prog != "pbfusion_v0.4.0") %>%
+    filter(prog %in% c('ctat-LR-fusion.v0.12.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.3.1')) %>%
     mutate(prog = factor(prog, levels=c('ctat-LR-fusion.v0.12.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.3.1'))) %>%
     group_by(sample, prog) %>% tally(name='num_fusions') %>%
     ggplot(aes(x=prog, y=num_fusions)) + geom_col(aes(fill=prog)) + facet_wrap(~sample)  + 
@@ -192,10 +192,10 @@ data %>% ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom
 # exclude pbfusion v0.4.0 for the paper fig
 
 depmap_accuracy_lineplot = data %>% 
-    filter(prog != "pbfusion_v0.4.0") %>%
+    filter(prog %in%  c('ctat-LR-fusion.v0.13.0-predev2', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.3.1') ) %>%
     mutate(prog = factor(prog, levels=c('ctat-LR-fusion.v0.12.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.3.1'))) %>%
     ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom_line(aes(group=prog, color=prog)) +
-    xlim(3,10) + ylim(0.4,0.9) +
+    xlim(3,10) + ylim(0.4,1) +
     ggtitle("Depmap v1 fusions: F1 ~ min read support") 
 
 depmap_accuracy_lineplot
@@ -229,19 +229,29 @@ data %>% select(prog, min_sum_frags, TP, FP) %>%
 
 ```{r}
 
-# precision / recall 
-
-data %>% ggplot(aes(x=TPR, y=PPV)) + 
-    geom_point(aes(groups=prog, color=prog)) +
-    geom_line(aes(color=prog)) 
-    
-
+data %>% 
+    filter(prog %in% c('ctat-LR-fusion.v0.13.0-predev3', "JAFFAL")) %>%
+    select(prog, min_sum_frags, TP, FP) %>% 
+    gather(key=pred_class_type, value=pred_class_value, TP, FP) %>%
+    ggplot(aes(x=min_sum_frags, y=pred_class_value)) +
+    geom_point(aes(shape=pred_class_type, color=prog)) +
+    geom_line(aes(groups=pred_class_type, shape=pred_class_type, color=prog)) +
+    xlim(3,15)
 
 
 ```
 
 
 
+```{r}
+
+# precision / recall 
+
+data %>% ggplot(aes(x=TPR, y=PPV)) + 
+    geom_point(aes(groups=prog, color=prog)) +
+    geom_line(aes(color=prog)) 
+
+```
 
 
 
@@ -425,6 +435,16 @@ upset_plot
 pdf(file=paste0("depmap.upset_plot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".pdf"), width=20)
 upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
 dev.off()
+
+```
+
+
+```{r}
+# which are ctatLRF missing?
+
+
+truth_fusions_found_matrix  %>% filter(JAFFAL==1 & ctat.LR.fusion.v0.12.0 == 0)
+
 
 ```
 

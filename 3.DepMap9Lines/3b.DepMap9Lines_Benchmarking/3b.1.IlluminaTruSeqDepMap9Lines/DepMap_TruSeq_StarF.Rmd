@@ -78,7 +78,7 @@ all_pred_fusions_illum_support_indicated_summary = all_pred_fusions_illum_suppor
 
 all_pred_fusions_illum_support_indicated_summary
 
-# 80 shared and 15 unique have illumina support
+# 75 shared and 17 unique have illumina support
 
 ```
 
@@ -152,7 +152,7 @@ so, 80 lexically sorted fusions here
 
 StarF_overlapping_preds %>% filter(type=="unique")
 
-# 15 of the uniquely pred fusions have illumina support
+# 17 of the uniquely pred fusions have illumina support
 
 ```
 

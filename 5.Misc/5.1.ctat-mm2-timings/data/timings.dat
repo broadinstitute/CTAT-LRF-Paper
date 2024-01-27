@@ -1,0 +1,21 @@
+DMS53 default [M::main] Real time: 50943.293 sec; CPU: 50817.564 sec; Peak RSS: 9.376 GB
+HCC1187 default [M::main] Real time: 42551.624 sec; CPU: 42446.605 sec; Peak RSS: 9.147 GB
+HCC1395 default [M::main] Real time: 48623.518 sec; CPU: 48495.626 sec; Peak RSS: 9.185 GB
+K562 default [M::main] Real time: 66796.644 sec; CPU: 66624.302 sec; Peak RSS: 9.344 GB
+KIJK default [M::main] Real time: 29322.507 sec; CPU: 29243.585 sec; Peak RSS: 9.345 GB
+MJ default [M::main] Real time: 48329.294 sec; CPU: 48209.864 sec; Peak RSS: 9.149 GB
+RT112 default [M::main] Real time: 58325.625 sec; CPU: 58181.648 sec; Peak RSS: 9.149 GB
+SKBR3 default [M::main] Real time: 40610.451 sec; CPU: 40509.077 sec; Peak RSS: 9.187 GB
+VCAP default [M::main] Real time: 57661.118 sec; CPU: 57510.270 sec; Peak RSS: 9.162 GB
+
+
+DMS53 ctat [M::main] Real time: 10814.950 sec; CPU: 10787.651 sec; Peak RSS: 11.382 GB
+HCC1187 ctat [M::main] Real time: 10430.832 sec; CPU: 10403.509 sec; Peak RSS: 10.500 GB
+HCC1395 ctat [M::main] Real time: 11869.913 sec; CPU: 11840.901 sec; Peak RSS: 11.174 GB
+K562 ctat [M::main] Real time: 17608.495 sec; CPU: 17565.190 sec; Peak RSS: 11.971 GB
+KIJK ctat [M::main] Real time: 8398.030 sec; CPU: 8375.411 sec; Peak RSS: 10.306 GB
+MJ ctat [M::main] Real time: 12723.323 sec; CPU: 12690.217 sec; Peak RSS: 11.223 GB
+RT112 ctat [M::main] Real time: 13868.537 sec; CPU: 13832.565 sec; Peak RSS: 11.503 GB
+SKBR3 ctat [M::main] Real time: 9237.117 sec; CPU: 9212.724 sec; Peak RSS: 10.549 GB
+VCAP ctat [M::main] Real time: 14792.035 sec; CPU: 14755.355 sec; Peak RSS: 11.525 GB
+

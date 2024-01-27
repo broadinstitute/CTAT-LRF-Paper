@@ -1,0 +1,93 @@
+---
+title: "ctat-mm2-timings"
+author: "bhaas"
+date: '2024-01-26'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+Regular minimap2 and the modified ctat-minimap2 were run on the 9 cell lines to examine the time differences in execution.
+
+
+Using the regular setting:
+
+ for file in ../*fastq.gz; do ctat-minimap2 --sam-hit-only -ax splice --junc-bed /seq/RNASEQ/__ctat_genome_lib_building/Mar2021/GRCh38_gencode_v22_CTAT_lib_Mar012021.plug-n-play/ctat_genome_lib_build_dir/ref_annot.mm2.bed --secondary=no -t 1 -u b -G 100000 /seq/RNASEQ/__ctat_genome_lib_building/Mar2021/GRCh38_gencode_v22_CTAT_lib_Mar012021.plug-n-play/ctat_genome_lib_build_dir/ref_genome.fa.mm2 $file > $file.sam 2>&1 &  done
+
+
+Using the --only_chimeric setting:
+
+
+ for file in ../*fastq.gz; do ctat-minimap2  --only_chimeric  --sam-hit-only -ax splice --junc-bed /seq/RNASEQ/__ctat_genome_lib_building/Mar2021/GRCh38_gencode_v22_CTAT_lib_Mar012021.plug-n-play/ctat_genome_lib_build_dir/ref_annot.mm2.bed --secondary=no -t 1 -u b -G 100000 /seq/RNASEQ/__ctat_genome_lib_building/Mar2021/GRCh38_gencode_v22_CTAT_lib_Mar012021.plug-n-play/ctat_genome_lib_build_dir/ref_genome.fa.mm2 $file > $file.sam2 2>&1 &  done
+
+
+```{r}
+
+timings_data = read.csv("data/timings.dat", sep=" ", header=F)
+
+timings_data
+
+```
+
+```{r}
+
+timings_data = timings_data[,c(1,2,6,9)]
+
+colnames(timings_data) = c('sample', 'version', 'real', 'CPU')
+
+timings_data 
+```
+
+
+
+```{r}
+
+timings_data %>% 
+    mutate(real_hr = real/60/60) %>%
+    
+    ggplot(aes(x=sample, y=real_hr)) + geom_bar(stat='identity', position='dodge', aes(fill=version)) 
+
+
+```
+
+
+
+```{r}
+
+timings_data %>% 
+    mutate(cpu_hr = CPU/60/60) %>%
+    ggplot(aes(x=sample, y=cpu_hr)) + geom_bar(stat='identity', position='dodge', aes(fill=version)) 
+
+```
+
+
+
+
+```{r}
+
+timings_spread = full_join(timings_data %>% filter(version == "default"),
+          timings_data %>% filter(version == "ctat"),
+          by=c('sample'),
+          suffix=c('.default', '.ctat')
+        )
+
+timings_spread 
+```
+
+```{r}
+
+timings_spread = timings_spread %>% mutate(frac_ctat_real = real.ctat / real.default, frac_ctat_cpu = CPU.ctat / CPU.default)
+
+timings_spread %>% select(sample, frac_ctat_real, frac_ctat_cpu)
+
+```
+
+
+So, overall, we cut the time down to ~ 1/4th by focusing on just the likely chimeric read alignments.
+
+
+
