@@ -63,3 +63,9 @@ Analysis of HGSOC Patient-2
 
 
 
+# Miscellaneous
+
+## Evaluating the improvement in runtime of minimap2 by focusing on just the chimeric alignments:
+
+-  5.Misc/5.1.ctat-mm2-timings/ctat-mm2-timings.Rmd
+
