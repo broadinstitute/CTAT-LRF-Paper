@@ -78,7 +78,7 @@ all_pred_fusions_illum_support_indicated_summary = all_pred_fusions_illum_suppor
 
 all_pred_fusions_illum_support_indicated_summary
 
-# 75 shared and 17 unique have illumina support
+# 76 shared and 18 unique have illumina support
 
 ```
 
@@ -146,7 +146,7 @@ StarF_overlapping_preds %>% filter(type=="shared")
 
 VCAP|ANO10--SLMAP is found by STARF in both orientations:  SLMAP--ANO10 and ANO10--SLMAP
 
-so, 80 lexically sorted fusions here
+so, 76 lexically sorted fusions here
 
 ```{r}
 

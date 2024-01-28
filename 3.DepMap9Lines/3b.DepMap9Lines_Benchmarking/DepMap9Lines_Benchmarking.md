@@ -9,9 +9,9 @@ USE_PARALOG_PROXIES = TRUE
 
 if (USE_PARALOG_PROXIES) {
     # or allow for paralogs as proxies:
-    scored_predictions_file = "data/min_2.okPara_ignoreUnsure.results.scored"
+    scored_predictions_file = "data/min_3.okPara_ignoreUnsure.results.scored"
 } else {
-    scored_predictions_file = "data/min_2.ignoreUnsure.results.scored"
+    scored_predictions_file = "data/min_3.ignoreUnsure.results.scored"
 }
 
 
@@ -56,7 +56,9 @@ fusion_preds %>% head()
     ## 6                                                                                                                                                                                                                                                                                                                                                                                                                                                           PRKCH--VWA2:INTERCHROMOSOMAL[chr14--chr10];;(recip)VWA2--PRKCH:[DepMap2023,CCLE_StarF2019];INTERCHROMOSOMAL[chr10--chr14]
 
 ``` r
-p = fusion_preds %>% group_by(sample, prog) %>% tally(name='num_fusions') %>%
+p = fusion_preds %>% 
+    select(sample, prog, fusion) %>% unique() %>%
+    group_by(sample, prog) %>% tally(name='num_fusions') %>%
     ggplot(aes(x=prog, y=num_fusions)) + geom_col(aes(fill=prog)) + facet_wrap(~sample)  + 
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
 
@@ -83,12 +85,12 @@ truth_data %>% head()
     ## 5   HCC1395|PLA2R1--RBMS1
     ## 6 HCC1395|OSBPL9--CCDC178
     ##                                                          prog_names num_progs
-    ## 1 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 2 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 3 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 4 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 5 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 6 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 1 JAFFAL,LongGF,ctat-LR-fusion.v0.13.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 2 JAFFAL,LongGF,ctat-LR-fusion.v0.13.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 3 JAFFAL,LongGF,ctat-LR-fusion.v0.13.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 4 JAFFAL,LongGF,ctat-LR-fusion.v0.13.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 5 JAFFAL,LongGF,ctat-LR-fusion.v0.13.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 6 JAFFAL,LongGF,ctat-LR-fusion.v0.13.0,fusionseeker,pbfusion_v0.3.1         5
 
 ``` r
 truth_data$sample_name = sapply(truth_data$proxy_fusion_name, function(x) { str_split(x, "\\|")[[1]][1]})
@@ -104,12 +106,12 @@ head(truth_data)
     ## 5   HCC1395|PLA2R1--RBMS1
     ## 6 HCC1395|OSBPL9--CCDC178
     ##                                                          prog_names num_progs
-    ## 1 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 2 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 3 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 4 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 5 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
-    ## 6 JAFFAL,LongGF,ctat-LR-fusion.v0.12.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 1 JAFFAL,LongGF,ctat-LR-fusion.v0.13.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 2 JAFFAL,LongGF,ctat-LR-fusion.v0.13.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 3 JAFFAL,LongGF,ctat-LR-fusion.v0.13.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 4 JAFFAL,LongGF,ctat-LR-fusion.v0.13.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 5 JAFFAL,LongGF,ctat-LR-fusion.v0.13.0,fusionseeker,pbfusion_v0.3.1         5
+    ## 6 JAFFAL,LongGF,ctat-LR-fusion.v0.13.0,fusionseeker,pbfusion_v0.3.1         5
     ##   sample_name
     ## 1     HCC1395
     ## 2        VCAP
@@ -127,15 +129,15 @@ truth_data_counts %>% arrange(num_truth_fusions)
     ## # A tibble: 9 × 2
     ##   sample  num_truth_fusions
     ##   <chr>               <int>
-    ## 1 MJ                      2
-    ## 2 RT112                   2
+    ## 1 RT112                   2
+    ## 2 MJ                      3
     ## 3 KIJK                    5
     ## 4 K562                    8
     ## 5 HCC1187                14
     ## 6 HCC1395                16
-    ## 7 DMS53                  17
-    ## 8 SKBR3                  20
-    ## 9 VCAP                   31
+    ## 7 DMS53                  18
+    ## 8 SKBR3                  23
+    ## 9 VCAP                   32
 
 ``` r
 # as few as 2 in MJ and as many aas 31 in VCaP
@@ -148,7 +150,7 @@ truth_data_counts %>% summarise(sum_truth_fusions = sum(num_truth_fusions))
     ## # A tibble: 1 × 1
     ##   sum_truth_fusions
     ##               <int>
-    ## 1               115
+    ## 1               121
 
 ``` r
 # 115 proxy truth fusions
@@ -166,8 +168,9 @@ p_fusion_counts_barplot
 # pbfusion v0.4.0 isn't part of the main paper (came out later)
 
 p_fusion_counts_barplot = fusion_preds %>% 
-    filter(prog != "pbfusion_v0.4.0") %>%
-    mutate(prog = factor(prog, levels=c('ctat-LR-fusion.v0.12.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.3.1'))) %>%
+     select(sample, prog, fusion) %>% unique() %>%
+    filter(prog %in% c('ctat-LR-fusion.v0.13.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.3.1')) %>%
+    mutate(prog = factor(prog, levels=c('ctat-LR-fusion.v0.13.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.3.1'))) %>%
     group_by(sample, prog) %>% tally(name='num_fusions') %>%
     ggplot(aes(x=prog, y=num_fusions)) + geom_col(aes(fill=prog)) + facet_wrap(~sample)  + 
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
@@ -195,7 +198,7 @@ truth_data %>% head()
     ##   <chr>                  <chr>                      <int> <chr>      
     ## 1 HCC1395|EIF3K--CYP39A1 JAFFAL                         5 HCC1395    
     ## 2 HCC1395|EIF3K--CYP39A1 LongGF                         5 HCC1395    
-    ## 3 HCC1395|EIF3K--CYP39A1 ctat-LR-fusion.v0.12.0         5 HCC1395    
+    ## 3 HCC1395|EIF3K--CYP39A1 ctat-LR-fusion.v0.13.0         5 HCC1395    
     ## 4 HCC1395|EIF3K--CYP39A1 fusionseeker                   5 HCC1395    
     ## 5 HCC1395|EIF3K--CYP39A1 pbfusion_v0.3.1                5 HCC1395    
     ## 6 VCAP|PDE4D--FAM172A    JAFFAL                         5 VCAP
@@ -272,13 +275,13 @@ data = read.table(ROC_file, header=T, sep="\t", stringsAsFactors = F) %>%
 data %>% head()
 ```
 
-    ##           prog min_sum_frags  TP  FP FN  TPR  PPV    F1
-    ## 1 fusionseeker             3 105 249 10 0.91 0.30 0.451
-    ## 2 fusionseeker             4  90 141 25 0.78 0.39 0.520
-    ## 3 fusionseeker             5  80  74 35 0.70 0.52 0.597
-    ## 4 fusionseeker             6  75  60 40 0.65 0.56 0.602
-    ## 5 fusionseeker             7  69  43 46 0.60 0.62 0.610
-    ## 6 fusionseeker             8  68  35 47 0.59 0.66 0.623
+    ##           prog min_sum_frags TP  FP FN  TPR  PPV    F1
+    ## 1 fusionseeker             3 95 248  5 0.95 0.28 0.433
+    ## 2 fusionseeker             4 79 141 21 0.79 0.36 0.495
+    ## 3 fusionseeker             5 72  74 28 0.72 0.49 0.583
+    ## 4 fusionseeker             6 68  60 32 0.68 0.53 0.596
+    ## 5 fusionseeker             7 63  43 37 0.63 0.59 0.609
+    ## 6 fusionseeker             8 62  35 38 0.62 0.64 0.630
 
 ``` r
 # F1 vs. min reads
@@ -289,9 +292,9 @@ data %>% ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom
     ggtitle("Depmap v1 fusions: F1 ~ min read support") 
 ```
 
-    ## Warning: Removed 243 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 238 rows containing missing values (`geom_point()`).
 
-    ## Warning: Removed 243 rows containing missing values (`geom_line()`).
+    ## Warning: Removed 238 rows containing missing values (`geom_line()`).
 
 ![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
@@ -300,19 +303,23 @@ data %>% ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom
 
 # exclude pbfusion v0.4.0 for the paper fig
 
+
+progs = c('ctat-LR-fusion.v0.13.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.3.1'); 
+
+
 depmap_accuracy_lineplot = data %>% 
-    filter(prog != "pbfusion_v0.4.0") %>%
-    mutate(prog = factor(prog, levels=c('ctat-LR-fusion.v0.12.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.3.1'))) %>%
+    filter(prog %in% progs ) %>%
+    mutate(prog = factor(prog, levels=progs)) %>%
     ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom_line(aes(group=prog, color=prog)) +
-    xlim(3,10) + ylim(0.4,0.9) +
+    xlim(3,10) + ylim(0.4,1) +
     ggtitle("Depmap v1 fusions: F1 ~ min read support") 
 
 depmap_accuracy_lineplot
 ```
 
-    ## Warning: Removed 204 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 199 rows containing missing values (`geom_point()`).
 
-    ## Warning: Removed 204 rows containing missing values (`geom_line()`).
+    ## Warning: Removed 199 rows containing missing values (`geom_line()`).
 
 ![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
@@ -320,9 +327,9 @@ depmap_accuracy_lineplot
 ggsave(depmap_accuracy_lineplot, file=paste0("depmap_accuracy_lineplot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=7, height=4)
 ```
 
-    ## Warning: Removed 204 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 199 rows containing missing values (`geom_point()`).
 
-    ## Warning: Removed 204 rows containing missing values (`geom_line()`).
+    ## Warning: Removed 199 rows containing missing values (`geom_line()`).
 
 ``` r
 # plot TP and FP ~ min sum frags.
@@ -334,9 +341,29 @@ data %>% select(prog, min_sum_frags, TP, FP) %>%
     xlim(3,15)
 ```
 
-    ## Warning: Removed 430 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 420 rows containing missing values (`geom_point()`).
 
 ![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+
+``` r
+data %>% 
+    filter(prog %in% c('ctat-LR-fusion.v0.13.0', "JAFFAL")) %>%
+    select(prog, min_sum_frags, TP, FP) %>% 
+    gather(key=pred_class_type, value=pred_class_value, TP, FP) %>%
+    ggplot(aes(x=min_sum_frags, y=pred_class_value)) +
+    geom_point(aes(shape=pred_class_type, color=prog)) +
+    geom_line(aes(groups=pred_class_type, shape=pred_class_type, color=prog)) +
+    xlim(3,15)
+```
+
+    ## Warning in geom_line(aes(groups = pred_class_type, shape = pred_class_type, :
+    ## Ignoring unknown aesthetics: groups and shape
+
+    ## Warning: Removed 138 rows containing missing values (`geom_point()`).
+
+    ## Warning: Removed 138 rows containing missing values (`geom_line()`).
+
+![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
 ``` r
 # precision / recall 
@@ -349,7 +376,7 @@ data %>% ggplot(aes(x=TPR, y=PPV)) +
     ## Warning in geom_point(aes(groups = prog, color = prog)): Ignoring unknown
     ## aesthetics: groups
 
-![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
 
 ``` r
 # exclude pbfusion v0.4.0
@@ -366,15 +393,15 @@ depmap_TP_vs_FP_scatterplot = data %>% select(prog, min_sum_frags, TP, FP) %>%
 depmap_TP_vs_FP_scatterplot
 ```
 
-    ## Warning: Removed 360 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 350 rows containing missing values (`geom_point()`).
 
-![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
 ``` r
 ggsave(depmap_TP_vs_FP_scatterplot, file=paste0("depmap_TP_vs_FP_scatterplot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=7, height=5)
 ```
 
-    ## Warning: Removed 360 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 350 rows containing missing values (`geom_point()`).
 
 ``` r
 # precision / recall 
@@ -393,7 +420,7 @@ depmap_precision_recall_plot = data %>%
 depmap_precision_recall_plot
 ```
 
-![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
 
 ``` r
 ggsave(depmap_precision_recall_plot, file=paste0("depmap_precision_recall_plot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=5, height=3)
@@ -483,14 +510,14 @@ cosmic_fusion_preds
     ##    sample proxy_fusion_name  prog                   num_reads
     ##    <chr>  <chr>              <chr>                      <int>
     ##  1 KIJK   KIJK|ALK--NPM1     pbfusion_v0.3.1              463
-    ##  2 KIJK   KIJK|ALK--NPM1     fusionseeker                 459
-    ##  3 KIJK   KIJK|ALK--NPM1     ctat-LR-fusion.v0.12.0       459
+    ##  2 KIJK   KIJK|ALK--NPM1     ctat-LR-fusion.v0.13.0       462
+    ##  3 KIJK   KIJK|ALK--NPM1     fusionseeker                 459
     ##  4 KIJK   KIJK|ALK--NPM1     LongGF                       458
     ##  5 KIJK   KIJK|ALK--NPM1     pbfusion_v0.4.0              453
     ##  6 KIJK   KIJK|ALK--NPM1     JAFFAL                       358
     ##  7 RT112  RT112|FGFR3--TACC3 pbfusion_v0.4.0              345
     ##  8 RT112  RT112|FGFR3--TACC3 fusionseeker                 344
-    ##  9 RT112  RT112|FGFR3--TACC3 ctat-LR-fusion.v0.12.0       343
+    ##  9 RT112  RT112|FGFR3--TACC3 ctat-LR-fusion.v0.13.0       343
     ## 10 RT112  RT112|FGFR3--TACC3 LongGF                       341
     ## # ℹ 38 more rows
 
@@ -519,7 +546,7 @@ cosmic_fusion_preds_mult_methods
  depmap_cosmic_fusions_heatmap
 ```
 
-![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->
+![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-30-1.png)<!-- -->
 
 ``` r
 ggsave(depmap_cosmic_fusions_heatmap, file=paste0("depmap_cosmic_fusions_heatmap.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=7, height=5)
@@ -537,7 +564,7 @@ truth_fusions_found = read.table(scored_predictions_file, sep="\t", header=T) %>
 truth_fusions_found %>% select(selected_fusion) %>% unique() %>% nrow()
 ```
 
-    ## [1] 115
+    ## [1] 101
 
 ``` r
 truth_fusions_found %>% group_by(prog) %>% tally() %>% arrange(desc(n))
@@ -546,13 +573,13 @@ truth_fusions_found %>% group_by(prog) %>% tally() %>% arrange(desc(n))
     ## # A tibble: 7 × 2
     ##   prog                       n
     ##   <chr>                  <int>
-    ## 1 fusionseeker             105
-    ## 2 ctat-LR-fusion.v0.12.0    94
-    ## 3 JAFFAL                    88
-    ## 4 pbfusion_v0.3.1           87
-    ## 5 pbfusion_v0.4.0           85
-    ## 6 LongGF                    72
-    ## 7 flairfusion_v1mod         24
+    ## 1 fusionseeker              95
+    ## 2 ctat-LR-fusion.v0.13.0    94
+    ## 3 JAFFAL                    85
+    ## 4 pbfusion_v0.3.1           82
+    ## 5 pbfusion_v0.4.0           81
+    ## 6 LongGF                    66
+    ## 7 flairfusion_v1mod         23
 
 ``` r
 truth_fusions_found_matrix = truth_fusions_found %>% mutate(found = 1) %>% spread(key=prog, value=found, fill=0)
@@ -572,7 +599,7 @@ upset_plot = upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nin
 upset_plot
 ```
 
-![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-33-1.png)<!-- -->
+![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-34-1.png)<!-- -->
 
 ``` r
 pdf(file=paste0("depmap.upset_plot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".pdf"), width=20)
@@ -582,3 +609,29 @@ dev.off()
 
     ## quartz_off_screen 
     ##                 2
+
+``` r
+# which are ctatLRF missing?
+
+
+truth_fusions_found_matrix  %>% filter(JAFFAL==1 & ctat.LR.fusion.v0.13.0 == 0)
+```
+
+    ##                                ctat.LR.fusion.v0.13.0 flairfusion_v1mod
+    ## DMS53|ABR--CDK14                                    0                 0
+    ## DMS53|CH507-528H12.1--KIAA0232                      0                 0
+    ## HCC1395|CTF1--ZNF646                                0                 0
+    ## MJ|CCL22--CD82                                      0                 0
+    ## VCAP|RN7SK--TMPRSS2                                 0                 1
+    ##                                fusionseeker JAFFAL LongGF pbfusion_v0.3.1
+    ## DMS53|ABR--CDK14                          1      1      1               1
+    ## DMS53|CH507-528H12.1--KIAA0232            1      1      0               1
+    ## HCC1395|CTF1--ZNF646                      1      1      1               1
+    ## MJ|CCL22--CD82                            1      1      1               1
+    ## VCAP|RN7SK--TMPRSS2                       1      1      0               1
+    ##                                pbfusion_v0.4.0
+    ## DMS53|ABR--CDK14                             0
+    ## DMS53|CH507-528H12.1--KIAA0232               1
+    ## HCC1395|CTF1--ZNF646                         1
+    ## MJ|CCL22--CD82                               0
+    ## VCAP|RN7SK--TMPRSS2                          0

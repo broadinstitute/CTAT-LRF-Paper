@@ -19,9 +19,9 @@ USE_PARALOG_PROXIES = TRUE
 
 if (USE_PARALOG_PROXIES) {
     # or allow for paralogs as proxies:
-    scored_predictions_file = "data/min_2.okPara_ignoreUnsure.results.scored"
+    scored_predictions_file = "data/min_3.okPara_ignoreUnsure.results.scored"
 } else {
-    scored_predictions_file = "data/min_2.ignoreUnsure.results.scored"
+    scored_predictions_file = "data/min_3.ignoreUnsure.results.scored"
 }
 
 
@@ -44,7 +44,9 @@ fusion_preds %>% head()
 
 ```{r}
 
-p = fusion_preds %>% group_by(sample, prog) %>% tally(name='num_fusions') %>%
+p = fusion_preds %>% 
+    select(sample, prog, fusion) %>% unique() %>%
+    group_by(sample, prog) %>% tally(name='num_fusions') %>%
     ggplot(aes(x=prog, y=num_fusions)) + geom_col(aes(fill=prog)) + facet_wrap(~sample)  + 
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
 
@@ -101,8 +103,9 @@ p_fusion_counts_barplot
 # pbfusion v0.4.0 isn't part of the main paper (came out later)
 
 p_fusion_counts_barplot = fusion_preds %>% 
-    filter(prog %in% c('ctat-LR-fusion.v0.12.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.3.1')) %>%
-    mutate(prog = factor(prog, levels=c('ctat-LR-fusion.v0.12.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.3.1'))) %>%
+     select(sample, prog, fusion) %>% unique() %>%
+    filter(prog %in% c('ctat-LR-fusion.v0.13.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.3.1')) %>%
+    mutate(prog = factor(prog, levels=c('ctat-LR-fusion.v0.13.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.3.1'))) %>%
     group_by(sample, prog) %>% tally(name='num_fusions') %>%
     ggplot(aes(x=prog, y=num_fusions)) + geom_col(aes(fill=prog)) + facet_wrap(~sample)  + 
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
@@ -191,9 +194,13 @@ data %>% ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom
 
 # exclude pbfusion v0.4.0 for the paper fig
 
+
+progs = c('ctat-LR-fusion.v0.13.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.3.1'); 
+
+
 depmap_accuracy_lineplot = data %>% 
-    filter(prog %in%  c('ctat-LR-fusion.v0.13.0-predev2', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.3.1') ) %>%
-    mutate(prog = factor(prog, levels=c('ctat-LR-fusion.v0.12.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.3.1'))) %>%
+    filter(prog %in% progs ) %>%
+    mutate(prog = factor(prog, levels=progs)) %>%
     ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom_line(aes(group=prog, color=prog)) +
     xlim(3,10) + ylim(0.4,1) +
     ggtitle("Depmap v1 fusions: F1 ~ min read support") 
@@ -230,7 +237,7 @@ data %>% select(prog, min_sum_frags, TP, FP) %>%
 ```{r}
 
 data %>% 
-    filter(prog %in% c('ctat-LR-fusion.v0.13.0-predev3', "JAFFAL")) %>%
+    filter(prog %in% c('ctat-LR-fusion.v0.13.0', "JAFFAL")) %>%
     select(prog, min_sum_frags, TP, FP) %>% 
     gather(key=pred_class_type, value=pred_class_value, TP, FP) %>%
     ggplot(aes(x=min_sum_frags, y=pred_class_value)) +
@@ -443,7 +450,7 @@ dev.off()
 # which are ctatLRF missing?
 
 
-truth_fusions_found_matrix  %>% filter(JAFFAL==1 & ctat.LR.fusion.v0.12.0 == 0)
+truth_fusions_found_matrix  %>% filter(JAFFAL==1 & ctat.LR.fusion.v0.13.0 == 0)
 
 
 ```

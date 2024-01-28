@@ -1,23 +1,50 @@
 #!/bin/bash
 
-
 set -ex
 
-####################################################################
-# be sure to have first run:
-#   make incl_extra_starF_supported_in_truth_by_Illum
-# so results are based on including the Illumina-supported entries.
-####################################################################
+scp login://home/unix/bhaas/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/cancer_cell_lines/preds.collected.gencode_mapped.wAnnot .
 
+gzip -f preds.collected.gencode_mapped.wAnnot
 
 scp login://home/unix/bhaas/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/cancer_cell_lines/preds.collected.gencode_mapped.wAnnot.filt.pass .
 
-scp login://home/unix/bhaas/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/cancer_cell_lines/__min_2_agree/min_2.okPara_ignoreUnsure.results.scored .
 
-scp login://home/unix/bhaas/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/cancer_cell_lines/__min_2_agree/min_2.okPara_ignoreUnsure.results.scored.ROC .
 
-scp login://home/unix/bhaas/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/cancer_cell_lines/__min_2_agree/preds.collected.gencode_mapped.wAnnot.filt.pass.proxy_assignments.byProgAgree.min_2.truth_set .
+## min 2 agree analysis
 
-scp login://home/unix/bhaas/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/cancer_cell_lines/__min_2_agree/preds.collected.gencode_mapped.wAnnot.filt.pass.proxy_assignments.byProgAgree.min_2.unique_set .
+X=2
 
-scp login://home/unix/bhaas/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/cancer_cell_lines/__min_2_agree/preds.collected.gencode_mapped.wAnnot.filt.pass.proxy_assignments.byProgAgree.min_2.unsure_set .
+scp login://home/unix/bhaas/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/cancer_cell_lines/__min_${X}_agree/min_${X}.okPara_ignoreUnsure.results.scored .
+
+scp login://home/unix/bhaas/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/cancer_cell_lines/__min_${X}_agree/min_${X}.okPara_ignoreUnsure.results.scored.ROC .
+
+scp login://home/unix/bhaas/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/cancer_cell_lines/__min_${X}_agree/preds.collected.gencode_mapped.wAnnot.filt.pass.proxy_assignments.byProgAgree.min_${X}.truth_set .
+
+scp login://home/unix/bhaas/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/cancer_cell_lines/__min_${X}_agree/preds.collected.gencode_mapped.wAnnot.filt.pass.proxy_assignments.byProgAgree.min_${X}.unique_set .
+
+scp login://home/unix/bhaas/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/cancer_cell_lines/__min_${X}_agree/preds.collected.gencode_mapped.wAnnot.filt.pass.proxy_assignments.byProgAgree.min_${X}.unsure_set .
+
+
+scp login://home/unix/bhaas/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/cancer_cell_lines/__min_${X}_agree/min_${X}.ignoreUnsure.results.scored .
+
+scp login://home/unix/bhaas/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/cancer_cell_lines/__min_${X}_agree/min_${X}.ignoreUnsure.results.scored.ROC .
+
+
+## min 3 agree analysis
+
+X=3
+
+scp login://home/unix/bhaas/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/cancer_cell_lines/__min_${X}_agree/min_${X}.okPara_ignoreUnsure.results.scored .
+
+scp login://home/unix/bhaas/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/cancer_cell_lines/__min_${X}_agree/min_${X}.okPara_ignoreUnsure.results.scored.ROC .
+
+scp login://home/unix/bhaas/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/cancer_cell_lines/__min_${X}_agree/preds.collected.gencode_mapped.wAnnot.filt.pass.proxy_assignments.byProgAgree.min_${X}.truth_set .
+
+scp login://home/unix/bhaas/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/cancer_cell_lines/__min_${X}_agree/preds.collected.gencode_mapped.wAnnot.filt.pass.proxy_assignments.byProgAgree.min_${X}.unique_set .
+
+scp login://home/unix/bhaas/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/cancer_cell_lines/__min_${X}_agree/preds.collected.gencode_mapped.wAnnot.filt.pass.proxy_assignments.byProgAgree.min_${X}.unsure_set .
+
+
+scp login://home/unix/bhaas/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/cancer_cell_lines/__min_${X}_agree/min_${X}.ignoreUnsure.results.scored .
+
+scp login://home/unix/bhaas/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/cancer_cell_lines/__min_${X}_agree/min_${X}.ignoreUnsure.results.scored.ROC .

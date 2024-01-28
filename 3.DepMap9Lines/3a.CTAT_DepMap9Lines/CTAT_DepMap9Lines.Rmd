@@ -694,7 +694,6 @@ ggsave(plots[[2]], file="depmap_VCaP_TMPRSS2--ERG_LR_vs_SR_isoforms.svg", width=
 ggsave(plots[[4]], file="depmap_VCaP_TMPRSS2--ERG_LR_vs_SR_isoforms.zoomed.svg", width=9, height=6)
 
 
-
 ```
 
 
@@ -706,6 +705,10 @@ plots = plot_fusion_expression_by_breakpoint_incl_gene_structures("SKBR3", "CYTH
 ggsave(plots[[1]], file="depmap_SKBR3_CYTH1--EIF3H_LR_vs_SR_isoforms.svg", width=9, height=6)
 
 
+ggsave(plots[[3]], file="depmap_SKBR3_CYTH1--EIF3H_LR_vs_SR_isoforms.zoomed.svg", width=9, height=6)
+
+# save the structure fore the full-length view of each gene:
+ggsave(plots[[1]] + xlim(800,1000) + theme_bw(), file="EIF3H_structure.svg", width=4)
 
 
 ```
