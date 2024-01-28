@@ -410,7 +410,8 @@ depmap_precision_recall_plot = data %>%
       filter(prog != "pbfusion_v0.4.0") %>%
     ggplot(aes(x=TPR, y=PPV)) + 
     geom_point(aes(groups=prog, color=prog)) +
-    geom_line(aes(color=prog)) 
+    geom_line(aes(color=prog)) +
+    xlab("Recall") + ylab("Precision")
 ```
 
     ## Warning in geom_point(aes(groups = prog, color = prog)): Ignoring unknown
@@ -549,6 +550,21 @@ cosmic_fusion_preds_mult_methods
 ![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-30-1.png)<!-- -->
 
 ``` r
+ depmap_cosmic_fusions_heatmap =   cosmic_fusion_preds %>%
+     filter(prog %in% progs) %>%
+    filter(proxy_fusion_name %in% cosmic_fusion_preds_mult_methods) %>%
+    
+    ggplot(aes(x=proxy_fusion_name, y=prog)) + geom_tile(aes(fill=num_reads)) + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    scale_fill_continuous(high = "#132B43", low = "#56B1F7", na.value="white") +
+    geom_text(aes(label=num_reads), color='white')
+
+ depmap_cosmic_fusions_heatmap
+```
+
+![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-31-1.png)<!-- -->
+
+``` r
 ggsave(depmap_cosmic_fusions_heatmap, file=paste0("depmap_cosmic_fusions_heatmap.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=7, height=5)
 ```
 
@@ -582,7 +598,9 @@ truth_fusions_found %>% group_by(prog) %>% tally() %>% arrange(desc(n))
     ## 7 flairfusion_v1mod         23
 
 ``` r
-truth_fusions_found_matrix = truth_fusions_found %>% mutate(found = 1) %>% spread(key=prog, value=found, fill=0)
+truth_fusions_found_matrix = truth_fusions_found %>% 
+    filter(prog %in% progs) %>% 
+    mutate(found = 1) %>% spread(key=prog, value=found, fill=0)
 
 
 truth_fusion_names = truth_fusions_found_matrix%>% pull(selected_fusion)
@@ -599,7 +617,7 @@ upset_plot = upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nin
 upset_plot
 ```
 
-![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-34-1.png)<!-- -->
+![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-35-1.png)<!-- -->
 
 ``` r
 pdf(file=paste0("depmap.upset_plot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".pdf"), width=20)
@@ -609,44 +627,3 @@ dev.off()
 
     ## quartz_off_screen 
     ##                 2
-
-``` r
-# which are ctatLRF missing?
-
-
-truth_fusions_found_matrix  %>% filter(JAFFAL==1 & ctat.LR.fusion.v0.13.0 == 0)
-```
-
-    ##                                ctat.LR.fusion.v0.13.0 flairfusion_v1mod
-    ## DMS53|ABR--CDK14                                    0                 0
-    ## DMS53|AP003900.6--BP-2189O9.3                       0                 0
-    ## DMS53|CH507-528H12.1--KIAA0232                      0                 0
-    ## DMS53|FAM230C--BP-2189O9.3                          0                 0
-    ## DMS53|RP11-59N23.1--CMAS                            0                 0
-    ## DMS53|RRP12--R3HCC1L                                0                 0
-    ## HCC1395|CTF1--ZNF646                                0                 0
-    ## MJ|CCL22--CD82                                      0                 0
-    ## SKBR3|ABCB9--ACOT13                                 0                 0
-    ## VCAP|RN7SK--TMPRSS2                                 0                 1
-    ##                                fusionseeker JAFFAL LongGF pbfusion_v0.3.1
-    ## DMS53|ABR--CDK14                          1      1      1               1
-    ## DMS53|AP003900.6--BP-2189O9.3             0      1      0               1
-    ## DMS53|CH507-528H12.1--KIAA0232            1      1      0               1
-    ## DMS53|FAM230C--BP-2189O9.3                0      1      0               1
-    ## DMS53|RP11-59N23.1--CMAS                  0      1      0               0
-    ## DMS53|RRP12--R3HCC1L                      1      1      1               0
-    ## HCC1395|CTF1--ZNF646                      1      1      1               1
-    ## MJ|CCL22--CD82                            1      1      1               1
-    ## SKBR3|ABCB9--ACOT13                       1      1      0               0
-    ## VCAP|RN7SK--TMPRSS2                       1      1      0               1
-    ##                                pbfusion_v0.4.0
-    ## DMS53|ABR--CDK14                             0
-    ## DMS53|AP003900.6--BP-2189O9.3                0
-    ## DMS53|CH507-528H12.1--KIAA0232               1
-    ## DMS53|FAM230C--BP-2189O9.3                   0
-    ## DMS53|RP11-59N23.1--CMAS                     0
-    ## DMS53|RRP12--R3HCC1L                         0
-    ## HCC1395|CTF1--ZNF646                         1
-    ## MJ|CCL22--CD82                               0
-    ## SKBR3|ABCB9--ACOT13                          0
-    ## VCAP|RN7SK--TMPRSS2                          0

@@ -296,7 +296,8 @@ depmap_precision_recall_plot = data %>%
       filter(prog != "pbfusion_v0.4.0") %>%
     ggplot(aes(x=TPR, y=PPV)) + 
     geom_point(aes(groups=prog, color=prog)) +
-    geom_line(aes(color=prog)) 
+    geom_line(aes(color=prog)) +
+    xlab("Recall") + ylab("Precision")
     
 depmap_precision_recall_plot
 
@@ -388,6 +389,23 @@ cosmic_fusion_preds_mult_methods
 
 ```{r}
 
+ depmap_cosmic_fusions_heatmap =   cosmic_fusion_preds %>%
+     filter(prog %in% progs) %>%
+    filter(proxy_fusion_name %in% cosmic_fusion_preds_mult_methods) %>%
+    
+    ggplot(aes(x=proxy_fusion_name, y=prog)) + geom_tile(aes(fill=num_reads)) + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    scale_fill_continuous(high = "#132B43", low = "#56B1F7", na.value="white") +
+    geom_text(aes(label=num_reads), color='white')
+
+ depmap_cosmic_fusions_heatmap
+
+```
+
+
+
+```{r}
+
 ggsave(depmap_cosmic_fusions_heatmap, file=paste0("depmap_cosmic_fusions_heatmap.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=7, height=5)
 
 
@@ -418,7 +436,9 @@ truth_fusions_found %>% group_by(prog) %>% tally() %>% arrange(desc(n))
 
 ```{r}
 
-truth_fusions_found_matrix = truth_fusions_found %>% mutate(found = 1) %>% spread(key=prog, value=found, fill=0)
+truth_fusions_found_matrix = truth_fusions_found %>% 
+    filter(prog %in% progs) %>% 
+    mutate(found = 1) %>% spread(key=prog, value=found, fill=0)
 
 
 truth_fusion_names = truth_fusions_found_matrix%>% pull(selected_fusion)
@@ -446,14 +466,6 @@ dev.off()
 ```
 
 
-```{r}
-# which are ctatLRF missing?
-
-
-truth_fusions_found_matrix  %>% filter(JAFFAL==1 & ctat.LR.fusion.v0.13.0 == 0)
-
-
-```
 
 
 
