@@ -14,7 +14,7 @@ library(tidyverse)
 
 ```{r}
 
-USE_PARALOG_PROXIES = TRUE
+USE_PARALOG_PROXIES = FALSE
 
 
 if (USE_PARALOG_PROXIES) {
@@ -77,7 +77,7 @@ truth_data_counts = truth_data %>% rename(sample=sample_name) %>% group_by(sampl
 
 truth_data_counts %>% arrange(num_truth_fusions)
 
-# as few as 2 in MJ and as many aas 31 in VCaP
+# as few as 2 in MJ and as many aas 32 in VCaP
 
 ```
 
