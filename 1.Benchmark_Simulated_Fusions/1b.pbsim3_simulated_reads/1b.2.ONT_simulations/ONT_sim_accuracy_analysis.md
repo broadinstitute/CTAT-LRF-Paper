@@ -25,16 +25,16 @@ max_F1_data %>% head()
     ## 1          cov50      sample1        fusionseeker_s1             1 498  1  2
     ## 2          cov50      sample2        fusionseeker_s1             1 498  2  2
     ## 3          cov50      sample5        fusionseeker_s1             3 494  2  6
-    ## 4          cov50      sample4        fusionseeker_s1             2 495  2  5
-    ## 5          cov50      sample3        fusionseeker_s1             2 493  0  7
-    ## 6          cov50      sample1 ctat-LR-fusion.v0.12.0             2 489  2 11
+    ## 4          cov50      sample2 ctat-LR-fusion.v0.13.0             4 493  2  7
+    ## 5          cov50      sample4        fusionseeker_s1             2 495  2  5
+    ## 6          cov50      sample4 ctat-LR-fusion.v0.13.0             6 495  0  5
     ##    TPR PPV    F1       analysisType
     ## 1 1.00   1 1.000 allow_revNparalogs
     ## 2 1.00   1 1.000 allow_revNparalogs
     ## 3 0.99   1 0.995 allow_revNparalogs
     ## 4 0.99   1 0.995 allow_revNparalogs
     ## 5 0.99   1 0.995 allow_revNparalogs
-    ## 6 0.98   1 0.990             strict
+    ## 6 0.99   1 0.995 allow_revNparalogs
 
 ``` r
 # barplot

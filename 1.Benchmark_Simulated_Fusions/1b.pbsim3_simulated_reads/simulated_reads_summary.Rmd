@@ -53,7 +53,7 @@ combined_data %>% head()
 
 ```{r}
 
-combined_data$prog = factor(combined_data$prog, levels = c('ctat-LR-fusion.v0.12.0',
+combined_data$prog = factor(combined_data$prog, levels = c('ctat-LR-fusion.v0.13.0',
                                                            'JAFFAL',
                                                            'LongGF',
                                                            'fusionseeker_s1',
