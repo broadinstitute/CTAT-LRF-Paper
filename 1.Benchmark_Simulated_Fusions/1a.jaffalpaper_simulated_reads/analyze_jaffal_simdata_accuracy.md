@@ -48,6 +48,8 @@ ranked_progs = max_F1_data  %>% group_by(prog) %>% summarize(mean_F1 = mean(F1))
 max_F1_data$prog = factor(max_F1_data$prog, levels=ranked_progs$prog)
 
 max_F1_data$analysisType = factor(max_F1_data$analysisType, levels=c('strict', 'allow_reverse'))
+
+max_F1_data = max_F1_data %>% mutate(seqtype = ifelse(seqtype == "Pac", "PacBio", seqtype))
 ```
 
 ``` r
