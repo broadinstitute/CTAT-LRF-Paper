@@ -118,17 +118,21 @@ Tum_cell_counts = left_join(Tum_cell_counts, fusion_annots)
 Tum_cell_counts %>% filter(tot_cells_w_fusion >= MIN_CELLS)
 ```
 
-    ## # A tibble: 8 × 4
-    ##   FusionName               tot_cells_w_fusion frac_tot_cells annots             
-    ##   <chr>                                 <int>          <dbl> <chr>              
-    ## 1 NUTM2A-AS1--RP11-203L2.4                268       0.0387   INTERCHROMOSOMAL[c…
-    ## 2 ZNF292--PNRC1                            12       0.00173  INTRACHROMOSOMAL[c…
-    ## 3 RP11-444D3.1--SOX5                       10       0.00144  [SOX5:Oncogene];IN…
-    ## 4 BACH2--PNRC1                              9       0.00130  [BACH2:Oncogene];I…
-    ## 5 SRSF7--CXCR4                              8       0.00115  INTRACHROMOSOMAL[c…
-    ## 6 RP1-34H18.1--NAV3                         6       0.000866 INTRACHROMOSOMAL[c…
-    ## 7 DPH6-AS1--RP11-684B21.1                   5       0.000721 INTRACHROMOSOMAL[c…
-    ## 8 RP11-14D22.2--PRICKLE2                    5       0.000721 INTRACHROMOSOMAL[c…
+    ## # A tibble: 12 × 4
+    ##    FusionName               tot_cells_w_fusion frac_tot_cells annots            
+    ##    <chr>                                 <int>          <dbl> <chr>             
+    ##  1 NUTM2A-AS1--RP11-203L2.4                268       0.0387   INTERCHROMOSOMAL[…
+    ##  2 ZNF292--PNRC1                            12       0.00173  INTRACHROMOSOMAL[…
+    ##  3 RP11-444D3.1--SOX5                       10       0.00144  [SOX5:Oncogene];I…
+    ##  4 BACH2--PNRC1                              9       0.00130  [BACH2:Oncogene];…
+    ##  5 RP11-855A2.2--BPTF                        8       0.00115  <NA>              
+    ##  6 SRSF7--CXCR4                              8       0.00115  INTRACHROMOSOMAL[…
+    ##  7 LINC01317--AC073218.1                     7       0.00101  <NA>              
+    ##  8 LINC01340--RP11-455B3.1                   7       0.00101  INTRACHROMOSOMAL[…
+    ##  9 GNGT1--AC002076.10                        6       0.000866 <NA>              
+    ## 10 RP1-34H18.1--NAV3                         6       0.000866 INTRACHROMOSOMAL[…
+    ## 11 DPH6-AS1--RP11-684B21.1                   5       0.000721 INTRACHROMOSOMAL[…
+    ## 12 RP11-14D22.2--PRICKLE2                    5       0.000721 INTRACHROMOSOMAL[…
 
 ``` r
 fusions_min_cell_counts = Tum_cell_counts %>% filter(tot_cells_w_fusion >= MIN_CELLS) 
@@ -136,17 +140,21 @@ fusions_min_cell_counts = Tum_cell_counts %>% filter(tot_cells_w_fusion >= MIN_C
 fusions_min_cell_counts
 ```
 
-    ## # A tibble: 8 × 4
-    ##   FusionName               tot_cells_w_fusion frac_tot_cells annots             
-    ##   <chr>                                 <int>          <dbl> <chr>              
-    ## 1 NUTM2A-AS1--RP11-203L2.4                268       0.0387   INTERCHROMOSOMAL[c…
-    ## 2 ZNF292--PNRC1                            12       0.00173  INTRACHROMOSOMAL[c…
-    ## 3 RP11-444D3.1--SOX5                       10       0.00144  [SOX5:Oncogene];IN…
-    ## 4 BACH2--PNRC1                              9       0.00130  [BACH2:Oncogene];I…
-    ## 5 SRSF7--CXCR4                              8       0.00115  INTRACHROMOSOMAL[c…
-    ## 6 RP1-34H18.1--NAV3                         6       0.000866 INTRACHROMOSOMAL[c…
-    ## 7 DPH6-AS1--RP11-684B21.1                   5       0.000721 INTRACHROMOSOMAL[c…
-    ## 8 RP11-14D22.2--PRICKLE2                    5       0.000721 INTRACHROMOSOMAL[c…
+    ## # A tibble: 12 × 4
+    ##    FusionName               tot_cells_w_fusion frac_tot_cells annots            
+    ##    <chr>                                 <int>          <dbl> <chr>             
+    ##  1 NUTM2A-AS1--RP11-203L2.4                268       0.0387   INTERCHROMOSOMAL[…
+    ##  2 ZNF292--PNRC1                            12       0.00173  INTRACHROMOSOMAL[…
+    ##  3 RP11-444D3.1--SOX5                       10       0.00144  [SOX5:Oncogene];I…
+    ##  4 BACH2--PNRC1                              9       0.00130  [BACH2:Oncogene];…
+    ##  5 RP11-855A2.2--BPTF                        8       0.00115  <NA>              
+    ##  6 SRSF7--CXCR4                              8       0.00115  INTRACHROMOSOMAL[…
+    ##  7 LINC01317--AC073218.1                     7       0.00101  <NA>              
+    ##  8 LINC01340--RP11-455B3.1                   7       0.00101  INTRACHROMOSOMAL[…
+    ##  9 GNGT1--AC002076.10                        6       0.000866 <NA>              
+    ## 10 RP1-34H18.1--NAV3                         6       0.000866 INTRACHROMOSOMAL[…
+    ## 11 DPH6-AS1--RP11-684B21.1                   5       0.000721 INTRACHROMOSOMAL[…
+    ## 12 RP11-14D22.2--PRICKLE2                    5       0.000721 INTRACHROMOSOMAL[…
 
 ``` r
 # examine distribution of fusion calls according to cell types
@@ -167,8 +175,8 @@ Tum_fusion_frac_cell_types %>% head()
     ## 2 ZNF292--PNRC1            normal                         12             1    
     ## 3 BACH2--PNRC1             normal                          9             1    
     ## 4 SRSF7--CXCR4             normal                          8             1    
-    ## 5 RP11-444D3.1--SOX5       tumor                           7             0.7  
-    ## 6 RP1-34H18.1--NAV3        tumor                           6             1
+    ## 5 LINC01317--AC073218.1    tumor                           7             1    
+    ## 6 LINC01340--RP11-455B3.1  tumor                           7             1
 
 ``` r
 Tum_data %>% select(method) %>% unique()
@@ -176,8 +184,8 @@ Tum_data %>% select(method) %>% unique()
 
     ##              method
     ## 1    ctat-LR-fusion
-    ## 57      STAR-Fusion
-    ## 113 FusionInspector
+    ## 73      STAR-Fusion
+    ## 144 FusionInspector
 
 ``` r
 starF_fusions = Tum_data %>% filter(method=="STAR-Fusion")
@@ -209,7 +217,7 @@ Tum_cell_counts_by_method %>% head()
     ##   leiden dataset cell_counts
     ## 1      4  M132TS         105
     ## 2      4  M132TS          64
-    ## 3      4  M132TS          56
+    ## 3      4  M132TS          57
     ## 4      4  M132TS          29
     ## 5      7  M132TS          25
     ## 6      4  M132TS          17
@@ -233,7 +241,7 @@ Tum_cell_counts_by_method_spread %>% head()
     ## 6 NUTM2A-AS1--RP11-203L2.4 chr10:87307957:- chr9:68824290:-      4
     ##   ctat-LR-fusion FusionInspector STAR-Fusion
     ## 1            105              64          17
-    ## 2             56              29          13
+    ## 2             57              29          13
     ## 3             25              10           2
     ## 4             15               3          NA
     ## 5             14               1          NA
@@ -254,10 +262,11 @@ right_join(Tum_cell_counts_by_method,
 
     ## Joining with `by = join_by(FusionName, LeftBreakpoint, RightBreakpoint)`
 
-    ## Warning in right_join(Tum_cell_counts_by_method, Tum_cell_counts_by_method %>% : Each row in `x` is expected to match at most 1 row in `y`.
-    ## ℹ Row 1 of `x` matches multiple rows.
-    ## ℹ If multiple matches are expected, set `multiple = "all"` to silence this
-    ##   warning.
+    ## Warning in right_join(Tum_cell_counts_by_method, Tum_cell_counts_by_method %>% : Detected an unexpected many-to-many relationship between `x` and `y`.
+    ## ℹ Row 1 of `x` matches multiple rows in `y`.
+    ## ℹ Row 1 of `y` matches multiple rows in `x`.
+    ## ℹ If a many-to-many relationship is expected, set `relationship =
+    ##   "many-to-many"` to silence this warning.
 
 ![](M132TS_analysis_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
@@ -280,8 +289,8 @@ fusion_frac_cell_types %>% head()
     ## 2 NUTM2A-AS1--RP11-203L2.4      7                 44             0.164
     ## 3 RP11-444D3.1--SOX5            4                  7             0.7  
     ## 4 BACH2--PNRC1                  0                  6             0.667
-    ## 5 RP11-14D22.2--PRICKLE2        4                  5             1    
-    ## 6 ZNF292--PNRC1                 0                  5             0.417
+    ## 5 LINC01317--AC073218.1         4                  6             0.857
+    ## 6 LINC01340--RP11-455B3.1       4                  6             0.857
 
 ``` r
 fusions_of_interest = Tum_fusion_frac_cell_types %>% 
@@ -292,14 +301,17 @@ fusions_of_interest = Tum_fusion_frac_cell_types %>%
 fusions_of_interest
 ```
 
-    ## # A tibble: 4 × 4
-    ## # Groups:   FusionName [4]
+    ## # A tibble: 7 × 4
+    ## # Groups:   FusionName [7]
     ##   FusionName               celltype_final tot_cells_w_fusion frac_fusion_cells
     ##   <chr>                    <chr>                       <int>             <dbl>
     ## 1 NUTM2A-AS1--RP11-203L2.4 tumor                         265             0.989
-    ## 2 RP1-34H18.1--NAV3        tumor                           6             1    
-    ## 3 DPH6-AS1--RP11-684B21.1  tumor                           5             1    
-    ## 4 RP11-14D22.2--PRICKLE2   tumor                           5             1
+    ## 2 LINC01317--AC073218.1    tumor                           7             1    
+    ## 3 LINC01340--RP11-455B3.1  tumor                           7             1    
+    ## 4 GNGT1--AC002076.10       tumor                           6             1    
+    ## 5 RP1-34H18.1--NAV3        tumor                           6             1    
+    ## 6 DPH6-AS1--RP11-684B21.1  tumor                           5             1    
+    ## 7 RP11-14D22.2--PRICKLE2   tumor                           5             1
 
 ``` r
 fusions_of_interest = left_join(fusions_of_interest,
@@ -312,15 +324,17 @@ fusions_of_interest = left_join(fusions_of_interest,
 fusions_of_interest
 ```
 
-    ## # A tibble: 4 × 5
-    ## # Groups:   FusionName [4]
-    ##   FusionName               celltype_final tot_cells_w_fusion frac_fusio…¹ annots
-    ##   <chr>                    <chr>                       <int>        <dbl> <chr> 
-    ## 1 NUTM2A-AS1--RP11-203L2.4 tumor                         265        0.989 INTER…
-    ## 2 RP1-34H18.1--NAV3        tumor                           6        1     INTRA…
-    ## 3 DPH6-AS1--RP11-684B21.1  tumor                           5        1     INTRA…
-    ## 4 RP11-14D22.2--PRICKLE2   tumor                           5        1     INTRA…
-    ## # … with abbreviated variable name ¹​frac_fusion_cells
+    ## # A tibble: 7 × 5
+    ## # Groups:   FusionName [7]
+    ##   FusionName          celltype_final tot_cells_w_fusion frac_fusion_cells annots
+    ##   <chr>               <chr>                       <int>             <dbl> <chr> 
+    ## 1 NUTM2A-AS1--RP11-2… tumor                         265             0.989 INTER…
+    ## 2 LINC01317--AC07321… tumor                           7             1     <NA>  
+    ## 3 LINC01340--RP11-45… tumor                           7             1     INTRA…
+    ## 4 GNGT1--AC002076.10  tumor                           6             1     <NA>  
+    ## 5 RP1-34H18.1--NAV3   tumor                           6             1     INTRA…
+    ## 6 DPH6-AS1--RP11-684… tumor                           5             1     INTRA…
+    ## 7 RP11-14D22.2--PRIC… tumor                           5             1     INTRA…
 
 NUTM2A-AS1–RP11-203L2.4 is the only relevant inter-chromosomal.
 
@@ -404,10 +418,10 @@ fusions_of_interest
 
     ## # A tibble: 1 × 5
     ## # Groups:   FusionName [1]
-    ##   FusionName               normal_cell_count tumor_cell_count frac_nor…¹ frac_…²
-    ##   <chr>                                <dbl>            <dbl>      <dbl>   <dbl>
-    ## 1 NUTM2A-AS1--RP11-203L2.4                 3              265   0.000481   0.378
-    ## # … with abbreviated variable names ¹​frac_normal_cells, ²​frac_tumor_cells
+    ##   FusionName               normal_cell_count tumor_cell_count frac_normal_cells
+    ##   <chr>                                <dbl>            <dbl>             <dbl>
+    ## 1 NUTM2A-AS1--RP11-203L2.4                 3              265          0.000481
+    ## # ℹ 1 more variable: frac_tumor_cells <dbl>
 
 ``` r
 x = 0
@@ -454,11 +468,10 @@ fusions_of_interest
 
     ## # A tibble: 1 × 6
     ## # Groups:   FusionName [1]
-    ##   FusionName               normal_cell_count tumor_cell…¹ frac_…² frac_…³ annots
-    ##   <chr>                                <dbl>        <dbl>   <dbl>   <dbl> <chr> 
-    ## 1 NUTM2A-AS1--RP11-203L2.4                 3          265 4.81e-4   0.378 INTER…
-    ## # … with abbreviated variable names ¹​tumor_cell_count, ²​frac_normal_cells,
-    ## #   ³​frac_tumor_cells
+    ##   FusionName               normal_cell_count tumor_cell_count frac_normal_cells
+    ##   <chr>                                <dbl>            <dbl>             <dbl>
+    ## 1 NUTM2A-AS1--RP11-203L2.4                 3              265          0.000481
+    ## # ℹ 2 more variables: frac_tumor_cells <dbl>, annots <chr>
 
 ``` r
 write.table(fusions_of_interest, file="M132TS.fusions_of_interest.tsv", sep="\t", quote=F, row.names = F)
@@ -489,7 +502,7 @@ Tum_cell_counts_by_method %>% filter(FusionName %in% fusions_of_interest$FusionN
     ## 15 NUTM2A-AS1--RP11-203L2.4 chr10:87326630:- chr9:68843275:-      4
     ##    ctat-LR-fusion FusionInspector STAR-Fusion
     ## 1             105              64          17
-    ## 2              56              29          13
+    ## 2              57              29          13
     ## 3              25              10           2
     ## 4              15               3          NA
     ## 5              14               1          NA
@@ -559,7 +572,7 @@ Tum_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4" ) %>%
     ## 1 NUTM2A-AS1--RP11-203L2.4 FusionInspector         104                     0.392
     ## 2 NUTM2A-AS1--RP11-203L2.4 STAR-Fusion              33                     0.125
     ## 3 NUTM2A-AS1--RP11-203L2.4 ctat-LR-fusion          214                     0.808
-    ## # … with abbreviated variable name ¹​frac_NUTM2A_AS1_fusion_positive
+    ## # ℹ abbreviated name: ¹​frac_NUTM2A_AS1_fusion_positive
 
 ``` r
  p = baseplot + geom_point(data=Tum_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4") %>% select(umap_1, umap_2, method) %>% unique(), 
@@ -570,6 +583,10 @@ Tum_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4" ) %>%
 ```
 
 ![](M132TS_analysis_files/figure-gfm/unnamed-chunk-30-1.png)<!-- -->
+
+``` r
+ggsave(p, file="M132TS_NUTM2A-AS1_fusion_umap.svg", width=7, height=4)
+```
 
 ``` r
 venn_dist = Tum_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4") %>%
@@ -596,6 +613,8 @@ venn_dist
     ## 5 STAR-Fusion                                        1        0.00377
     ## 6 ctat-LR-fusion                                   160        0.604
 
+60% identified by ctat-LRF only.
+
 ``` r
 # what fraction of fusion positive cells were by short reads only?
 venn_dist %>% filter(! grepl("ctat-LR-fusion", methods))
@@ -616,6 +635,8 @@ venn_dist %>% filter(! grepl("ctat-LR-fusion", methods)) %>% summarize(sum(frac_
     ##   `sum(frac_pos_cells)`
     ##                   <dbl>
     ## 1                 0.192
+
+\~20% by short reads alone
 
 ``` r
 # double check number of tumor cells with NUTM2A-AS1 fusion = 265
@@ -646,7 +667,7 @@ Tum_data %>%
 
     ## # A tibble: 0 × 4
     ## # Groups:   FusionName [0]
-    ## # … with 4 variables: FusionName <chr>, celltype_final <chr>,
+    ## # ℹ 4 variables: FusionName <chr>, celltype_final <chr>,
     ## #   fusion_cell_counts_per_cluster <int>, frac_fusion_cells <dbl>
 
 ``` r
@@ -666,19 +687,23 @@ left_join(Tum_data %>% filter(FusionName %in% fusions_min_cell_counts$FusionName
     fusion_annots, by='FusionName')
 ```
 
-    ## # A tibble: 8 × 6
-    ##   FusionName               leiden fusion_cell_counts_pe…¹ frac_…² tumor…³ annots
-    ##   <chr>                     <int>                   <int>   <dbl> <lgl>   <chr> 
-    ## 1 NUTM2A-AS1--RP11-203L2.4      4                     221 0.684   TRUE    INTER…
-    ## 2 RP11-444D3.1--SOX5            4                       7 0.0217  TRUE    [SOX5…
-    ## 3 BACH2--PNRC1                  0                       6 0.0186  FALSE   [BACH…
-    ## 4 RP11-14D22.2--PRICKLE2        4                       5 0.0155  TRUE    INTRA…
-    ## 5 ZNF292--PNRC1                 0                       5 0.0155  FALSE   INTRA…
-    ## 6 RP1-34H18.1--NAV3             4                       4 0.0124  TRUE    INTRA…
-    ## 7 DPH6-AS1--RP11-684B21.1       4                       3 0.00929 TRUE    INTRA…
-    ## 8 SRSF7--CXCR4                  0                       2 0.00619 FALSE   INTRA…
-    ## # … with abbreviated variable names ¹​fusion_cell_counts_per_cluster,
-    ## #   ²​frac_fusion_cells, ³​tumor_or_normal
+    ## # A tibble: 12 × 6
+    ##    FusionName    leiden fusion_cell_counts_p…¹ frac_fusion_cells tumor_or_normal
+    ##    <chr>          <int>                  <int>             <dbl> <lgl>          
+    ##  1 NUTM2A-AS1--…      4                    221           0.630   TRUE           
+    ##  2 RP11-444D3.1…      4                      7           0.0199  TRUE           
+    ##  3 BACH2--PNRC1       0                      6           0.0171  FALSE          
+    ##  4 LINC01317--A…      4                      6           0.0171  TRUE           
+    ##  5 LINC01340--R…      4                      6           0.0171  TRUE           
+    ##  6 GNGT1--AC002…      7                      5           0.0142  TRUE           
+    ##  7 RP11-14D22.2…      4                      5           0.0142  TRUE           
+    ##  8 ZNF292--PNRC1      0                      5           0.0142  FALSE          
+    ##  9 RP1-34H18.1-…      4                      4           0.0114  TRUE           
+    ## 10 RP11-855A2.2…      4                      4           0.0114  TRUE           
+    ## 11 DPH6-AS1--RP…      4                      3           0.00855 TRUE           
+    ## 12 SRSF7--CXCR4       0                      2           0.00570 FALSE          
+    ## # ℹ abbreviated name: ¹​fusion_cell_counts_per_cluster
+    ## # ℹ 1 more variable: annots <chr>
 
 # exploring individual fusions
 
@@ -743,15 +768,15 @@ report_on_fusion("RP11-208G20.2--PSPHP1")
     ## [5] ctat-LR-fusion  FusionInspector STAR-Fusion    
     ## <0 rows> (or 0-length row.names)
     ## # A tibble: 0 × 5
-    ## # … with 5 variables: FusionName <chr>, tot_cells_w_fusion <int>,
+    ## # ℹ 5 variables: FusionName <chr>, tot_cells_w_fusion <int>,
     ## #   frac_tot_cells <dbl>, annots <chr>, type <chr>
     ## # A tibble: 0 × 5
     ## # Groups:   FusionName [0]
-    ## # … with 5 variables: FusionName <chr>, leiden <int>, tot_cells_w_fusion <int>,
+    ## # ℹ 5 variables: FusionName <chr>, leiden <int>, tot_cells_w_fusion <int>,
     ## #   frac_fusion_cells <dbl>, type <chr>
     ## # A tibble: 0 × 5
     ## # Groups:   FusionName [0]
-    ## # … with 5 variables: FusionName <chr>, celltype_final <chr>,
+    ## # ℹ 5 variables: FusionName <chr>, celltype_final <chr>,
     ## #   tot_cells_w_fusion <int>, frac_fusion_cells <dbl>, type <chr>
 
 none here.
