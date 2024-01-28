@@ -69,21 +69,44 @@ data %>% head()
 
     ## # A tibble: 6 × 36
     ## # Rowwise: 
-    ##   fusion  num_LR LeftG…¹ LeftL…² LeftB…³ Right…⁴ Right…⁵ Right…⁶ Splic…⁷ LR_FFPM
-    ##   <chr>    <dbl> <chr>     <int> <chr>   <chr>     <int> <chr>   <chr>     <dbl>
-    ## 1 RP11-2…    583 RP11-2…    1093 chr7:5… PSPHP1     5244 chr7:5… INCL_N…    96.0
-    ## 2 NPM1--…    459 NPM1       4640 chr5:1… ALK       40446 chr2:2… ONLY_R…   173. 
-    ## 3 CYTH1-…    451 CYTH1      1096 chr17:… EIF3H     28690 chr8:1… ONLY_R…   133. 
-    ## 4 BAG6--…    345 BAG6       2050 chr6:3… SLC44A4   25651 chr6:3… ONLY_R…    55.2
-    ## 5 FGFR3-…    343 FGFR3      9864 chr4:1… TACC3     26008 chr4:1… ONLY_R…    63.9
-    ## 6 RP11-2…    330 RP11-2…    1093 chr7:5… PSPHP1     5244 chr7:5… INCL_N…    78.8
-    ## # … with 26 more variables: JunctionReadCount <dbl>, SpanningFragCount <dbl>,
-    ## #   est_J <dbl>, est_S <dbl>, LeftGene_SR <chr>, RightGene_SR <chr>,
-    ## #   LargeAnchorSupport <chr>, NumCounterFusionLeft <dbl>,
+    ##   fusion            num_LR LeftGene LeftLocalBreakpoint LeftBreakpoint RightGene
+    ##   <chr>              <dbl> <chr>                  <int> <chr>          <chr>    
+    ## 1 RP11-208G20.2--P…    583 RP11-20…                1093 chr7:55761799… PSPHP1   
+    ## 2 NPM1--ALK            459 NPM1                    4640 chr5:17139179… ALK      
+    ## 3 CYTH1--EIF3H         451 CYTH1                   1096 chr17:7878220… EIF3H    
+    ## 4 BAG6--SLC44A4        345 BAG6                    2050 chr6:31651656… SLC44A4  
+    ## 5 FGFR3--TACC3         343 FGFR3                   9864 chr4:1806934:+ TACC3    
+    ## 6 RP11-208G20.2--P…    330 RP11-20…                1093 chr7:55761799… PSPHP1   
+    ## # ℹ 30 more variables: RightLocalBreakpoint <int>, RightBreakpoint <chr>,
+    ## #   SpliceType <chr>, LR_FFPM <dbl>, JunctionReadCount <dbl>,
+    ## #   SpanningFragCount <dbl>, est_J <dbl>, est_S <dbl>, LeftGene_SR <chr>,
+    ## #   RightGene_SR <chr>, LargeAnchorSupport <chr>, NumCounterFusionLeft <dbl>,
     ## #   NumCounterFusionRight <dbl>, FAR_left <dbl>, FAR_right <dbl>,
     ## #   LeftBreakDinuc <chr>, LeftBreakEntropy <dbl>, RightBreakDinuc <chr>,
-    ## #   RightBreakEntropy <dbl>, SR_FFPM <dbl>, microh_brkpt_dist <dbl>,
-    ## #   num_microh_near_brkpt <dbl>, annots <chr>, max_LR_FFPM <dbl>, …
+    ## #   RightBreakEntropy <dbl>, SR_FFPM <dbl>, microh_brkpt_dist <dbl>, …
+
+``` r
+write.table(data, file="DepMap_v1v2mrgd.ctatLRF_FI.consolidated.tsv", quote=F, sep="\t", row.names=F)
+```
+
+``` r
+# How many fusion gene pairs and isoforms if require both long and short read support for breakpoints?
+data %>% filter(num_LR > 0 & num_SR > 0) %>% select(sample, fusion) %>% unique() %>% nrow()
+```
+
+    ## [1] 204
+
+``` r
+# 204
+
+data %>% filter(num_LR > 0 & num_SR > 0) %>% select(sample, fusion, LeftBreakpoint, RightBreakpoint) %>% unique() %>% nrow()
+```
+
+    ## [1] 268
+
+``` r
+# 268
+```
 
 # compare long vs. short read fusion evidence, normalized by sequencing depth
 
@@ -100,7 +123,7 @@ data %>% ggplot(aes(x=log10(LR_FFPM), y=log10(SR_FFPM))) + geom_point() +
 
     ## Warning: Removed 9214 rows containing missing values (`geom_point()`).
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 ``` r
 cor.test(x=log2(data$LR_FFPM), y=log2(data$SR_FFPM), use='complete.obs')
@@ -118,10 +141,14 @@ cor.test(x=log2(data$LR_FFPM), y=log2(data$SR_FFPM), use='complete.obs')
     ##     cor 
     ## 0.70979
 
+``` r
+# R=0.71, p<2.2e-16)
+```
+
 # restrict to the TP fusions
 
 ``` r
-TP_fusions = read.table("../3b.DepMap9Lines_Benchmarking/3b.2.IncludeIlluminaSupportedFusions/data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.byProgAgree.min_2.truth_set", 
+TP_fusions = read.table("../3b.DepMap9Lines_Benchmarking/3b.2.IncludeIlluminaSupportedFusions/data/preds.collected.gencode_mapped.wAnnot.filt.pass.proxy_assignments.byProgAgree.min_2.truth_set", 
                         header=T, sep="\t", stringsAsFactors = F) %>% 
     select(proxy_fusion_name)
 
@@ -135,7 +162,7 @@ TP_fusions = TP_fusions %>% rowwise() %>% mutate(lexsort_fusion_name = paste0(sa
 nrow(TP_fusions)
 ```
 
-    ## [1] 163
+    ## [1] 135
 
 ``` r
 TP_fusions %>% head()
@@ -146,11 +173,11 @@ TP_fusions %>% head()
     ##   proxy_fusion_name       sample  fusion          lexsort_fusion_name    
     ##   <chr>                   <chr>   <chr>           <chr>                  
     ## 1 HCC1395|EIF3K--CYP39A1  HCC1395 EIF3K--CYP39A1  HCC1395|CYP39A1--EIF3K 
-    ## 2 HCC1395|OSBPL9--CCDC178 HCC1395 OSBPL9--CCDC178 HCC1395|CCDC178--OSBPL9
-    ## 3 HCC1395|FUBP3--PRRC2B   HCC1395 FUBP3--PRRC2B   HCC1395|FUBP3--PRRC2B  
-    ## 4 SKBR3|ANKHD1--PCDH1     SKBR3   ANKHD1--PCDH1   SKBR3|ANKHD1--PCDH1    
-    ## 5 VCAP|ANO10--SLMAP       VCAP    ANO10--SLMAP    VCAP|ANO10--SLMAP      
-    ## 6 SKBR3|SUMF1--LRRFIP2    SKBR3   SUMF1--LRRFIP2  SKBR3|LRRFIP2--SUMF1
+    ## 2 VCAP|PDE4D--FAM172A     VCAP    PDE4D--FAM172A  VCAP|FAM172A--PDE4D    
+    ## 3 VCAP|HJURP--EIF4E2      VCAP    HJURP--EIF4E2   VCAP|EIF4E2--HJURP     
+    ## 4 HCC1187|KMT2E--LHFPL3   HCC1187 KMT2E--LHFPL3   HCC1187|KMT2E--LHFPL3  
+    ## 5 HCC1395|PLA2R1--RBMS1   HCC1395 PLA2R1--RBMS1   HCC1395|PLA2R1--RBMS1  
+    ## 6 HCC1395|OSBPL9--CCDC178 HCC1395 OSBPL9--CCDC178 HCC1395|CCDC178--OSBPL9
 
 ``` r
 data = inner_join(TP_fusions %>% select(lexsort_fusion_name),
@@ -164,13 +191,13 @@ data = inner_join(TP_fusions %>% select(lexsort_fusion_name),
 nrow(data)
 ```
 
-    ## [1] 218
+    ## [1] 209
 
 ``` r
 data %>% select(sample, fusion) %>% unique() %>% nrow()
 ```
 
-    ## [1] 113
+    ## [1] 108
 
 ``` r
 data %>% head()
@@ -178,34 +205,34 @@ data %>% head()
 
     ## # A tibble: 6 × 36
     ## # Rowwise: 
-    ##   lexsor…¹ fusion num_LR LeftG…² LeftL…³ LeftB…⁴ Right…⁵ Right…⁶ Right…⁷ Splic…⁸
-    ##   <chr>    <chr>   <dbl> <chr>     <int> <chr>   <chr>     <int> <chr>   <chr>  
-    ## 1 HCC1395… EIF3K…     54 "EIF3K"    8757 chr19:… "CYP39…   17360 chr6:4… ONLY_R…
-    ## 2 HCC1395… EIF3K…      2 "EIF3K"    8575 chr19:… "CYP39…   17360 chr6:4… ONLY_R…
-    ## 3 HCC1395… EIF3K…      1 "EIF3K"    8757 chr19:… "CYP39…   17344 chr6:4… INCL_N…
-    ## 4 HCC1395… EIF3K…     NA ""         8757 chr19:… ""        17420 chr6:4… INCL_N…
-    ## 5 HCC1395… OSBPL…      3 "OSBPL…    6741 chr1:5… "CCDC1…   65592 chr18:… ONLY_R…
-    ## 6 HCC1395… PRRC2…     46 "PRRC2…    1171 chr9:1… "FUBP3"   46698 chr9:1… ONLY_R…
-    ## # … with 26 more variables: LR_FFPM <dbl>, JunctionReadCount <dbl>,
-    ## #   SpanningFragCount <dbl>, est_J <dbl>, est_S <dbl>, LeftGene_SR <chr>,
-    ## #   RightGene_SR <chr>, LargeAnchorSupport <chr>, NumCounterFusionLeft <dbl>,
-    ## #   NumCounterFusionRight <dbl>, FAR_left <dbl>, FAR_right <dbl>,
-    ## #   LeftBreakDinuc <chr>, LeftBreakEntropy <dbl>, RightBreakDinuc <chr>,
-    ## #   RightBreakEntropy <dbl>, SR_FFPM <dbl>, microh_brkpt_dist <dbl>,
-    ## #   num_microh_near_brkpt <dbl>, annots <chr>, max_LR_FFPM <dbl>, …
+    ##   lexsort_fusion_name  fusion num_LR LeftGene LeftLocalBreakpoint LeftBreakpoint
+    ##   <chr>                <chr>   <dbl> <chr>                  <int> <chr>         
+    ## 1 HCC1395|CYP39A1--EI… EIF3K…     54 "EIF3K"                 8757 chr19:3863267…
+    ## 2 HCC1395|CYP39A1--EI… EIF3K…      2 "EIF3K"                 8575 chr19:3863249…
+    ## 3 HCC1395|CYP39A1--EI… EIF3K…      1 "EIF3K"                 8757 chr19:3863267…
+    ## 4 HCC1395|CYP39A1--EI… EIF3K…     NA ""                      8757 chr19:3863267…
+    ## 5 VCAP|FAM172A--PDE4D  PDE4D…      9 "PDE4D"                19661 chr5:59768247…
+    ## 6 VCAP|FAM172A--PDE4D  PDE4D…      3 "PDE4D"                13468 chr5:59988488…
+    ## # ℹ 30 more variables: RightGene <chr>, RightLocalBreakpoint <int>,
+    ## #   RightBreakpoint <chr>, SpliceType <chr>, LR_FFPM <dbl>,
+    ## #   JunctionReadCount <dbl>, SpanningFragCount <dbl>, est_J <dbl>, est_S <dbl>,
+    ## #   LeftGene_SR <chr>, RightGene_SR <chr>, LargeAnchorSupport <chr>,
+    ## #   NumCounterFusionLeft <dbl>, NumCounterFusionRight <dbl>, FAR_left <dbl>,
+    ## #   FAR_right <dbl>, LeftBreakDinuc <chr>, LeftBreakEntropy <dbl>,
+    ## #   RightBreakDinuc <chr>, RightBreakEntropy <dbl>, SR_FFPM <dbl>, …
 
 ``` r
-# how many genes and isoforms ahve both long and short read support:
+# how many TP genes and isoforms have both long and short read support:
 data %>% filter(num_LR > 0 && num_SR > 0) %>% nrow()
 ```
 
-    ## [1] 150
+    ## [1] 143
 
 ``` r
 data %>% filter(num_LR > 0 && num_SR > 0) %>% select(sample, fusion) %>% unique() %>% nrow()
 ```
 
-    ## [1] 94
+    ## [1] 87
 
 ``` r
 # by read counts
@@ -221,9 +248,9 @@ data %>%
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
-    ## Warning: Removed 68 rows containing missing values (`geom_bar()`).
+    ## Warning: Removed 66 rows containing missing values (`geom_bar()`).
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 ``` r
 # by FFPM
@@ -246,9 +273,9 @@ data %>%
     ylab("FFPM * 100")
 ```
 
-    ## Warning: Removed 68 rows containing missing values (`geom_bar()`).
+    ## Warning: Removed 66 rows containing missing values (`geom_bar()`).
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 ``` r
 # label those fusions that have the most extreme difference with SR >> LR
@@ -266,28 +293,31 @@ SR_enriched_fusion_isoforms %>% filter(SR_enrichment > 1)
 ```
 
     ## # A tibble: 16 × 7
-    ##    sample  fusion             fusion_iso           LR_FFPM SR_FFPM SR_en…¹  rank
-    ##    <chr>   <chr>              <chr>                  <dbl>   <dbl>   <dbl> <int>
-    ##  1 SKBR3   TATDN1--GSDMB      TATDN1--GSDMB iso 5    1.18   60.9     51.8      1
-    ##  2 SKBR3   TATDN1--GSDMB      TATDN1--GSDMB iso 8    0.294  10.0     34.1      2
-    ##  3 K562    BCR--ABL1          BCR--ABL1 iso 1        0.32    9.83    30.7      3
-    ##  4 SKBR3   TATDN1--GSDMB      TATDN1--GSDMB iso 4    2.06   18.6      9.03     4
-    ##  5 HCC1187 PUM1--TRERF1       PUM1--TRERF1 iso 1     1.59    7.41     4.67     5
-    ##  6 VCAP    USP10--ZDHHC7      USP10--ZDHHC7 iso 1    0.494   1.07     2.16     6
-    ##  7 VCAP    TMPRSS2--ERG       TMPRSS2--ERG iso 4     0.165   0.340    2.06     7
-    ##  8 DMS53   RP11-59N23.3--CMAS RP11-59N23.3--CMAS …   0.239   0.482    2.02     8
-    ##  9 VCAP    TMPRSS2--ERG       TMPRSS2--ERG iso 2     2.31    3.93     1.70     9
-    ## 10 MJ      RP11-444D3.1--SOX5 RP11-444D3.1--SOX5 …   0.207   0.304    1.47    10
-    ## 11 K562    NUP214--XKR3       NUP214--XKR3 iso 1     3.36    4.68     1.39    11
-    ## 12 VCAP    ZDHHC7--H3F3B      ZDHHC7--H3F3B iso 1    0.165   0.186    1.12    12
-    ## 13 HCC1187 SEC22B--NOTCH2     SEC22B--NOTCH2 iso 1   3.97    4.44     1.12    13
-    ## 14 HCC1187 PLXND1--TMCC1      PLXND1--TMCC1 iso 2    0.265   0.294    1.11    14
-    ## 15 SKBR3   DHX35--ITCH        DHX35--ITCH iso 1      0.882   0.926    1.05    15
-    ## 16 SKBR3   ANKHD1--PCDH1      ANKHD1--PCDH1 iso 1    1.18    1.19     1.01    16
-    ## # … with abbreviated variable name ¹​SR_enrichment
+    ##    sample  fusion             fusion_iso     LR_FFPM SR_FFPM SR_enrichment  rank
+    ##    <chr>   <chr>              <chr>            <dbl>   <dbl>         <dbl> <int>
+    ##  1 SKBR3   TATDN1--GSDMB      TATDN1--GSDMB…   1.18   60.9           51.8      1
+    ##  2 SKBR3   TATDN1--GSDMB      TATDN1--GSDMB…   0.294  10.0           34.1      2
+    ##  3 K562    BCR--ABL1          BCR--ABL1 iso…   0.32    9.83          30.7      3
+    ##  4 SKBR3   TATDN1--GSDMB      TATDN1--GSDMB…   2.06   18.6            9.03     4
+    ##  5 HCC1187 PUM1--TRERF1       PUM1--TRERF1 …   1.59    7.41           4.67     5
+    ##  6 VCAP    USP10--ZDHHC7      USP10--ZDHHC7…   0.494   1.07           2.16     6
+    ##  7 VCAP    TMPRSS2--ERG       TMPRSS2--ERG …   0.165   0.340          2.06     7
+    ##  8 DMS53   RP11-59N23.3--CMAS RP11-59N23.3-…   0.239   0.482          2.02     8
+    ##  9 VCAP    TMPRSS2--ERG       TMPRSS2--ERG …   2.31    3.93           1.70     9
+    ## 10 MJ      RP11-444D3.1--SOX5 RP11-444D3.1-…   0.207   0.304          1.47    10
+    ## 11 K562    NUP214--XKR3       NUP214--XKR3 …   3.36    4.68           1.39    11
+    ## 12 VCAP    ZDHHC7--H3F3B      ZDHHC7--H3F3B…   0.165   0.186          1.12    12
+    ## 13 HCC1187 SEC22B--NOTCH2     SEC22B--NOTCH…   3.97    4.44           1.12    13
+    ## 14 HCC1187 PLXND1--TMCC1      PLXND1--TMCC1…   0.265   0.294          1.11    14
+    ## 15 SKBR3   DHX35--ITCH        DHX35--ITCH i…   0.882   0.926          1.05    15
+    ## 16 SKBR3   ANKHD1--PCDH1      ANKHD1--PCDH1…   1.18    1.19           1.01    16
 
 ``` r
-data %>%     
+# BCR-ABL1 has >30-fold enrichment for SR
+```
+
+``` r
+depmap_LR_vs_SR_fusion_FFPM_scatterplot = data %>%     
     select(sample, fusion_iso, LR_FFPM, SR_FFPM) %>% 
     ggplot(aes(x=log10(LR_FFPM), y=log10(SR_FFPM))) + geom_point() +
     stat_smooth(method = "lm", 
@@ -295,15 +325,26 @@ data %>%
               geom = "smooth") + 
     geom_abline(intercept=0, slope=1, color='purple') +
     geom_point(data=SR_enriched_fusion_isoforms %>% filter(SR_enrichment>=3), color='red')  +
-    geom_text_repel(data=SR_enriched_fusion_isoforms %>% filter(SR_enrichment>=3), aes(label=fusion)) +
+    geom_text_repel(data=SR_enriched_fusion_isoforms %>% filter(SR_enrichment>=3), aes(label=fusion_iso)) +
     ggtitle("CTAT-LR-FI FFPM Comparison for isoforms of TP fusions")
+
+
+depmap_LR_vs_SR_fusion_FFPM_scatterplot
 ```
 
-    ## Warning: Removed 68 rows containing non-finite values (`stat_smooth()`).
+    ## Warning: Removed 66 rows containing non-finite values (`stat_smooth()`).
 
-    ## Warning: Removed 68 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 66 rows containing missing values (`geom_point()`).
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+``` r
+ggsave(depmap_LR_vs_SR_fusion_FFPM_scatterplot, file="depmap_LR_vs_SR_fusion_FFPM_scatterplot.svg", width=7, height=5)
+```
+
+    ## Warning: Removed 66 rows containing non-finite values (`stat_smooth()`).
+
+    ## Warning: Removed 66 rows containing missing values (`geom_point()`).
 
 ``` r
 cor.test(x=log2(data$LR_FFPM), y=log2(data$SR_FFPM), use='complete.obs')
@@ -313,23 +354,29 @@ cor.test(x=log2(data$LR_FFPM), y=log2(data$SR_FFPM), use='complete.obs')
     ##  Pearson's product-moment correlation
     ## 
     ## data:  log2(data$LR_FFPM) and log2(data$SR_FFPM)
-    ## t = 11.059, df = 148, p-value < 2.2e-16
+    ## t = 11.002, df = 141, p-value < 2.2e-16
     ## alternative hypothesis: true correlation is not equal to 0
     ## 95 percent confidence interval:
-    ##  0.5742838 0.7518520
+    ##  0.5802527 0.7591213
     ## sample estimates:
     ##       cor 
-    ## 0.6726386
+    ## 0.6796648
 
 ``` r
-SR_enriched_fusion_isoforms %>%
+depmap_SR_enrichment_rankings_plot = SR_enriched_fusion_isoforms %>%
     mutate(rn = row_number() ) %>%
     ggplot(aes(x=rn, y=SR_enrichment)) + geom_point() + geom_hline(yintercept = 1.0, color='purple') +
     scale_y_continuous(trans='log10') +
     xlab("Fusion isoform ranked by SR_enrichment")
+   
+depmap_SR_enrichment_rankings_plot
 ```
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+
+``` r
+ggsave(depmap_SR_enrichment_rankings_plot, file="depmap_SR_enrichment_rankings_plot.svg", width=5, height=3)
+```
 
 # examine specific fusions and breakpoint splice support
 
@@ -412,24 +459,24 @@ plot_fusion_expression_by_breakpoint(sample_name, fusion_name)
 
     ## # A tibble: 13 × 8
     ## # Rowwise: 
-    ##    sample fusion        LeftLocalBreakpoint Right…¹ num_LR est_J LR_FFPM SR_FFPM
-    ##    <chr>  <chr>                       <int>   <int>  <dbl> <dbl>   <dbl>   <dbl>
-    ##  1 SKBR3  TATDN1--GSDMB                1434   23528      4  2499   1.18  60.9   
-    ##  2 SKBR3  TATDN1--GSDMB                1531   23528    123   417  36.2   10.2   
-    ##  3 SKBR3  TATDN1--GSDMB                2128   23528      3     3   0.882  0.0736
-    ##  4 SKBR3  TATDN1--GSDMB                1434   23532      0     6   0      0.146 
-    ##  5 SKBR3  TATDN1--GSDMB                1434   24410      0     7   0      0.170 
-    ##  6 SKBR3  TATDN1--GSDMB                1531   24410      1     3   0.294  0.0733
-    ##  7 SKBR3  TATDN1--GSDMB                1434   26465      0    21   0      0.512 
-    ##  8 SKBR3  TATDN1--GSDMB                1531   26465      3     4   0.882  0.0979
-    ##  9 SKBR3  TATDN1--GSDMB                1434   27181      1   411   0.294 10.0   
-    ## 10 SKBR3  TATDN1--GSDMB                1531   27181     14    42   4.12   1.03  
-    ## 11 SKBR3  TATDN1--GSDMB                1434   27467      7   763   2.06  18.6   
-    ## 12 SKBR3  TATDN1--GSDMB                1531   27467     34   111  10.0    2.70  
-    ## 13 SKBR3  TATDN1--GSDMB                1434   27956      0    10   0      0.244 
-    ## # … with abbreviated variable name ¹​RightLocalBreakpoint
+    ##    sample fusion   LeftLocalBreakpoint RightLocalBreakpoint num_LR est_J LR_FFPM
+    ##    <chr>  <chr>                  <int>                <int>  <dbl> <dbl>   <dbl>
+    ##  1 SKBR3  TATDN1-…                1434                23528      4  2499   1.18 
+    ##  2 SKBR3  TATDN1-…                1531                23528    123   417  36.2  
+    ##  3 SKBR3  TATDN1-…                2128                23528      3     3   0.882
+    ##  4 SKBR3  TATDN1-…                1434                23532      0     6   0    
+    ##  5 SKBR3  TATDN1-…                1434                24410      0     7   0    
+    ##  6 SKBR3  TATDN1-…                1531                24410      1     3   0.294
+    ##  7 SKBR3  TATDN1-…                1434                26465      0    21   0    
+    ##  8 SKBR3  TATDN1-…                1531                26465      3     4   0.882
+    ##  9 SKBR3  TATDN1-…                1434                27181      1   411   0.294
+    ## 10 SKBR3  TATDN1-…                1531                27181     14    42   4.12 
+    ## 11 SKBR3  TATDN1-…                1434                27467      7   763   2.06 
+    ## 12 SKBR3  TATDN1-…                1531                27467     34   111  10.0  
+    ## 13 SKBR3  TATDN1-…                1434                27956      0    10   0    
+    ## # ℹ 1 more variable: SR_FFPM <dbl>
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-16-2.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-16-3.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-16-4.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-20-2.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-20-3.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-20-4.png)<!-- -->
 
     ## 
     ## Call:
@@ -439,7 +486,7 @@ plot_fusion_expression_by_breakpoint(sample_name, fusion_name)
     ## (Intercept)   df$LR_FFPM  
     ##     7.82812      0.05363
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-16-5.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-20-5.png)<!-- -->
 
     ## 
     ##  Pearson's product-moment correlation
@@ -461,12 +508,12 @@ plot_fusion_expression_by_breakpoint("K562", "BCR--ABL1")
 
     ## # A tibble: 1 × 8
     ## # Rowwise: 
-    ##   sample fusion    LeftLocalBreakpoint RightLocal…¹ num_LR est_J LR_FFPM SR_FFPM
-    ##   <chr>  <chr>                   <int>        <int>  <dbl> <dbl>   <dbl>   <dbl>
-    ## 1 K562   BCR--ABL1               21553        43957      2   272    0.32    9.83
-    ## # … with abbreviated variable name ¹​RightLocalBreakpoint
+    ##   sample fusion    LeftLocalBreakpoint RightLocalBreakpoint num_LR est_J LR_FFPM
+    ##   <chr>  <chr>                   <int>                <int>  <dbl> <dbl>   <dbl>
+    ## 1 K562   BCR--ABL1               21553                43957      2   272    0.32
+    ## # ℹ 1 more variable: SR_FFPM <dbl>
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-17-2.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-17-3.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-17-4.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-21-2.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-21-3.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-21-4.png)<!-- -->
 
     ## 
     ## Call:
@@ -478,7 +525,7 @@ plot_fusion_expression_by_breakpoint("K562", "BCR--ABL1")
 
     ## Warning: Removed 1 rows containing missing values (`geom_abline()`).
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-17-5.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-21-5.png)<!-- -->
 
 ``` r
 # HCC1187   PUM1--TRERF1 
@@ -488,12 +535,12 @@ plot_fusion_expression_by_breakpoint("HCC1187", "PUM1--TRERF1")
 
     ## # A tibble: 1 × 8
     ## # Rowwise: 
-    ##   sample  fusion       LeftLocalBreakpoint RightL…¹ num_LR est_J LR_FFPM SR_FFPM
-    ##   <chr>   <chr>                      <int>    <int>  <dbl> <dbl>   <dbl>   <dbl>
-    ## 1 HCC1187 PUM1--TRERF1               26417    37568      6   172    1.59    7.41
-    ## # … with abbreviated variable name ¹​RightLocalBreakpoint
+    ##   sample  fusion   LeftLocalBreakpoint RightLocalBreakpoint num_LR est_J LR_FFPM
+    ##   <chr>   <chr>                  <int>                <int>  <dbl> <dbl>   <dbl>
+    ## 1 HCC1187 PUM1--T…               26417                37568      6   172    1.59
+    ## # ℹ 1 more variable: SR_FFPM <dbl>
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-18-2.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-18-3.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-18-4.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-22-2.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-22-3.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-22-4.png)<!-- -->
 
     ## 
     ## Call:
@@ -505,7 +552,7 @@ plot_fusion_expression_by_breakpoint("HCC1187", "PUM1--TRERF1")
 
     ## Warning: Removed 1 rows containing missing values (`geom_abline()`).
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-18-5.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-22-5.png)<!-- -->
 
 ``` r
 # VCAP  TMPRSS2--ERG
@@ -515,24 +562,24 @@ plot_fusion_expression_by_breakpoint("VCAP", "TMPRSS2--ERG")
 
     ## # A tibble: 5 × 8
     ## # Rowwise: 
-    ##   sample fusion       LeftLocalBreakpoint RightLo…¹ num_LR est_J LR_FFPM SR_FFPM
-    ##   <chr>  <chr>                      <int>     <int>  <dbl> <dbl>   <dbl>   <dbl>
-    ## 1 VCAP   TMPRSS2--ERG                3407     31121      1    11   0.165  0.340 
-    ## 2 VCAP   TMPRSS2--ERG                3538     31121      3     0   0.494 NA     
-    ## 3 VCAP   TMPRSS2--ERG                3407     35606     14   127   2.31   3.93  
-    ## 4 VCAP   TMPRSS2--ERG                3538     35606     18    17   2.96   0.526 
-    ## 5 VCAP   TMPRSS2--ERG                4698     35606      1     1   0.165  0.0927
-    ## # … with abbreviated variable name ¹​RightLocalBreakpoint
+    ##   sample fusion    LeftLocalBreakpoint RightLocalBreakpoint num_LR est_J LR_FFPM
+    ##   <chr>  <chr>                   <int>                <int>  <dbl> <dbl>   <dbl>
+    ## 1 VCAP   TMPRSS2-…                3407                31121      1    11   0.165
+    ## 2 VCAP   TMPRSS2-…                3538                31121      3     0   0.494
+    ## 3 VCAP   TMPRSS2-…                3407                35606     14   127   2.31 
+    ## 4 VCAP   TMPRSS2-…                3538                35606     18    17   2.96 
+    ## 5 VCAP   TMPRSS2-…                4698                35606      1     1   0.165
+    ## # ℹ 1 more variable: SR_FFPM <dbl>
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-19-2.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-23-2.png)<!-- -->
 
     ## Warning: Removed 1 rows containing missing values (`geom_point()`).
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-19-3.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-23-3.png)<!-- -->
 
     ## Warning: Removed 1 rows containing missing values (`geom_bar()`).
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-19-4.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-23-4.png)<!-- -->
 
     ## 
     ## Call:
@@ -544,7 +591,7 @@ plot_fusion_expression_by_breakpoint("VCAP", "TMPRSS2--ERG")
 
     ## Warning: Removed 1 rows containing missing values (`geom_point()`).
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-19-5.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-23-5.png)<!-- -->
 
     ## 
     ##  Pearson's product-moment correlation
@@ -577,7 +624,7 @@ fusions_w_both_long_and_short = data %>%
 nrow(fusions_w_both_long_and_short)
 ```
 
-    ## [1] 94
+    ## [1] 87
 
 ``` r
 min_multi_isoforms = 3
@@ -594,7 +641,7 @@ mult_isoform_data = left_join(fusions_w_both_long_and_short, data,
 mult_isoform_data %>% select(sample, fusion) %>% unique() %>% nrow()
 ```
 
-    ## [1] 22
+    ## [1] 21
 
 ``` r
 # how many have both LR and SR isoform support?
@@ -605,14 +652,7 @@ mult_iso_both_sample_fusion_names = mult_isoform_data_both_read_types %>% group_
 
 # include isoformws supported uniquely by long or short in the downstream analysis here:
 mult_isoform_data_both_read_types = left_join(mult_iso_both_sample_fusion_names, mult_isoform_data, by=c('sample', 'fusion'))
-```
 
-    ## Warning in left_join(mult_iso_both_sample_fusion_names, mult_isoform_data, : Each row in `x` is expected to match at most 1 row in `y`.
-    ## ℹ Row 1 of `x` matches multiple rows.
-    ## ℹ If multiple matches are expected, set `multiple = "all"` to silence this
-    ##   warning.
-
-``` r
 mult_iso_both_sample_fusion_names %>% arrange(desc(num_multi_iso_both_types))
 ```
 
@@ -626,23 +666,37 @@ mult_iso_both_sample_fusion_names %>% arrange(desc(num_multi_iso_both_types))
     ## 4 HCC1187 LINC01535--EXOSC10                        4
     ## 5 VCAP    TMPRSS2--ERG                              4
 
+``` r
+# 5 fusions with at least 3 splicing isoforms each:
+```
+
 ## Compare read support for fusion isoforms across each fusion gene
 
 ``` r
-mult_isoform_data_both_read_types %>% 
+depmap_fusion_isoform_expr_LR_SR_comparison_plot =  mult_isoform_data_both_read_types %>% 
     ggplot(aes(x=log10(LR_FFPM), y=log10(SR_FFPM))) + geom_point(aes(color=fusion)) +
     ggtitle("restricted to fusion genes w/ multi isoforms supported by both read types") +
     stat_smooth(method = "lm", 
               formula = y ~ x, 
               geom = "smooth") +
     facet_wrap(~fusion, scale='free')
+
+depmap_fusion_isoform_expr_LR_SR_comparison_plot
 ```
 
     ## Warning: Removed 5 rows containing non-finite values (`stat_smooth()`).
 
     ## Warning: Removed 5 rows containing missing values (`geom_point()`).
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
+
+``` r
+ggsave(depmap_fusion_isoform_expr_LR_SR_comparison_plot, file="depmap_fusion_isoform_expr_LR_SR_comparison_plot.svg", width=9, height=5)
+```
+
+    ## Warning: Removed 5 rows containing non-finite values (`stat_smooth()`).
+
+    ## Warning: Removed 5 rows containing missing values (`geom_point()`).
 
 ``` r
 for (i in seq(nrow(mult_iso_both_sample_fusion_names))) {
@@ -685,7 +739,7 @@ for (i in seq(nrow(mult_iso_both_sample_fusion_names))) {
     ##    (Intercept)  loc_df$LR_FFPM  
     ##        0.01608         0.04704
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-30-1.png)<!-- -->
 
     ## 
     ##  Pearson's product-moment correlation
@@ -707,7 +761,7 @@ for (i in seq(nrow(mult_iso_both_sample_fusion_names))) {
     ##    (Intercept)  loc_df$LR_FFPM  
     ##       -0.09397         0.04108
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-25-2.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-30-2.png)<!-- -->
 
     ## 
     ##  Pearson's product-moment correlation
@@ -729,7 +783,7 @@ for (i in seq(nrow(mult_iso_both_sample_fusion_names))) {
     ##    (Intercept)  loc_df$LR_FFPM  
     ##       0.003051        0.099194
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-25-3.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-30-3.png)<!-- -->
 
     ## 
     ##  Pearson's product-moment correlation
@@ -753,7 +807,7 @@ for (i in seq(nrow(mult_iso_both_sample_fusion_names))) {
 
     ## Warning: Removed 4 rows containing missing values (`geom_point()`).
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-25-4.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-30-4.png)<!-- -->
 
     ## 
     ##  Pearson's product-moment correlation
@@ -777,7 +831,7 @@ for (i in seq(nrow(mult_iso_both_sample_fusion_names))) {
 
     ## Warning: Removed 1 rows containing missing values (`geom_point()`).
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-25-5.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-30-5.png)<!-- -->
 
     ## 
     ##  Pearson's product-moment correlation
@@ -797,16 +851,16 @@ plot_fusion_expression_by_breakpoint("SKBR3", "CYTH1--EIF3H")
 
     ## # A tibble: 5 × 8
     ## # Rowwise: 
-    ##   sample fusion       LeftLocalBreakpoint RightLo…¹ num_LR est_J LR_FFPM SR_FFPM
-    ##   <chr>  <chr>                      <int>     <int>  <dbl> <dbl>   <dbl>   <dbl>
-    ## 1 SKBR3  CYTH1--EIF3H                1096     28690    451   223  133.    5.43  
-    ## 2 SKBR3  CYTH1--EIF3H                1096     28912     46    22   13.5   0.536 
-    ## 3 SKBR3  CYTH1--EIF3H                1096     32601    161    64   47.3   1.56  
-    ## 4 SKBR3  CYTH1--EIF3H                1096     36015    109    53   32.0   1.29  
-    ## 5 SKBR3  CYTH1--EIF3H                1096     38781     10     4    2.94  0.0974
-    ## # … with abbreviated variable name ¹​RightLocalBreakpoint
+    ##   sample fusion    LeftLocalBreakpoint RightLocalBreakpoint num_LR est_J LR_FFPM
+    ##   <chr>  <chr>                   <int>                <int>  <dbl> <dbl>   <dbl>
+    ## 1 SKBR3  CYTH1--E…                1096                28690    451   223  133.  
+    ## 2 SKBR3  CYTH1--E…                1096                28912     46    22   13.5 
+    ## 3 SKBR3  CYTH1--E…                1096                32601    161    64   47.3 
+    ## 4 SKBR3  CYTH1--E…                1096                36015    109    53   32.0 
+    ## 5 SKBR3  CYTH1--E…                1096                38781     10     4    2.94
+    ## # ℹ 1 more variable: SR_FFPM <dbl>
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-26-2.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-26-3.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-26-4.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-31-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-31-2.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-31-3.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-31-4.png)<!-- -->
 
     ## 
     ## Call:
@@ -816,7 +870,7 @@ plot_fusion_expression_by_breakpoint("SKBR3", "CYTH1--EIF3H")
     ## (Intercept)   df$LR_FFPM  
     ##    -0.09397      0.04108
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-26-5.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-31-5.png)<!-- -->
 
     ## 
     ##  Pearson's product-moment correlation
@@ -831,24 +885,28 @@ plot_fusion_expression_by_breakpoint("SKBR3", "CYTH1--EIF3H")
     ## 0.9970398
 
 ``` r
+# significant correlation:  R=0.997, p=1.9e-4
+```
+
+``` r
 plot_fusion_expression_by_breakpoint("SKBR3", "SAMD12--MRPL13")
 ```
 
     ## # A tibble: 8 × 8
     ## # Rowwise: 
-    ##   sample fusion         LeftLocalBreakpoint Right…¹ num_LR est_J LR_FFPM SR_FFPM
-    ##   <chr>  <chr>                        <int>   <int>  <dbl> <dbl>   <dbl>   <dbl>
-    ## 1 SKBR3  SAMD12--MRPL13                2373   22212     13     9   3.82   0.32  
-    ## 2 SKBR3  SAMD12--MRPL13                3503   22212     16    23   4.70   1.10  
-    ## 3 SKBR3  SAMD12--MRPL13                3508   22212      5     3   1.47   0.144 
-    ## 4 SKBR3  SAMD12--MRPL13                2373   23336      3     3   0.882  0.0887
-    ## 5 SKBR3  SAMD12--MRPL13                3503   23336     22     9   6.47   0.310 
-    ## 6 SKBR3  SAMD12--MRPL13                2373   24430      3     2   0.882  0.0526
-    ## 7 SKBR3  SAMD12--MRPL13                3473   24430      3     2   0.882  0.0543
-    ## 8 SKBR3  SAMD12--MRPL13                3503   24430     11     6   3.23   0.168 
-    ## # … with abbreviated variable name ¹​RightLocalBreakpoint
+    ##   sample fusion    LeftLocalBreakpoint RightLocalBreakpoint num_LR est_J LR_FFPM
+    ##   <chr>  <chr>                   <int>                <int>  <dbl> <dbl>   <dbl>
+    ## 1 SKBR3  SAMD12--…                2373                22212     13     9   3.82 
+    ## 2 SKBR3  SAMD12--…                3503                22212     16    23   4.70 
+    ## 3 SKBR3  SAMD12--…                3508                22212      5     3   1.47 
+    ## 4 SKBR3  SAMD12--…                2373                23336      3     3   0.882
+    ## 5 SKBR3  SAMD12--…                3503                23336     22     9   6.47 
+    ## 6 SKBR3  SAMD12--…                2373                24430      3     2   0.882
+    ## 7 SKBR3  SAMD12--…                3473                24430      3     2   0.882
+    ## 8 SKBR3  SAMD12--…                3503                24430     11     6   3.23 
+    ## # ℹ 1 more variable: SR_FFPM <dbl>
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-27-2.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-27-3.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-27-4.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-32-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-32-2.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-32-3.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-32-4.png)<!-- -->
 
     ## 
     ## Call:
@@ -858,7 +916,7 @@ plot_fusion_expression_by_breakpoint("SKBR3", "SAMD12--MRPL13")
     ## (Intercept)   df$LR_FFPM  
     ##    0.003051     0.099194
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-27-5.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-32-5.png)<!-- -->
 
     ## 
     ##  Pearson's product-moment correlation
@@ -881,6 +939,10 @@ colnames(fusion_gene_structures) = c('fusion_name', 'feature_type', 'lend', 'ren
 
 ``` r
 plot_fusion_expression_by_breakpoint_incl_gene_structures = function(sample_name, fusion_name) {
+    
+    
+    ret_plots = list()
+    
     
     df = data %>% filter(sample == sample_name & fusion == fusion_name) %>% 
         select(sample, fusion, LeftLocalBreakpoint, RightLocalBreakpoint, num_LR, est_J, LR_FFPM, SR_FFPM) %>% 
@@ -925,7 +987,7 @@ plot_fusion_expression_by_breakpoint_incl_gene_structures = function(sample_name
 
     ## draw geneA
     geneA_minY = geneB_lend - 0.95*padding
-    geneA_maxY = geneA_minY + 0.02*geneB_length
+    geneA_maxY = geneA_minY + 0.03*geneB_length
 
     p1 = p + geom_rect(data=geneA_info, aes(xmin=lend, xmax=rend, ymin=geneA_minY, ymax=geneA_maxY), fill=NA, color='black', alpha=0.5)
 
@@ -951,9 +1013,11 @@ plot_fusion_expression_by_breakpoint_incl_gene_structures = function(sample_name
 
     
     plot(p1)
+    ret_plots[[1]] = p1
     
     p1 = p1 + facet_wrap(~readtype) 
     plot(p1)
+    ret_plots[[2]] = p1
     
     
     # zoom in around breakpoints
@@ -969,7 +1033,7 @@ plot_fusion_expression_by_breakpoint_incl_gene_structures = function(sample_name
     
      ## draw geneA (along X-axis)
     geneA_minY = min_right_breakpoint - 0.95*padding
-    geneA_maxY = geneA_minY + 0.02* (max_left_breakpoint - min_left_breakpoint + 2*padding)
+    geneA_maxY = geneA_minY + 0.03* (max_right_breakpoint - min_right_breakpoint + 2*padding)
 
     p2 = p + geom_rect(data=geneA_info, aes(xmin=lend, xmax=rend, ymin=geneA_minY, ymax=geneA_maxY), fill=NA, color='black', alpha=0.5)
 
@@ -992,9 +1056,14 @@ plot_fusion_expression_by_breakpoint_incl_gene_structures = function(sample_name
         xlim(min_left_breakpoint-padding, max_left_breakpoint+padding)
     
     plot(p2)
+    ret_plots[[3]] = p2
     
     p2 = p2 + facet_wrap(~readtype)
     plot(p2)
+    ret_plots[[4]] = p2
+    
+    
+    return(ret_plots)
     
 }
 ```
@@ -1005,10 +1074,10 @@ plot_fusion_expression_by_breakpoint_incl_gene_structures("K562", "BCR--ABL1")
 
     ## # A tibble: 1 × 8
     ## # Rowwise: 
-    ##   sample fusion    LeftLocalBreakpoint RightLocal…¹ num_LR est_J LR_FFPM SR_FFPM
-    ##   <chr>  <chr>                   <int>        <int>  <dbl> <dbl>   <dbl>   <dbl>
-    ## 1 K562   BCR--ABL1               21553        43957      2   272    0.32    9.83
-    ## # … with abbreviated variable name ¹​RightLocalBreakpoint
+    ##   sample fusion    LeftLocalBreakpoint RightLocalBreakpoint num_LR est_J LR_FFPM
+    ##   <chr>  <chr>                   <int>                <int>  <dbl> <dbl>   <dbl>
+    ## 1 K562   BCR--ABL1               21553                43957      2   272    0.32
+    ## # ℹ 1 more variable: SR_FFPM <dbl>
     ##    fusion_name feature_type  lend  rend
     ## 1    BCR--ABL1        GeneA  1001  1129
     ## 2    BCR--ABL1        GeneA  1507  3536
@@ -1082,34 +1151,61 @@ plot_fusion_expression_by_breakpoint_incl_gene_structures("K562", "BCR--ABL1")
     ## 14   BCR--ABL1        GeneB 53107 54821
     ## 15   BCR--ABL1        GeneB 53107 56813
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-30-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-30-2.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-35-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-35-2.png)<!-- -->
 
     ## Warning: Removed 54 rows containing missing values (`geom_rect()`).
 
     ## Warning: Removed 13 rows containing missing values (`geom_rect()`).
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-30-3.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-35-3.png)<!-- -->
 
     ## Warning: Removed 108 rows containing missing values (`geom_rect()`).
 
     ## Warning: Removed 26 rows containing missing values (`geom_rect()`).
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-30-4.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-35-4.png)<!-- -->
+
+    ## [[1]]
+
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-35-5.png)<!-- -->
+
+    ## 
+    ## [[2]]
+
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-35-6.png)<!-- -->
+
+    ## 
+    ## [[3]]
+
+    ## Warning: Removed 54 rows containing missing values (`geom_rect()`).
+
+    ## Warning: Removed 13 rows containing missing values (`geom_rect()`).
+
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-35-7.png)<!-- -->
+
+    ## 
+    ## [[4]]
+
+    ## Warning: Removed 108 rows containing missing values (`geom_rect()`).
+
+    ## Warning: Removed 26 rows containing missing values (`geom_rect()`).
+
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-35-8.png)<!-- -->
 
 ``` r
-plot_fusion_expression_by_breakpoint_incl_gene_structures("VCAP", "TMPRSS2--ERG")
+plots = plot_fusion_expression_by_breakpoint_incl_gene_structures("VCAP", "TMPRSS2--ERG")
 ```
 
     ## # A tibble: 5 × 8
     ## # Rowwise: 
-    ##   sample fusion       LeftLocalBreakpoint RightLo…¹ num_LR est_J LR_FFPM SR_FFPM
-    ##   <chr>  <chr>                      <int>     <int>  <dbl> <dbl>   <dbl>   <dbl>
-    ## 1 VCAP   TMPRSS2--ERG                3407     31121      1    11   0.165  0.340 
-    ## 2 VCAP   TMPRSS2--ERG                3538     31121      3     0   0.494 NA     
-    ## 3 VCAP   TMPRSS2--ERG                3407     35606     14   127   2.31   3.93  
-    ## 4 VCAP   TMPRSS2--ERG                3538     35606     18    17   2.96   0.526 
-    ## 5 VCAP   TMPRSS2--ERG                4698     35606      1     1   0.165  0.0927
-    ## # … with abbreviated variable name ¹​RightLocalBreakpoint
+    ##   sample fusion    LeftLocalBreakpoint RightLocalBreakpoint num_LR est_J LR_FFPM
+    ##   <chr>  <chr>                   <int>                <int>  <dbl> <dbl>   <dbl>
+    ## 1 VCAP   TMPRSS2-…                3407                31121      1    11   0.165
+    ## 2 VCAP   TMPRSS2-…                3538                31121      3     0   0.494
+    ## 3 VCAP   TMPRSS2-…                3407                35606     14   127   2.31 
+    ## 4 VCAP   TMPRSS2-…                3538                35606     18    17   2.96 
+    ## 5 VCAP   TMPRSS2-…                4698                35606      1     1   0.165
+    ## # ℹ 1 more variable: SR_FFPM <dbl>
     ##     fusion_name feature_type  lend  rend
     ## 1  TMPRSS2--ERG        GeneA  1001  1132
     ## 2  TMPRSS2--ERG        GeneA  1019  1132
@@ -1175,34 +1271,47 @@ plot_fusion_expression_by_breakpoint_incl_gene_structures("VCAP", "TMPRSS2--ERG"
     ## 28 TMPRSS2--ERG        GeneB 45428 46225
     ## 29 TMPRSS2--ERG        GeneB 45428 46060
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-31-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-31-2.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-36-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-36-2.png)<!-- -->
 
     ## Warning: Removed 26 rows containing missing values (`geom_rect()`).
 
     ## Warning: Removed 25 rows containing missing values (`geom_rect()`).
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-31-3.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-36-3.png)<!-- -->
 
     ## Warning: Removed 52 rows containing missing values (`geom_rect()`).
 
     ## Warning: Removed 50 rows containing missing values (`geom_rect()`).
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-31-4.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-36-4.png)<!-- -->
 
 ``` r
-plot_fusion_expression_by_breakpoint_incl_gene_structures("SKBR3", "CYTH1--EIF3H")
+ggsave(plots[[2]], file="depmap_VCaP_TMPRSS2--ERG_LR_vs_SR_isoforms.svg", width=9, height=6)
+
+ggsave(plots[[4]], file="depmap_VCaP_TMPRSS2--ERG_LR_vs_SR_isoforms.zoomed.svg", width=9, height=6)
+```
+
+    ## Warning: Removed 52 rows containing missing values (`geom_rect()`).
+    ## Removed 50 rows containing missing values (`geom_rect()`).
+
+``` r
+# has 1 isoform uniquely supported by long reads
+```
+
+``` r
+plots = plot_fusion_expression_by_breakpoint_incl_gene_structures("SKBR3", "CYTH1--EIF3H")
 ```
 
     ## # A tibble: 5 × 8
     ## # Rowwise: 
-    ##   sample fusion       LeftLocalBreakpoint RightLo…¹ num_LR est_J LR_FFPM SR_FFPM
-    ##   <chr>  <chr>                      <int>     <int>  <dbl> <dbl>   <dbl>   <dbl>
-    ## 1 SKBR3  CYTH1--EIF3H                1096     28690    451   223  133.    5.43  
-    ## 2 SKBR3  CYTH1--EIF3H                1096     28912     46    22   13.5   0.536 
-    ## 3 SKBR3  CYTH1--EIF3H                1096     32601    161    64   47.3   1.56  
-    ## 4 SKBR3  CYTH1--EIF3H                1096     36015    109    53   32.0   1.29  
-    ## 5 SKBR3  CYTH1--EIF3H                1096     38781     10     4    2.94  0.0974
-    ## # … with abbreviated variable name ¹​RightLocalBreakpoint
+    ##   sample fusion    LeftLocalBreakpoint RightLocalBreakpoint num_LR est_J LR_FFPM
+    ##   <chr>  <chr>                   <int>                <int>  <dbl> <dbl>   <dbl>
+    ## 1 SKBR3  CYTH1--E…                1096                28690    451   223  133.  
+    ## 2 SKBR3  CYTH1--E…                1096                28912     46    22   13.5 
+    ## 3 SKBR3  CYTH1--E…                1096                32601    161    64   47.3 
+    ## 4 SKBR3  CYTH1--E…                1096                36015    109    53   32.0 
+    ## 5 SKBR3  CYTH1--E…                1096                38781     10     4    2.94
+    ## # ℹ 1 more variable: SR_FFPM <dbl>
     ##     fusion_name feature_type  lend  rend
     ## 1  CYTH1--EIF3H        GeneA  1001  1096
     ## 2  CYTH1--EIF3H        GeneA  1004  1096
@@ -1282,42 +1391,85 @@ plot_fusion_expression_by_breakpoint_incl_gene_structures("SKBR3", "CYTH1--EIF3H
     ## 34 CYTH1--EIF3H        GeneB 42185 42455
     ## 35 CYTH1--EIF3H        GeneB 42185 42471
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-32-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-32-2.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-37-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-37-2.png)<!-- -->
 
     ## Warning: Removed 36 rows containing missing values (`geom_rect()`).
 
     ## Warning: Removed 8 rows containing missing values (`geom_rect()`).
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-32-3.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-37-3.png)<!-- -->
 
     ## Warning: Removed 72 rows containing missing values (`geom_rect()`).
 
     ## Warning: Removed 16 rows containing missing values (`geom_rect()`).
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-32-4.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-37-4.png)<!-- -->
 
 ``` r
-plot_fusion_expression_by_breakpoint_incl_gene_structures("SKBR3", "TATDN1--GSDMB")
+ggsave(plots[[1]], file="depmap_SKBR3_CYTH1--EIF3H_LR_vs_SR_isoforms.svg", width=9, height=6)
+
+
+ggsave(plots[[3]], file="depmap_SKBR3_CYTH1--EIF3H_LR_vs_SR_isoforms.zoomed.svg", width=9, height=6)
+```
+
+    ## Warning: Removed 36 rows containing missing values (`geom_rect()`).
+
+    ## Warning: Removed 8 rows containing missing values (`geom_rect()`).
+
+``` r
+# save the structure fore the full-length view of each gene:
+ggsave(plots[[1]] + xlim(800,1000) + theme_bw(), file="EIF3H_structure.svg", width=4)
+```
+
+    ## Saving 4 x 5 in image
+    ## Scale for x is already present.
+    ## Adding another scale for x, which will replace the existing scale.
+
+    ## Warning: Removed 10 rows containing missing values (`geom_point()`).
+
+    ## Warning: Removed 41 rows containing missing values (`geom_rect()`).
+
+    ## Warning: Removed 41 rows containing missing values (`geom_segment()`).
+
+``` r
+cyth1_eif3h_cor_plot =  mult_isoform_data_both_read_types %>% 
+    filter(fusion=="CYTH1--EIF3H") %>%
+    ggplot(aes(x=log10(LR_FFPM), y=log10(SR_FFPM))) + geom_point(aes(color=fusion), size=rel(3), color='black') +
+    ggtitle("restricted to fusion genes w/ multi isoforms supported by both read types") +
+    stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth") 
+cyth1_eif3h_cor_plot 
+```
+
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-38-1.png)<!-- -->
+
+``` r
+ggsave(cyth1_eif3h_cor_plot, file="cyth1_eif3h_LR_SR_correlation_plot.svg", width=5, height=4)
+```
+
+``` r
+plots = plot_fusion_expression_by_breakpoint_incl_gene_structures("SKBR3", "TATDN1--GSDMB")
 ```
 
     ## # A tibble: 13 × 8
     ## # Rowwise: 
-    ##    sample fusion        LeftLocalBreakpoint Right…¹ num_LR est_J LR_FFPM SR_FFPM
-    ##    <chr>  <chr>                       <int>   <int>  <dbl> <dbl>   <dbl>   <dbl>
-    ##  1 SKBR3  TATDN1--GSDMB                1434   23528      4  2499   1.18  60.9   
-    ##  2 SKBR3  TATDN1--GSDMB                1531   23528    123   417  36.2   10.2   
-    ##  3 SKBR3  TATDN1--GSDMB                2128   23528      3     3   0.882  0.0736
-    ##  4 SKBR3  TATDN1--GSDMB                1434   23532      0     6   0      0.146 
-    ##  5 SKBR3  TATDN1--GSDMB                1434   24410      0     7   0      0.170 
-    ##  6 SKBR3  TATDN1--GSDMB                1531   24410      1     3   0.294  0.0733
-    ##  7 SKBR3  TATDN1--GSDMB                1434   26465      0    21   0      0.512 
-    ##  8 SKBR3  TATDN1--GSDMB                1531   26465      3     4   0.882  0.0979
-    ##  9 SKBR3  TATDN1--GSDMB                1434   27181      1   411   0.294 10.0   
-    ## 10 SKBR3  TATDN1--GSDMB                1531   27181     14    42   4.12   1.03  
-    ## 11 SKBR3  TATDN1--GSDMB                1434   27467      7   763   2.06  18.6   
-    ## 12 SKBR3  TATDN1--GSDMB                1531   27467     34   111  10.0    2.70  
-    ## 13 SKBR3  TATDN1--GSDMB                1434   27956      0    10   0      0.244 
-    ## # … with abbreviated variable name ¹​RightLocalBreakpoint
+    ##    sample fusion   LeftLocalBreakpoint RightLocalBreakpoint num_LR est_J LR_FFPM
+    ##    <chr>  <chr>                  <int>                <int>  <dbl> <dbl>   <dbl>
+    ##  1 SKBR3  TATDN1-…                1434                23528      4  2499   1.18 
+    ##  2 SKBR3  TATDN1-…                1531                23528    123   417  36.2  
+    ##  3 SKBR3  TATDN1-…                2128                23528      3     3   0.882
+    ##  4 SKBR3  TATDN1-…                1434                23532      0     6   0    
+    ##  5 SKBR3  TATDN1-…                1434                24410      0     7   0    
+    ##  6 SKBR3  TATDN1-…                1531                24410      1     3   0.294
+    ##  7 SKBR3  TATDN1-…                1434                26465      0    21   0    
+    ##  8 SKBR3  TATDN1-…                1531                26465      3     4   0.882
+    ##  9 SKBR3  TATDN1-…                1434                27181      1   411   0.294
+    ## 10 SKBR3  TATDN1-…                1531                27181     14    42   4.12 
+    ## 11 SKBR3  TATDN1-…                1434                27467      7   763   2.06 
+    ## 12 SKBR3  TATDN1-…                1531                27467     34   111  10.0  
+    ## 13 SKBR3  TATDN1-…                1434                27956      0    10   0    
+    ## # ℹ 1 more variable: SR_FFPM <dbl>
     ##      fusion_name feature_type  lend  rend
     ## 1  TATDN1--GSDMB        GeneA  1001  1434
     ## 2  TATDN1--GSDMB        GeneA  1350  1434
@@ -1400,16 +1552,29 @@ plot_fusion_expression_by_breakpoint_incl_gene_structures("SKBR3", "TATDN1--GSDM
     ## 29 TATDN1--GSDMB        GeneB 28488 28855
     ## 30 TATDN1--GSDMB        GeneB 28488 28640
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-33-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-33-2.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-39-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-39-2.png)<!-- -->
 
     ## Warning: Removed 35 rows containing missing values (`geom_rect()`).
 
     ## Warning: Removed 15 rows containing missing values (`geom_rect()`).
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-33-3.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-39-3.png)<!-- -->
 
     ## Warning: Removed 70 rows containing missing values (`geom_rect()`).
 
     ## Warning: Removed 30 rows containing missing values (`geom_rect()`).
 
-![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-33-4.png)<!-- -->
+![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-39-4.png)<!-- -->
+
+``` r
+ggsave(plots[[2]], file="depmap_SKBR3_TATDN1--GSDMB_LR_vs_SR_isoforms.svg", width=9, height=6)
+
+ggsave(plots[[4]], file="depmap_SKBR3_TATDN1--GSDMB_LR_vs_SR_isoforms.zoomed.svg", width=9, height=6)
+```
+
+    ## Warning: Removed 70 rows containing missing values (`geom_rect()`).
+    ## Removed 30 rows containing missing values (`geom_rect()`).
+
+``` r
+# has 4 isoforms uniquely supported by SR
+```

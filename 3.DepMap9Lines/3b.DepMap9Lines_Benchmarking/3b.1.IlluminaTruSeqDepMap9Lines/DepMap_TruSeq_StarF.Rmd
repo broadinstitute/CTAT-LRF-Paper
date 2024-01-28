@@ -152,7 +152,7 @@ so, 76 lexically sorted fusions here
 
 StarF_overlapping_preds %>% filter(type=="unique")
 
-# 17 of the uniquely pred fusions have illumina support
+# 18 of the uniquely pred fusions have illumina support
 
 ```
 

@@ -98,7 +98,7 @@ data %>% ggplot(aes(x=log10(LR_FFPM), y=log10(SR_FFPM))) + geom_point() +
 
 cor.test(x=log2(data$LR_FFPM), y=log2(data$SR_FFPM), use='complete.obs')
 
-# R=0.71
+# R=0.71, p<2.2e-16)
 
 ```
 
@@ -212,6 +212,9 @@ SR_enriched_fusion_isoforms = data %>%
 
 
 SR_enriched_fusion_isoforms %>% filter(SR_enrichment > 1)
+
+
+# BCR-ABL1 has >30-fold enrichment for SR
 
 ```
 
@@ -521,6 +524,7 @@ for (i in seq(nrow(mult_iso_both_sample_fusion_names))) {
 
 plot_fusion_expression_by_breakpoint("SKBR3", "CYTH1--EIF3H")
 
+# significant correlation:  R=0.997, p=1.9e-4
 
 ```
 
@@ -693,6 +697,7 @@ ggsave(plots[[2]], file="depmap_VCaP_TMPRSS2--ERG_LR_vs_SR_isoforms.svg", width=
 
 ggsave(plots[[4]], file="depmap_VCaP_TMPRSS2--ERG_LR_vs_SR_isoforms.zoomed.svg", width=9, height=6)
 
+# has 1 isoform uniquely supported by long reads
 
 ```
 
@@ -740,7 +745,7 @@ ggsave(plots[[2]], file="depmap_SKBR3_TATDN1--GSDMB_LR_vs_SR_isoforms.svg", widt
 
 ggsave(plots[[4]], file="depmap_SKBR3_TATDN1--GSDMB_LR_vs_SR_isoforms.zoomed.svg", width=9, height=6)
 
-
+# has 4 isoforms uniquely supported by SR
 
 ```
 

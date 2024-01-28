@@ -627,3 +627,28 @@ dev.off()
 
     ## quartz_off_screen 
     ##                 2
+
+``` r
+library(UpSetR)
+```
+
+    ## Registered S3 methods overwritten by 'UpSetR':
+    ##   method        from           
+    ##   print.upset   UpSetRbyFeature
+    ##   summary.upset UpSetRbyFeature
+
+    ## 
+    ## Attaching package: 'UpSetR'
+
+    ## The following objects are masked from 'package:UpSetRbyFeature':
+    ## 
+    ##     elements, fromExpression, fromList, histogram, intersects,
+    ##     scatter_plot, upset
+
+``` r
+upset_plot_basic = UpSetR::upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
+
+upset_plot_basic
+```
+
+![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-37-1.png)<!-- -->

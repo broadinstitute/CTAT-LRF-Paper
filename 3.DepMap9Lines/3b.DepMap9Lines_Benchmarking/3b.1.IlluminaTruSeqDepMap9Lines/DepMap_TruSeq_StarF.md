@@ -262,7 +262,7 @@ StarF_overlapping_preds %>% filter(type=="unique")
     ## 18 DMS53|RP11-368L12.1--RP11-96H17.1  unique DMS53   RP11-368L12.1--RP11-96H17.1
 
 ``` r
-# 17 of the uniquely pred fusions have illumina support
+# 18 of the uniquely pred fusions have illumina support
 ```
 
 ``` r

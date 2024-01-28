@@ -153,7 +153,7 @@ truth_data_counts %>% summarise(sum_truth_fusions = sum(num_truth_fusions))
     ## 1               121
 
 ``` r
-# 115 proxy truth fusions
+# 121 proxy truth fusions
 ```
 
 ``` r
