@@ -467,5 +467,17 @@ dev.off()
 
 
 
+```{r}
+library(UpSetR)
+
+upset_plot_basic = UpSetR::upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
+
+upset_plot_basic
+
+```
+
+
+
+
 
 
