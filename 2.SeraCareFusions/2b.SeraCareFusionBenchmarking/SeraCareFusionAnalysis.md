@@ -76,7 +76,7 @@ fusion_preds %>% head()
     ## 6                                                                                                                                                                                                                                                                                                                                                       7SK,7SK.155,7SK.232,GOPC,RN7SKP18,RN7SKP51,ROS1,RP1-179P9.3
     ##                                                                                                                                                                                                                                          annots
     ## 1                                                                     [RET:FoundationOne_panel,RET:OncomapV4_panel,RET:Oncogene,RET:ArcherDX_panel,RET:OncocartaV1_panel];[ChimerKB,ChimerPub,Cosmic,ChimerSeq];INTRACHROMOSOMAL[chr10:11.02Mb]
-    ## 2               [SLC34A2:Oncogene];[ROS1:Oncogene,ROS1:FoundationOne_panel,ROS1:ArcherDX_panel];[ChimerKB,ChimerSeq,TCGA_StarF2019,CCLE_StarF2019,Klijn_CellLines,GUO2018CR_TCGA,chimerdb_pubmed,ChimerPub,Cosmic];INTERCHROMOSOMAL[chr4--chr6]
+    ## 2    [SLC34A2:Oncogene];[ROS1:Oncogene,ROS1:FoundationOne_panel,ROS1:ArcherDX_panel];[ChimerKB,DepMap2023,ChimerSeq,TCGA_StarF2019,CCLE_StarF2019,Klijn_CellLines,GUO2018CR_TCGA,chimerdb_pubmed,ChimerPub,Cosmic];INTERCHROMOSOMAL[chr4--chr6]
     ## 3                                                     [TACC3:Oncogene];[FGFR3:Oncogene,FGFR3:ArcherDX_panel,FGFR3:FoundationOne_panel,FGFR3:OncomapV4_panel,FGFR3:OncocartaV1_panel];[ChimerPub];INTRACHROMOSOMAL[chr4:0.05Mb];NEIGHBORS[48131]
     ## 4                                                                                                                                                                                                                                             .
     ## 5                                                                                                      [NTRK1:FoundationOne_panel,NTRK1:ArcherDX_panel,NTRK1:Oncogene];[ChimerKB,ChimerPub,Cosmic,TCGA_StarF2019];INTRACHROMOSOMAL[chr1:0.68Mb]
@@ -136,17 +136,17 @@ control_fusions_found = full_join(cross_join(control_fusions, progs),
 control_fusions_found %>% head()
 ```
 
-    ##   FusionName                   prog dataset found
-    ## 1 KIF5B--RET           fusionseeker  ISOseq  TRUE
-    ## 2 KIF5B--RET        pbfusion_v0.4.0  ISOseq  TRUE
-    ## 3 KIF5B--RET ctat-LR-fusion.v0.12.0  ISOseq  TRUE
-    ## 4 KIF5B--RET                 LongGF  ISOseq  TRUE
-    ## 5 KIF5B--RET        pbfusion_v0.3.1  ISOseq  TRUE
-    ## 6 KIF5B--RET            flairfusion  ISOseq  TRUE
+    ##   FusionName               prog dataset found
+    ## 1 KIF5B--RET       fusionseeker  ISOseq  TRUE
+    ## 2 KIF5B--RET    pbfusion_v0.4.0  ISOseq  TRUE
+    ## 3 KIF5B--RET             LongGF  ISOseq  TRUE
+    ## 4 KIF5B--RET    pbfusion_v0.3.1  ISOseq  TRUE
+    ## 5 KIF5B--RET        flairfusion  ISOseq  TRUE
+    ## 6 KIF5B--RET flairfusion_v1mods  ISOseq  TRUE
 
 ``` r
 control_fusions_found %>%  filter(! grepl("flairfusion", prog)) %>%
-    mutate(prog = factor(prog, levels = c('ctat-LR-fusion.v0.12.0', 'fusionseeker', 'LongGF', 'JAFFAL', 'pbfusion_v0.3.1', 'pbfusion_v0.4.0'))) %>%
+    mutate(prog = factor(prog, levels = c('ctat-LR-fusion.v0.13.0', 'fusionseeker', 'LongGF', 'JAFFAL', 'pbfusion_v0.3.1', 'pbfusion_v0.4.0'))) %>%
     mutate(prog_data = paste(prog, dataset)) %>%
     ggplot(aes(x=FusionName, y=reorder(prog_data, desc(prog_data)))) +
     geom_tile(aes(fill=found), color='black') + 
@@ -166,33 +166,38 @@ pbfusion v0.4.0 does find KIF5B–RET but breakpoint coordinates aren’t
 one-to-one so was ignored.
 
 ``` r
-control_fusions_found %>%  filter(! grepl("flairfusion", prog)) %>%
+seracare_prog_compare_plot = control_fusions_found %>%  filter(! grepl("flairfusion", prog)) %>%
     filter(prog != "pbfusion_v0.4.0") %>%
-    mutate(prog = factor(prog, levels = c('ctat-LR-fusion.v0.12.0', 'fusionseeker', 'LongGF', 'JAFFAL', 'pbfusion_v0.3.1'))) %>%
+    mutate(prog = factor(prog, levels = c('ctat-LR-fusion.v0.13.0', 'fusionseeker', 'LongGF', 'JAFFAL', 'pbfusion_v0.3.1'))) %>%
     mutate(prog_data = paste(prog, dataset)) %>%
     ggplot(aes(x=FusionName, y=reorder(prog_data, desc(prog_data)))) +
     geom_tile(aes(fill=found), color='black') + 
     #scale_y_reverse() +
      theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+#+
+#        theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+#        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+
+
+seracare_prog_compare_plot
 ```
 
 ![](SeraCareFusionAnalysis_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 ``` r
-#+
-#        theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-#        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+ggsave(seracare_prog_compare_plot, file="seracare_prog_compare_plot.heatmap.svg", width=7, height=4)
 ```
 
 ``` r
 fusion_preds %>% filter(fusion == "TMPRSS2--ERG") %>%
-    filter(prog == "ctat-LR-fusion.v0.12.0")
+    filter(prog == "ctat-LR-fusion.v0.13.0")
 ```
 
     ##   pred_class     sample                   prog       fusion
-    ## 1         TP    ISO-seq ctat-LR-fusion.v0.12.0 TMPRSS2--ERG
-    ## 2         TP MAS-seq-L1 ctat-LR-fusion.v0.12.0 TMPRSS2--ERG
-    ## 3         TP MAS-seq-L2 ctat-LR-fusion.v0.12.0 TMPRSS2--ERG
+    ## 1         TP    ISO-seq ctat-LR-fusion.v0.13.0 TMPRSS2--ERG
+    ## 2         TP MAS-seq-L1 ctat-LR-fusion.v0.13.0 TMPRSS2--ERG
+    ## 3         TP MAS-seq-L2 ctat-LR-fusion.v0.13.0 TMPRSS2--ERG
     ##                       breakpoint num_reads mapped_gencode_A_gene_list
     ## 1 chr21:41508081--chr21:38584945        45                    TMPRSS2
     ## 2 chr21:41508081--chr21:38584945        98                    TMPRSS2
@@ -201,14 +206,14 @@ fusion_preds %>% filter(fusion == "TMPRSS2--ERG") %>%
     ## 1               ERG,SNRPGP13
     ## 2               ERG,SNRPGP13
     ## 3               ERG,SNRPGP13
-    ##                                                                                                                                                                                                                                                                                                                          annots
-    ## 1 [TMPRSS2:FoundationOne_panel,TMPRSS2:Oncogene,TMPRSS2:ArcherDX_panel];[ERG:FoundationOne_panel,ERG:ArcherDX_panel,ERG:Oncogene];[ChimerKB,Larsson_TCGA,ChimerSeq,TCGA_StarF2019,CCLE_StarF2019,YOSHIHARA_TCGA,chimerdb_pubmed,DEEPEST2019,GUO2018CR_TCGA,ChimerPub,TumorFusionsNAR2018,Cosmic];INTRACHROMOSOMAL[chr21:2.80Mb]
-    ## 2 [TMPRSS2:FoundationOne_panel,TMPRSS2:Oncogene,TMPRSS2:ArcherDX_panel];[ERG:FoundationOne_panel,ERG:ArcherDX_panel,ERG:Oncogene];[ChimerKB,Larsson_TCGA,ChimerSeq,TCGA_StarF2019,CCLE_StarF2019,YOSHIHARA_TCGA,chimerdb_pubmed,DEEPEST2019,GUO2018CR_TCGA,ChimerPub,TumorFusionsNAR2018,Cosmic];INTRACHROMOSOMAL[chr21:2.80Mb]
-    ## 3 [TMPRSS2:FoundationOne_panel,TMPRSS2:Oncogene,TMPRSS2:ArcherDX_panel];[ERG:FoundationOne_panel,ERG:ArcherDX_panel,ERG:Oncogene];[ChimerKB,Larsson_TCGA,ChimerSeq,TCGA_StarF2019,CCLE_StarF2019,YOSHIHARA_TCGA,chimerdb_pubmed,DEEPEST2019,GUO2018CR_TCGA,ChimerPub,TumorFusionsNAR2018,Cosmic];INTRACHROMOSOMAL[chr21:2.80Mb]
+    ##                                                                                                                                                                                                                                                                                                                                     annots
+    ## 1 [TMPRSS2:FoundationOne_panel,TMPRSS2:Oncogene,TMPRSS2:ArcherDX_panel];[ERG:FoundationOne_panel,ERG:ArcherDX_panel,ERG:Oncogene];[ChimerKB,Larsson_TCGA,DepMap2023,ChimerSeq,TCGA_StarF2019,CCLE_StarF2019,YOSHIHARA_TCGA,chimerdb_pubmed,DEEPEST2019,GUO2018CR_TCGA,ChimerPub,TumorFusionsNAR2018,Cosmic];INTRACHROMOSOMAL[chr21:2.80Mb]
+    ## 2 [TMPRSS2:FoundationOne_panel,TMPRSS2:Oncogene,TMPRSS2:ArcherDX_panel];[ERG:FoundationOne_panel,ERG:ArcherDX_panel,ERG:Oncogene];[ChimerKB,Larsson_TCGA,DepMap2023,ChimerSeq,TCGA_StarF2019,CCLE_StarF2019,YOSHIHARA_TCGA,chimerdb_pubmed,DEEPEST2019,GUO2018CR_TCGA,ChimerPub,TumorFusionsNAR2018,Cosmic];INTRACHROMOSOMAL[chr21:2.80Mb]
+    ## 3 [TMPRSS2:FoundationOne_panel,TMPRSS2:Oncogene,TMPRSS2:ArcherDX_panel];[ERG:FoundationOne_panel,ERG:ArcherDX_panel,ERG:Oncogene];[ChimerKB,Larsson_TCGA,DepMap2023,ChimerSeq,TCGA_StarF2019,CCLE_StarF2019,YOSHIHARA_TCGA,chimerdb_pubmed,DEEPEST2019,GUO2018CR_TCGA,ChimerPub,TumorFusionsNAR2018,Cosmic];INTRACHROMOSOMAL[chr21:2.80Mb]
     ##   selected_fusion                                               explanation
-    ## 1    TMPRSS2--ERG first encounter of TP ctat-LR-fusion.v0.12.0,TMPRSS2--ERG
-    ## 2    TMPRSS2--ERG first encounter of TP ctat-LR-fusion.v0.12.0,TMPRSS2--ERG
-    ## 3    TMPRSS2--ERG first encounter of TP ctat-LR-fusion.v0.12.0,TMPRSS2--ERG
+    ## 1    TMPRSS2--ERG first encounter of TP ctat-LR-fusion.v0.13.0,TMPRSS2--ERG
+    ## 2    TMPRSS2--ERG first encounter of TP ctat-LR-fusion.v0.13.0,TMPRSS2--ERG
+    ## 3    TMPRSS2--ERG first encounter of TP ctat-LR-fusion.v0.13.0,TMPRSS2--ERG
     ##     dataset
     ## 1    ISOseq
     ## 2 MASseq_L1
