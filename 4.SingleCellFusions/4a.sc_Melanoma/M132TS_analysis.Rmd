@@ -447,6 +447,9 @@ venn_dist = Tum_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4") %>%
 venn_dist = venn_dist %>% mutate(frac_pos_cells = num_cells/ 265)
 
 venn_dist 
+
+# ~60% of cells identified by ctat-LRF (long reads) alone.
+
 ```
 60% identified by ctat-LRF only.
 
@@ -457,6 +460,10 @@ venn_dist
 venn_dist %>% filter(! grepl("ctat-LR-fusion", methods))
 
 venn_dist %>% filter(! grepl("ctat-LR-fusion", methods)) %>% summarize(sum(frac_pos_cells))
+
+# ~ 20% uniquely by short reads only
+
+# and so the remaining ~20% invvolved a combo of short and long reads
 
 ```
 ~20% by short reads alone

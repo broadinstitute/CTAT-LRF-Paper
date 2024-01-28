@@ -613,6 +613,10 @@ venn_dist
     ## 5 STAR-Fusion                                        1        0.00377
     ## 6 ctat-LR-fusion                                   160        0.604
 
+``` r
+# ~60% of cells identified by ctat-LRF (long reads) alone.
+```
+
 60% identified by ctat-LRF only.
 
 ``` r
@@ -635,6 +639,12 @@ venn_dist %>% filter(! grepl("ctat-LR-fusion", methods)) %>% summarize(sum(frac_
     ##   `sum(frac_pos_cells)`
     ##                   <dbl>
     ## 1                 0.192
+
+``` r
+# ~ 20% uniquely by short reads only
+
+# and so the remaining ~20% invvolved a combo of short and long reads
+```
 
 \~20% by short reads alone
 
