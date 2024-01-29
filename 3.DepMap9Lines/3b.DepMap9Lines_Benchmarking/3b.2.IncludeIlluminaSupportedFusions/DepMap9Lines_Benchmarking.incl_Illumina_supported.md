@@ -129,18 +129,18 @@ truth_data_counts %>% arrange(num_truth_fusions)
     ## # A tibble: 9 × 2
     ##   sample  num_truth_fusions
     ##   <chr>               <int>
-    ## 1 RT112                   2
-    ## 2 MJ                      3
-    ## 3 KIJK                    5
+    ## 1 MJ                      3
+    ## 2 RT112                   4
+    ## 3 KIJK                    6
     ## 4 K562                   12
-    ## 5 HCC1187                14
-    ## 6 HCC1395                20
-    ## 7 DMS53                  22
-    ## 8 SKBR3                  23
-    ## 9 VCAP                   34
+    ## 5 HCC1187                17
+    ## 6 HCC1395                21
+    ## 7 DMS53                  24
+    ## 8 SKBR3                  25
+    ## 9 VCAP                   35
 
 ``` r
-# as few as 2 in MJ and as many aas 31 in VCaP
+# as few as 2 in MJ and as many as 34 in VCaP (including Illumina support!)
 ```
 
 ``` r
@@ -150,10 +150,10 @@ truth_data_counts %>% summarise(sum_truth_fusions = sum(num_truth_fusions))
     ## # A tibble: 1 × 1
     ##   sum_truth_fusions
     ##               <int>
-    ## 1               135
+    ## 1               147
 
 ``` r
-# 115 proxy truth fusions
+# 134 min2 + 13 Illumina-supported-unique = 147 proxy truth fusions
 ```
 
 ``` r
@@ -213,10 +213,10 @@ scored_data %>% head()
 
     ##   pred_result  proxy_fusion_name proxy_fusion_type sample   prog        fusion
     ## 1          TP RT112|FGFR3--TACC3            tie_lt  RT112 LongGF  TACC3--FGFR3
-    ## 2          FP RT112|NOP14--WHSC1         orig_name  RT112 LongGF  NOP14--WHSC1
+    ## 2          TP RT112|NOP14--WHSC1            tie_lt  RT112 LongGF  NOP14--WHSC1
     ## 3          TP     KIJK|ALK--NPM1   dominant_choice   KIJK LongGF     ALK--NPM1
     ## 4          TP KIJK|TAF12--YTHDF2            tie_lt   KIJK LongGF TAF12--YTHDF2
-    ## 5          FP  KIJK|RBMS3--LUZP2         orig_name   KIJK LongGF  RBMS3--LUZP2
+    ## 5          TP  KIJK|LUZP2--RBMS3            tie_lt   KIJK LongGF  RBMS3--LUZP2
     ## 6          TP   VCAP|VWA2--PRKCH    recip_selected   VCAP LongGF   PRKCH--VWA2
     ##                        breakpoint num_reads
     ## 1      chr4:1739701--chr4:1806934       341
@@ -246,13 +246,13 @@ scored_data %>% head()
     ## 4                                                                                                                                                                                                                                                                                                                                                                                                 TAF12--YTHDF2:INTRACHROMOSOMAL[chr1:0.09Mb];LOCAL_INVERSION:-:+:[93536];;(recip)YTHDF2--TAF12:[DepMap2023,CCLE_StarF2019];INTRACHROMOSOMAL[chr1:0.09Mb];LOCAL_INVERSION:+:-:[93536]
     ## 5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       RBMS3--LUZP2:INTERCHROMOSOMAL[chr3--chr11];;(recip)LUZP2--RBMS3:INTERCHROMOSOMAL[chr11--chr3]
     ## 6                                                                                                                                                                                                                                                                                                                                                                                                                                                           PRKCH--VWA2:INTERCHROMOSOMAL[chr14--chr10];;(recip)VWA2--PRKCH:[DepMap2023,CCLE_StarF2019];INTERCHROMOSOMAL[chr10--chr14]
-    ##                                              explanation    selected_fusion
-    ## 1        first encounter of TP LongGF,RT112|FGFR3--TACC3 RT112|FGFR3--TACC3
-    ## 2 first encounter of FP fusion LongGF,RT112|NOP14--WHSC1                  .
-    ## 3            first encounter of TP LongGF,KIJK|ALK--NPM1     KIJK|ALK--NPM1
-    ## 4        first encounter of TP LongGF,KIJK|TAF12--YTHDF2 KIJK|TAF12--YTHDF2
-    ## 5  first encounter of FP fusion LongGF,KIJK|RBMS3--LUZP2                  .
-    ## 6          first encounter of TP LongGF,VCAP|VWA2--PRKCH   VCAP|VWA2--PRKCH
+    ##                                       explanation    selected_fusion
+    ## 1 first encounter of TP LongGF,RT112|FGFR3--TACC3 RT112|FGFR3--TACC3
+    ## 2 first encounter of TP LongGF,RT112|NOP14--WHSC1 RT112|NOP14--WHSC1
+    ## 3     first encounter of TP LongGF,KIJK|ALK--NPM1     KIJK|ALK--NPM1
+    ## 4 first encounter of TP LongGF,KIJK|TAF12--YTHDF2 KIJK|TAF12--YTHDF2
+    ## 5  first encounter of TP LongGF,KIJK|LUZP2--RBMS3  KIJK|LUZP2--RBMS3
+    ## 6   first encounter of TP LongGF,VCAP|VWA2--PRKCH   VCAP|VWA2--PRKCH
 
 ``` r
 scored_data %>% filter(pred_result %in% c("TP", "FP", "FN")) %>% 
@@ -276,12 +276,12 @@ data %>% head()
 ```
 
     ##           prog min_sum_frags  TP  FP FN  TPR  PPV    F1
-    ## 1 fusionseeker             3 110 248 25 0.81 0.31 0.448
-    ## 2 fusionseeker             4  90 142 45 0.67 0.39 0.493
-    ## 3 fusionseeker             5  80  74 55 0.59 0.52 0.553
-    ## 4 fusionseeker             6  75  60 60 0.56 0.56 0.560
-    ## 5 fusionseeker             7  69  43 66 0.51 0.62 0.560
-    ## 6 fusionseeker             8  68  35 67 0.50 0.66 0.569
+    ## 1 fusionseeker             3 118 240 29 0.80 0.33 0.467
+    ## 2 fusionseeker             4  94 138 53 0.64 0.41 0.500
+    ## 3 fusionseeker             5  82  72 65 0.56 0.53 0.545
+    ## 4 fusionseeker             6  76  59 71 0.52 0.56 0.539
+    ## 5 fusionseeker             7  70  42 77 0.48 0.62 0.541
+    ## 6 fusionseeker             8  69  34 78 0.47 0.67 0.552
 
 ``` r
 # F1 vs. min reads
@@ -311,7 +311,7 @@ depmap_accuracy_lineplot = data %>%
     filter(prog %in% progs ) %>%
     mutate(prog = factor(prog, levels=progs)) %>%
     ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom_line(aes(group=prog, color=prog)) +
-    xlim(3,10) + ylim(0.4,1) +
+    xlim(3,10) + ylim(0.4,0.85) +
     ggtitle("Depmap v1 fusions: F1 ~ min read support") 
 
 depmap_accuracy_lineplot
@@ -580,7 +580,7 @@ truth_fusions_found = read.table(scored_predictions_file, sep="\t", header=T) %>
 truth_fusions_found %>% select(selected_fusion) %>% unique() %>% nrow()
 ```
 
-    ## [1] 135
+    ## [1] 147
 
 ``` r
 truth_fusions_found %>% group_by(prog) %>% tally() %>% arrange(desc(n))
@@ -589,13 +589,13 @@ truth_fusions_found %>% group_by(prog) %>% tally() %>% arrange(desc(n))
     ## # A tibble: 7 × 2
     ##   prog                       n
     ##   <chr>                  <int>
-    ## 1 fusionseeker             110
+    ## 1 fusionseeker             118
     ## 2 ctat-LR-fusion.v0.13.0   106
-    ## 3 pbfusion_v0.3.1           95
-    ## 4 JAFFAL                    91
-    ## 5 pbfusion_v0.4.0           91
-    ## 6 LongGF                    73
-    ## 7 flairfusion_v1mod         23
+    ## 3 pbfusion_v0.3.1          102
+    ## 4 pbfusion_v0.4.0           93
+    ## 5 JAFFAL                    92
+    ## 6 LongGF                    77
+    ## 7 flairfusion_v1mod         24
 
 ``` r
 truth_fusions_found_matrix = truth_fusions_found %>% 
@@ -612,7 +612,7 @@ rownames(truth_fusions_found_matrix) = truth_fusion_names
 
 
 
-upset_plot = upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
+upset_plot = UpSetRbyFeature::upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
 
 upset_plot
 ```
@@ -621,7 +621,7 @@ upset_plot
 
 ``` r
 pdf(file=paste0("depmap.upset_plot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".pdf"), width=20)
-upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
+UpSetRbyFeature::upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
 dev.off()
 ```
 
@@ -652,3 +652,12 @@ upset_plot_basic
 ```
 
 ![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-37-1.png)<!-- -->
+
+``` r
+pdf(file=paste0("depmap.upset_plot-basic.use_paralog_proxies=", USE_PARALOG_PROXIES, ".pdf"), width=20)
+UpSetR::upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
+dev.off()
+```
+
+    ## quartz_off_screen 
+    ##                 2

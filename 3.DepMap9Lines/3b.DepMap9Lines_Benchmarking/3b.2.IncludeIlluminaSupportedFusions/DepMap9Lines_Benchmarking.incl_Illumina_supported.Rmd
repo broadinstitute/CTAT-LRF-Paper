@@ -77,7 +77,7 @@ truth_data_counts = truth_data %>% rename(sample=sample_name) %>% group_by(sampl
 
 truth_data_counts %>% arrange(num_truth_fusions)
 
-# as few as 2 in MJ and as many aas 31 in VCaP
+# as few as 2 in MJ and as many as 34 in VCaP (including Illumina support!)
 
 ```
 
@@ -85,7 +85,7 @@ truth_data_counts %>% arrange(num_truth_fusions)
 
 truth_data_counts %>% summarise(sum_truth_fusions = sum(num_truth_fusions))
 
-# 115 proxy truth fusions
+# 134 min2 + 13 Illumina-supported-unique = 147 proxy truth fusions
 
 ```
 
@@ -202,7 +202,7 @@ depmap_accuracy_lineplot = data %>%
     filter(prog %in% progs ) %>%
     mutate(prog = factor(prog, levels=progs)) %>%
     ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom_line(aes(group=prog, color=prog)) +
-    xlim(3,10) + ylim(0.4,1) +
+    xlim(3,10) + ylim(0.4,0.85) +
     ggtitle("Depmap v1 fusions: F1 ~ min read support") 
 
 depmap_accuracy_lineplot
@@ -450,7 +450,7 @@ rownames(truth_fusions_found_matrix) = truth_fusion_names
 
 
 
-upset_plot = upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
+upset_plot = UpSetRbyFeature::upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
 
 upset_plot
 
@@ -460,7 +460,7 @@ upset_plot
 ```{r}
 
 pdf(file=paste0("depmap.upset_plot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".pdf"), width=20)
-upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
+UpSetRbyFeature::upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
 dev.off()
 
 ```
@@ -477,7 +477,13 @@ upset_plot_basic
 ```
 
 
+```{r}
 
+pdf(file=paste0("depmap.upset_plot-basic.use_paralog_proxies=", USE_PARALOG_PROXIES, ".pdf"), width=20)
+UpSetR::upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
+dev.off()
+
+```
 
 
 
