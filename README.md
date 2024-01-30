@@ -32,7 +32,7 @@ Comparison of control fusions found by various predictors for SeraCare fusion mi
 
 Comparing fusion prediction results for DepMap cell lines for various predictors:
     
-- 3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/DepMap9Lines_Benchmarking.Rmd (Figure 4a,b,c, and Supplementary Figure S2a)
+- 3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/DepMap9Lines_Benchmarking.Rmd 
 
 Evaluate Illumina read support for fusion predictions as per STAR-Fusion:
 
@@ -40,11 +40,11 @@ Evaluate Illumina read support for fusion predictions as per STAR-Fusion:
 
 Revisit benchmarking including the 17 additional illumina-supported fusions into the truth set:
 
-- 3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.IncludeIlluminaSupportedFusions/DepMap9Lines_Benchmarking.incl_Illumina_supported.Rmd
+- 3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.IncludeIlluminaSupportedFusions/DepMap9Lines_Benchmarking.incl_Illumina_supported.Rmd (Figure 4a,b,c, and Supplementary Figure S2)
 
 Compare fusion support and isoform detection from short vs. long RNA-seq reads:
     
-- 3.DepMap9Lines/3a.CTAT_DepMap9Lines/CTAT_DepMap9Lines.Rmd (Figure 4d, Supplementary Figure S2b, S3, and S4)
+- 3.DepMap9Lines/3a.CTAT_DepMap9Lines/CTAT_DepMap9Lines.Rmd (Figure 4d,e,f, Supplementary S3)
 
 
 ## Long Read Fusion Isoform Detection from Tumor Single Cell Transcriptomes
@@ -61,11 +61,18 @@ Analysis of HGSOC Patient-1
 
 Analysis of HGSOC Patient-2
 
+- 4.SingleCellFusions/4b.sc_HGSOC/Patient2_analysis.Rmd
 
+Analysis of HGSOC Patient-3
+
+- 4.SingleCellFusions/4b.sc_HGSOC/Patient3_analysis.Rmd
+    
 
 # Miscellaneous
 
 ## Evaluating the improvement in runtime of minimap2 by focusing on just the chimeric alignments:
 
+Shows that ctat-minimap2 in chimeric only mode is 4x faster than regular mode.
+    
 -  5.Misc/5.1.ctat-mm2-timings/ctat-mm2-timings.Rmd
 
