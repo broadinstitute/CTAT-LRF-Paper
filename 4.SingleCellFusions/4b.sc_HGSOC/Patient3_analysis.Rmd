@@ -46,7 +46,7 @@ nrow(Om_data)
 
 
 ```{r}
-fusion_annots = read.table("data/Patient3.fusion_annots.gz", header=T, sep="\t", stringsAsFactors = F)
+fusion_annots = read.csv("data/Patient3.fusion_annots.gz", header=T, sep="\t", stringsAsFactors = F)
 ```
 
 
@@ -271,7 +271,7 @@ Tum_data %>% filter(FusionName %in% fusions_of_interest$FusionName) %>% select(F
 
 left_join(fusions_of_interest, Om_fusion_frac_cell_types, by='FusionName', suffix=c('.Tum', '.Om'))
 
-
+# only 2 fusions of interest
 ```
 
 ```{r}
@@ -289,6 +289,8 @@ fusions_of_interest
 fusions_of_interest = left_join(fusions_of_interest, fusion_annots)
 
 fusions_of_interest
+
+# only long reads detect SNRNP70--ZIK1
 ```
 
 
@@ -502,7 +504,7 @@ report_on_fusion = function(fusion_name) {
 
 report_on_fusion("ZCCHC8--RSRC2")
 
-
+# 46% of tumor cells and 36% of normal cells
 ```
 
 

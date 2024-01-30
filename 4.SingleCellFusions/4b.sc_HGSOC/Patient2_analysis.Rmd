@@ -48,7 +48,7 @@ nrow(Tum_data)
 
 ```{r}
 
-fusion_annots = read.table("data/Patient2.fusion_annots.gz", sep="\t", header=T, stringsAsFactors = F)
+fusion_annots = read.csv("data/Patient2.fusion_annots.gz", sep="\t", header=T, stringsAsFactors = F)
 
 ```
 
@@ -180,7 +180,7 @@ right_join(Tum_cell_counts_by_method,
 
 ```{r}
 
-# counts of cells containing fusions and fraction of fusions iddentified according to that cell type
+# counts of cells containing fusions and fraction of fusions identified according to that cell type
 
 
 fusion_frac_cell_types = Tum_data %>% select(FusionName, barcodes, celltype_final) %>% unique() %>%
@@ -206,7 +206,7 @@ fusions_of_interest = fusion_frac_cell_types %>%
 
 fusions_of_interest
 
-# 13 fusions of interest
+# 17 fusions of interest
 
 ```
 
