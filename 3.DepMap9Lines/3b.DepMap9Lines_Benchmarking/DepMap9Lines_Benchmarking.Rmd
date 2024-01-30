@@ -430,7 +430,7 @@ rownames(truth_fusions_found_matrix) = truth_fusion_names
 
 
 
-upset_plot = upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
+upset_plot = UpSetRbyFeature::upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
 
 upset_plot
 
@@ -440,20 +440,13 @@ upset_plot
 ```{r}
 
 pdf(file=paste0("depmap.upset_plot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".pdf"), width=20)
-upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
+UpSetRbyFeature::upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
 dev.off()
 
 ```
 
 
-```{r}
-# which are ctatLRF missing?
 
-
-truth_fusions_found_matrix  %>% filter(JAFFAL==1 & ctat.LR.fusion.v0.13.0 == 0)
-
-
-```
 
 
 

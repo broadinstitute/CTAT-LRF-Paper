@@ -16,7 +16,7 @@ Om_data = read.table("data/Patient3_Om.Dondi_overian_CTAT_fusions.filtered_cells
 nrow(Om_data)
 ```
 
-    ## [1] 3318
+    ## [1] 4520
 
 ``` r
 Om_data %>% head()
@@ -24,25 +24,25 @@ Om_data %>% head()
 
     ##             FusionName   LeftBreakpoint  RightBreakpoint     cell_barcode
     ## 1         AAED1--SUMO1  chr9:96651390:- chr2:202214429:- AAGAGATTGCATTACG
-    ## 2 ABCC1--RP11-640N20.4 chr16:16016594:+ chr16:16146115:+ CACTCGTACTCCCTCA
-    ## 3         ABCE1--BACH2 chr4:145122509:+  chr6:89930260:- ATCTGACGACTGTAAC
-    ## 4        ABHD12--TTBK2 chr20:25390513:- chr15:42878684:- TATGAGGCTGGGTATG
-    ## 5        ABI3BP--CAPZB chr3:100902618:-  chr1:19419750:- AGTTCGAACCATCTCC
-    ## 6       ABL1--FAM114A1 chr9:130835525:+  chr4:38945316:+ CGCTTGTACTAGAATG
-    ##            umi                                  read_name         method
-    ## 1 TCGCATGTTTCG  NS500318:945:HNGM5BGXG:3:11401:9392:13153    STAR-Fusion
-    ## 2 CAGTCTGCGTAG           m64156_210226_140858/1837470/ccs ctat-LR-fusion
-    ## 3 AAAACGCACCCT  NS500318:945:HNGM5BGXG:1:12302:3771:13866    STAR-Fusion
-    ## 4 TAGTGTGTGTTA           m64156_210226_140858/8058321/ccs ctat-LR-fusion
-    ## 5 GTTTTGTGCGTC           m64156_210214_222855/1426343/ccs ctat-LR-fusion
-    ## 6 AAAATAGTAATA NS500318:945:HNGM5BGXG:3:13401:17121:16129    STAR-Fusion
-    ##           barcodes    celltype_final     UMAP_1     UMAP_2     dataset
-    ## 1 CGTAATGCAATCTCTT Mesothelial.cells -11.733489 -8.4741673 Patient3_Om
-    ## 2 TGAGGGAGTACGAGTG        T.NK.cells  12.678537  2.8051196 Patient3_Om
-    ## 3 GTTACAGTCGTCAGAT Mesothelial.cells -12.210028 -8.9281439 Patient3_Om
-    ## 4 CATACCCAGCCTCATA     Myeloid.cells   0.450182  7.1446185 Patient3_Om
-    ## 5 GGAGATGGTTCGAACT Mesothelial.cells  -9.335212  0.1417333 Patient3_Om
-    ## 6 CATTCTAGTACAAGCG Mesothelial.cells -12.753826 -5.8788814 Patient3_Om
+    ## 2         ABCA1--SCAF4 chr9:104927831:- chr21:31685468:- ATTTGCGGAGCAGCAA
+    ## 3        ABCA2--PRSS21 chr9:137016381:-  chr16:2821354:+ TGCTCAGCTTTGCTCC
+    ## 4         ABCA3--SMOC2  chr16:2324468:- chr6:168547137:+ GAGAATAACAGCGATG
+    ## 5         ABCA3--SMOC2  chr16:2324468:- chr6:168547137:+ GAGAATAACAGCGATG
+    ## 6 ABCC1--RP11-640N20.4 chr16:16016594:+ chr16:16146115:+ CACTCGTACTCCCTCA
+    ##            umi                                 read_name         method
+    ## 1 TCGCATGTTTCG NS500318:945:HNGM5BGXG:3:11401:9392:13153    STAR-Fusion
+    ## 2 GCTGCAGGGCCG          m64156_210214_222855/7345512/ccs ctat-LR-fusion
+    ## 3 TTTAGATGGTTA          m64156_210226_140858/5410520/ccs ctat-LR-fusion
+    ## 4 GACGATGAATTG         m64156_210214_222855/11810953/ccs ctat-LR-fusion
+    ## 5 AGACGATGAATG         m64156_210214_222855/12469721/ccs ctat-LR-fusion
+    ## 6 CAGTCTGCGTAG          m64156_210226_140858/1837470/ccs ctat-LR-fusion
+    ##           barcodes    celltype_final    UMAP_1    UMAP_2     dataset
+    ## 1 CGTAATGCAATCTCTT Mesothelial.cells -11.73349 -8.474167 Patient3_Om
+    ## 2 TTGCTGCTCCGCAAAT Mesothelial.cells -11.86847 -8.825021 Patient3_Om
+    ## 3 GGAGCAAAGCTGAGCA        T.NK.cells  12.45839  0.599520 Patient3_Om
+    ## 4 CATCGCTGTTATTCTC Mesothelial.cells -11.73225 -8.369301 Patient3_Om
+    ## 5 CATCGCTGTTATTCTC Mesothelial.cells -11.73225 -8.369301 Patient3_Om
+    ## 6 TGAGGGAGTACGAGTG        T.NK.cells  12.67854  2.805120 Patient3_Om
 
 ``` r
 # since starF and FI were run at max sensitivity, lets restrict fusions to those identified by ctat-LRF
@@ -54,7 +54,7 @@ Om_data = Om_data %>% filter(FusionName %in% Om_ctat_LRF_fusion_genes)
 nrow(Om_data)
 ```
 
-    ## [1] 2500
+    ## [1] 3715
 
 ``` r
 fusion_annots = read.table("data/Patient3.fusion_annots.gz", header=T, sep="\t", stringsAsFactors = F)
@@ -82,7 +82,7 @@ Om_data = Om_data %>% filter(barcodes %in% Om_umap_data$barcodes)
 nrow(Om_data)
 ```
 
-    ## [1] 2500
+    ## [1] 3715
 
 ``` r
 Om_cell_counts = Om_data %>% select(FusionName, cell_barcode) %>% unique() %>% 
@@ -94,16 +94,22 @@ Om_cell_counts = Om_data %>% select(FusionName, cell_barcode) %>% unique() %>%
 Om_cell_counts %>% filter(tot_cells_w_fusion >= MIN_CELLS)
 ```
 
-    ## # A tibble: 7 × 3
-    ##   FusionName                   tot_cells_w_fusion frac_tot_cells
-    ##   <chr>                                     <int>          <dbl>
-    ## 1 ZCCHC8--RSRC2                               148         0.357 
-    ## 2 RP11-208G20.2--PSPHP1                        74         0.178 
-    ## 3 RP11-384F7.2--LSAMP                          20         0.0482
-    ## 4 CTD-2008L17.1--RP11-456O19.2                  7         0.0169
-    ## 5 ROR2--NFIL3                                   5         0.0120
-    ## 6 RP1-34H18.1--NAV3                             5         0.0120
-    ## 7 RP11-444D3.1--SOX5                            5         0.0120
+    ## # A tibble: 13 × 3
+    ##    FusionName                   tot_cells_w_fusion frac_tot_cells
+    ##    <chr>                                     <int>          <dbl>
+    ##  1 ZCCHC8--RSRC2                               148         0.357 
+    ##  2 RP11-208G20.2--PSPHP1                        85         0.205 
+    ##  3 RP11-384F7.2--LSAMP                          20         0.0482
+    ##  4 RP11-32B5.7--RP11-116P24.2                   13         0.0313
+    ##  5 RP11-32B5.7--RP11-403B2.6                    13         0.0313
+    ##  6 HOOK2--JUNB                                   8         0.0193
+    ##  7 RP11-855A2.2--BPTF                            8         0.0193
+    ##  8 CTD-2008L17.1--RP11-456O19.2                  7         0.0169
+    ##  9 RP11-420N3.2--RBFOX1                          6         0.0145
+    ## 10 PHYKPL--HNRNPAB                               5         0.0120
+    ## 11 ROR2--NFIL3                                   5         0.0120
+    ## 12 RP1-34H18.1--NAV3                             5         0.0120
+    ## 13 RP11-444D3.1--SOX5                            5         0.0120
 
 ``` r
 Om_cell_counts_by_method = read.table("data/Patient3_Om.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.cell_counts_by_method.tsv.gz", 
@@ -117,15 +123,15 @@ Om_cell_counts_by_method %>% head()
     ## 2 RP11-208G20.2--PSPHP1   chr7:55761799:+   chr7:55773181:+  ctat-LR-fusion
     ## 3     AC003080.4--PRDX6  chr7:111971400:-  chr1:173488635:+ FusionInspector
     ## 4         ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-  ctat-LR-fusion
-    ## 5   RP11-384F7.2--LSAMP  chr3:117997182:-  chr3:116444955:-  ctat-LR-fusion
-    ## 6         ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-  ctat-LR-fusion
+    ## 5 RP11-208G20.2--PSPHP1   chr7:55761798:+   chr7:55772328:+  ctat-LR-fusion
+    ## 6   RP11-384F7.2--LSAMP  chr3:117997182:-  chr3:116444955:-  ctat-LR-fusion
     ##      celltype_final     dataset cell_counts
     ## 1 Mesothelial.cells Patient3_Om          68
     ## 2 Mesothelial.cells Patient3_Om          53
     ## 3 Mesothelial.cells Patient3_Om          43
     ## 4        T.NK.cells Patient3_Om          40
-    ## 5 Mesothelial.cells Patient3_Om          19
-    ## 6     Myeloid.cells Patient3_Om          19
+    ## 5 Mesothelial.cells Patient3_Om          29
+    ## 6 Mesothelial.cells Patient3_Om          19
 
 ``` r
 Om_cell_counts_by_method_spread = Om_cell_counts_by_method %>% select(FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, cell_counts) %>%
@@ -139,16 +145,16 @@ Om_cell_counts_by_method_spread %>% head()
     ## 1         ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:- Mesothelial.cells
     ## 2 RP11-208G20.2--PSPHP1   chr7:55761799:+   chr7:55773181:+ Mesothelial.cells
     ## 3         ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-        T.NK.cells
-    ## 4   RP11-384F7.2--LSAMP  chr3:117997182:-  chr3:116444955:- Mesothelial.cells
-    ## 5         ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-     Myeloid.cells
-    ## 6         ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-       Fibroblasts
+    ## 4 RP11-208G20.2--PSPHP1   chr7:55761798:+   chr7:55772328:+ Mesothelial.cells
+    ## 5   RP11-384F7.2--LSAMP  chr3:117997182:-  chr3:116444955:- Mesothelial.cells
+    ## 6         ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-     Myeloid.cells
     ##   ctat-LR-fusion FusionInspector STAR-Fusion
     ## 1             68               3           1
     ## 2             53              NA          NA
     ## 3             40              NA          NA
-    ## 4             19              NA          NA
+    ## 4             29              NA          NA
     ## 5             19              NA          NA
-    ## 6             17               1           1
+    ## 6             19              NA          NA
 
 ``` r
 Om_fusion_frac_cell_types = Om_data %>% select(FusionName, barcodes, celltype_final) %>% unique() %>%
@@ -159,20 +165,27 @@ Om_fusion_frac_cell_types = Om_data %>% select(FusionName, barcodes, celltype_fi
 Om_fusion_frac_cell_types %>% filter(tot_cells_w_fusion >= MIN_CELLS) 
 ```
 
-    ## # A tibble: 10 × 4
-    ## # Groups:   FusionName [5]
+    ## # A tibble: 17 × 4
+    ## # Groups:   FusionName [10]
     ##    FusionName                celltype_final tot_cells_w_fusion frac_fusion_cells
     ##    <chr>                     <chr>                       <int>             <dbl>
     ##  1 ZCCHC8--RSRC2             Mesothelial.c…                 68            0.459 
-    ##  2 RP11-208G20.2--PSPHP1     Mesothelial.c…                 56            0.757 
+    ##  2 RP11-208G20.2--PSPHP1     Mesothelial.c…                 63            0.741 
     ##  3 ZCCHC8--RSRC2             T.NK.cells                     40            0.270 
     ##  4 RP11-384F7.2--LSAMP       Mesothelial.c…                 19            0.95  
     ##  5 ZCCHC8--RSRC2             Myeloid.cells                  19            0.128 
     ##  6 ZCCHC8--RSRC2             Fibroblasts                    17            0.115 
-    ##  7 RP11-208G20.2--PSPHP1     T.NK.cells                      9            0.122 
-    ##  8 CTD-2008L17.1--RP11-456O… Mesothelial.c…                  7            1     
-    ##  9 RP11-208G20.2--PSPHP1     Myeloid.cells                   7            0.0946
-    ## 10 ROR2--NFIL3               Mesothelial.c…                  5            1
+    ##  7 RP11-208G20.2--PSPHP1     T.NK.cells                     11            0.129 
+    ##  8 RP11-32B5.7--RP11-116P24… T.NK.cells                      8            0.615 
+    ##  9 RP11-32B5.7--RP11-403B2.6 T.NK.cells                      8            0.615 
+    ## 10 CTD-2008L17.1--RP11-456O… Mesothelial.c…                  7            1     
+    ## 11 RP11-208G20.2--PSPHP1     Myeloid.cells                   7            0.0824
+    ## 12 RP11-420N3.2--RBFOX1      Mesothelial.c…                  6            1     
+    ## 13 RP11-855A2.2--BPTF        Mesothelial.c…                  6            0.75  
+    ## 14 HOOK2--JUNB               Fibroblasts                     5            0.625 
+    ## 15 ROR2--NFIL3               Mesothelial.c…                  5            1     
+    ## 16 RP11-32B5.7--RP11-116P24… Mesothelial.c…                  5            0.385 
+    ## 17 RP11-32B5.7--RP11-403B2.6 Mesothelial.c…                  5            0.385
 
 # P3 Tumor
 
@@ -183,33 +196,33 @@ Tum_data = read.table("data/Patient3_Tum.Dondi_overian_CTAT_fusions.filtered_cel
 nrow(Tum_data)
 ```
 
-    ## [1] 2483
+    ## [1] 3261
 
 ``` r
 Tum_data %>% head()
 ```
 
-    ##          FusionName   LeftBreakpoint   RightBreakpoint     cell_barcode
-    ## 1        AASS--MEG3 chr7:122093048:- chr14:100848570:+ TAGTTACCTTACGATC
-    ## 2        AASS--MEG3 chr7:122093048:- chr14:100848570:+ TAGTTACCTTACGATC
-    ## 3      ABCA3--NFIL3  chr16:2340573:-   chr9:91410906:- GATGGGTGATCATGCA
-    ## 4      ABCA5--USP25 chr17:69325699:-  chr21:15864268:+ GACCAGAGATAGGAAT
-    ## 5 ABHD16B--KIAA0513 chr20:63863074:+  chr16:85027750:+ AGCGGGTCTTGGTTAC
-    ## 6    ABI1--C1orf132 chr10:26860997:-  chr1:207811155:- AAGGGACACTTCAGCA
-    ##            umi                                  read_name          method
-    ## 1 CTTTTCATTGCG  NS500318:945:HNGM5BGXG:1:13303:7782:14704     STAR-Fusion
-    ## 2 CTTTTCATTGCG  NS500318:945:HNGM5BGXG:1:13303:7782:14704 FusionInspector
-    ## 3 TATATGATGATA           m64156_210220_223905/8151666/ccs  ctat-LR-fusion
-    ## 4 AGAGAGCTAGAT           m64156_210213_160114/3862947/ccs  ctat-LR-fusion
-    ## 5 TCTAAGCCTTCT NS500318:945:HNGM5BGXG:4:12510:15036:12983     STAR-Fusion
-    ## 6 TCAATTAGTTGG  NS500318:945:HNGM5BGXG:2:12310:4550:17312     STAR-Fusion
-    ##           barcodes celltype_final    UMAP_1    UMAP_2      dataset
-    ## 1 GATCGTAAGGTAACTA    Fibroblasts  2.589430 12.493015 Patient3_Tum
-    ## 2 GATCGTAAGGTAACTA    Fibroblasts  2.589430 12.493015 Patient3_Tum
-    ## 3 TGCATGATCACCCATC  Myeloid.cells 11.954963 -6.190181 Patient3_Tum
-    ## 4 ATTCCTATCTCTGGTC     T.NK.cells -6.361723  3.178483 Patient3_Tum
-    ## 5 GTAACCAAGACCCGCT          HGSOC  1.353654 -4.185481 Patient3_Tum
-    ## 6 TGCTGAAGTGTCCCTT          HGSOC  1.229690 -4.206707 Patient3_Tum
+    ##      FusionName   LeftBreakpoint   RightBreakpoint     cell_barcode
+    ## 1   A1BG--STRBP chr19:58346887:-  chr9:123125497:- GCAACGCTGTCGGAAG
+    ## 2    AASS--MEG3 chr7:122093048:- chr14:100848570:+ TAGTTACCTTACGATC
+    ## 3    AASS--MEG3 chr7:122093048:- chr14:100848570:+ TAGTTACCTTACGATC
+    ## 4 ABCA11P--AFF4    chr4:472575:-  chr5:132934941:- TGCAAGTTGTTCTATC
+    ## 5  ABCA3--NFIL3  chr16:2340573:-   chr9:91410906:- GATGGGTGATCATGCA
+    ## 6  ABCA5--USP25 chr17:69325699:-  chr21:15864268:+ GACCAGAGATAGGAAT
+    ##            umi                                 read_name          method
+    ## 1 AGGGATCAAGGA          m64156_210219_161109/4885829/ccs  ctat-LR-fusion
+    ## 2 CTTTTCATTGCG NS500318:945:HNGM5BGXG:1:13303:7782:14704     STAR-Fusion
+    ## 3 CTTTTCATTGCG NS500318:945:HNGM5BGXG:1:13303:7782:14704 FusionInspector
+    ## 4 GCCTCAAAGAAT          m64156_210213_160114/4360485/ccs  ctat-LR-fusion
+    ## 5 TATATGATGATA          m64156_210220_223905/8151666/ccs  ctat-LR-fusion
+    ## 6 AGAGAGCTAGAT          m64156_210213_160114/3862947/ccs  ctat-LR-fusion
+    ##           barcodes celltype_final     UMAP_1    UMAP_2      dataset
+    ## 1 CTTCCGACAGCGTTGC          HGSOC  0.6810082 -4.588101 Patient3_Tum
+    ## 2 GATCGTAAGGTAACTA    Fibroblasts  2.5894298 12.493015 Patient3_Tum
+    ## 3 GATCGTAAGGTAACTA    Fibroblasts  2.5894298 12.493015 Patient3_Tum
+    ## 4 GATAGAACAACTTGCA     T.NK.cells -8.6050201  1.075450 Patient3_Tum
+    ## 5 TGCATGATCACCCATC  Myeloid.cells 11.9549626 -6.190181 Patient3_Tum
+    ## 6 ATTCCTATCTCTGGTC     T.NK.cells -6.3617230  3.178483 Patient3_Tum
 
 ``` r
 # since starF and FI were run at max sensitivity, lets restrict fusions to those identified by ctat-LRF
@@ -221,7 +234,7 @@ Tum_data = Tum_data %>% filter(FusionName %in% Tum_ctat_LRF_fusion_genes)
 nrow(Tum_data)
 ```
 
-    ## [1] 1546
+    ## [1] 2271
 
 ``` r
 Tum_umap_data = read.table("data/Patient3_Tum_UMAPcoords.txt.gz", header=T, sep=",") %>%
@@ -276,22 +289,29 @@ Tum_cell_counts = Tum_data %>% select(FusionName, cell_barcode) %>% unique() %>%
 Tum_cell_counts %>% filter(tot_cells_w_fusion >= MIN_CELLS)
 ```
 
-    ## # A tibble: 13 × 3
+    ## # A tibble: 20 × 3
     ##    FusionName                  tot_cells_w_fusion frac_tot_cells
     ##    <chr>                                    <int>          <dbl>
     ##  1 ZCCHC8--RSRC2                              297        0.460  
-    ##  2 RP11-208G20.2--PSPHP1                      125        0.193  
-    ##  3 CBLC--CTC-232P5.1                           16        0.0248 
-    ##  4 RP11-384F7.2--LSAMP                         13        0.0201 
-    ##  5 RP11-403B2.7--RP11-116P24.2                 12        0.0186 
-    ##  6 SNRNP70--ZIK1                                8        0.0124 
-    ##  7 MBOAT7--CEACAM16                             7        0.0108 
-    ##  8 RP11-444D3.1--SOX5                           7        0.0108 
-    ##  9 STAG1--CACNA1C                               6        0.00929
-    ## 10 ARHGAP35--CTD-2538C1.3                       5        0.00774
-    ## 11 IQGAP1--KIF13A                               5        0.00774
-    ## 12 RMST--RMST_2                                 5        0.00774
-    ## 13 RP11-678G14.2--ZNF85                         5        0.00774
+    ##  2 RP11-208G20.2--PSPHP1                      139        0.215  
+    ##  3 VIM-AS1--VIM                                27        0.0418 
+    ##  4 AC068446.1--RP11-403B2.6                    25        0.0387 
+    ##  5 AC068446.1--RP11-116P24.2                   24        0.0372 
+    ##  6 RP11-32B5.7--RP11-116P24.2                  21        0.0325 
+    ##  7 RP11-32B5.7--RP11-403B2.6                   19        0.0294 
+    ##  8 RP11-855A2.2--BPTF                          17        0.0263 
+    ##  9 CBLC--CTC-232P5.1                           16        0.0248 
+    ## 10 RP11-384F7.2--LSAMP                         13        0.0201 
+    ## 11 RP11-678G14.2--RP11-58A17.3                  8        0.0124 
+    ## 12 SNRNP70--ZIK1                                8        0.0124 
+    ## 13 MBOAT7--CEACAM16                             7        0.0108 
+    ## 14 RP11-444D3.1--SOX5                           7        0.0108 
+    ## 15 RP11-678G14.2--ZNF85                         6        0.00929
+    ## 16 STAG1--CACNA1C                               6        0.00929
+    ## 17 ARHGAP35--CTD-2538C1.3                       5        0.00774
+    ## 18 CASC15--RP11-500C11.3                        5        0.00774
+    ## 19 IQGAP1--KIF13A                               5        0.00774
+    ## 20 RMST--RMST_2                                 5        0.00774
 
 ``` r
 Tum_cell_counts_by_method = read.table("data/Patient3_Tum.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.cell_counts_by_method.tsv.gz", 
@@ -334,16 +354,29 @@ Tum_cell_counts_by_method_spread %>% filter(`ctat-LR-fusion` >= MIN_CELLS)
     ## 8                ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-
     ## 9        RP11-208G20.2--PSPHP1   chr7:55761799:+   chr7:55773181:+
     ## 10               ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-
-    ## 11           CBLC--CTC-232P5.1  chr19:44784401:+   chr19:6012120:+
-    ## 12           CBLC--CTC-232P5.1  chr19:44784417:+   chr19:6012120:+
-    ## 13       RP11-208G20.2--PSPHP1   chr7:55761799:+   chr7:55773181:+
-    ## 14       RP11-208G20.2--PSPHP1   chr7:55761799:+   chr7:55773181:+
-    ## 15               SNRNP70--ZIK1  chr19:49098704:+  chr19:57590011:+
-    ## 16           CBLC--CTC-232P5.1  chr19:44781051:+   chr19:6012120:+
-    ## 17         RP11-384F7.2--LSAMP  chr3:117997182:-  chr3:116444955:-
-    ## 18 RP11-403B2.7--RP11-116P24.2  chr15:20755930:-  chr15:20759907:-
-    ## 19          RP11-444D3.1--SOX5  chr12:24276141:-  chr12:23896024:-
-    ## 20               ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-
+    ## 11       RP11-208G20.2--PSPHP1   chr7:55761798:+   chr7:55772328:+
+    ## 12                VIM-AS1--VIM  chr10:17229660:-  chr10:17229747:+
+    ## 13           CBLC--CTC-232P5.1  chr19:44784401:+   chr19:6012120:+
+    ## 14       RP11-208G20.2--PSPHP1   chr7:55761798:+   chr7:55772328:+
+    ## 15                VIM-AS1--VIM  chr10:17229660:-  chr10:17229747:+
+    ## 16   AC068446.1--RP11-116P24.2  chr15:20778313:-  chr15:20759907:-
+    ## 17    AC068446.1--RP11-403B2.6  chr15:20778313:-  chr15:20759907:-
+    ## 18  RP11-32B5.7--RP11-116P24.2  chr15:21324988:-  chr15:20759979:-
+    ## 19   RP11-32B5.7--RP11-403B2.6  chr15:21324988:-  chr15:20759979:-
+    ## 20           CBLC--CTC-232P5.1  chr19:44784417:+   chr19:6012120:+
+    ## 21       RP11-208G20.2--PSPHP1   chr7:55761799:+   chr7:55773181:+
+    ## 22       RP11-208G20.2--PSPHP1   chr7:55761799:+   chr7:55773181:+
+    ## 23          RP11-855A2.2--BPTF  chr17:67822409:+  chr17:67945409:+
+    ## 24               SNRNP70--ZIK1  chr19:49098704:+  chr19:57590011:+
+    ## 25           CBLC--CTC-232P5.1  chr19:44781051:+   chr19:6012120:+
+    ## 26    AC068446.1--RP11-403B2.6  chr15:20778350:-  chr15:20759907:-
+    ## 27       RP11-208G20.2--PSPHP1   chr7:55761798:+   chr7:55772328:+
+    ## 28       RP11-208G20.2--PSPHP1   chr7:55761798:+   chr7:55772328:+
+    ## 29  RP11-32B5.7--RP11-116P24.2  chr15:21324988:-  chr15:20759907:-
+    ## 30         RP11-384F7.2--LSAMP  chr3:117997182:-  chr3:116444955:-
+    ## 31          RP11-444D3.1--SOX5  chr12:24276141:-  chr12:23896024:-
+    ## 32 RP11-678G14.2--RP11-58A17.3  chr19:21569104:-  chr12:57967189:+
+    ## 33               ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-
     ##       celltype_final ctat-LR-fusion FusionInspector STAR-Fusion
     ## 1         T.NK.cells            105               1           1
     ## 2      Myeloid.cells             99              NA          NA
@@ -355,16 +388,29 @@ Tum_cell_counts_by_method_spread %>% filter(`ctat-LR-fusion` >= MIN_CELLS)
     ## 8        Fibroblasts             19              NA          NA
     ## 9  Mesothelial.cells             16              NA          NA
     ## 10           B.cells             13              NA          NA
-    ## 11             HGSOC             11               6           4
-    ## 12             HGSOC              8               3           3
-    ## 13           B.cells              8              NA          NA
-    ## 14       Fibroblasts              7              NA          NA
-    ## 15             HGSOC              7              NA          NA
-    ## 16             HGSOC              6               2           1
-    ## 17 Mesothelial.cells              5              NA           1
-    ## 18             HGSOC              5               2          NA
-    ## 19       Fibroblasts              5              NA          NA
-    ## 20    B.cells.memory              5              NA          NA
+    ## 11             HGSOC             12              NA          NA
+    ## 12     Myeloid.cells             12              NA          NA
+    ## 13             HGSOC             11               6           4
+    ## 14     Myeloid.cells             11              NA          NA
+    ## 15        T.NK.cells             10              NA          NA
+    ## 16        T.NK.cells              9              NA          NA
+    ## 17        T.NK.cells              9              NA          NA
+    ## 18        T.NK.cells              9              NA          NA
+    ## 19        T.NK.cells              9              NA          NA
+    ## 20             HGSOC              8               3           3
+    ## 21           B.cells              8              NA          NA
+    ## 22       Fibroblasts              7              NA          NA
+    ## 23             HGSOC              7              NA          NA
+    ## 24             HGSOC              7              NA          NA
+    ## 25             HGSOC              6               2           1
+    ## 26             HGSOC              5              NA          NA
+    ## 27 Mesothelial.cells              5              NA          NA
+    ## 28        T.NK.cells              5              NA          NA
+    ## 29             HGSOC              5              NA          NA
+    ## 30 Mesothelial.cells              5              NA           1
+    ## 31       Fibroblasts              5              NA          NA
+    ## 32             HGSOC              5              NA          NA
+    ## 33    B.cells.memory              5              NA          NA
 
 # compare P1 Tum and Om fusions
 
@@ -415,16 +461,29 @@ Tum_n_Om_joined_fusions %>% select(FusionName, LeftBreakpoint, RightBreakpoint, 
     ## 8                ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-
     ## 9        RP11-208G20.2--PSPHP1   chr7:55761799:+   chr7:55773181:+
     ## 10               ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-
-    ## 11           CBLC--CTC-232P5.1  chr19:44784401:+   chr19:6012120:+
-    ## 12           CBLC--CTC-232P5.1  chr19:44784417:+   chr19:6012120:+
-    ## 13       RP11-208G20.2--PSPHP1   chr7:55761799:+   chr7:55773181:+
-    ## 14       RP11-208G20.2--PSPHP1   chr7:55761799:+   chr7:55773181:+
-    ## 15               SNRNP70--ZIK1  chr19:49098704:+  chr19:57590011:+
-    ## 16           CBLC--CTC-232P5.1  chr19:44781051:+   chr19:6012120:+
-    ## 17         RP11-384F7.2--LSAMP  chr3:117997182:-  chr3:116444955:-
-    ## 18 RP11-403B2.7--RP11-116P24.2  chr15:20755930:-  chr15:20759907:-
-    ## 19          RP11-444D3.1--SOX5  chr12:24276141:-  chr12:23896024:-
-    ## 20               ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-
+    ## 11       RP11-208G20.2--PSPHP1   chr7:55761798:+   chr7:55772328:+
+    ## 12                VIM-AS1--VIM  chr10:17229660:-  chr10:17229747:+
+    ## 13           CBLC--CTC-232P5.1  chr19:44784401:+   chr19:6012120:+
+    ## 14       RP11-208G20.2--PSPHP1   chr7:55761798:+   chr7:55772328:+
+    ## 15                VIM-AS1--VIM  chr10:17229660:-  chr10:17229747:+
+    ## 16   AC068446.1--RP11-116P24.2  chr15:20778313:-  chr15:20759907:-
+    ## 17    AC068446.1--RP11-403B2.6  chr15:20778313:-  chr15:20759907:-
+    ## 18  RP11-32B5.7--RP11-116P24.2  chr15:21324988:-  chr15:20759979:-
+    ## 19   RP11-32B5.7--RP11-403B2.6  chr15:21324988:-  chr15:20759979:-
+    ## 20           CBLC--CTC-232P5.1  chr19:44784417:+   chr19:6012120:+
+    ## 21       RP11-208G20.2--PSPHP1   chr7:55761799:+   chr7:55773181:+
+    ## 22       RP11-208G20.2--PSPHP1   chr7:55761799:+   chr7:55773181:+
+    ## 23          RP11-855A2.2--BPTF  chr17:67822409:+  chr17:67945409:+
+    ## 24               SNRNP70--ZIK1  chr19:49098704:+  chr19:57590011:+
+    ## 25           CBLC--CTC-232P5.1  chr19:44781051:+   chr19:6012120:+
+    ## 26    AC068446.1--RP11-403B2.6  chr15:20778350:-  chr15:20759907:-
+    ## 27       RP11-208G20.2--PSPHP1   chr7:55761798:+   chr7:55772328:+
+    ## 28       RP11-208G20.2--PSPHP1   chr7:55761798:+   chr7:55772328:+
+    ## 29  RP11-32B5.7--RP11-116P24.2  chr15:21324988:-  chr15:20759907:-
+    ## 30         RP11-384F7.2--LSAMP  chr3:117997182:-  chr3:116444955:-
+    ## 31          RP11-444D3.1--SOX5  chr12:24276141:-  chr12:23896024:-
+    ## 32 RP11-678G14.2--RP11-58A17.3  chr19:21569104:-  chr12:57967189:+
+    ## 33               ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-
     ##       celltype_final ctat-LR-fusion.Tum ctat-LR-fusion.Om
     ## 1         T.NK.cells                105                40
     ## 2      Myeloid.cells                 99                19
@@ -436,16 +495,29 @@ Tum_n_Om_joined_fusions %>% select(FusionName, LeftBreakpoint, RightBreakpoint, 
     ## 8        Fibroblasts                 19                17
     ## 9  Mesothelial.cells                 16                53
     ## 10           B.cells                 13                NA
-    ## 11             HGSOC                 11                NA
-    ## 12             HGSOC                  8                NA
-    ## 13           B.cells                  8                NA
-    ## 14       Fibroblasts                  7                 2
-    ## 15             HGSOC                  7                NA
-    ## 16             HGSOC                  6                NA
-    ## 17 Mesothelial.cells                  5                19
-    ## 18             HGSOC                  5                NA
-    ## 19       Fibroblasts                  5                 4
-    ## 20    B.cells.memory                  5                NA
+    ## 11             HGSOC                 12                NA
+    ## 12     Myeloid.cells                 12                NA
+    ## 13             HGSOC                 11                NA
+    ## 14     Myeloid.cells                 11                 1
+    ## 15        T.NK.cells                 10                NA
+    ## 16        T.NK.cells                  9                NA
+    ## 17        T.NK.cells                  9                NA
+    ## 18        T.NK.cells                  9                 6
+    ## 19        T.NK.cells                  9                 6
+    ## 20             HGSOC                  8                NA
+    ## 21           B.cells                  8                NA
+    ## 22       Fibroblasts                  7                 2
+    ## 23             HGSOC                  7                NA
+    ## 24             HGSOC                  7                NA
+    ## 25             HGSOC                  6                NA
+    ## 26             HGSOC                  5                NA
+    ## 27 Mesothelial.cells                  5                29
+    ## 28        T.NK.cells                  5                 3
+    ## 29             HGSOC                  5                NA
+    ## 30 Mesothelial.cells                  5                19
+    ## 31       Fibroblasts                  5                 4
+    ## 32             HGSOC                  5                NA
+    ## 33    B.cells.memory                  5                NA
 
 ``` r
 Tum_fusion_frac_cell_types = Tum_data %>% select(FusionName, barcodes, celltype_final) %>% unique() %>%
@@ -456,28 +528,21 @@ Tum_fusion_frac_cell_types = Tum_data %>% select(FusionName, barcodes, celltype_
 Tum_fusion_frac_cell_types %>% filter(tot_cells_w_fusion >= MIN_CELLS)
 ```
 
-    ## # A tibble: 18 × 4
-    ## # Groups:   FusionName [7]
-    ##    FusionName                celltype_final tot_cells_w_fusion frac_fusion_cells
-    ##    <chr>                     <chr>                       <int>             <dbl>
-    ##  1 ZCCHC8--RSRC2             T.NK.cells                    105            0.354 
-    ##  2 ZCCHC8--RSRC2             Myeloid.cells                  99            0.333 
-    ##  3 RP11-208G20.2--PSPHP1     T.NK.cells                     38            0.304 
-    ##  4 RP11-208G20.2--PSPHP1     Myeloid.cells                  30            0.24  
-    ##  5 ZCCHC8--RSRC2             HGSOC                          30            0.101 
-    ##  6 ZCCHC8--RSRC2             Mesothelial.c…                 26            0.0875
-    ##  7 RP11-208G20.2--PSPHP1     HGSOC                          22            0.176 
-    ##  8 ZCCHC8--RSRC2             Fibroblasts                    19            0.0640
-    ##  9 RP11-208G20.2--PSPHP1     Mesothelial.c…                 16            0.128 
-    ## 10 CBLC--CTC-232P5.1         HGSOC                          14            0.875 
-    ## 11 ZCCHC8--RSRC2             B.cells                        13            0.0438
-    ## 12 RP11-208G20.2--PSPHP1     Fibroblasts                     9            0.072 
-    ## 13 RP11-208G20.2--PSPHP1     B.cells                         8            0.064 
-    ## 14 RP11-384F7.2--LSAMP       Mesothelial.c…                  7            0.538 
-    ## 15 SNRNP70--ZIK1             HGSOC                           7            0.875 
-    ## 16 RP11-403B2.7--RP11-116P2… HGSOC                           5            0.417 
-    ## 17 RP11-444D3.1--SOX5        Fibroblasts                     5            0.714 
-    ## 18 ZCCHC8--RSRC2             B.cells.memory                  5            0.0168
+    ## # A tibble: 29 × 4
+    ## # Groups:   FusionName [13]
+    ##    FusionName            celltype_final    tot_cells_w_fusion frac_fusion_cells
+    ##    <chr>                 <chr>                          <int>             <dbl>
+    ##  1 ZCCHC8--RSRC2         T.NK.cells                       105            0.354 
+    ##  2 ZCCHC8--RSRC2         Myeloid.cells                     99            0.333 
+    ##  3 RP11-208G20.2--PSPHP1 T.NK.cells                        41            0.295 
+    ##  4 RP11-208G20.2--PSPHP1 Myeloid.cells                     34            0.245 
+    ##  5 ZCCHC8--RSRC2         HGSOC                             30            0.101 
+    ##  6 RP11-208G20.2--PSPHP1 HGSOC                             26            0.187 
+    ##  7 ZCCHC8--RSRC2         Mesothelial.cells                 26            0.0875
+    ##  8 ZCCHC8--RSRC2         Fibroblasts                       19            0.0640
+    ##  9 RP11-208G20.2--PSPHP1 Mesothelial.cells                 18            0.129 
+    ## 10 CBLC--CTC-232P5.1     HGSOC                             14            0.875 
+    ## # ℹ 19 more rows
 
 ``` r
 # identify tumor-enriched fusions:
@@ -789,39 +854,54 @@ left_join(Tum_n_Om_joined_fusions %>% filter(`ctat-LR-fusion.Tum` >= MIN_CELLS &
           by='FusionName') 
 ```
 
-    ##               FusionName    LeftBreakpoint   RightBreakpoint    celltype_final
-    ## 1          ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-        T.NK.cells
-    ## 2          ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-     Myeloid.cells
-    ## 3  RP11-208G20.2--PSPHP1   chr7:55761799:+   chr7:55773181:+        T.NK.cells
-    ## 4  RP11-208G20.2--PSPHP1   chr7:55761799:+   chr7:55773181:+     Myeloid.cells
-    ## 5          ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:- Mesothelial.cells
-    ## 6          ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-       Fibroblasts
-    ## 7  RP11-208G20.2--PSPHP1   chr7:55761799:+   chr7:55773181:+ Mesothelial.cells
-    ## 8  RP11-208G20.2--PSPHP1   chr7:55761799:+   chr7:55773181:+       Fibroblasts
-    ## 9    RP11-384F7.2--LSAMP  chr3:117997182:-  chr3:116444955:- Mesothelial.cells
-    ## 10    RP11-444D3.1--SOX5  chr12:24276141:-  chr12:23896024:-       Fibroblasts
-    ##    ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum ctat-LR-fusion.Om
-    ## 1                 105                   1               1                40
-    ## 2                  99                  NA              NA                19
-    ## 3                  36                  NA              NA                 8
-    ## 4                  28                  NA              NA                 6
-    ## 5                  26                  NA              NA                68
-    ## 6                  19                  NA              NA                17
-    ## 7                  16                  NA              NA                53
-    ## 8                   7                  NA              NA                 2
-    ## 9                   5                  NA               1                19
-    ## 10                  5                  NA              NA                 4
-    ##    FusionInspector.Om STAR-Fusion.Om
-    ## 1                  NA             NA
-    ## 2                  NA             NA
-    ## 3                  NA             NA
-    ## 4                  NA             NA
-    ## 5                   3              1
-    ## 6                   1              1
-    ## 7                  NA             NA
-    ## 8                  NA             NA
-    ## 9                  NA             NA
-    ## 10                 NA             NA
+    ##                    FusionName    LeftBreakpoint   RightBreakpoint
+    ## 1               ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-
+    ## 2               ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-
+    ## 3       RP11-208G20.2--PSPHP1   chr7:55761799:+   chr7:55773181:+
+    ## 4       RP11-208G20.2--PSPHP1   chr7:55761799:+   chr7:55773181:+
+    ## 5               ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-
+    ## 6               ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-
+    ## 7       RP11-208G20.2--PSPHP1   chr7:55761799:+   chr7:55773181:+
+    ## 8       RP11-208G20.2--PSPHP1   chr7:55761798:+   chr7:55772328:+
+    ## 9  RP11-32B5.7--RP11-116P24.2  chr15:21324988:-  chr15:20759979:-
+    ## 10  RP11-32B5.7--RP11-403B2.6  chr15:21324988:-  chr15:20759979:-
+    ## 11      RP11-208G20.2--PSPHP1   chr7:55761799:+   chr7:55773181:+
+    ## 12      RP11-208G20.2--PSPHP1   chr7:55761798:+   chr7:55772328:+
+    ## 13      RP11-208G20.2--PSPHP1   chr7:55761798:+   chr7:55772328:+
+    ## 14        RP11-384F7.2--LSAMP  chr3:117997182:-  chr3:116444955:-
+    ## 15         RP11-444D3.1--SOX5  chr12:24276141:-  chr12:23896024:-
+    ##       celltype_final ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum
+    ## 1         T.NK.cells                105                   1               1
+    ## 2      Myeloid.cells                 99                  NA              NA
+    ## 3         T.NK.cells                 36                  NA              NA
+    ## 4      Myeloid.cells                 28                  NA              NA
+    ## 5  Mesothelial.cells                 26                  NA              NA
+    ## 6        Fibroblasts                 19                  NA              NA
+    ## 7  Mesothelial.cells                 16                  NA              NA
+    ## 8      Myeloid.cells                 11                  NA              NA
+    ## 9         T.NK.cells                  9                  NA              NA
+    ## 10        T.NK.cells                  9                  NA              NA
+    ## 11       Fibroblasts                  7                  NA              NA
+    ## 12 Mesothelial.cells                  5                  NA              NA
+    ## 13        T.NK.cells                  5                  NA              NA
+    ## 14 Mesothelial.cells                  5                  NA               1
+    ## 15       Fibroblasts                  5                  NA              NA
+    ##    ctat-LR-fusion.Om FusionInspector.Om STAR-Fusion.Om
+    ## 1                 40                 NA             NA
+    ## 2                 19                 NA             NA
+    ## 3                  8                 NA             NA
+    ## 4                  6                 NA             NA
+    ## 5                 68                  3              1
+    ## 6                 17                  1              1
+    ## 7                 53                 NA             NA
+    ## 8                  1                 NA             NA
+    ## 9                  6                 NA             NA
+    ## 10                 6                 NA             NA
+    ## 11                 2                 NA             NA
+    ## 12                29                 NA             NA
+    ## 13                 3                 NA             NA
+    ## 14                19                 NA             NA
+    ## 15                 4                 NA             NA
     ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         annots
     ## 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ZCCHC8--RSRC2:{ZCCHC8--RSRC2:{YOSHIHARA_TCGA:BLCA:1|BRCA:2|HNSC:1|KIRC:1|LGG:1,DEEPEST2019:BRCA:2,CESC:1,PAAD:1,HNSC:1,UCEC:1,ESCA:1,KIRC:1,BLCA:1,LGG:1,TumorFusionsNAR2018:UCEC:1.96%|ESCA:1.03%|PAAD:1.02%|KIRC:0.66%|CESC:0.54%|LGG:0.36%|BLCA:0.33%|SKCM:0.30%|HNSC:0.29%|BRCA:0.24%,ATTS:[YOSHIHARA_TCGA,DEEPEST2019,TumorFusionsNAR2018,ChimerSeq,TCGA_StarF2019,CCLE_StarF2019],LOCALITY:[INTRACHROMOSOMAL[chr12:0.00Mb],LOCAL_REARRANGEMENT:-:[2863]],TCGA_StarF2019:TCGA-BRCA-TP:0.197;n=2|TCGA-UCEC-TP:0.694;n=1|TCGA-SKCM-TP:1.149;n=1|TCGA-PAAD-TP:0.775;n=1|TCGA-LGG-TP:0.263;n=1|TCGA-KIRC-TP:0.240;n=1|TCGA-HNSC-TP:0.203;n=1|TCGA-ESCA-TP:0.595;n=1|TCGA-CESC-TP:0.369;n=1|TCGA-BLCA-TP:0.270;n=1,CCLE_StarF2019:HUH6_LIVER},ZCCHC8:{HGNC:zinc finger CCHC-type containing 8,[protein-coding gene]},RSRC2:{HGNC:arginine and serine rich coiled-coil 2,[protein-coding gene]}};;(recip)RSRC2--ZCCHC8:{RSRC2--ZCCHC8:{LOCALITY:[INTRACHROMOSOMAL[chr12:0.00Mb],NEIGHBORS[2863]]},ZCCHC8:{HGNC:zinc finger CCHC-type containing 8,[protein-coding gene]},RSRC2:{HGNC:arginine and serine rich coiled-coil 2,[protein-coding gene]}}
     ## 2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ZCCHC8--RSRC2:{ZCCHC8--RSRC2:{YOSHIHARA_TCGA:BLCA:1|BRCA:2|HNSC:1|KIRC:1|LGG:1,DEEPEST2019:BRCA:2,CESC:1,PAAD:1,HNSC:1,UCEC:1,ESCA:1,KIRC:1,BLCA:1,LGG:1,TumorFusionsNAR2018:UCEC:1.96%|ESCA:1.03%|PAAD:1.02%|KIRC:0.66%|CESC:0.54%|LGG:0.36%|BLCA:0.33%|SKCM:0.30%|HNSC:0.29%|BRCA:0.24%,ATTS:[YOSHIHARA_TCGA,DEEPEST2019,TumorFusionsNAR2018,ChimerSeq,TCGA_StarF2019,CCLE_StarF2019],LOCALITY:[INTRACHROMOSOMAL[chr12:0.00Mb],LOCAL_REARRANGEMENT:-:[2863]],TCGA_StarF2019:TCGA-BRCA-TP:0.197;n=2|TCGA-UCEC-TP:0.694;n=1|TCGA-SKCM-TP:1.149;n=1|TCGA-PAAD-TP:0.775;n=1|TCGA-LGG-TP:0.263;n=1|TCGA-KIRC-TP:0.240;n=1|TCGA-HNSC-TP:0.203;n=1|TCGA-ESCA-TP:0.595;n=1|TCGA-CESC-TP:0.369;n=1|TCGA-BLCA-TP:0.270;n=1,CCLE_StarF2019:HUH6_LIVER},ZCCHC8:{HGNC:zinc finger CCHC-type containing 8,[protein-coding gene]},RSRC2:{HGNC:arginine and serine rich coiled-coil 2,[protein-coding gene]}};;(recip)RSRC2--ZCCHC8:{RSRC2--ZCCHC8:{LOCALITY:[INTRACHROMOSOMAL[chr12:0.00Mb],NEIGHBORS[2863]]},ZCCHC8:{HGNC:zinc finger CCHC-type containing 8,[protein-coding gene]},RSRC2:{HGNC:arginine and serine rich coiled-coil 2,[protein-coding gene]}}
@@ -831,8 +911,13 @@ left_join(Tum_n_Om_joined_fusions %>% filter(`ctat-LR-fusion.Tum` >= MIN_CELLS &
     ## 6                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ZCCHC8--RSRC2:{ZCCHC8--RSRC2:{YOSHIHARA_TCGA:BLCA:1|BRCA:2|HNSC:1|KIRC:1|LGG:1,DEEPEST2019:BRCA:2,CESC:1,PAAD:1,HNSC:1,UCEC:1,ESCA:1,KIRC:1,BLCA:1,LGG:1,TumorFusionsNAR2018:UCEC:1.96%|ESCA:1.03%|PAAD:1.02%|KIRC:0.66%|CESC:0.54%|LGG:0.36%|BLCA:0.33%|SKCM:0.30%|HNSC:0.29%|BRCA:0.24%,ATTS:[YOSHIHARA_TCGA,DEEPEST2019,TumorFusionsNAR2018,ChimerSeq,TCGA_StarF2019,CCLE_StarF2019],LOCALITY:[INTRACHROMOSOMAL[chr12:0.00Mb],LOCAL_REARRANGEMENT:-:[2863]],TCGA_StarF2019:TCGA-BRCA-TP:0.197;n=2|TCGA-UCEC-TP:0.694;n=1|TCGA-SKCM-TP:1.149;n=1|TCGA-PAAD-TP:0.775;n=1|TCGA-LGG-TP:0.263;n=1|TCGA-KIRC-TP:0.240;n=1|TCGA-HNSC-TP:0.203;n=1|TCGA-ESCA-TP:0.595;n=1|TCGA-CESC-TP:0.369;n=1|TCGA-BLCA-TP:0.270;n=1,CCLE_StarF2019:HUH6_LIVER},ZCCHC8:{HGNC:zinc finger CCHC-type containing 8,[protein-coding gene]},RSRC2:{HGNC:arginine and serine rich coiled-coil 2,[protein-coding gene]}};;(recip)RSRC2--ZCCHC8:{RSRC2--ZCCHC8:{LOCALITY:[INTRACHROMOSOMAL[chr12:0.00Mb],NEIGHBORS[2863]]},ZCCHC8:{HGNC:zinc finger CCHC-type containing 8,[protein-coding gene]},RSRC2:{HGNC:arginine and serine rich coiled-coil 2,[protein-coding gene]}}
     ## 7                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
     ## 8                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
-    ## 9                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  RP11-384F7.2--LSAMP:{RP11-384F7.2--LSAMP:{LOCALITY:[INTRACHROMOSOMAL[chr3:0.53Mb]]},LSAMP:{HGNC:limbic system-associated membrane protein,[protein-coding gene]}};;(recip)LSAMP--RP11-384F7.2:{LSAMP--RP11-384F7.2:{LOCALITY:[INTRACHROMOSOMAL[chr3:0.53Mb]]},LSAMP:{HGNC:limbic system-associated membrane protein,[protein-coding gene]}}
-    ## 10 RP11-444D3.1--SOX5:{SOX5:{HGNC:SRY-box 5,[protein-coding gene],ATTS:[SOX5:Oncogene]},RP11-444D3.1--SOX5:{ATTS:[DepMap2023],LOCALITY:[INTRACHROMOSOMAL[chr12:0.26Mb]],DepMap2023:127399_SOFT_TISSUE,8505C_THYROID,A101D_SKIN,A375_SKIN,A673_BONE,AMO1_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,C2BBE1_LARGE_INTESTINE,C32_SKIN,C33A_CERVIX,C8166_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,CA46_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,CAL78_BONE,CAS1_CENTRAL_NERVOUS_SYSTEM,CCFSTTG1_CENTRAL_NERVOUS_SYSTEM,CHLA10_BONE,CHLA99_BONE,CHP126_AUTONOMIC_GANGLIA,CME1_SOFT_TISSUE,COGN278_AUTONOMIC_GANGLIA,COGN305_AUTONOMIC_GANGLIA,COLO783_SKIN,CORL311_LUNG,COV318_OVARY,COV362_OVARY,COV504_OVARY,D425_CENTRAL_NERVOUS_SYSTEM,D458_CENTRAL_NERVOUS_SYSTEM,DAUDI_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,DBTRG05MG_CENTRAL_NERVOUS_SYSTEM,DL40_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,EB1_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,ECC12_STOMACH,FEPD_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,G361_SKIN,GA10_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,GB1_CENTRAL_NERVOUS_SYSTEM,HCC1500_BREAST,HCC33_LUNG,HDLM2_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,HLFA_FIBROBLAST,HS172T_FIBROBLAST,HS255T_FIBROBLAST,HS294T_SKIN,HS618T_FIBROBLAST,HS683_CENTRAL_NERVOUS_SYSTEM,HS695T_SKIN,HS729_SOFT_TISSUE,HS766T_PANCREAS,HS888T_FIBROBLAST,HS895T_FIBROBLAST,HS936T_SKIN,HS939T_SKIN,HT144_SKIN,HUH1_LIVER,HUH7_LIVER,IGR37_SKIN,IGR39_SKIN,IPC298_SKIN,JHH5_LIVER,JHUEM2_ENDOMETRIUM,JURKAT_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,KARPAS422_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,KE37_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,KE39_STOMACH,KELLY_AUTONOMIC_GANGLIA,KIJK_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,KLE_ENDOMETRIUM,KMH2_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,KMS12BM_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,KNS42_CENTRAL_NERVOUS_SYSTEM,KOPN8_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,KS1_CENTRAL_NERVOUS_SYSTEM,KYM1_SOFT_TISSUE,KYSE70_OESOPHAGUS,L540_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,LAN2_AUTONOMIC_GANGLIA,LC1F_LUNG,LN235_CENTRAL_NERVOUS_SYSTEM,LN319_CENTRAL_NERVOUS_SYSTEM,LN340_CENTRAL_NERVOUS_SYSTEM,LN382_CENTRAL_NERVOUS_SYSTEM,LNZ308_CENTRAL_NERVOUS_SYSTEM,LOUCY_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,LOXIMVI_SKIN,MAC2A_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,MALME3M_SKIN,MCC26_SKIN,MDAMB435S_SKIN,MDST8_LARGE_INTESTINE,MEL202_UVEA,MELJUSO_SKIN,MERO25_PLEURA,MJ_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,MOLP2_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,NAMALWA_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,NB1643_AUTONOMIC_GANGLIA,NB1_AUTONOMIC_GANGLIA,NCIH1184_LUNG,NCIH1436_LUNG,NCIH1618_LUNG,NCIH1651_LUNG,NCIH1876_LUNG,NCIH1930_LUNG,NCIH660_PROSTATE,NCIH69_LUNG,NCIH82_LUNG,NCIH841_LUNG,NCIH889_LUNG,NMCG1_CENTRAL_NERVOUS_SYSTEM,NOMO1_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,NUDHL1_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,OCILY3_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,OVK18_OVARY,PEDS005TSUSP_KIDNEY,QGP1_PANCREAS,RAJI_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,RDES_BONE,REC1_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,RVH421_SKIN,SAOS2_BONE,SEKI_SKIN,SF126_CENTRAL_NERVOUS_SYSTEM,SF295_CENTRAL_NERVOUS_SYSTEM,SIMA_AUTONOMIC_GANGLIA,SJSA1_BONE,SKMEL1_SKIN,SKMEL24_SKIN,SKMEL28_SKIN,SKMEL30_SKIN,SKMEL31_SKIN,SKNAS_AUTONOMIC_GANGLIA,SKNDZ_AUTONOMIC_GANGLIA,SNU1214_UPPER_AERODIGESTIVE_TRACT,SNU466_CENTRAL_NERVOUS_SYSTEM,SNU46_UPPER_AERODIGESTIVE_TRACT,SR786_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,SUDHL5_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,SUPM2_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,SUPT1_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,THP1_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,TM31_CENTRAL_NERVOUS_SYSTEM,TTC442_SOFT_TISSUE,TTC709_SOFT_TISSUE,TT_THYROID,U118MG_CENTRAL_NERVOUS_SYSTEM,U251MG_CENTRAL_NERVOUS_SYSTEM,UPCISCC152_UPPER_AERODIGESTIVE_TRACT,UW228_CENTRAL_NERVOUS_SYSTEM,WM115_SKIN,WM1799_SKIN,WM793_SKIN,YAMATO_SOFT_TISSUE,YKG1_CENTRAL_NERVOUS_SYSTEM}};;(recip)SOX5--RP11-444D3.1:{SOX5--RP11-444D3.1:{LOCALITY:[INTRACHROMOSOMAL[chr12:0.26Mb]]},SOX5:{HGNC:SRY-box 5,[protein-coding gene],ATTS:[SOX5:Oncogene]}}
+    ## 9                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              RP11-32B5.7--RP11-116P24.2:{RP11-32B5.7--RP11-116P24.2:{LOCALITY:[INTRACHROMOSOMAL[chr15:0.52Mb]]}};;(recip)RP11-116P24.2--RP11-32B5.7:{RP11-116P24.2--RP11-32B5.7:{LOCALITY:[INTRACHROMOSOMAL[chr15:0.52Mb]]}}
+    ## 10                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <NA>
+    ## 11                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
+    ## 12                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
+    ## 13                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
+    ## 14                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 RP11-384F7.2--LSAMP:{RP11-384F7.2--LSAMP:{LOCALITY:[INTRACHROMOSOMAL[chr3:0.53Mb]]},LSAMP:{HGNC:limbic system-associated membrane protein,[protein-coding gene]}};;(recip)LSAMP--RP11-384F7.2:{LSAMP--RP11-384F7.2:{LOCALITY:[INTRACHROMOSOMAL[chr3:0.53Mb]]},LSAMP:{HGNC:limbic system-associated membrane protein,[protein-coding gene]}}
+    ## 15 RP11-444D3.1--SOX5:{SOX5:{HGNC:SRY-box 5,[protein-coding gene],ATTS:[SOX5:Oncogene]},RP11-444D3.1--SOX5:{ATTS:[DepMap2023],LOCALITY:[INTRACHROMOSOMAL[chr12:0.26Mb]],DepMap2023:127399_SOFT_TISSUE,8505C_THYROID,A101D_SKIN,A375_SKIN,A673_BONE,AMO1_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,C2BBE1_LARGE_INTESTINE,C32_SKIN,C33A_CERVIX,C8166_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,CA46_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,CAL78_BONE,CAS1_CENTRAL_NERVOUS_SYSTEM,CCFSTTG1_CENTRAL_NERVOUS_SYSTEM,CHLA10_BONE,CHLA99_BONE,CHP126_AUTONOMIC_GANGLIA,CME1_SOFT_TISSUE,COGN278_AUTONOMIC_GANGLIA,COGN305_AUTONOMIC_GANGLIA,COLO783_SKIN,CORL311_LUNG,COV318_OVARY,COV362_OVARY,COV504_OVARY,D425_CENTRAL_NERVOUS_SYSTEM,D458_CENTRAL_NERVOUS_SYSTEM,DAUDI_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,DBTRG05MG_CENTRAL_NERVOUS_SYSTEM,DL40_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,EB1_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,ECC12_STOMACH,FEPD_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,G361_SKIN,GA10_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,GB1_CENTRAL_NERVOUS_SYSTEM,HCC1500_BREAST,HCC33_LUNG,HDLM2_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,HLFA_FIBROBLAST,HS172T_FIBROBLAST,HS255T_FIBROBLAST,HS294T_SKIN,HS618T_FIBROBLAST,HS683_CENTRAL_NERVOUS_SYSTEM,HS695T_SKIN,HS729_SOFT_TISSUE,HS766T_PANCREAS,HS888T_FIBROBLAST,HS895T_FIBROBLAST,HS936T_SKIN,HS939T_SKIN,HT144_SKIN,HUH1_LIVER,HUH7_LIVER,IGR37_SKIN,IGR39_SKIN,IPC298_SKIN,JHH5_LIVER,JHUEM2_ENDOMETRIUM,JURKAT_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,KARPAS422_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,KE37_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,KE39_STOMACH,KELLY_AUTONOMIC_GANGLIA,KIJK_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,KLE_ENDOMETRIUM,KMH2_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,KMS12BM_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,KNS42_CENTRAL_NERVOUS_SYSTEM,KOPN8_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,KS1_CENTRAL_NERVOUS_SYSTEM,KYM1_SOFT_TISSUE,KYSE70_OESOPHAGUS,L540_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,LAN2_AUTONOMIC_GANGLIA,LC1F_LUNG,LN235_CENTRAL_NERVOUS_SYSTEM,LN319_CENTRAL_NERVOUS_SYSTEM,LN340_CENTRAL_NERVOUS_SYSTEM,LN382_CENTRAL_NERVOUS_SYSTEM,LNZ308_CENTRAL_NERVOUS_SYSTEM,LOUCY_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,LOXIMVI_SKIN,MAC2A_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,MALME3M_SKIN,MCC26_SKIN,MDAMB435S_SKIN,MDST8_LARGE_INTESTINE,MEL202_UVEA,MELJUSO_SKIN,MERO25_PLEURA,MJ_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,MOLP2_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,NAMALWA_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,NB1643_AUTONOMIC_GANGLIA,NB1_AUTONOMIC_GANGLIA,NCIH1184_LUNG,NCIH1436_LUNG,NCIH1618_LUNG,NCIH1651_LUNG,NCIH1876_LUNG,NCIH1930_LUNG,NCIH660_PROSTATE,NCIH69_LUNG,NCIH82_LUNG,NCIH841_LUNG,NCIH889_LUNG,NMCG1_CENTRAL_NERVOUS_SYSTEM,NOMO1_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,NUDHL1_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,OCILY3_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,OVK18_OVARY,PEDS005TSUSP_KIDNEY,QGP1_PANCREAS,RAJI_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,RDES_BONE,REC1_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,RVH421_SKIN,SAOS2_BONE,SEKI_SKIN,SF126_CENTRAL_NERVOUS_SYSTEM,SF295_CENTRAL_NERVOUS_SYSTEM,SIMA_AUTONOMIC_GANGLIA,SJSA1_BONE,SKMEL1_SKIN,SKMEL24_SKIN,SKMEL28_SKIN,SKMEL30_SKIN,SKMEL31_SKIN,SKNAS_AUTONOMIC_GANGLIA,SKNDZ_AUTONOMIC_GANGLIA,SNU1214_UPPER_AERODIGESTIVE_TRACT,SNU466_CENTRAL_NERVOUS_SYSTEM,SNU46_UPPER_AERODIGESTIVE_TRACT,SR786_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,SUDHL5_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,SUPM2_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,SUPT1_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,THP1_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE,TM31_CENTRAL_NERVOUS_SYSTEM,TTC442_SOFT_TISSUE,TTC709_SOFT_TISSUE,TT_THYROID,U118MG_CENTRAL_NERVOUS_SYSTEM,U251MG_CENTRAL_NERVOUS_SYSTEM,UPCISCC152_UPPER_AERODIGESTIVE_TRACT,UW228_CENTRAL_NERVOUS_SYSTEM,WM115_SKIN,WM1799_SKIN,WM793_SKIN,YAMATO_SOFT_TISSUE,YKG1_CENTRAL_NERVOUS_SYSTEM}};;(recip)SOX5--RP11-444D3.1:{SOX5--RP11-444D3.1:{LOCALITY:[INTRACHROMOSOMAL[chr12:0.26Mb]]},SOX5:{HGNC:SRY-box 5,[protein-coding gene],ATTS:[SOX5:Oncogene]}}
 
 ``` r
 # top cell count 
@@ -844,13 +929,15 @@ left_join(Tum_n_Om_joined_fusions %>% filter(`ctat-LR-fusion.Tum` >= MIN_CELLS &
     select(FusionName, `ctat-LR-fusion.Tum`, annots) %>% unique()
 ```
 
-    ## # A tibble: 4 × 3
-    ##   FusionName            `ctat-LR-fusion.Tum` annots                             
-    ##   <chr>                                <int> <chr>                              
-    ## 1 ZCCHC8--RSRC2                          105 ZCCHC8--RSRC2:{ZCCHC8--RSRC2:{YOSH…
-    ## 2 RP11-208G20.2--PSPHP1                   36 RP11-208G20.2--PSPHP1:{PSPHP1:{HGN…
-    ## 3 RP11-384F7.2--LSAMP                      5 RP11-384F7.2--LSAMP:{RP11-384F7.2-…
-    ## 4 RP11-444D3.1--SOX5                       5 RP11-444D3.1--SOX5:{SOX5:{HGNC:SRY…
+    ## # A tibble: 6 × 3
+    ##   FusionName                 `ctat-LR-fusion.Tum` annots                        
+    ##   <chr>                                     <int> <chr>                         
+    ## 1 ZCCHC8--RSRC2                               105 ZCCHC8--RSRC2:{ZCCHC8--RSRC2:…
+    ## 2 RP11-208G20.2--PSPHP1                        36 RP11-208G20.2--PSPHP1:{PSPHP1…
+    ## 3 RP11-32B5.7--RP11-116P24.2                    9 RP11-32B5.7--RP11-116P24.2:{R…
+    ## 4 RP11-32B5.7--RP11-403B2.6                     9 <NA>                          
+    ## 5 RP11-384F7.2--LSAMP                           5 RP11-384F7.2--LSAMP:{RP11-384…
+    ## 6 RP11-444D3.1--SOX5                            5 RP11-444D3.1--SOX5:{SOX5:{HGN…
 
 ZCCHC8–RSRC2 is found in both tumor and normal here, but reported as
 tumor-relevant in several studies according to the fusion annotation.
@@ -970,33 +1057,35 @@ report_on_fusion("RP11-208G20.2--PSPHP1")
     ## 2  RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+     Myeloid.cells
     ## 3  RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+             HGSOC
     ## 4  RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+ Mesothelial.cells
-    ## 5  RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+           B.cells
-    ## 6  RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+       Fibroblasts
-    ## 7  RP11-208G20.2--PSPHP1 chr7:55761798:+ chr7:55772328:+             HGSOC
-    ## 8  RP11-208G20.2--PSPHP1 chr7:55761798:+ chr7:55772328:+     Myeloid.cells
-    ## 9  RP11-208G20.2--PSPHP1 chr7:55761798:+ chr7:55772328:+       Fibroblasts
+    ## 5  RP11-208G20.2--PSPHP1 chr7:55761798:+ chr7:55772328:+             HGSOC
+    ## 6  RP11-208G20.2--PSPHP1 chr7:55761798:+ chr7:55772328:+     Myeloid.cells
+    ## 7  RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+           B.cells
+    ## 8  RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+       Fibroblasts
+    ## 9  RP11-208G20.2--PSPHP1 chr7:55761798:+ chr7:55772328:+ Mesothelial.cells
     ## 10 RP11-208G20.2--PSPHP1 chr7:55761798:+ chr7:55772328:+        T.NK.cells
-    ## 11 RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+         uncertain
+    ## 11 RP11-208G20.2--PSPHP1 chr7:55761798:+ chr7:55772328:+       Fibroblasts
     ## 12 RP11-208G20.2--PSPHP1 chr7:55761798:+ chr7:55772328:+         uncertain
-    ## 13 RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+    B.cells.memory
-    ## 14 RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+     B.cells.naive
-    ## 15 RP11-208G20.2--PSPHP1 chr7:55761798:+ chr7:55772328:+ Mesothelial.cells
+    ## 13 RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+         uncertain
+    ## 14 RP11-208G20.2--PSPHP1 chr7:55761798:+ chr7:55772328:+           B.cells
+    ## 15 RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+    B.cells.memory
+    ## 16 RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+     B.cells.naive
     ##    ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum ctat-LR-fusion.Om
     ## 1                  36                  NA              NA                 8
     ## 2                  28                  NA              NA                 6
     ## 3                  20                  NA              NA                NA
     ## 4                  16                  NA              NA                53
-    ## 5                   8                  NA              NA                NA
-    ## 6                   7                  NA              NA                 2
-    ## 7                   4                  NA              NA                NA
-    ## 8                   3                  NA              NA                 1
-    ## 9                   2                  NA              NA                NA
-    ## 10                  2                  NA              NA                 1
-    ## 11                  2                  NA              NA                NA
-    ## 12                  1                  NA              NA                NA
-    ## 13                  1                  NA              NA                NA
+    ## 5                  12                  NA              NA                NA
+    ## 6                  11                  NA              NA                 1
+    ## 7                   8                  NA              NA                NA
+    ## 8                   7                  NA              NA                 2
+    ## 9                   5                  NA              NA                29
+    ## 10                  5                  NA              NA                 3
+    ## 11                  3                  NA              NA                 2
+    ## 12                  2                  NA              NA                NA
+    ## 13                  2                  NA              NA                NA
     ## 14                  1                  NA              NA                NA
-    ## 15                 NA                  NA              NA                 7
+    ## 15                  1                  NA              NA                NA
+    ## 16                  1                  NA              NA                NA
     ##    FusionInspector.Om STAR-Fusion.Om
     ## 1                  NA             NA
     ## 2                  NA             NA
@@ -1013,6 +1102,7 @@ report_on_fusion("RP11-208G20.2--PSPHP1")
     ## 13                 NA             NA
     ## 14                 NA             NA
     ## 15                 NA             NA
+    ## 16                 NA             NA
     ##                                                                                                                                                                                                                                                                                                                             annots
     ## 1  RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
     ## 2  RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
@@ -1029,34 +1119,35 @@ report_on_fusion("RP11-208G20.2--PSPHP1")
     ## 13 RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
     ## 14 RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
     ## 15 RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
+    ## 16 RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
     ## # A tibble: 1 × 4
     ##   FusionName            tot_cells_w_fusion frac_tot_cells type 
     ##   <chr>                              <int>          <dbl> <chr>
-    ## 1 RP11-208G20.2--PSPHP1                 74          0.178 Om   
+    ## 1 RP11-208G20.2--PSPHP1                 85          0.205 Om   
     ## # A tibble: 4 × 5
     ## # Groups:   FusionName [1]
     ##   FusionName           celltype_final tot_cells_w_fusion frac_fusion_cells type 
     ##   <chr>                <chr>                       <int>             <dbl> <chr>
-    ## 1 RP11-208G20.2--PSPH… Mesothelial.c…                 56            0.757  Om   
-    ## 2 RP11-208G20.2--PSPH… T.NK.cells                      9            0.122  Om   
-    ## 3 RP11-208G20.2--PSPH… Myeloid.cells                   7            0.0946 Om   
-    ## 4 RP11-208G20.2--PSPH… Fibroblasts                     2            0.0270 Om   
+    ## 1 RP11-208G20.2--PSPH… Mesothelial.c…                 63            0.741  Om   
+    ## 2 RP11-208G20.2--PSPH… T.NK.cells                     11            0.129  Om   
+    ## 3 RP11-208G20.2--PSPH… Myeloid.cells                   7            0.0824 Om   
+    ## 4 RP11-208G20.2--PSPH… Fibroblasts                     4            0.0471 Om   
     ## # A tibble: 1 × 4
     ##   FusionName            tot_cells_w_fusion frac_tot_cells type 
     ##   <chr>                              <int>          <dbl> <chr>
-    ## 1 RP11-208G20.2--PSPHP1                125          0.193 Tum  
+    ## 1 RP11-208G20.2--PSPHP1                139          0.215 Tum  
     ## # A tibble: 8 × 5
     ## # Groups:   FusionName [1]
     ##   FusionName           celltype_final tot_cells_w_fusion frac_fusion_cells type 
     ##   <chr>                <chr>                       <int>             <dbl> <chr>
-    ## 1 RP11-208G20.2--PSPH… T.NK.cells                     38             0.304 Tum  
-    ## 2 RP11-208G20.2--PSPH… Myeloid.cells                  30             0.24  Tum  
-    ## 3 RP11-208G20.2--PSPH… HGSOC                          22             0.176 Tum  
-    ## 4 RP11-208G20.2--PSPH… Mesothelial.c…                 16             0.128 Tum  
-    ## 5 RP11-208G20.2--PSPH… Fibroblasts                     9             0.072 Tum  
-    ## 6 RP11-208G20.2--PSPH… B.cells                         8             0.064 Tum  
-    ## 7 RP11-208G20.2--PSPH… B.cells.memory                  1             0.008 Tum  
-    ## 8 RP11-208G20.2--PSPH… B.cells.naive                   1             0.008 Tum
+    ## 1 RP11-208G20.2--PSPH… T.NK.cells                     41           0.295   Tum  
+    ## 2 RP11-208G20.2--PSPH… Myeloid.cells                  34           0.245   Tum  
+    ## 3 RP11-208G20.2--PSPH… HGSOC                          26           0.187   Tum  
+    ## 4 RP11-208G20.2--PSPH… Mesothelial.c…                 18           0.129   Tum  
+    ## 5 RP11-208G20.2--PSPH… Fibroblasts                    10           0.0719  Tum  
+    ## 6 RP11-208G20.2--PSPH… B.cells                         8           0.0576  Tum  
+    ## 7 RP11-208G20.2--PSPH… B.cells.memory                  1           0.00719 Tum  
+    ## 8 RP11-208G20.2--PSPH… B.cells.naive                   1           0.00719 Tum
 
 ## RP11-384F7.2–LSAMP
 

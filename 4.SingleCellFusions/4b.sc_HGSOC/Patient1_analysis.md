@@ -18,33 +18,33 @@ Om_data = read.table("data/Patient1_Om.Dondi_overian_CTAT_fusions.filtered_cells
 nrow(Om_data)
 ```
 
-    ## [1] 2527
+    ## [1] 3597
 
 ``` r
 Om_data %>% head()
 ```
 
-    ##       FusionName   LeftBreakpoint  RightBreakpoint     cell_barcode
-    ## 1   AAK1--NSFL1C  chr2:69520840:-  chr20:1443919:- TGCGGGTTGTGAACAA
-    ## 2   AAK1--NSFL1C  chr2:69520840:-  chr20:1443919:- TGCGGGTTGTGAACAA
-    ## 3    AATF--CDC27 chr17:36953907:+ chr17:47154786:- TTACATCACCACGCCA
-    ## 4   AATF--RNF181 chr17:37056856:+  chr2:85596857:+ CACAAAGCTTTCAGGT
-    ## 5   ABCB7--TBL1X  chrX:75156105:-   chrX:9684043:+ TACATCTTGTGTGCTA
-    ## 6 ABCD3--ZCCHC11  chr1:94418588:+  chr1:52446667:- AAAGGTTGAACTGTGT
-    ##            umi                        read_name         method         barcodes
-    ## 1 GATGATACCATA m64156_210212_094634/5494165/ccs ctat-LR-fusion TTGTTCACAACCCGCA
-    ## 2 ATGATACCCATA m64156_210212_094634/2470599/ccs ctat-LR-fusion TTGTTCACAACCCGCA
-    ## 3 GGAAAACACTCA m64156_210218_095630/2164025/ccs ctat-LR-fusion TGGCGTGGTGATGTAA
-    ## 4 TAGATGGGCGAG m64156_210218_095630/9427948/ccs ctat-LR-fusion ACCTGAAAGCTTTGTG
-    ## 5 CGGAAGGTTCAT m64156_210218_095630/1147487/ccs ctat-LR-fusion TAGCACACAAGATGTA
-    ## 6 ACTCAAAGCGCC m64156_210218_095630/6810021/ccs ctat-LR-fusion ACACAGTTCAACCTTT
-    ##      celltype_final     UMAP_1    UMAP_2     dataset
-    ## 1 Mesothelial.cells -3.1328955 -6.413856 Patient1_Om
-    ## 2 Mesothelial.cells -3.1328955 -6.413856 Patient1_Om
-    ## 3 Mesothelial.cells -2.6065259 -6.884776 Patient1_Om
-    ## 4 Mesothelial.cells -2.6343203 -8.152050 Patient1_Om
-    ## 5 Mesothelial.cells -3.9997020 -8.107354 Patient1_Om
-    ## 6 Mesothelial.cells -0.4981933 -7.227113 Patient1_Om
+    ##     FusionName   LeftBreakpoint  RightBreakpoint     cell_barcode          umi
+    ## 1 AAK1--NSFL1C  chr2:69520840:-  chr20:1443919:- TGCGGGTTGTGAACAA GATGATACCATA
+    ## 2 AAK1--NSFL1C  chr2:69520840:-  chr20:1443919:- TGCGGGTTGTGAACAA ATGATACCCATA
+    ## 3 AAMDC--SAMD9 chr11:77842531:+  chr7:93116011:- TATGGCATGTTGTGTG GAGGTCTGAATA
+    ## 4  AATF--CDC27 chr17:36953907:+ chr17:47154786:- TTACATCACCACGCCA GGAAAACACTCA
+    ## 5 AATF--RNF181 chr17:37056856:+  chr2:85596857:+ CACAAAGCTTTCAGGT TAGATGGGCGAG
+    ## 6 ABCA9--TEAD3 chr17:69027091:-  chr6:35478291:- GCTTTGAGATGTGAAA CGGAGAAGAGAA
+    ##                           read_name         method         barcodes
+    ## 1  m64156_210212_094634/5494165/ccs ctat-LR-fusion TTGTTCACAACCCGCA
+    ## 2  m64156_210212_094634/2470599/ccs ctat-LR-fusion TTGTTCACAACCCGCA
+    ## 3 m64156_210218_095630/13535503/ccs ctat-LR-fusion CACACAACATGCCATA
+    ## 4  m64156_210218_095630/2164025/ccs ctat-LR-fusion TGGCGTGGTGATGTAA
+    ## 5  m64156_210218_095630/9427948/ccs ctat-LR-fusion ACCTGAAAGCTTTGTG
+    ## 6 m64156_210212_094634/13110180/ccs ctat-LR-fusion TTTCACATCTCAAAGC
+    ##      celltype_final    UMAP_1    UMAP_2     dataset
+    ## 1 Mesothelial.cells -3.132895 -6.413856 Patient1_Om
+    ## 2 Mesothelial.cells -3.132895 -6.413856 Patient1_Om
+    ## 3 Mesothelial.cells -4.305784 -9.273861 Patient1_Om
+    ## 4 Mesothelial.cells -2.606526 -6.884776 Patient1_Om
+    ## 5 Mesothelial.cells -2.634320 -8.152050 Patient1_Om
+    ## 6       Fibroblasts -6.761996  5.146760 Patient1_Om
 
 ``` r
 # since starF and FI were run at max sensitivity, lets restrict fusions to those identified by ctat-LRF
@@ -56,7 +56,7 @@ Om_data = Om_data %>% filter(FusionName %in% Om_ctat_LRF_fusion_genes)
 nrow(Om_data)
 ```
 
-    ## [1] 2166
+    ## [1] 3239
 
 ``` r
 fusion_annots = read.table("data/Patient1.fusion_annots.gz", header=T, sep="\t", stringsAsFactors = F)
@@ -84,7 +84,7 @@ Om_data = Om_data %>% filter(barcodes %in% Om_umap_data$barcodes)
 nrow(Om_data)
 ```
 
-    ## [1] 2166
+    ## [1] 3239
 
 ``` r
 Om_cell_counts = Om_data %>% select(FusionName, cell_barcode) %>% unique() %>% 
@@ -96,18 +96,22 @@ Om_cell_counts = Om_data %>% select(FusionName, cell_barcode) %>% unique() %>%
 Om_cell_counts %>% filter(tot_cells_w_fusion >= MIN_CELLS)
 ```
 
-    ## # A tibble: 9 × 3
-    ##   FusionName                  tot_cells_w_fusion frac_tot_cells
-    ##   <chr>                                    <int>          <dbl>
-    ## 1 RP11-208G20.2--PSPHP1                      147        0.247  
-    ## 2 RP11-384F7.2--LSAMP                         34        0.0572 
-    ## 3 RP11-444D3.1--SOX5                           8        0.0135 
-    ## 4 RP11-96H19.1--RP11-446N19.1                  8        0.0135 
-    ## 5 SAMD5--RP11-307P5.1                          8        0.0135 
-    ## 6 RP1-34H18.1--NAV3                            7        0.0118 
-    ## 7 RP1-34H18.1--RP11-781A6.1                    6        0.0101 
-    ## 8 CHD2--LINC01578                              5        0.00842
-    ## 9 YWHAE--CRK                                   5        0.00842
+    ## # A tibble: 13 × 3
+    ##    FusionName                  tot_cells_w_fusion frac_tot_cells
+    ##    <chr>                                    <int>          <dbl>
+    ##  1 RP11-208G20.2--PSPHP1                      169        0.285  
+    ##  2 RP11-384F7.2--LSAMP                         34        0.0572 
+    ##  3 RP5-940J5.9--GAPDH                          17        0.0286 
+    ##  4 UPK3B--CH17-264B6.4                         11        0.0185 
+    ##  5 AC007563.5--IGFBP5                           9        0.0152 
+    ##  6 HOOK2--JUNB                                  9        0.0152 
+    ##  7 RP11-444D3.1--SOX5                           8        0.0135 
+    ##  8 RP11-96H19.1--RP11-446N19.1                  8        0.0135 
+    ##  9 SAMD5--RP11-307P5.1                          8        0.0135 
+    ## 10 RP1-34H18.1--NAV3                            7        0.0118 
+    ## 11 RP1-34H18.1--RP11-781A6.1                    6        0.0101 
+    ## 12 CHD2--LINC01578                              5        0.00842
+    ## 13 YWHAE--CRK                                   5        0.00842
 
 ``` r
 # Om sample counts of cells with fusions according to fusion detection method.
@@ -120,18 +124,18 @@ Om_cell_counts_by_method %>% head()
 
     ##              FusionName   LeftBreakpoint  RightBreakpoint          method
     ## 1 RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+  ctat-LR-fusion
-    ## 2   RP11-384F7.2--LSAMP chr3:117997182:- chr3:116444955:-  ctat-LR-fusion
-    ## 3 RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+  ctat-LR-fusion
-    ## 4 RP11-208G20.2--PSPHP1  chr7:55761798:+  chr7:55772328:+  ctat-LR-fusion
-    ## 5            YAF2--RYBP chr12:42238155:-  chr3:72446621:- FusionInspector
-    ## 6 RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+  ctat-LR-fusion
+    ## 2 RP11-208G20.2--PSPHP1  chr7:55761798:+  chr7:55772328:+  ctat-LR-fusion
+    ## 3   RP11-384F7.2--LSAMP chr3:117997182:- chr3:116444955:-  ctat-LR-fusion
+    ## 4 RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+  ctat-LR-fusion
+    ## 5    RP5-940J5.9--GAPDH  chr12:6538153:-  chr12:6538135:+ FusionInspector
+    ## 6            YAF2--RYBP chr12:42238155:-  chr3:72446621:- FusionInspector
     ##      celltype_final     dataset cell_counts
     ## 1 Mesothelial.cells Patient1_Om         118
-    ## 2 Mesothelial.cells Patient1_Om          30
-    ## 3       Fibroblasts Patient1_Om          17
-    ## 4 Mesothelial.cells Patient1_Om          11
+    ## 2 Mesothelial.cells Patient1_Om          34
+    ## 3 Mesothelial.cells Patient1_Om          30
+    ## 4       Fibroblasts Patient1_Om          17
     ## 5 Mesothelial.cells Patient1_Om           9
-    ## 6        T.NK.cells Patient1_Om           8
+    ## 6 Mesothelial.cells Patient1_Om           9
 
 ``` r
 # reorganizing cell counts by method for comparing across methods and corresponding types of reads (long or short)
@@ -143,26 +147,30 @@ Om_cell_counts_by_method_spread = Om_cell_counts_by_method %>% select(FusionName
 Om_cell_counts_by_method_spread %>% filter(`ctat-LR-fusion` >= MIN_CELLS)
 ```
 
-    ##                    FusionName   LeftBreakpoint  RightBreakpoint
-    ## 1       RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+
-    ## 2         RP11-384F7.2--LSAMP chr3:117997182:- chr3:116444955:-
-    ## 3       RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+
-    ## 4       RP11-208G20.2--PSPHP1  chr7:55761798:+  chr7:55772328:+
-    ## 5       RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+
-    ## 6 RP11-96H19.1--RP11-446N19.1 chr12:46387972:+ chr12:46652390:+
-    ## 7         SAMD5--RP11-307P5.1 chr6:147509387:+ chr6:147947472:+
-    ## 8           RP1-34H18.1--NAV3 chr12:77326622:+ chr12:77940319:+
-    ## 9                  YWHAE--CRK  chr17:1400047:-  chr17:1437155:-
-    ##      celltype_final ctat-LR-fusion FusionInspector STAR-Fusion
-    ## 1 Mesothelial.cells            118              NA          NA
-    ## 2 Mesothelial.cells             30              NA          NA
-    ## 3       Fibroblasts             17              NA          NA
-    ## 4 Mesothelial.cells             11              NA          NA
-    ## 5        T.NK.cells              8              NA          NA
-    ## 6 Mesothelial.cells              8              NA          NA
-    ## 7 Mesothelial.cells              6              NA          NA
-    ## 8 Mesothelial.cells              5              NA          NA
-    ## 9 Mesothelial.cells              5              NA          NA
+    ##                     FusionName   LeftBreakpoint  RightBreakpoint
+    ## 1        RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+
+    ## 2        RP11-208G20.2--PSPHP1  chr7:55761798:+  chr7:55772328:+
+    ## 3          RP11-384F7.2--LSAMP chr3:117997182:- chr3:116444955:-
+    ## 4        RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+
+    ## 5        RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+
+    ## 6  RP11-96H19.1--RP11-446N19.1 chr12:46387972:+ chr12:46652390:+
+    ## 7        RP11-208G20.2--PSPHP1  chr7:55761798:+  chr7:55772328:+
+    ## 8          SAMD5--RP11-307P5.1 chr6:147509387:+ chr6:147947472:+
+    ## 9           AC007563.5--IGFBP5 chr2:216695273:+ chr2:216681126:-
+    ## 10           RP1-34H18.1--NAV3 chr12:77326622:+ chr12:77940319:+
+    ## 11                  YWHAE--CRK  chr17:1400047:-  chr17:1437155:-
+    ##       celltype_final ctat-LR-fusion FusionInspector STAR-Fusion
+    ## 1  Mesothelial.cells            118              NA          NA
+    ## 2  Mesothelial.cells             34              NA          NA
+    ## 3  Mesothelial.cells             30              NA          NA
+    ## 4        Fibroblasts             17              NA          NA
+    ## 5         T.NK.cells              8              NA          NA
+    ## 6  Mesothelial.cells              8              NA          NA
+    ## 7        Fibroblasts              7              NA          NA
+    ## 8  Mesothelial.cells              6              NA          NA
+    ## 9        Fibroblasts              5              NA          NA
+    ## 10 Mesothelial.cells              5              NA          NA
+    ## 11 Mesothelial.cells              5              NA          NA
 
 ``` r
 # determine how each fusion is distributed across different cell types.
@@ -175,19 +183,23 @@ Om_fusion_frac_cell_types = Om_data %>% select(FusionName, barcodes, celltype_fi
 Om_fusion_frac_cell_types %>% filter(tot_cells_w_fusion >= MIN_CELLS) %>% arrange(FusionName, desc(tot_cells_w_fusion))
 ```
 
-    ## # A tibble: 9 × 4
-    ## # Groups:   FusionName [7]
-    ##   FusionName                 celltype_final tot_cells_w_fusion frac_fusion_cells
-    ##   <chr>                      <chr>                       <int>             <dbl>
-    ## 1 RP1-34H18.1--NAV3          Mesothelial.c…                  5            0.714 
-    ## 2 RP11-208G20.2--PSPHP1      Mesothelial.c…                121            0.823 
-    ## 3 RP11-208G20.2--PSPHP1      Fibroblasts                    17            0.116 
-    ## 4 RP11-208G20.2--PSPHP1      T.NK.cells                      8            0.0544
-    ## 5 RP11-384F7.2--LSAMP        Mesothelial.c…                 30            0.882 
-    ## 6 RP11-444D3.1--SOX5         Fibroblasts                     6            0.75  
-    ## 7 RP11-96H19.1--RP11-446N19… Mesothelial.c…                  8            1     
-    ## 8 SAMD5--RP11-307P5.1        Mesothelial.c…                  8            1     
-    ## 9 YWHAE--CRK                 Mesothelial.c…                  5            1
+    ## # A tibble: 13 × 4
+    ## # Groups:   FusionName [11]
+    ##    FusionName                celltype_final tot_cells_w_fusion frac_fusion_cells
+    ##    <chr>                     <chr>                       <int>             <dbl>
+    ##  1 AC007563.5--IGFBP5        Fibroblasts                     6            0.667 
+    ##  2 HOOK2--JUNB               Fibroblasts                     5            0.556 
+    ##  3 RP1-34H18.1--NAV3         Mesothelial.c…                  5            0.714 
+    ##  4 RP11-208G20.2--PSPHP1     Mesothelial.c…                133            0.787 
+    ##  5 RP11-208G20.2--PSPHP1     Fibroblasts                    23            0.136 
+    ##  6 RP11-208G20.2--PSPHP1     T.NK.cells                     10            0.0592
+    ##  7 RP11-384F7.2--LSAMP       Mesothelial.c…                 30            0.882 
+    ##  8 RP11-444D3.1--SOX5        Fibroblasts                     6            0.75  
+    ##  9 RP11-96H19.1--RP11-446N1… Mesothelial.c…                  8            1     
+    ## 10 RP5-940J5.9--GAPDH        Mesothelial.c…                 13            0.765 
+    ## 11 SAMD5--RP11-307P5.1       Mesothelial.c…                  8            1     
+    ## 12 UPK3B--CH17-264B6.4       Mesothelial.c…                 11            1     
+    ## 13 YWHAE--CRK                Mesothelial.c…                  5            1
 
 # P1 Tumor
 
@@ -201,33 +213,33 @@ Tum_data = read.table("data/Patient1_Tum.Dondi_overian_CTAT_fusions.filtered_cel
 nrow(Tum_data)
 ```
 
-    ## [1] 1930
+    ## [1] 2313
 
 ``` r
 Tum_data %>% head()
 ```
 
-    ##          FusionName   LeftBreakpoint  RightBreakpoint     cell_barcode
-    ## 1       ABCF1--CHD2  chr6:30571560:+ chr15:92978234:+ GATAGGCGATATCCGA
-    ## 2  ABHD17A--MIF-AS1  chr19:1877636:- chr22:23894839:- CCTGATGCTCTGGCTG
-    ## 3      ABHD6--SEC62  chr3:58294376:+ chr3:169966815:+ CTGTAAGACTGAAATG
-    ## 4       ABL1--ACBD3 chr9:130714455:+ chr1:226166000:- TGAGCAACTGCAAGCA
-    ## 5       ABL1--ACBD3 chr9:130714455:+ chr1:226166000:- TGAGCAACTGCAAGCA
-    ## 6 AC006014.7--ACOX3  chr7:75485823:-   chr4:8373601:- ACAAGCTACCGTGCGT
+    ##         FusionName   LeftBreakpoint  RightBreakpoint     cell_barcode
+    ## 1     ABCC10--ILF3  chr6:43436131:+ chr19:10681219:+ GTTCTCTCTCCTCCTA
+    ## 2      ABCF1--CHD2  chr6:30571560:+ chr15:92978234:+ GATAGGCGATATCCGA
+    ## 3 ABHD17A--MIF-AS1  chr19:1877636:- chr22:23894839:- CCTGATGCTCTGGCTG
+    ## 4     ABHD6--SEC62  chr3:58294376:+ chr3:169966815:+ CTGTAAGACTGAAATG
+    ## 5      ABL1--ACBD3 chr9:130714455:+ chr1:226166000:- TGAGCAACTGCAAGCA
+    ## 6      ABL1--ACBD3 chr9:130714455:+ chr1:226166000:- TGAGCAACTGCAAGCA
     ##            umi                                 read_name         method
-    ## 1 ACATAGTAAAGA        m64141e_210223_151117/16579686/ccs ctat-LR-fusion
-    ## 2 GTAGATACCTCT NS500318:931:HGT2FBGXG:1:11208:1944:11134    STAR-Fusion
-    ## 3 GTCTCAGGTGAG NS500318:931:HGT2FBGXG:3:22510:3460:16164    STAR-Fusion
-    ## 4 GAAGGGTTAGGA          m64141e_210226_034232/644555/ccs ctat-LR-fusion
-    ## 5 AAGAGGTTAGGA         m64141e_210205_142336/8944271/ccs ctat-LR-fusion
-    ## 6 CCGGATCGCCGG        m64141e_210226_034232/16568032/ccs ctat-LR-fusion
-    ##           barcodes    celltype_final     UMAP_1    UMAP_2      dataset
-    ## 1 TCGGATATCGCCTATC Mesothelial.cells   4.803859 12.414766 Patient1_Tum
-    ## 2 CAGCCAGAGCATCAGG             HGSOC   8.051662  5.157959 Patient1_Tum
-    ## 3 CATTTCAGTCTTACAG             HGSOC   5.731084 14.108007 Patient1_Tum
-    ## 4 TGCTTGCAGTTGCTCA     Myeloid.cells -14.128127  3.693997 Patient1_Tum
-    ## 5 TGCTTGCAGTTGCTCA     Myeloid.cells -14.128127  3.693997 Patient1_Tum
-    ## 6 ACGCACGGTAGCTTGT        T.NK.cells  -1.632042 -6.182518 Patient1_Tum
+    ## 1 AAGGAGTGGCAG        m64141e_210223_151117/15718988/ccs ctat-LR-fusion
+    ## 2 ACATAGTAAAGA         m64141e_210226_034232/5252116/ccs ctat-LR-fusion
+    ## 3 GTAGATACCTCT NS500318:931:HGT2FBGXG:1:11208:1944:11134    STAR-Fusion
+    ## 4 GTCTCAGGTGAG NS500318:931:HGT2FBGXG:3:22510:3460:16164    STAR-Fusion
+    ## 5 GAAGGGTTAGGA        m64141e_210223_151117/13338330/ccs ctat-LR-fusion
+    ## 6 AAGAGGTTAGGA         m64141e_210205_142336/8944271/ccs ctat-LR-fusion
+    ##           barcodes    celltype_final      UMAP_1    UMAP_2      dataset
+    ## 1 TAGGAGGAGAGAGAAC        T.NK.cells  -0.4992825 -7.437235 Patient1_Tum
+    ## 2 TCGGATATCGCCTATC Mesothelial.cells   4.8038591 12.414766 Patient1_Tum
+    ## 3 CAGCCAGAGCATCAGG             HGSOC   8.0516616  5.157959 Patient1_Tum
+    ## 4 CATTTCAGTCTTACAG             HGSOC   5.7310840 14.108007 Patient1_Tum
+    ## 5 TGCTTGCAGTTGCTCA     Myeloid.cells -14.1281270  3.693997 Patient1_Tum
+    ## 6 TGCTTGCAGTTGCTCA     Myeloid.cells -14.1281270  3.693997 Patient1_Tum
 
 ``` r
 # since starF and FI were run at max sensitivity, lets restrict fusions to those identified by ctat-LRF
@@ -239,7 +251,7 @@ Tum_data = Tum_data %>% filter(FusionName %in% Tum_ctat_LRF_fusion_genes)
 nrow(Tum_data)
 ```
 
-    ## [1] 971
+    ## [1] 1337
 
 ``` r
 Tum_umap_data = read.table("data/Patient1_Tum_UMAPcoords.txt.gz", header=T, sep=",") %>%
@@ -293,16 +305,19 @@ left_join(Tum_cell_counts %>% filter(tot_cells_w_fusion >= MIN_CELLS),
           by='FusionName')
 ```
 
-    ## # A tibble: 7 × 4
-    ##   FusionName            tot_cells_w_fusion frac_tot_cells annots                
-    ##   <chr>                              <int>          <dbl> <chr>                 
-    ## 1 RP11-208G20.2--PSPHP1                117         0.235  RP11-208G20.2--PSPHP1…
-    ## 2 SMG7--CH507-513H4.1                   26         0.0523 SMG7--CH507-513H4.1:{…
-    ## 3 RP11-384F7.2--LSAMP                   20         0.0402 RP11-384F7.2--LSAMP:{…
-    ## 4 RP11-444D3.1--SOX5                    11         0.0221 RP11-444D3.1--SOX5:{S…
-    ## 5 RP1-34H18.1--NAV3                      7         0.0141 RP1-34H18.1--NAV3:{RP…
-    ## 6 RAPGEF5--AGMO                          6         0.0121 RAPGEF5--AGMO:{AGMO:{…
-    ## 7 NTN1--CDRT15P2                         5         0.0101 NTN1--CDRT15P2:{NTN1:…
+    ## # A tibble: 10 × 4
+    ##    FusionName                 tot_cells_w_fusion frac_tot_cells annots          
+    ##    <chr>                                   <int>          <dbl> <chr>           
+    ##  1 SMG7--CH507-513H4.1                        26         0.0523 SMG7--CH507-513…
+    ##  2 RP11-384F7.2--LSAMP                        20         0.0402 RP11-384F7.2--L…
+    ##  3 RP11-444D3.1--SOX5                         11         0.0221 RP11-444D3.1--S…
+    ##  4 RP1-34H18.1--NAV3                           7         0.0141 RP1-34H18.1--NA…
+    ##  5 RP11-33B1.1--RP11-208G20.3                  7         0.0141 <NA>            
+    ##  6 VIM-AS1--VIM                                7         0.0141 <NA>            
+    ##  7 PHYKPL--HNRNPAB                             6         0.0121 <NA>            
+    ##  8 RAPGEF5--AGMO                               6         0.0121 RAPGEF5--AGMO:{…
+    ##  9 GS1-279B7.2--GNG4                           5         0.0101 <NA>            
+    ## 10 NTN1--CDRT15P2                              5         0.0101 NTN1--CDRT15P2:…
 
 ``` r
 # read in cell counts by method
@@ -313,20 +328,20 @@ Tum_cell_counts_by_method = read.table("data/Patient1_Tum.Dondi_overian_CTAT_fus
 Tum_cell_counts_by_method %>% head()
 ```
 
-    ##              FusionName   LeftBreakpoint  RightBreakpoint          method
-    ## 1      FAU--RP1-269O5.3 chr11:65121500:- chrX:111930935:+ FusionInspector
-    ## 2      FAU--RP1-269O5.3 chr11:65121500:- chrX:111930935:+ FusionInspector
-    ## 3 RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+  ctat-LR-fusion
-    ## 4      FAU--RP1-269O5.3 chr11:65121500:- chrX:111930935:+ FusionInspector
-    ## 5      FAU--RP1-269O5.3 chr11:65121500:- chrX:111930935:+ FusionInspector
-    ## 6   SMG7--CH507-513H4.1 chr1:183472649:+  chr21:8222961:+  ctat-LR-fusion
+    ##            FusionName   LeftBreakpoint  RightBreakpoint          method
+    ## 1    FAU--RP1-269O5.3 chr11:65121500:- chrX:111930935:+ FusionInspector
+    ## 2    FAU--RP1-269O5.3 chr11:65121500:- chrX:111930935:+ FusionInspector
+    ## 3    FAU--RP1-269O5.3 chr11:65121500:- chrX:111930935:+ FusionInspector
+    ## 4    FAU--RP1-269O5.3 chr11:65121500:- chrX:111930935:+ FusionInspector
+    ## 5 SMG7--CH507-513H4.1 chr1:183472649:+  chr21:8222961:+  ctat-LR-fusion
+    ## 6    FAU--RP1-269O5.3 chr11:65121500:- chrX:111930935:+ FusionInspector
     ##      celltype_final      dataset cell_counts
     ## 1        T.NK.cells Patient1_Tum          94
     ## 2             HGSOC Patient1_Tum          70
-    ## 3             HGSOC Patient1_Tum          46
-    ## 4 Mesothelial.cells Patient1_Tum          31
-    ## 5     Myeloid.cells Patient1_Tum          31
-    ## 6             HGSOC Patient1_Tum          26
+    ## 3 Mesothelial.cells Patient1_Tum          31
+    ## 4     Myeloid.cells Patient1_Tum          31
+    ## 5             HGSOC Patient1_Tum          26
+    ## 6       Fibroblasts Patient1_Tum          25
 
 ``` r
 # organize fusion cell counts by method to compare methods
@@ -339,36 +354,24 @@ Tum_cell_counts_by_method_spread = Tum_cell_counts_by_method %>% select(FusionNa
 Tum_cell_counts_by_method_spread %>% filter(`ctat-LR-fusion` >= MIN_CELLS)
 ```
 
-    ##               FusionName   LeftBreakpoint  RightBreakpoint    celltype_final
-    ## 1  RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+             HGSOC
-    ## 2    SMG7--CH507-513H4.1 chr1:183472649:+  chr21:8222961:+             HGSOC
-    ## 3  RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+ Mesothelial.cells
-    ## 4  RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+        T.NK.cells
-    ## 5  RP11-208G20.2--PSPHP1  chr7:55761798:+  chr7:55772328:+             HGSOC
-    ## 6    RP11-384F7.2--LSAMP chr3:117997182:- chr3:116444955:-             HGSOC
-    ## 7    RP11-384F7.2--LSAMP chr3:117997182:- chr3:116444955:- Mesothelial.cells
-    ## 8  RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+           B.cells
-    ## 9  RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+     Myeloid.cells
-    ## 10    RP11-444D3.1--SOX5 chr12:24276141:- chr12:23896024:-             HGSOC
-    ## 11        NTN1--CDRT15P2  chr17:9023391:+ chr17:15765108:+             HGSOC
-    ## 12         RAPGEF5--AGMO  chr7:22125604:-  chr7:15201359:-             HGSOC
-    ## 13     RP1-34H18.1--NAV3 chr12:77326622:+ chr12:77940319:+       Fibroblasts
-    ## 14 RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+       Fibroblasts
-    ##    ctat-LR-fusion FusionInspector STAR-Fusion
-    ## 1              46              NA          NA
-    ## 2              26              NA          NA
-    ## 3              22              NA          NA
-    ## 4              17              NA          NA
-    ## 5              11              NA          NA
-    ## 6              10              NA          NA
-    ## 7               9              NA          NA
-    ## 8               8              NA          NA
-    ## 9               8              NA          NA
-    ## 10              7              NA          NA
-    ## 11              5              NA          NA
-    ## 12              5               3           1
-    ## 13              5              NA          NA
-    ## 14              5              NA          NA
+    ##            FusionName   LeftBreakpoint  RightBreakpoint    celltype_final
+    ## 1 SMG7--CH507-513H4.1 chr1:183472649:+  chr21:8222961:+             HGSOC
+    ## 2 RP11-384F7.2--LSAMP chr3:117997182:- chr3:116444955:-             HGSOC
+    ## 3 RP11-384F7.2--LSAMP chr3:117997182:- chr3:116444955:- Mesothelial.cells
+    ## 4  RP11-444D3.1--SOX5 chr12:24276141:- chr12:23896024:-             HGSOC
+    ## 5   GS1-279B7.2--GNG4 chr1:235654008:- chr1:235583848:-             HGSOC
+    ## 6      NTN1--CDRT15P2  chr17:9023391:+ chr17:15765108:+             HGSOC
+    ## 7       RAPGEF5--AGMO  chr7:22125604:-  chr7:15201359:-             HGSOC
+    ## 8   RP1-34H18.1--NAV3 chr12:77326622:+ chr12:77940319:+       Fibroblasts
+    ##   ctat-LR-fusion FusionInspector STAR-Fusion
+    ## 1             26              NA          NA
+    ## 2             10              NA          NA
+    ## 3              9              NA          NA
+    ## 4              7              NA          NA
+    ## 5              5              NA          NA
+    ## 6              5              NA          NA
+    ## 7              5               3           1
+    ## 8              5              NA          NA
 
 # compare P1 Tum and Om fusions
 
@@ -382,20 +385,20 @@ Tum_n_Om_joined_fusions = full_join(Tum_cell_counts_by_method_spread, Om_cell_co
 Tum_n_Om_joined_fusions %>% head()
 ```
 
-    ##              FusionName   LeftBreakpoint  RightBreakpoint    celltype_final
-    ## 1 RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+             HGSOC
-    ## 2   SMG7--CH507-513H4.1 chr1:183472649:+  chr21:8222961:+             HGSOC
-    ## 3 RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+ Mesothelial.cells
-    ## 4 RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+        T.NK.cells
-    ## 5 RP11-208G20.2--PSPHP1  chr7:55761798:+  chr7:55772328:+             HGSOC
-    ## 6   RP11-384F7.2--LSAMP chr3:117997182:- chr3:116444955:-             HGSOC
+    ##            FusionName   LeftBreakpoint  RightBreakpoint    celltype_final
+    ## 1 SMG7--CH507-513H4.1 chr1:183472649:+  chr21:8222961:+             HGSOC
+    ## 2 RP11-384F7.2--LSAMP chr3:117997182:- chr3:116444955:-             HGSOC
+    ## 3 RP11-384F7.2--LSAMP chr3:117997182:- chr3:116444955:- Mesothelial.cells
+    ## 4  RP11-444D3.1--SOX5 chr12:24276141:- chr12:23896024:-             HGSOC
+    ## 5   GS1-279B7.2--GNG4 chr1:235654008:- chr1:235583848:-             HGSOC
+    ## 6      NTN1--CDRT15P2  chr17:9023391:+ chr17:15765108:+             HGSOC
     ##   ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum ctat-LR-fusion.Om
-    ## 1                 46                  NA              NA                NA
-    ## 2                 26                  NA              NA                NA
-    ## 3                 22                  NA              NA               118
-    ## 4                 17                  NA              NA                 8
-    ## 5                 11                  NA              NA                NA
-    ## 6                 10                  NA              NA                NA
+    ## 1                 26                  NA              NA                NA
+    ## 2                 10                  NA              NA                NA
+    ## 3                  9                  NA              NA                30
+    ## 4                  7                  NA              NA                NA
+    ## 5                  5                  NA              NA                NA
+    ## 6                  5                  NA              NA                NA
     ##   FusionInspector.Om STAR-Fusion.Om
     ## 1                 NA             NA
     ## 2                 NA             NA
@@ -412,36 +415,24 @@ Tum_n_Om_joined_fusions %>% select(FusionName, LeftBreakpoint, RightBreakpoint, 
     filter(`ctat-LR-fusion.Tum` >= MIN_CELLS)
 ```
 
-    ##               FusionName   LeftBreakpoint  RightBreakpoint    celltype_final
-    ## 1  RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+             HGSOC
-    ## 2    SMG7--CH507-513H4.1 chr1:183472649:+  chr21:8222961:+             HGSOC
-    ## 3  RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+ Mesothelial.cells
-    ## 4  RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+        T.NK.cells
-    ## 5  RP11-208G20.2--PSPHP1  chr7:55761798:+  chr7:55772328:+             HGSOC
-    ## 6    RP11-384F7.2--LSAMP chr3:117997182:- chr3:116444955:-             HGSOC
-    ## 7    RP11-384F7.2--LSAMP chr3:117997182:- chr3:116444955:- Mesothelial.cells
-    ## 8  RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+           B.cells
-    ## 9  RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+     Myeloid.cells
-    ## 10    RP11-444D3.1--SOX5 chr12:24276141:- chr12:23896024:-             HGSOC
-    ## 11        NTN1--CDRT15P2  chr17:9023391:+ chr17:15765108:+             HGSOC
-    ## 12         RAPGEF5--AGMO  chr7:22125604:-  chr7:15201359:-             HGSOC
-    ## 13     RP1-34H18.1--NAV3 chr12:77326622:+ chr12:77940319:+       Fibroblasts
-    ## 14 RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+       Fibroblasts
-    ##    ctat-LR-fusion.Tum ctat-LR-fusion.Om
-    ## 1                  46                NA
-    ## 2                  26                NA
-    ## 3                  22               118
-    ## 4                  17                 8
-    ## 5                  11                NA
-    ## 6                  10                NA
-    ## 7                   9                30
-    ## 8                   8                NA
-    ## 9                   8                 1
-    ## 10                  7                NA
-    ## 11                  5                NA
-    ## 12                  5                NA
-    ## 13                  5                 2
-    ## 14                  5                17
+    ##            FusionName   LeftBreakpoint  RightBreakpoint    celltype_final
+    ## 1 SMG7--CH507-513H4.1 chr1:183472649:+  chr21:8222961:+             HGSOC
+    ## 2 RP11-384F7.2--LSAMP chr3:117997182:- chr3:116444955:-             HGSOC
+    ## 3 RP11-384F7.2--LSAMP chr3:117997182:- chr3:116444955:- Mesothelial.cells
+    ## 4  RP11-444D3.1--SOX5 chr12:24276141:- chr12:23896024:-             HGSOC
+    ## 5   GS1-279B7.2--GNG4 chr1:235654008:- chr1:235583848:-             HGSOC
+    ## 6      NTN1--CDRT15P2  chr17:9023391:+ chr17:15765108:+             HGSOC
+    ## 7       RAPGEF5--AGMO  chr7:22125604:-  chr7:15201359:-             HGSOC
+    ## 8   RP1-34H18.1--NAV3 chr12:77326622:+ chr12:77940319:+       Fibroblasts
+    ##   ctat-LR-fusion.Tum ctat-LR-fusion.Om
+    ## 1                 26                NA
+    ## 2                 10                NA
+    ## 3                  9                30
+    ## 4                  7                NA
+    ## 5                  5                NA
+    ## 6                  5                NA
+    ## 7                  5                NA
+    ## 8                  5                 2
 
 ``` r
 # examine distribution of fusion calls according to cell types
@@ -455,15 +446,15 @@ Tum_fusion_frac_cell_types %>% head()
 ```
 
     ## # A tibble: 6 × 4
-    ## # Groups:   FusionName [3]
-    ##   FusionName            celltype_final    tot_cells_w_fusion frac_fusion_cells
-    ##   <chr>                 <chr>                          <int>             <dbl>
-    ## 1 RP11-208G20.2--PSPHP1 HGSOC                             49             0.419
-    ## 2 SMG7--CH507-513H4.1   HGSOC                             26             1    
-    ## 3 RP11-208G20.2--PSPHP1 Mesothelial.cells                 23             0.197
-    ## 4 RP11-208G20.2--PSPHP1 T.NK.cells                        17             0.145
-    ## 5 RP11-384F7.2--LSAMP   HGSOC                             11             0.55 
-    ## 6 RP11-384F7.2--LSAMP   Mesothelial.cells                  9             0.45
+    ## # Groups:   FusionName [5]
+    ##   FusionName          celltype_final    tot_cells_w_fusion frac_fusion_cells
+    ##   <chr>               <chr>                          <int>             <dbl>
+    ## 1 SMG7--CH507-513H4.1 HGSOC                             26             1    
+    ## 2 RP11-384F7.2--LSAMP HGSOC                             11             0.55 
+    ## 3 RP11-384F7.2--LSAMP Mesothelial.cells                  9             0.45 
+    ## 4 RP11-444D3.1--SOX5  HGSOC                              7             0.636
+    ## 5 RAPGEF5--AGMO       HGSOC                              6             1    
+    ## 6 GS1-279B7.2--GNG4   HGSOC                              5             1
 
 ``` r
 # identify tumor-enriched fusions:
@@ -485,13 +476,14 @@ write.table(left_join(fusions_of_interest, fusion_annots), file="Patient1_Tum.fu
 fusions_of_interest
 ```
 
-    ## # A tibble: 3 × 4
-    ## # Groups:   FusionName [3]
+    ## # A tibble: 4 × 4
+    ## # Groups:   FusionName [4]
     ##   FusionName          celltype_final tot_cells_w_fusion frac_fusion_cells
     ##   <chr>               <chr>                       <int>             <dbl>
     ## 1 SMG7--CH507-513H4.1 HGSOC                          26                 1
     ## 2 RAPGEF5--AGMO       HGSOC                           6                 1
-    ## 3 NTN1--CDRT15P2      HGSOC                           5                 1
+    ## 3 GS1-279B7.2--GNG4   HGSOC                           5                 1
+    ## 4 NTN1--CDRT15P2      HGSOC                           5                 1
 
 only 3 fusions of interest, each with at least 5 cells, and found
 entirely within the tumor cell fraction
@@ -502,13 +494,14 @@ entirely within the tumor cell fraction
 left_join(fusions_of_interest, Om_fusion_frac_cell_types, by='FusionName', suffix=c('.Tum', '.Om'))
 ```
 
-    ## # A tibble: 3 × 7
-    ## # Groups:   FusionName [3]
+    ## # A tibble: 4 × 7
+    ## # Groups:   FusionName [4]
     ##   FusionName     celltype_final.Tum tot_cells_w_fusion.Tum frac_fusion_cells.Tum
     ##   <chr>          <chr>                               <int>                 <dbl>
     ## 1 SMG7--CH507-5… HGSOC                                  26                     1
     ## 2 RAPGEF5--AGMO  HGSOC                                   6                     1
-    ## 3 NTN1--CDRT15P2 HGSOC                                   5                     1
+    ## 3 GS1-279B7.2--… HGSOC                                   5                     1
+    ## 4 NTN1--CDRT15P2 HGSOC                                   5                     1
     ## # ℹ 3 more variables: celltype_final.Om <chr>, tot_cells_w_fusion.Om <int>,
     ## #   frac_fusion_cells.Om <dbl>
 
@@ -534,13 +527,14 @@ fusions_of_interest = left_join(fusions_of_interest, fusion_annots)
 fusions_of_interest
 ```
 
-    ## # A tibble: 3 × 10
-    ## # Groups:   FusionName [3]
+    ## # A tibble: 4 × 10
+    ## # Groups:   FusionName [4]
     ##   FusionName  celltype_final tot_cells_w_fusion frac_fusion_cells LeftBreakpoint
     ##   <chr>       <chr>                       <int>             <dbl> <chr>         
     ## 1 SMG7--CH50… HGSOC                          26                 1 chr1:18347264…
     ## 2 RAPGEF5--A… HGSOC                           6                 1 chr7:22125604…
-    ## 3 NTN1--CDRT… HGSOC                           5                 1 chr17:9023391…
+    ## 3 GS1-279B7.… HGSOC                           5                 1 chr1:23565400…
+    ## 4 NTN1--CDRT… HGSOC                           5                 1 chr17:9023391…
     ## # ℹ 5 more variables: RightBreakpoint <chr>, `ctat-LR-fusion` <int>,
     ## #   FusionInspector <int>, `STAR-Fusion` <int>, annots <chr>
 
@@ -583,7 +577,7 @@ for (fusion in  fusions_of_interest$FusionName) {
 }
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-24-2.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-24-3.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-24-2.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-24-3.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-24-4.png)<!-- -->
 
 ``` r
 pdf("Patient1_Tum.fusions_of_interest.pdf")
@@ -606,13 +600,14 @@ fusion_of_interest_cell_counts = Tum_data %>% filter(FusionName %in%  fusions_of
 fusion_of_interest_cell_counts %>% spread(key=method, value=cell_counts) %>% arrange(desc(`ctat-LR-fusion`))
 ```
 
-    ## # A tibble: 3 × 4
-    ## # Groups:   FusionName [3]
+    ## # A tibble: 4 × 4
+    ## # Groups:   FusionName [4]
     ##   FusionName          `ctat-LR-fusion` FusionInspector `STAR-Fusion`
     ##   <chr>                          <int>           <int>         <int>
     ## 1 SMG7--CH507-513H4.1               26              NA            NA
-    ## 2 NTN1--CDRT15P2                     5              NA            NA
-    ## 3 RAPGEF5--AGMO                      5               3             1
+    ## 2 GS1-279B7.2--GNG4                  5              NA            NA
+    ## 3 NTN1--CDRT15P2                     5              NA            NA
+    ## 4 RAPGEF5--AGMO                      5               3             1
 
 ``` r
 fusion_of_interest_cell_counts  %>%
@@ -638,16 +633,17 @@ tumor_cell_counts_by_methods = Tum_data %>% filter(FusionName %in%  fusions_of_i
 tumor_cell_counts_by_methods 
 ```
 
-    ## # A tibble: 6 × 3
-    ## # Groups:   FusionName [3]
+    ## # A tibble: 7 × 3
+    ## # Groups:   FusionName [4]
     ##   FusionName          methods                                        n
     ##   <chr>               <chr>                                      <int>
-    ## 1 NTN1--CDRT15P2      ctat-LR-fusion                                 5
-    ## 2 RAPGEF5--AGMO       FusionInspector                                1
-    ## 3 RAPGEF5--AGMO       FusionInspector,STAR-Fusion,ctat-LR-fusion     1
-    ## 4 RAPGEF5--AGMO       FusionInspector,ctat-LR-fusion                 1
-    ## 5 RAPGEF5--AGMO       ctat-LR-fusion                                 3
-    ## 6 SMG7--CH507-513H4.1 ctat-LR-fusion                                26
+    ## 1 GS1-279B7.2--GNG4   ctat-LR-fusion                                 5
+    ## 2 NTN1--CDRT15P2      ctat-LR-fusion                                 5
+    ## 3 RAPGEF5--AGMO       FusionInspector                                1
+    ## 4 RAPGEF5--AGMO       FusionInspector,STAR-Fusion,ctat-LR-fusion     1
+    ## 5 RAPGEF5--AGMO       FusionInspector,ctat-LR-fusion                 1
+    ## 6 RAPGEF5--AGMO       ctat-LR-fusion                                 3
+    ## 7 SMG7--CH507-513H4.1 ctat-LR-fusion                                26
 
 For RAPGEF5::AGMO, half (3/6) of the cells were detected only by long
 reads, and 1/6 exclusively by short reads.
@@ -667,6 +663,10 @@ p
 ```
 
 ![](Patient1_analysis_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->
+
+``` r
+ggsave(p, file="HGSOC_Patient1_umap.svg", width=7, height=5)
+```
 
 ``` r
 tumor_cell_counts_by_methods  %>% filter(FusionName == "SMG7--CH507-513H4.1")
@@ -722,7 +722,7 @@ for (fusion in  fusions_of_interest$FusionName) {
 }
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-33-1.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-33-2.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-33-3.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-34-1.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-34-2.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-34-3.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-34-4.png)<!-- -->
 
 The SMG7 and RAPGEF5–AGMO fusions appear in different tumor subclusters.
 
@@ -737,34 +737,18 @@ left_join(Tum_n_Om_joined_fusions %>% filter(`ctat-LR-fusion.Tum` >= MIN_CELLS &
 
     ## Joining with `by = join_by(FusionName)`
 
-    ##              FusionName   LeftBreakpoint  RightBreakpoint    celltype_final
-    ## 1 RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+ Mesothelial.cells
-    ## 2 RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+        T.NK.cells
-    ## 3   RP11-384F7.2--LSAMP chr3:117997182:- chr3:116444955:- Mesothelial.cells
-    ## 4 RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+     Myeloid.cells
-    ## 5     RP1-34H18.1--NAV3 chr12:77326622:+ chr12:77940319:+       Fibroblasts
-    ## 6 RP11-208G20.2--PSPHP1  chr7:55761799:+  chr7:55773181:+       Fibroblasts
+    ##            FusionName   LeftBreakpoint  RightBreakpoint    celltype_final
+    ## 1 RP11-384F7.2--LSAMP chr3:117997182:- chr3:116444955:- Mesothelial.cells
+    ## 2   RP1-34H18.1--NAV3 chr12:77326622:+ chr12:77940319:+       Fibroblasts
     ##   ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum ctat-LR-fusion.Om
-    ## 1                 22                  NA              NA               118
-    ## 2                 17                  NA              NA                 8
-    ## 3                  9                  NA              NA                30
-    ## 4                  8                  NA              NA                 1
-    ## 5                  5                  NA              NA                 2
-    ## 6                  5                  NA              NA                17
+    ## 1                  9                  NA              NA                30
+    ## 2                  5                  NA              NA                 2
     ##   FusionInspector.Om STAR-Fusion.Om
     ## 1                 NA             NA
     ## 2                 NA             NA
-    ## 3                 NA             NA
-    ## 4                 NA             NA
-    ## 5                 NA             NA
-    ## 6                 NA             NA
     ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       annots
-    ## 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
-    ## 2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
-    ## 3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                RP11-384F7.2--LSAMP:{RP11-384F7.2--LSAMP:{LOCALITY:[INTRACHROMOSOMAL[chr3:0.53Mb]]},LSAMP:{HGNC:limbic system-associated membrane protein,[protein-coding gene]}};;(recip)LSAMP--RP11-384F7.2:{LSAMP--RP11-384F7.2:{LOCALITY:[INTRACHROMOSOMAL[chr3:0.53Mb]]},LSAMP:{HGNC:limbic system-associated membrane protein,[protein-coding gene]}}
-    ## 4                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
-    ## 5 RP1-34H18.1--NAV3:{RP1-34H18.1--NAV3:{ATTS:[DepMap2023],LOCALITY:[INTRACHROMOSOMAL[chr12:0.26Mb]],DepMap2023:C32_SKIN,COLO320_LARGE_INTESTINE,COLO783_SKIN,DKMG_CENTRAL_NERVOUS_SYSTEM,DL_SOFT_TISSUE,DMS79_LUNG,G361_SKIN,GCIY_STOMACH,HS688AT_FIBROBLAST,HS936T_SKIN,HS939T_SKIN,HUH28_BILIARY_TRACT,KD_SOFT_TISSUE,KPMRTRY_SOFT_TISSUE,MALME3M_SKIN,MDAMB157_BREAST,NCIH1341_LUNG,NCIH1694_LUNG,NCIH2227_LUNG,NCIH446_LUNG,RVH421_SKIN,SKMEL1_SKIN,SKMEL5_SKIN,SKNSH_AUTONOMIC_GANGLIA,SKUT1_SOFT_TISSUE,SNU1105_CENTRAL_NERVOUS_SYSTEM,SNU182_LIVER,SNU398_LIVER,SNU407_LARGE_INTESTINE,SNU475_LIVER,TTC642_SOFT_TISSUE,UW228_CENTRAL_NERVOUS_SYSTEM,WM1799_SKIN},NAV3:{HGNC:neuron navigator 3,[protein-coding gene]}};;(recip)NAV3--RP1-34H18.1:{NAV3--RP1-34H18.1:{LOCALITY:[INTRACHROMOSOMAL[chr12:0.26Mb]]},NAV3:{HGNC:neuron navigator 3,[protein-coding gene]}}
-    ## 6                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
+    ## 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                RP11-384F7.2--LSAMP:{RP11-384F7.2--LSAMP:{LOCALITY:[INTRACHROMOSOMAL[chr3:0.53Mb]]},LSAMP:{HGNC:limbic system-associated membrane protein,[protein-coding gene]}};;(recip)LSAMP--RP11-384F7.2:{LSAMP--RP11-384F7.2:{LOCALITY:[INTRACHROMOSOMAL[chr3:0.53Mb]]},LSAMP:{HGNC:limbic system-associated membrane protein,[protein-coding gene]}}
+    ## 2 RP1-34H18.1--NAV3:{RP1-34H18.1--NAV3:{ATTS:[DepMap2023],LOCALITY:[INTRACHROMOSOMAL[chr12:0.26Mb]],DepMap2023:C32_SKIN,COLO320_LARGE_INTESTINE,COLO783_SKIN,DKMG_CENTRAL_NERVOUS_SYSTEM,DL_SOFT_TISSUE,DMS79_LUNG,G361_SKIN,GCIY_STOMACH,HS688AT_FIBROBLAST,HS936T_SKIN,HS939T_SKIN,HUH28_BILIARY_TRACT,KD_SOFT_TISSUE,KPMRTRY_SOFT_TISSUE,MALME3M_SKIN,MDAMB157_BREAST,NCIH1341_LUNG,NCIH1694_LUNG,NCIH2227_LUNG,NCIH446_LUNG,RVH421_SKIN,SKMEL1_SKIN,SKMEL5_SKIN,SKNSH_AUTONOMIC_GANGLIA,SKUT1_SOFT_TISSUE,SNU1105_CENTRAL_NERVOUS_SYSTEM,SNU182_LIVER,SNU398_LIVER,SNU407_LARGE_INTESTINE,SNU475_LIVER,TTC642_SOFT_TISSUE,UW228_CENTRAL_NERVOUS_SYSTEM,WM1799_SKIN},NAV3:{HGNC:neuron navigator 3,[protein-coding gene]}};;(recip)NAV3--RP1-34H18.1:{NAV3--RP1-34H18.1:{LOCALITY:[INTRACHROMOSOMAL[chr12:0.26Mb]]},NAV3:{HGNC:neuron navigator 3,[protein-coding gene]}}
 
 ``` r
 left_join(Tum_n_Om_joined_fusions %>% filter(`ctat-LR-fusion.Tum` >= MIN_CELLS & `ctat-LR-fusion.Om` > 0),
@@ -774,14 +758,12 @@ left_join(Tum_n_Om_joined_fusions %>% filter(`ctat-LR-fusion.Tum` >= MIN_CELLS &
 
     ## Joining with `by = join_by(FusionName)`
 
-    ##              FusionName
-    ## 1 RP11-208G20.2--PSPHP1
-    ## 3   RP11-384F7.2--LSAMP
-    ## 5     RP1-34H18.1--NAV3
+    ##            FusionName
+    ## 1 RP11-384F7.2--LSAMP
+    ## 2   RP1-34H18.1--NAV3
     ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       annots
-    ## 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
-    ## 3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                RP11-384F7.2--LSAMP:{RP11-384F7.2--LSAMP:{LOCALITY:[INTRACHROMOSOMAL[chr3:0.53Mb]]},LSAMP:{HGNC:limbic system-associated membrane protein,[protein-coding gene]}};;(recip)LSAMP--RP11-384F7.2:{LSAMP--RP11-384F7.2:{LOCALITY:[INTRACHROMOSOMAL[chr3:0.53Mb]]},LSAMP:{HGNC:limbic system-associated membrane protein,[protein-coding gene]}}
-    ## 5 RP1-34H18.1--NAV3:{RP1-34H18.1--NAV3:{ATTS:[DepMap2023],LOCALITY:[INTRACHROMOSOMAL[chr12:0.26Mb]],DepMap2023:C32_SKIN,COLO320_LARGE_INTESTINE,COLO783_SKIN,DKMG_CENTRAL_NERVOUS_SYSTEM,DL_SOFT_TISSUE,DMS79_LUNG,G361_SKIN,GCIY_STOMACH,HS688AT_FIBROBLAST,HS936T_SKIN,HS939T_SKIN,HUH28_BILIARY_TRACT,KD_SOFT_TISSUE,KPMRTRY_SOFT_TISSUE,MALME3M_SKIN,MDAMB157_BREAST,NCIH1341_LUNG,NCIH1694_LUNG,NCIH2227_LUNG,NCIH446_LUNG,RVH421_SKIN,SKMEL1_SKIN,SKMEL5_SKIN,SKNSH_AUTONOMIC_GANGLIA,SKUT1_SOFT_TISSUE,SNU1105_CENTRAL_NERVOUS_SYSTEM,SNU182_LIVER,SNU398_LIVER,SNU407_LARGE_INTESTINE,SNU475_LIVER,TTC642_SOFT_TISSUE,UW228_CENTRAL_NERVOUS_SYSTEM,WM1799_SKIN},NAV3:{HGNC:neuron navigator 3,[protein-coding gene]}};;(recip)NAV3--RP1-34H18.1:{NAV3--RP1-34H18.1:{LOCALITY:[INTRACHROMOSOMAL[chr12:0.26Mb]]},NAV3:{HGNC:neuron navigator 3,[protein-coding gene]}}
+    ## 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                RP11-384F7.2--LSAMP:{RP11-384F7.2--LSAMP:{LOCALITY:[INTRACHROMOSOMAL[chr3:0.53Mb]]},LSAMP:{HGNC:limbic system-associated membrane protein,[protein-coding gene]}};;(recip)LSAMP--RP11-384F7.2:{LSAMP--RP11-384F7.2:{LOCALITY:[INTRACHROMOSOMAL[chr3:0.53Mb]]},LSAMP:{HGNC:limbic system-associated membrane protein,[protein-coding gene]}}
+    ## 2 RP1-34H18.1--NAV3:{RP1-34H18.1--NAV3:{ATTS:[DepMap2023],LOCALITY:[INTRACHROMOSOMAL[chr12:0.26Mb]],DepMap2023:C32_SKIN,COLO320_LARGE_INTESTINE,COLO783_SKIN,DKMG_CENTRAL_NERVOUS_SYSTEM,DL_SOFT_TISSUE,DMS79_LUNG,G361_SKIN,GCIY_STOMACH,HS688AT_FIBROBLAST,HS936T_SKIN,HS939T_SKIN,HUH28_BILIARY_TRACT,KD_SOFT_TISSUE,KPMRTRY_SOFT_TISSUE,MALME3M_SKIN,MDAMB157_BREAST,NCIH1341_LUNG,NCIH1694_LUNG,NCIH2227_LUNG,NCIH446_LUNG,RVH421_SKIN,SKMEL1_SKIN,SKMEL5_SKIN,SKNSH_AUTONOMIC_GANGLIA,SKUT1_SOFT_TISSUE,SNU1105_CENTRAL_NERVOUS_SYSTEM,SNU182_LIVER,SNU398_LIVER,SNU407_LARGE_INTESTINE,SNU475_LIVER,TTC642_SOFT_TISSUE,UW228_CENTRAL_NERVOUS_SYSTEM,WM1799_SKIN},NAV3:{HGNC:neuron navigator 3,[protein-coding gene]}};;(recip)NAV3--RP1-34H18.1:{NAV3--RP1-34H18.1:{LOCALITY:[INTRACHROMOSOMAL[chr12:0.26Mb]]},NAV3:{HGNC:neuron navigator 3,[protein-coding gene]}}
 
 ``` r
 # top celltype count only for each
@@ -793,12 +775,11 @@ left_join(Tum_n_Om_joined_fusions %>% filter(`ctat-LR-fusion.Tum` >= MIN_CELLS &
     select(FusionName, `ctat-LR-fusion.Tum`, celltype_final, annots) %>% unique()
 ```
 
-    ## # A tibble: 3 × 4
-    ##   FusionName            `ctat-LR-fusion.Tum` celltype_final    annots           
-    ##   <chr>                                <int> <chr>             <chr>            
-    ## 1 RP11-208G20.2--PSPHP1                   22 Mesothelial.cells RP11-208G20.2--P…
-    ## 2 RP11-384F7.2--LSAMP                      9 Mesothelial.cells RP11-384F7.2--LS…
-    ## 3 RP1-34H18.1--NAV3                        5 Fibroblasts       RP1-34H18.1--NAV…
+    ## # A tibble: 2 × 4
+    ##   FusionName          `ctat-LR-fusion.Tum` celltype_final    annots             
+    ##   <chr>                              <int> <chr>             <chr>              
+    ## 1 RP11-384F7.2--LSAMP                    9 Mesothelial.cells RP11-384F7.2--LSAM…
+    ## 2 RP1-34H18.1--NAV3                      5 Fibroblasts       RP1-34H18.1--NAV3:…
 
 ``` r
 report_on_fusion = function(fusion_name) {
@@ -817,97 +798,105 @@ report_on_fusion = function(fusion_name) {
 }
 ```
 
+## GS1-279B7.2–GNG4
+
+``` r
+report_on_fusion("GS1-279B7.2--GNG4")
+```
+
+    ##          FusionName   LeftBreakpoint  RightBreakpoint celltype_final
+    ## 1 GS1-279B7.2--GNG4 chr1:235654008:- chr1:235583848:-          HGSOC
+    ##   ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum ctat-LR-fusion.Om
+    ## 1                  5                  NA              NA                NA
+    ##   FusionInspector.Om STAR-Fusion.Om annots
+    ## 1                 NA             NA   <NA>
+    ## # A tibble: 0 × 4
+    ## # ℹ 4 variables: FusionName <chr>, tot_cells_w_fusion <int>,
+    ## #   frac_tot_cells <dbl>, type <chr>
+    ## # A tibble: 0 × 5
+    ## # Groups:   FusionName [0]
+    ## # ℹ 5 variables: FusionName <chr>, celltype_final <chr>,
+    ## #   tot_cells_w_fusion <int>, frac_fusion_cells <dbl>, type <chr>
+    ## # A tibble: 1 × 4
+    ##   FusionName        tot_cells_w_fusion frac_tot_cells type 
+    ##   <chr>                          <int>          <dbl> <chr>
+    ## 1 GS1-279B7.2--GNG4                  5         0.0101 Tum  
+    ## # A tibble: 1 × 5
+    ## # Groups:   FusionName [1]
+    ##   FusionName        celltype_final tot_cells_w_fusion frac_fusion_cells type 
+    ##   <chr>             <chr>                       <int>             <dbl> <chr>
+    ## 1 GS1-279B7.2--GNG4 HGSOC                           5                 1 Tum
+
+``` r
+# GS1-279B7.2--GNG4 INTRACHROMOSOMAL[chr1:50.23Mb]
+```
+
 ## RP11-208G20.2–PSPHP1
 
 ``` r
 report_on_fusion("RP11-208G20.2--PSPHP1")
 ```
 
-    ##               FusionName  LeftBreakpoint RightBreakpoint    celltype_final
-    ## 1  RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+             HGSOC
-    ## 2  RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+ Mesothelial.cells
-    ## 3  RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+        T.NK.cells
-    ## 4  RP11-208G20.2--PSPHP1 chr7:55761798:+ chr7:55772328:+             HGSOC
-    ## 5  RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+           B.cells
-    ## 6  RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+     Myeloid.cells
-    ## 7  RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+       Fibroblasts
-    ## 8  RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+        Mast.cells
-    ## 9  RP11-208G20.2--PSPHP1 chr7:55761798:+ chr7:55772328:+ Mesothelial.cells
-    ## 10 RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+ Endothelial.cells
-    ## 11 RP11-208G20.2--PSPHP1 chr7:55761798:+ chr7:55772328:+           B.cells
-    ## 12 RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+         Monocytes
-    ## 13 RP11-208G20.2--PSPHP1 chr7:55761798:+ chr7:55772328:+       Fibroblasts
-    ##    ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum ctat-LR-fusion.Om
-    ## 1                  46                  NA              NA                NA
-    ## 2                  22                  NA              NA               118
-    ## 3                  17                  NA              NA                 8
-    ## 4                  11                  NA              NA                NA
-    ## 5                   8                  NA              NA                NA
-    ## 6                   8                  NA              NA                 1
-    ## 7                   5                  NA              NA                17
-    ## 8                   4                  NA              NA                NA
-    ## 9                   3                  NA              NA                11
-    ## 10                  2                  NA              NA                NA
-    ## 11                  1                  NA              NA                NA
-    ## 12                  1                  NA              NA                NA
-    ## 13                 NA                  NA              NA                 1
-    ##    FusionInspector.Om STAR-Fusion.Om
-    ## 1                  NA             NA
-    ## 2                  NA             NA
-    ## 3                  NA             NA
-    ## 4                  NA             NA
-    ## 5                  NA             NA
-    ## 6                  NA             NA
-    ## 7                  NA             NA
-    ## 8                  NA             NA
-    ## 9                  NA             NA
-    ## 10                 NA             NA
-    ## 11                 NA             NA
-    ## 12                 NA             NA
-    ## 13                 NA             NA
-    ##                                                                                                                                                                                                                                                                                                                             annots
-    ## 1  RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
-    ## 2  RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
-    ## 3  RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
-    ## 4  RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
-    ## 5  RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
-    ## 6  RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
-    ## 7  RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
-    ## 8  RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
-    ## 9  RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
-    ## 10 RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
-    ## 11 RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
-    ## 12 RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
-    ## 13 RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
+    ##              FusionName  LeftBreakpoint RightBreakpoint    celltype_final
+    ## 1 RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+ Mesothelial.cells
+    ## 2 RP11-208G20.2--PSPHP1 chr7:55761798:+ chr7:55772328:+ Mesothelial.cells
+    ## 3 RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+       Fibroblasts
+    ## 4 RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+        T.NK.cells
+    ## 5 RP11-208G20.2--PSPHP1 chr7:55761798:+ chr7:55772328:+       Fibroblasts
+    ## 6 RP11-208G20.2--PSPHP1 chr7:55761798:+ chr7:55772328:+        T.NK.cells
+    ## 7 RP11-208G20.2--PSPHP1 chr7:55761798:+ chr7:55772328:+ Endothelial.cells
+    ## 8 RP11-208G20.2--PSPHP1 chr7:55761798:+ chr7:55772328:+     Myeloid.cells
+    ## 9 RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+     Myeloid.cells
+    ##   ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum ctat-LR-fusion.Om
+    ## 1                 NA                  NA              NA               118
+    ## 2                 NA                  NA              NA                34
+    ## 3                 NA                  NA              NA                17
+    ## 4                 NA                  NA              NA                 8
+    ## 5                 NA                  NA              NA                 7
+    ## 6                 NA                  NA              NA                 2
+    ## 7                 NA                  NA              NA                 1
+    ## 8                 NA                  NA              NA                 1
+    ## 9                 NA                  NA              NA                 1
+    ##   FusionInspector.Om STAR-Fusion.Om
+    ## 1                 NA             NA
+    ## 2                 NA             NA
+    ## 3                 NA             NA
+    ## 4                 NA             NA
+    ## 5                 NA             NA
+    ## 6                 NA             NA
+    ## 7                 NA             NA
+    ## 8                 NA             NA
+    ## 9                 NA             NA
+    ##                                                                                                                                                                                                                                                                                                                            annots
+    ## 1 RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
+    ## 2 RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
+    ## 3 RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
+    ## 4 RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
+    ## 5 RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
+    ## 6 RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
+    ## 7 RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
+    ## 8 RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
+    ## 9 RP11-208G20.2--PSPHP1:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},RP11-208G20.2--PSPHP1:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}};;(recip)PSPHP1--RP11-208G20.2:{PSPHP1:{HGNC:phosphoserine phosphatase pseudogene 1,[pseudogene]},PSPHP1--RP11-208G20.2:{LOCALITY:[INTRACHROMOSOMAL[chr7:96.59Mb]]}}
     ## # A tibble: 1 × 4
     ##   FusionName            tot_cells_w_fusion frac_tot_cells type 
     ##   <chr>                              <int>          <dbl> <chr>
-    ## 1 RP11-208G20.2--PSPHP1                147          0.247 Om   
-    ## # A tibble: 4 × 5
+    ## 1 RP11-208G20.2--PSPHP1                169          0.285 Om   
+    ## # A tibble: 5 × 5
     ## # Groups:   FusionName [1]
     ##   FusionName           celltype_final tot_cells_w_fusion frac_fusion_cells type 
     ##   <chr>                <chr>                       <int>             <dbl> <chr>
-    ## 1 RP11-208G20.2--PSPH… Mesothelial.c…                121           0.823   Om   
-    ## 2 RP11-208G20.2--PSPH… Fibroblasts                    17           0.116   Om   
-    ## 3 RP11-208G20.2--PSPH… T.NK.cells                      8           0.0544  Om   
-    ## 4 RP11-208G20.2--PSPH… Myeloid.cells                   1           0.00680 Om   
-    ## # A tibble: 1 × 4
-    ##   FusionName            tot_cells_w_fusion frac_tot_cells type 
-    ##   <chr>                              <int>          <dbl> <chr>
-    ## 1 RP11-208G20.2--PSPHP1                117          0.235 Tum  
-    ## # A tibble: 9 × 5
-    ## # Groups:   FusionName [1]
-    ##   FusionName           celltype_final tot_cells_w_fusion frac_fusion_cells type 
-    ##   <chr>                <chr>                       <int>             <dbl> <chr>
-    ## 1 RP11-208G20.2--PSPH… HGSOC                          49           0.419   Tum  
-    ## 2 RP11-208G20.2--PSPH… Mesothelial.c…                 23           0.197   Tum  
-    ## 3 RP11-208G20.2--PSPH… T.NK.cells                     17           0.145   Tum  
-    ## 4 RP11-208G20.2--PSPH… B.cells                         8           0.0684  Tum  
-    ## 5 RP11-208G20.2--PSPH… Myeloid.cells                   8           0.0684  Tum  
-    ## 6 RP11-208G20.2--PSPH… Fibroblasts                     5           0.0427  Tum  
-    ## 7 RP11-208G20.2--PSPH… Mast.cells                      4           0.0342  Tum  
-    ## 8 RP11-208G20.2--PSPH… Endothelial.c…                  2           0.0171  Tum  
-    ## 9 RP11-208G20.2--PSPH… Monocytes                       1           0.00855 Tum
+    ## 1 RP11-208G20.2--PSPH… Mesothelial.c…                133           0.787   Om   
+    ## 2 RP11-208G20.2--PSPH… Fibroblasts                    23           0.136   Om   
+    ## 3 RP11-208G20.2--PSPH… T.NK.cells                     10           0.0592  Om   
+    ## 4 RP11-208G20.2--PSPH… Myeloid.cells                   2           0.0118  Om   
+    ## 5 RP11-208G20.2--PSPH… Endothelial.c…                  1           0.00592 Om   
+    ## # A tibble: 0 × 4
+    ## # ℹ 4 variables: FusionName <chr>, tot_cells_w_fusion <int>,
+    ## #   frac_tot_cells <dbl>, type <chr>
+    ## # A tibble: 0 × 5
+    ## # Groups:   FusionName [0]
+    ## # ℹ 5 variables: FusionName <chr>, celltype_final <chr>,
+    ## #   tot_cells_w_fusion <int>, frac_fusion_cells <dbl>, type <chr>
 
 ## RP11-384F7.2–LSAMP
 
@@ -919,22 +908,26 @@ report_on_fusion("RP11-384F7.2--LSAMP")
     ## 1 RP11-384F7.2--LSAMP chr3:117997182:- chr3:116444955:-             HGSOC
     ## 2 RP11-384F7.2--LSAMP chr3:117997182:- chr3:116444955:- Mesothelial.cells
     ## 3 RP11-384F7.2--LSAMP chr3:117997182:- chr3:116086556:-             HGSOC
-    ## 4 RP11-384F7.2--LSAMP chr3:117997182:- chr3:116444955:-       Fibroblasts
+    ## 4 RP11-384F7.2--LSAMP chr3:117997182:- chr3:116445023:-             HGSOC
+    ## 5 RP11-384F7.2--LSAMP chr3:117997182:- chr3:116444955:-       Fibroblasts
     ##   ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum ctat-LR-fusion.Om
     ## 1                 10                  NA              NA                NA
     ## 2                  9                  NA              NA                30
     ## 3                  2                  NA              NA                NA
-    ## 4                 NA                  NA              NA                 4
+    ## 4                  1                  NA              NA                NA
+    ## 5                 NA                  NA              NA                 4
     ##   FusionInspector.Om STAR-Fusion.Om
     ## 1                 NA             NA
     ## 2                 NA             NA
     ## 3                 NA             NA
     ## 4                 NA             NA
+    ## 5                 NA             NA
     ##                                                                                                                                                                                                                                                                                                                                        annots
     ## 1 RP11-384F7.2--LSAMP:{RP11-384F7.2--LSAMP:{LOCALITY:[INTRACHROMOSOMAL[chr3:0.53Mb]]},LSAMP:{HGNC:limbic system-associated membrane protein,[protein-coding gene]}};;(recip)LSAMP--RP11-384F7.2:{LSAMP--RP11-384F7.2:{LOCALITY:[INTRACHROMOSOMAL[chr3:0.53Mb]]},LSAMP:{HGNC:limbic system-associated membrane protein,[protein-coding gene]}}
     ## 2 RP11-384F7.2--LSAMP:{RP11-384F7.2--LSAMP:{LOCALITY:[INTRACHROMOSOMAL[chr3:0.53Mb]]},LSAMP:{HGNC:limbic system-associated membrane protein,[protein-coding gene]}};;(recip)LSAMP--RP11-384F7.2:{LSAMP--RP11-384F7.2:{LOCALITY:[INTRACHROMOSOMAL[chr3:0.53Mb]]},LSAMP:{HGNC:limbic system-associated membrane protein,[protein-coding gene]}}
     ## 3 RP11-384F7.2--LSAMP:{RP11-384F7.2--LSAMP:{LOCALITY:[INTRACHROMOSOMAL[chr3:0.53Mb]]},LSAMP:{HGNC:limbic system-associated membrane protein,[protein-coding gene]}};;(recip)LSAMP--RP11-384F7.2:{LSAMP--RP11-384F7.2:{LOCALITY:[INTRACHROMOSOMAL[chr3:0.53Mb]]},LSAMP:{HGNC:limbic system-associated membrane protein,[protein-coding gene]}}
     ## 4 RP11-384F7.2--LSAMP:{RP11-384F7.2--LSAMP:{LOCALITY:[INTRACHROMOSOMAL[chr3:0.53Mb]]},LSAMP:{HGNC:limbic system-associated membrane protein,[protein-coding gene]}};;(recip)LSAMP--RP11-384F7.2:{LSAMP--RP11-384F7.2:{LOCALITY:[INTRACHROMOSOMAL[chr3:0.53Mb]]},LSAMP:{HGNC:limbic system-associated membrane protein,[protein-coding gene]}}
+    ## 5 RP11-384F7.2--LSAMP:{RP11-384F7.2--LSAMP:{LOCALITY:[INTRACHROMOSOMAL[chr3:0.53Mb]]},LSAMP:{HGNC:limbic system-associated membrane protein,[protein-coding gene]}};;(recip)LSAMP--RP11-384F7.2:{LSAMP--RP11-384F7.2:{LOCALITY:[INTRACHROMOSOMAL[chr3:0.53Mb]]},LSAMP:{HGNC:limbic system-associated membrane protein,[protein-coding gene]}}
     ## # A tibble: 1 × 4
     ##   FusionName          tot_cells_w_fusion frac_tot_cells type 
     ##   <chr>                            <int>          <dbl> <chr>
@@ -1006,16 +999,20 @@ left_join(Om_fusion_frac_cell_types %>% filter(tot_cells_w_fusion >= MIN_CELLS) 
     by='FusionName')
 ```
 
-    ## # A tibble: 7 × 5
-    ##   FusionName          celltype_final tot_cells_w_fusion frac_fusion_cells annots
-    ##   <chr>               <chr>                       <int>             <dbl> <chr> 
-    ## 1 RP11-208G20.2--PSP… Mesothelial.c…                121             0.823 RP11-…
-    ## 2 RP11-384F7.2--LSAMP Mesothelial.c…                 30             0.882 RP11-…
-    ## 3 RP11-96H19.1--RP11… Mesothelial.c…                  8             1     RP11-…
-    ## 4 SAMD5--RP11-307P5.1 Mesothelial.c…                  8             1     <NA>  
-    ## 5 RP11-444D3.1--SOX5  Fibroblasts                     6             0.75  RP11-…
-    ## 6 RP1-34H18.1--NAV3   Mesothelial.c…                  5             0.714 RP1-3…
-    ## 7 YWHAE--CRK          Mesothelial.c…                  5             1     YWHAE…
+    ## # A tibble: 11 × 5
+    ##    FusionName         celltype_final tot_cells_w_fusion frac_fusion_cells annots
+    ##    <chr>              <chr>                       <int>             <dbl> <chr> 
+    ##  1 RP11-208G20.2--PS… Mesothelial.c…                133             0.787 RP11-…
+    ##  2 RP11-384F7.2--LSA… Mesothelial.c…                 30             0.882 RP11-…
+    ##  3 RP5-940J5.9--GAPDH Mesothelial.c…                 13             0.765 <NA>  
+    ##  4 UPK3B--CH17-264B6… Mesothelial.c…                 11             1     <NA>  
+    ##  5 RP11-96H19.1--RP1… Mesothelial.c…                  8             1     RP11-…
+    ##  6 SAMD5--RP11-307P5… Mesothelial.c…                  8             1     <NA>  
+    ##  7 AC007563.5--IGFBP5 Fibroblasts                     6             0.667 <NA>  
+    ##  8 RP11-444D3.1--SOX5 Fibroblasts                     6             0.75  RP11-…
+    ##  9 HOOK2--JUNB        Fibroblasts                     5             0.556 <NA>  
+    ## 10 RP1-34H18.1--NAV3  Mesothelial.c…                  5             0.714 RP1-3…
+    ## 11 YWHAE--CRK         Mesothelial.c…                  5             1     YWHAE…
 
 YWHAE–CRK is interesting as found before among different tumor data sets
 and involves a pair of known oncogenes.
@@ -1149,20 +1146,20 @@ tumor_umap %>% head()
     ## 4 AAACGCTAGGAGGTTC        -3.05818       0.2626778               1
     ## 5 AAACGCTAGGAGGTTC        -3.05818       0.2626778               1
     ## 6 AAACGCTAGGAGGTTC        -3.05818       0.2626778               1
-    ##              FusionName   LeftBreakpoint RightBreakpoint     cell_barcode
-    ## 1                  <NA>             <NA>            <NA>             <NA>
-    ## 2 RP11-208G20.2--PSPHP1  chr7:55761799:+ chr7:55773181:+ GAACCTCCTAGCGTTT
-    ## 3           RPL27A--ST5  chr11:8684081:+ chr11:8697636:- GAACCTCCTAGCGTTT
-    ## 4           RPL27A--ST5  chr11:8684081:+ chr11:8697636:- GAACCTCCTAGCGTTT
-    ## 5   SMG7--CH507-513H4.1 chr1:183472649:+ chr21:8222961:+ GAACCTCCTAGCGTTT
-    ## 6   SMG7--CH507-513H4.1 chr1:183472649:+ chr21:8222961:+ GAACCTCCTAGCGTTT
+    ##             FusionName   LeftBreakpoint  RightBreakpoint     cell_barcode
+    ## 1                 <NA>             <NA>             <NA>             <NA>
+    ## 2       DPH1--RAP1GAP2  chr17:2030230:+  chr17:3037530:+ GAACCTCCTAGCGTTT
+    ## 3         ENO2--LRRC23  chr12:6913828:+  chr12:6909779:+ GAACCTCCTAGCGTTT
+    ## 4          JUP--SUCLG1 chr17:41784986:-  chr2:84449188:- GAACCTCCTAGCGTTT
+    ## 5 RP11-388M20.2--PRSS8 chr16:31132875:+ chr16:31132922:- GAACCTCCTAGCGTTT
+    ## 6          RPL27A--ST5  chr11:8684081:+  chr11:8697636:- GAACCTCCTAGCGTTT
     ##            umi                          read_name         method celltype_final
     ## 1         <NA>                               <NA>           <NA>           <NA>
-    ## 2 GGCTAAGGAACC m64141e_210226_034232/13294995/ccs ctat-LR-fusion          HGSOC
-    ## 3 GATATAGGGTTC m64141e_210226_034232/15011873/ccs ctat-LR-fusion          HGSOC
-    ## 4 GATACAGGGTTC  m64141e_210226_034232/1108806/ccs ctat-LR-fusion          HGSOC
-    ## 5 TACAATTGAATT  m64141e_210205_142336/6880956/ccs ctat-LR-fusion          HGSOC
-    ## 6 TGGGATATAACA  m64141e_210205_142336/1559269/ccs ctat-LR-fusion          HGSOC
+    ## 2 AAGCACGGTGCG m64141e_210226_034232/13858595/ccs ctat-LR-fusion          HGSOC
+    ## 3 TCAGGGGATTGC m64141e_210226_034232/11827153/ccs ctat-LR-fusion          HGSOC
+    ## 4 GAACTCACCGAC  m64141e_210205_142336/8312005/ccs ctat-LR-fusion          HGSOC
+    ## 5 TACGGCTGCGAA  m64141e_210226_034232/9588373/ccs ctat-LR-fusion          HGSOC
+    ## 6 GATATAGGGTTC  m64141e_210223_151117/8396373/ccs ctat-LR-fusion          HGSOC
     ##   UMAP_1.allcells UMAP_2.allcells      dataset
     ## 1              NA              NA         <NA>
     ## 2        3.564836        10.72496 Patient1_Tum
@@ -1177,9 +1174,9 @@ tumor_umap %>% select(barcodes, UMAP_1.allcells, UMAP_2.allcells) %>% unique() %
     geom_point() + ggtitle("UMAP for tumor subset in all-cells umap")
 ```
 
-    ## Warning: Removed 20 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 13 rows containing missing values (`geom_point()`).
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-46-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-48-1.png)<!-- -->
 
 ``` r
 tum_only_umap_baseplot = tumor_umap %>% select(barcodes, UMAP_1.tum_only, UMAP_2.tum_only, seurat_clusters) %>% unique() %>% 
@@ -1190,14 +1187,20 @@ tum_only_umap_baseplot = tumor_umap %>% select(barcodes, UMAP_1.tum_only, UMAP_2
 tum_only_umap_baseplot
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-47-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-49-1.png)<!-- -->
 
 ``` r
-tum_only_umap_baseplot + 
+tumor_cells_only_fig = tum_only_umap_baseplot + 
     geom_point(data=tumor_umap %>% filter(FusionName %in% c('SMG7--CH507-513H4.1', 'RAPGEF5--AGMO', 'NTN1--CDRT15P2')) %>% 
                    select(FusionName, UMAP_1.tum_only, UMAP_2.tum_only, seurat_clusters) %>% unique(), 
                               aes(color=FusionName), size=rel(5), alpha=0.3) +
          ggtitle("Patient 1 Tumor Cells Only")
+
+tumor_cells_only_fig
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-48-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-50-1.png)<!-- -->
+
+``` r
+ggsave(tumor_cells_only_fig, file="scHGSOC_Patient1_tumor_cells_only_fig.svg", width=7, height=5)
+```

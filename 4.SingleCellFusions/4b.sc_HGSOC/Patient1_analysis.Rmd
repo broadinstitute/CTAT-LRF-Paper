@@ -541,6 +541,16 @@ report_on_fusion = function(fusion_name) {
 ```
 
 
+## GS1-279B7.2--GNG4
+
+```{r}
+
+report_on_fusion("GS1-279B7.2--GNG4")
+
+# GS1-279B7.2--GNG4	INTRACHROMOSOMAL[chr1:50.23Mb]
+
+```
+
 
 
 ##  RP11-208G20.2--PSPHP1

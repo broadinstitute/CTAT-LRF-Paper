@@ -202,7 +202,7 @@ depmap_accuracy_lineplot = data %>%
     filter(prog %in% progs ) %>%
     mutate(prog = factor(prog, levels=progs)) %>%
     ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom_line(aes(group=prog, color=prog)) +
-    xlim(3,10) + ylim(0.4,0.85) +
+    xlim(3,10) + ylim(0.45,0.8) +
     ggtitle("Depmap v1 fusions: F1 ~ min read support") 
 
 depmap_accuracy_lineplot
