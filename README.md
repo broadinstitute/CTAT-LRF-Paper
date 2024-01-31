@@ -30,6 +30,8 @@ Comparison of control fusions found by various predictors for SeraCare fusion mi
     
 ## Long Read Fusion Isoform Detection from MAS-Iso-seq of Nine Cancer Cell Lines
 
+>Note, you should install this customized R library for the feature-based UpsetR plots: https://github.com/fusiontranscripts/UpSetRbyFeature (see top of that README for installation instructions)
+    
 Comparing fusion prediction results for DepMap cell lines for various predictors:
     
 - 3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/DepMap9Lines_Benchmarking.Rmd 
@@ -75,4 +77,5 @@ Analysis of HGSOC Patient-3
 Shows that ctat-minimap2 in chimeric only mode is 4x faster than regular mode.
     
 -  5.Misc/5.1.ctat-mm2-timings/ctat-mm2-timings.Rmd
+
 
