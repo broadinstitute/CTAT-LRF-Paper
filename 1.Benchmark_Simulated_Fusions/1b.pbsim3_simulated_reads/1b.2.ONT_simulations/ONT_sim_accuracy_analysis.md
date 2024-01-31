@@ -140,7 +140,7 @@ combined_results %>%
         mutate(analysisType = factor(analysisType, 
                             levels=c('strict', 'allow_reverse', 'Exact Brkpt', 'Fuzzy Brkpt') )) %>%
     ggplot() +
-    geom_jitter(aes(x=analysisType, y=mean_F1, color=prog, shape=prog), width=0.2, size=rel(2)) +
+    geom_jitter(aes(x=analysisType, y=mean_F1, color=prog, shape=prog), width=0.2, height=0, size=rel(2)) +
 
     facet_wrap(~coverage_level) +
      theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
@@ -157,7 +157,7 @@ combined_results %>%
         mutate(analysisType = factor(analysisType, 
                             levels=c('strict', 'allow_reverse', 'Exact Brkpt', 'Fuzzy Brkpt') )) %>%
     ggplot() +
-    geom_jitter(aes(x=analysisType, y=mean_F1, color=prog, shape=prog), width=0.2, size=rel(2)) +
+    geom_jitter(aes(x=analysisType, y=mean_F1, color=prog, shape=prog), width=0.2, height=0, size=rel(2)) +
 
     facet_wrap(~coverage_level) +
      theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
@@ -177,7 +177,7 @@ combined_results %>%
         mutate(analysisType = factor(analysisType, 
                             levels=c('strict', 'allow_reverse', 'Exact Brkpt', 'Fuzzy Brkpt') )) %>%
     ggplot() +
-    geom_jitter(aes(x=analysisType, y=mean_F1, color=prog, shape=prog), width=0.2, size=rel(2)) +
+    geom_jitter(aes(x=analysisType, y=mean_F1, color=prog, shape=prog), width=0.2, height=0, size=rel(2)) +
 
     facet_wrap(~coverage_level) +
      theme(axis.text.x = element_text(angle = 90, hjust = 1)) 

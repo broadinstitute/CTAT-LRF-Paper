@@ -86,7 +86,7 @@ combined_data %>%
                             levels=c('strict', 'allow_reverse', 'Exact Brkpt', 'Fuzzy Brkpt') )) %>%
     mutate(seqTech = factor(seqTech, levels=c("PacBio", "ONT"))) %>%
      ggplot() +
-     geom_jitter(aes(x=analysisType, y=mean_F1, color=prog, shape=prog), width=0.2, size=rel(2)) +
+     geom_jitter(aes(x=analysisType, y=mean_F1, color=prog, shape=prog), width=0.2, height=0, size=rel(2)) +
      facet_wrap(~seqTech) +
      theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
 ```
@@ -103,7 +103,7 @@ paperfig = combined_data %>%
                             levels=c('strict', 'allow_reverse', 'Exact Brkpt', 'Fuzzy Brkpt') )) %>%
     mutate(seqTech = factor(seqTech, levels=c("PacBio", "ONT"))) %>%
      ggplot() +
-     geom_jitter(aes(x=analysisType, y=mean_F1, color=prog, shape=prog), width=0.2, size=rel(2)) +
+     geom_jitter(aes(x=analysisType, y=mean_F1, color=prog, shape=prog), width=0.2, height=0, size=rel(2)) +
      facet_wrap(~seqTech) +
      theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
 
