@@ -1,7 +1,7 @@
 DepMap_TruSeq_StarF
 ================
 bhaas
-2023-11-28
+2024-02-01
 
 ``` r
 # parse STAR-Fusion predictions based on Illumina reads
@@ -76,13 +76,13 @@ all_pred_fusions = all_pred_fusions %>% select(lex_ordered_fusion_name, type) %>
 message("num shared fusions: ", earlier_truth_set %>% select(lex_ordered_fusion_name) %>% unique() %>% nrow() )
 ```
 
-    ## num shared fusions: 134
+    ## num shared fusions: 133
 
 ``` r
 message("num unique fusions:", earlier_unique_set %>% select(lex_ordered_fusion_name) %>% unique() %>% nrow() )
 ```
 
-    ## num unique fusions:305
+    ## num unique fusions:354
 
 ``` r
 # add lex_ordered_fusion_name as attribute to STARF data
@@ -108,13 +108,13 @@ all_pred_fusions_illum_support_indicated_summary
     ## # Groups:   type [2]
     ##   type   Illumina_support     n
     ##   <chr>  <lgl>            <int>
-    ## 1 shared FALSE               53
-    ## 2 shared TRUE                81
-    ## 3 unique FALSE              292
-    ## 4 unique TRUE                13
+    ## 1 shared FALSE               54
+    ## 2 shared TRUE                79
+    ## 3 unique FALSE              342
+    ## 4 unique TRUE                12
 
 ``` r
-# 81 shared and 13 unique have illumina support
+# 79 shared and 12 unique have illumina support
 ```
 
 ``` r
@@ -123,23 +123,22 @@ all_pred_fusions_illum_support_indicated_summary
 all_pred_fusions_illum_support_indicated %>% filter(type=='unique' & Illumina_support) %>% arrange(lex_ordered_fusion_name)
 ```
 
-    ## # A tibble: 13 × 3
+    ## # A tibble: 12 × 3
     ## # Rowwise: 
-    ##    lex_ordered_fusion_name            type   Illumina_support
-    ##    <chr>                              <chr>  <lgl>           
-    ##  1 DMS53|CMAS--RP11-59N23.1           unique TRUE            
-    ##  2 DMS53|JAK1--RP4-535B20.1           unique TRUE            
-    ##  3 DMS53|LINC01420--UBQLN2            unique TRUE            
-    ##  4 DMS53|RP11-368L12.1--RP11-96H17.1  unique TRUE            
-    ##  5 HCC1187|CDH23--KLK5                unique TRUE            
-    ##  6 HCC1395|HELZ--HMGB1P7              unique TRUE            
-    ##  7 HCC1395|STPG2--UNC5C               unique TRUE            
-    ##  8 K562|ABL1--BCR                     unique TRUE            
-    ##  9 K562|CCDC26--LINC00977             unique TRUE            
-    ## 10 K562|RP11-1041F24.1--RP11-587P21.2 unique TRUE            
-    ## 11 SKBR3|AKAP13--BLOC1S6              unique TRUE            
-    ## 12 VCAP|CNNM4--PARD3B                 unique TRUE            
-    ## 13 VCAP|H3F3B--ZDHHC7                 unique TRUE
+    ##    lex_ordered_fusion_name           type   Illumina_support
+    ##    <chr>                             <chr>  <lgl>           
+    ##  1 DMS53|AP003900.6--bP-2189O9.3     unique TRUE            
+    ##  2 DMS53|CMAS--RP11-59N23.1          unique TRUE            
+    ##  3 DMS53|LINC01420--UBQLN2           unique TRUE            
+    ##  4 DMS53|RP11-368L12.1--RP11-96H17.1 unique TRUE            
+    ##  5 HCC1187|CDH23--KLK5               unique TRUE            
+    ##  6 HCC1395|HELZ--HMGB1P7             unique TRUE            
+    ##  7 HCC1395|STPG2--UNC5C              unique TRUE            
+    ##  8 K562|ABL1--BCR                    unique TRUE            
+    ##  9 K562|CCDC26--LINC00977            unique TRUE            
+    ## 10 K562|LRCH2--RP5-964N17.1          unique TRUE            
+    ## 11 VCAP|CNNM4--PARD3B                unique TRUE            
+    ## 12 VCAP|H3F3B--ZDHHC7                unique TRUE
 
 ``` r
 StarF_overlapping_preds = inner_join(all_pred_fusions_illum_support_indicated, StarF_data, by='lex_ordered_fusion_name', multiple='all')
@@ -151,21 +150,21 @@ StarF_overlapping_preds = StarF_overlapping_preds %>% select(lex_ordered_fusion_
 StarF_overlapping_preds
 ```
 
-    ## # A tibble: 95 × 4
+    ## # A tibble: 92 × 4
     ## # Rowwise: 
     ##    lex_ordered_fusion_name type   sample  FusionName    
     ##    <chr>                   <chr>  <chr>   <chr>         
     ##  1 HCC1395|CYP39A1--EIF3K  shared HCC1395 EIF3K--CYP39A1
-    ##  2 VCAP|FAM172A--PDE4D     shared VCAP    PDE4D--FAM172A
-    ##  3 VCAP|EIF4E2--HJURP      shared VCAP    HJURP--EIF4E2 
-    ##  4 HCC1187|KMT2E--LHFPL3   shared HCC1187 KMT2E--LHFPL3 
-    ##  5 HCC1395|PLA2R1--RBMS1   shared HCC1395 PLA2R1--RBMS1 
-    ##  6 HCC1395|FUBP3--PRRC2B   shared HCC1395 PRRC2B--FUBP3 
-    ##  7 SKBR3|ANKHD1--PCDH1     shared SKBR3   ANKHD1--PCDH1 
-    ##  8 K562|BAG6--SLC44A4      shared K562    BAG6--SLC44A4 
-    ##  9 VCAP|ANO10--SLMAP       shared VCAP    SLMAP--ANO10  
-    ## 10 VCAP|ANO10--SLMAP       shared VCAP    ANO10--SLMAP  
-    ## # ℹ 85 more rows
+    ##  2 VCAP|ANO10--SLMAP       shared VCAP    SLMAP--ANO10  
+    ##  3 VCAP|ANO10--SLMAP       shared VCAP    ANO10--SLMAP  
+    ##  4 VCAP|FAM172A--PDE4D     shared VCAP    PDE4D--FAM172A
+    ##  5 VCAP|EIF4E2--HJURP      shared VCAP    HJURP--EIF4E2 
+    ##  6 HCC1187|KMT2E--LHFPL3   shared HCC1187 KMT2E--LHFPL3 
+    ##  7 HCC1395|PLA2R1--RBMS1   shared HCC1395 PLA2R1--RBMS1 
+    ##  8 SKBR3|ANKHD1--PCDH1     shared SKBR3   ANKHD1--PCDH1 
+    ##  9 HCC1187|ALDOA--SHISA9   shared HCC1187 ALDOA--SHISA9 
+    ## 10 K562|C16orf87--ORC6     shared K562    C16orf87--ORC6
+    ## # ℹ 82 more rows
 
 ``` r
 # all Illumina supported ones
@@ -177,21 +176,21 @@ full_join(StarF_overlapping_preds,
           ) %>% filter(type=='shared')
 ```
 
-    ## # A tibble: 82 × 5
+    ## # A tibble: 80 × 5
     ## # Rowwise: 
     ##    lex_ordered_fusion_name type   sample  FusionName     Illumina_support
     ##    <chr>                   <chr>  <chr>   <chr>          <lgl>           
     ##  1 HCC1395|CYP39A1--EIF3K  shared HCC1395 EIF3K--CYP39A1 TRUE            
-    ##  2 VCAP|FAM172A--PDE4D     shared VCAP    PDE4D--FAM172A TRUE            
-    ##  3 VCAP|EIF4E2--HJURP      shared VCAP    HJURP--EIF4E2  TRUE            
-    ##  4 HCC1187|KMT2E--LHFPL3   shared HCC1187 KMT2E--LHFPL3  TRUE            
-    ##  5 HCC1395|PLA2R1--RBMS1   shared HCC1395 PLA2R1--RBMS1  TRUE            
-    ##  6 HCC1395|FUBP3--PRRC2B   shared HCC1395 PRRC2B--FUBP3  TRUE            
-    ##  7 SKBR3|ANKHD1--PCDH1     shared SKBR3   ANKHD1--PCDH1  TRUE            
-    ##  8 K562|BAG6--SLC44A4      shared K562    BAG6--SLC44A4  TRUE            
-    ##  9 VCAP|ANO10--SLMAP       shared VCAP    SLMAP--ANO10   TRUE            
-    ## 10 VCAP|ANO10--SLMAP       shared VCAP    ANO10--SLMAP   TRUE            
-    ## # ℹ 72 more rows
+    ##  2 VCAP|ANO10--SLMAP       shared VCAP    SLMAP--ANO10   TRUE            
+    ##  3 VCAP|ANO10--SLMAP       shared VCAP    ANO10--SLMAP   TRUE            
+    ##  4 VCAP|FAM172A--PDE4D     shared VCAP    PDE4D--FAM172A TRUE            
+    ##  5 VCAP|EIF4E2--HJURP      shared VCAP    HJURP--EIF4E2  TRUE            
+    ##  6 HCC1187|KMT2E--LHFPL3   shared HCC1187 KMT2E--LHFPL3  TRUE            
+    ##  7 HCC1395|PLA2R1--RBMS1   shared HCC1395 PLA2R1--RBMS1  TRUE            
+    ##  8 SKBR3|ANKHD1--PCDH1     shared SKBR3   ANKHD1--PCDH1  TRUE            
+    ##  9 HCC1187|ALDOA--SHISA9   shared HCC1187 ALDOA--SHISA9  TRUE            
+    ## 10 K562|C16orf87--ORC6     shared K562    C16orf87--ORC6 TRUE            
+    ## # ℹ 70 more rows
 
 ``` r
 StarF_overlapping_preds = StarF_overlapping_preds %>% rowwise() %>% 
@@ -201,21 +200,21 @@ StarF_overlapping_preds = StarF_overlapping_preds %>% rowwise() %>%
 StarF_overlapping_preds
 ```
 
-    ## # A tibble: 95 × 5
+    ## # A tibble: 92 × 5
     ## # Rowwise: 
     ##    proxy_fusion_name      type   sample  FusionName     lex_ordered_fusion_name
     ##    <chr>                  <chr>  <chr>   <chr>          <chr>                  
     ##  1 HCC1395|EIF3K--CYP39A1 shared HCC1395 EIF3K--CYP39A1 HCC1395|CYP39A1--EIF3K 
-    ##  2 VCAP|PDE4D--FAM172A    shared VCAP    PDE4D--FAM172A VCAP|FAM172A--PDE4D    
-    ##  3 VCAP|HJURP--EIF4E2     shared VCAP    HJURP--EIF4E2  VCAP|EIF4E2--HJURP     
-    ##  4 HCC1187|KMT2E--LHFPL3  shared HCC1187 KMT2E--LHFPL3  HCC1187|KMT2E--LHFPL3  
-    ##  5 HCC1395|PLA2R1--RBMS1  shared HCC1395 PLA2R1--RBMS1  HCC1395|PLA2R1--RBMS1  
-    ##  6 HCC1395|PRRC2B--FUBP3  shared HCC1395 PRRC2B--FUBP3  HCC1395|FUBP3--PRRC2B  
-    ##  7 SKBR3|ANKHD1--PCDH1    shared SKBR3   ANKHD1--PCDH1  SKBR3|ANKHD1--PCDH1    
-    ##  8 K562|BAG6--SLC44A4     shared K562    BAG6--SLC44A4  K562|BAG6--SLC44A4     
-    ##  9 VCAP|SLMAP--ANO10      shared VCAP    SLMAP--ANO10   VCAP|ANO10--SLMAP      
-    ## 10 VCAP|ANO10--SLMAP      shared VCAP    ANO10--SLMAP   VCAP|ANO10--SLMAP      
-    ## # ℹ 85 more rows
+    ##  2 VCAP|SLMAP--ANO10      shared VCAP    SLMAP--ANO10   VCAP|ANO10--SLMAP      
+    ##  3 VCAP|ANO10--SLMAP      shared VCAP    ANO10--SLMAP   VCAP|ANO10--SLMAP      
+    ##  4 VCAP|PDE4D--FAM172A    shared VCAP    PDE4D--FAM172A VCAP|FAM172A--PDE4D    
+    ##  5 VCAP|HJURP--EIF4E2     shared VCAP    HJURP--EIF4E2  VCAP|EIF4E2--HJURP     
+    ##  6 HCC1187|KMT2E--LHFPL3  shared HCC1187 KMT2E--LHFPL3  HCC1187|KMT2E--LHFPL3  
+    ##  7 HCC1395|PLA2R1--RBMS1  shared HCC1395 PLA2R1--RBMS1  HCC1395|PLA2R1--RBMS1  
+    ##  8 SKBR3|ANKHD1--PCDH1    shared SKBR3   ANKHD1--PCDH1  SKBR3|ANKHD1--PCDH1    
+    ##  9 HCC1187|ALDOA--SHISA9  shared HCC1187 ALDOA--SHISA9  HCC1187|ALDOA--SHISA9  
+    ## 10 K562|C16orf87--ORC6    shared K562    C16orf87--ORC6 K562|C16orf87--ORC6    
+    ## # ℹ 82 more rows
 
 ``` r
 # combining shared and uniquely pred fusions w/ illum support
@@ -228,42 +227,51 @@ full_join(StarF_overlapping_preds,
           )
 ```
 
-    ## # A tibble: 95 × 6
+    ## # A tibble: 92 × 6
     ## # Rowwise: 
     ##    proxy_fusion_name      type   sample  FusionName     lex_ordered_fusion_name
     ##    <chr>                  <chr>  <chr>   <chr>          <chr>                  
     ##  1 HCC1395|EIF3K--CYP39A1 shared HCC1395 EIF3K--CYP39A1 HCC1395|CYP39A1--EIF3K 
-    ##  2 VCAP|PDE4D--FAM172A    shared VCAP    PDE4D--FAM172A VCAP|FAM172A--PDE4D    
-    ##  3 VCAP|HJURP--EIF4E2     shared VCAP    HJURP--EIF4E2  VCAP|EIF4E2--HJURP     
-    ##  4 HCC1187|KMT2E--LHFPL3  shared HCC1187 KMT2E--LHFPL3  HCC1187|KMT2E--LHFPL3  
-    ##  5 HCC1395|PLA2R1--RBMS1  shared HCC1395 PLA2R1--RBMS1  HCC1395|PLA2R1--RBMS1  
-    ##  6 HCC1395|PRRC2B--FUBP3  shared HCC1395 PRRC2B--FUBP3  HCC1395|FUBP3--PRRC2B  
-    ##  7 SKBR3|ANKHD1--PCDH1    shared SKBR3   ANKHD1--PCDH1  SKBR3|ANKHD1--PCDH1    
-    ##  8 K562|BAG6--SLC44A4     shared K562    BAG6--SLC44A4  K562|BAG6--SLC44A4     
-    ##  9 VCAP|SLMAP--ANO10      shared VCAP    SLMAP--ANO10   VCAP|ANO10--SLMAP      
-    ## 10 VCAP|ANO10--SLMAP      shared VCAP    ANO10--SLMAP   VCAP|ANO10--SLMAP      
-    ## # ℹ 85 more rows
+    ##  2 VCAP|SLMAP--ANO10      shared VCAP    SLMAP--ANO10   VCAP|ANO10--SLMAP      
+    ##  3 VCAP|ANO10--SLMAP      shared VCAP    ANO10--SLMAP   VCAP|ANO10--SLMAP      
+    ##  4 VCAP|PDE4D--FAM172A    shared VCAP    PDE4D--FAM172A VCAP|FAM172A--PDE4D    
+    ##  5 VCAP|HJURP--EIF4E2     shared VCAP    HJURP--EIF4E2  VCAP|EIF4E2--HJURP     
+    ##  6 HCC1187|KMT2E--LHFPL3  shared HCC1187 KMT2E--LHFPL3  HCC1187|KMT2E--LHFPL3  
+    ##  7 HCC1395|PLA2R1--RBMS1  shared HCC1395 PLA2R1--RBMS1  HCC1395|PLA2R1--RBMS1  
+    ##  8 SKBR3|ANKHD1--PCDH1    shared SKBR3   ANKHD1--PCDH1  SKBR3|ANKHD1--PCDH1    
+    ##  9 HCC1187|ALDOA--SHISA9  shared HCC1187 ALDOA--SHISA9  HCC1187|ALDOA--SHISA9  
+    ## 10 K562|C16orf87--ORC6    shared K562    C16orf87--ORC6 K562|C16orf87--ORC6    
+    ## # ℹ 82 more rows
     ## # ℹ 1 more variable: Illumina_support <lgl>
 
 ``` r
 StarF_overlapping_preds %>% filter(type=="shared")
 ```
 
-    ## # A tibble: 82 × 5
+    ## # A tibble: 80 × 5
     ## # Rowwise: 
     ##    proxy_fusion_name      type   sample  FusionName     lex_ordered_fusion_name
     ##    <chr>                  <chr>  <chr>   <chr>          <chr>                  
     ##  1 HCC1395|EIF3K--CYP39A1 shared HCC1395 EIF3K--CYP39A1 HCC1395|CYP39A1--EIF3K 
-    ##  2 VCAP|PDE4D--FAM172A    shared VCAP    PDE4D--FAM172A VCAP|FAM172A--PDE4D    
-    ##  3 VCAP|HJURP--EIF4E2     shared VCAP    HJURP--EIF4E2  VCAP|EIF4E2--HJURP     
-    ##  4 HCC1187|KMT2E--LHFPL3  shared HCC1187 KMT2E--LHFPL3  HCC1187|KMT2E--LHFPL3  
-    ##  5 HCC1395|PLA2R1--RBMS1  shared HCC1395 PLA2R1--RBMS1  HCC1395|PLA2R1--RBMS1  
-    ##  6 HCC1395|PRRC2B--FUBP3  shared HCC1395 PRRC2B--FUBP3  HCC1395|FUBP3--PRRC2B  
-    ##  7 SKBR3|ANKHD1--PCDH1    shared SKBR3   ANKHD1--PCDH1  SKBR3|ANKHD1--PCDH1    
-    ##  8 K562|BAG6--SLC44A4     shared K562    BAG6--SLC44A4  K562|BAG6--SLC44A4     
-    ##  9 VCAP|SLMAP--ANO10      shared VCAP    SLMAP--ANO10   VCAP|ANO10--SLMAP      
-    ## 10 VCAP|ANO10--SLMAP      shared VCAP    ANO10--SLMAP   VCAP|ANO10--SLMAP      
-    ## # ℹ 72 more rows
+    ##  2 VCAP|SLMAP--ANO10      shared VCAP    SLMAP--ANO10   VCAP|ANO10--SLMAP      
+    ##  3 VCAP|ANO10--SLMAP      shared VCAP    ANO10--SLMAP   VCAP|ANO10--SLMAP      
+    ##  4 VCAP|PDE4D--FAM172A    shared VCAP    PDE4D--FAM172A VCAP|FAM172A--PDE4D    
+    ##  5 VCAP|HJURP--EIF4E2     shared VCAP    HJURP--EIF4E2  VCAP|EIF4E2--HJURP     
+    ##  6 HCC1187|KMT2E--LHFPL3  shared HCC1187 KMT2E--LHFPL3  HCC1187|KMT2E--LHFPL3  
+    ##  7 HCC1395|PLA2R1--RBMS1  shared HCC1395 PLA2R1--RBMS1  HCC1395|PLA2R1--RBMS1  
+    ##  8 SKBR3|ANKHD1--PCDH1    shared SKBR3   ANKHD1--PCDH1  SKBR3|ANKHD1--PCDH1    
+    ##  9 HCC1187|ALDOA--SHISA9  shared HCC1187 ALDOA--SHISA9  HCC1187|ALDOA--SHISA9  
+    ## 10 K562|C16orf87--ORC6    shared K562    C16orf87--ORC6 K562|C16orf87--ORC6    
+    ## # ℹ 70 more rows
+
+``` r
+StarF_overlapping_preds %>% filter(type=="shared") %>% group_by(lex_ordered_fusion_name) %>% tally() %>% filter(n>1)
+```
+
+    ## # A tibble: 1 × 2
+    ##   lex_ordered_fusion_name     n
+    ##   <chr>                   <int>
+    ## 1 VCAP|ANO10--SLMAP           2
 
 VCAP\|ANO10–SLMAP is found by STARF in both orientations: SLMAP–ANO10
 and ANO10–SLMAP
@@ -274,27 +282,26 @@ so, 81 lexically sorted fusions here
 StarF_overlapping_preds %>% filter(type=="unique")
 ```
 
-    ## # A tibble: 13 × 5
+    ## # A tibble: 12 × 5
     ## # Rowwise: 
     ##    proxy_fusion_name              type  sample FusionName lex_ordered_fusion_n…¹
     ##    <chr>                          <chr> <chr>  <chr>      <chr>                 
-    ##  1 VCAP|CNNM4--PARD3B             uniq… VCAP   CNNM4--PA… VCAP|CNNM4--PARD3B    
-    ##  2 SKBR3|BLOC1S6--AKAP13          uniq… SKBR3  BLOC1S6--… SKBR3|AKAP13--BLOC1S6 
+    ##  1 K562|RP5-964N17.1--LRCH2       uniq… K562   RP5-964N1… K562|LRCH2--RP5-964N1…
+    ##  2 VCAP|CNNM4--PARD3B             uniq… VCAP   CNNM4--PA… VCAP|CNNM4--PARD3B    
     ##  3 K562|CCDC26--LINC00977         uniq… K562   CCDC26--L… K562|CCDC26--LINC00977
     ##  4 VCAP|ZDHHC7--H3F3B             uniq… VCAP   ZDHHC7--H… VCAP|H3F3B--ZDHHC7    
-    ##  5 DMS53|RP4-535B20.1--JAK1       uniq… DMS53  RP4-535B2… DMS53|JAK1--RP4-535B2…
-    ##  6 K562|BCR--ABL1                 uniq… K562   BCR--ABL1  K562|ABL1--BCR        
-    ##  7 HCC1395|UNC5C--STPG2           uniq… HCC13… UNC5C--ST… HCC1395|STPG2--UNC5C  
-    ##  8 DMS53|RP11-59N23.1--CMAS       uniq… DMS53  RP11-59N2… DMS53|CMAS--RP11-59N2…
-    ##  9 DMS53|UBQLN2--LINC01420        uniq… DMS53  UBQLN2--L… DMS53|LINC01420--UBQL…
-    ## 10 HCC1187|KLK5--CDH23            uniq… HCC11… KLK5--CDH… HCC1187|CDH23--KLK5   
-    ## 11 K562|RP11-1041F24.1--RP11-587… uniq… K562   RP11-1041… K562|RP11-1041F24.1--…
-    ## 12 HCC1395|HELZ--HMGB1P7          uniq… HCC13… HELZ--HMG… HCC1395|HELZ--HMGB1P7 
-    ## 13 DMS53|RP11-368L12.1--RP11-96H… uniq… DMS53  RP11-368L… DMS53|RP11-368L12.1--…
+    ##  5 K562|BCR--ABL1                 uniq… K562   BCR--ABL1  K562|ABL1--BCR        
+    ##  6 HCC1395|UNC5C--STPG2           uniq… HCC13… UNC5C--ST… HCC1395|STPG2--UNC5C  
+    ##  7 DMS53|RP11-59N23.1--CMAS       uniq… DMS53  RP11-59N2… DMS53|CMAS--RP11-59N2…
+    ##  8 DMS53|UBQLN2--LINC01420        uniq… DMS53  UBQLN2--L… DMS53|LINC01420--UBQL…
+    ##  9 DMS53|AP003900.6--bP-2189O9.3  uniq… DMS53  AP003900.… DMS53|AP003900.6--bP-…
+    ## 10 HCC1395|HELZ--HMGB1P7          uniq… HCC13… HELZ--HMG… HCC1395|HELZ--HMGB1P7 
+    ## 11 HCC1187|KLK5--CDH23            uniq… HCC11… KLK5--CDH… HCC1187|CDH23--KLK5   
+    ## 12 DMS53|RP11-368L12.1--RP11-96H… uniq… DMS53  RP11-368L… DMS53|RP11-368L12.1--…
     ## # ℹ abbreviated name: ¹​lex_ordered_fusion_name
 
 ``` r
-# 13 of the uniquely pred fusions have illumina support
+# 12 of the uniquely pred fusions have illumina support
 ```
 
 ``` r
