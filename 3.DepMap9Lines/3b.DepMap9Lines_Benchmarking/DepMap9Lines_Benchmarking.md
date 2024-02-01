@@ -1,7 +1,7 @@
 DepMap Fusion Benchmarking
 ================
 bhaas
-2023-12-05
+2024-02-01
 
 ``` r
 USE_PARALOG_PROXIES = FALSE
@@ -140,7 +140,7 @@ truth_data_counts %>% arrange(num_truth_fusions)
     ## 9 VCAP                   31
 
 ``` r
-# as few as 2 in MJ and as many aas 32 in VCaP
+# as few as 3 in MJ and as many aas 31 in VCaP
 ```
 
 ``` r
@@ -153,7 +153,7 @@ truth_data_counts %>% summarise(sum_truth_fusions = sum(num_truth_fusions))
     ## 1               133
 
 ``` r
-# 134 proxy truth fusions
+# 133 proxy truth fusions
 ```
 
 ``` r
