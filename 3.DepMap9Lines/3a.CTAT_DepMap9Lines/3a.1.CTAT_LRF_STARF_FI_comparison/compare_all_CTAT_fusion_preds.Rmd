@@ -92,7 +92,7 @@ all_data_spread %>% head()
 
 TP_fusions = read.table("data/min_2.okPara_ignoreUnsure.results.scored", sep="\t", header=T, stringsAsFactors = F) %>%
     filter(pred_result == "TP") %>%
-    filter(prog == "ctat-LR-fusion.v0.12.0") %>%
+    filter(prog == "ctat-LR-fusion.v0.13.0") %>%
     select(sample, fusion) %>% unique() %>%
     rename(FusionName = fusion)
 
