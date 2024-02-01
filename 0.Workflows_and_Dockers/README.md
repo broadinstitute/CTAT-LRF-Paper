@@ -16,6 +16,7 @@ docker build -t jaffal .
 
 ```{bash}
 docker pull trinityctat/ctat_lr_fusion:0.11.1-dev
+docker pull trinityctat/ctat_lr_fusion:0.13.0
 ```
 
 ## JAFFAL
@@ -32,10 +33,25 @@ docker pull trinityctat/jaffal
 docker pull trinityctat/longgf
 ```
 
+LongGF reference file:
+
+```sh
+gs://fc-d438f734-542a-445f-96e1-e07b4a7cddbc/references/GRCh38.primary_assembly.genome.fa
+gs://fc-d438f734-542a-445f-96e1-e07b4a7cddbc/references/gencode.v22.chr_patch_hapl_scaff.annotation.gtf
+```
+
 ## pbfusion
 
 ``` {bash}
 docker pull trinityctat/pbfusion:v0.3.1
+docker pull trinityctat/pbfusion:v0.4.0
+```
+
+pbfusion v0.4.0 reference file link:
+
+```sh
+gs://fc-d438f734-542a-445f-96e1-e07b4a7cddbc/references/broad-gencode-v22.v0.4.0.gtf.bin
+gs://fc-d438f734-542a-445f-96e1-e07b4a7cddbc/references/ref_genome.mmi
 ```
 
 ## FusionSeeker
@@ -43,6 +59,13 @@ docker pull trinityctat/pbfusion:v0.3.1
 ``` {bash}
 # FusionSeeker (v1.0.1, commit 5710dc4)
 docker pull qianqin/fusion_seeker
+```
+
+FusionSeeker reference file:
+
+```sh
+gs://fc-d438f734-542a-445f-96e1-e07b4a7cddbc/references/GRCh38.primary_assembly.genome.fa
+gs://fc-d438f734-542a-445f-96e1-e07b4a7cddbc/references/gencode.v22.chr_patch_hapl_scaff.annotation.gtf
 ```
 
 # WDL script
