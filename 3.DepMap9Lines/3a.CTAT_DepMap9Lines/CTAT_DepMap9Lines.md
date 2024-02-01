@@ -1,7 +1,7 @@
 CTAT_DepMap9Lines
 ================
 bhaas
-2023-12-05
+2024-02-01
 
 ``` r
 files = paste0("data/", list.files("data/", "*abridged.tsv.gz"))
@@ -162,7 +162,7 @@ TP_fusions = TP_fusions %>% rowwise() %>% mutate(lexsort_fusion_name = paste0(sa
 nrow(TP_fusions)
 ```
 
-    ## [1] 135
+    ## [1] 145
 
 ``` r
 TP_fusions %>% head()
@@ -170,14 +170,14 @@ TP_fusions %>% head()
 
     ## # A tibble: 6 × 4
     ## # Rowwise: 
-    ##   proxy_fusion_name       sample  fusion          lexsort_fusion_name    
-    ##   <chr>                   <chr>   <chr>           <chr>                  
-    ## 1 HCC1395|EIF3K--CYP39A1  HCC1395 EIF3K--CYP39A1  HCC1395|CYP39A1--EIF3K 
-    ## 2 VCAP|PDE4D--FAM172A     VCAP    PDE4D--FAM172A  VCAP|FAM172A--PDE4D    
-    ## 3 VCAP|HJURP--EIF4E2      VCAP    HJURP--EIF4E2   VCAP|EIF4E2--HJURP     
-    ## 4 HCC1187|KMT2E--LHFPL3   HCC1187 KMT2E--LHFPL3   HCC1187|KMT2E--LHFPL3  
-    ## 5 HCC1395|PLA2R1--RBMS1   HCC1395 PLA2R1--RBMS1   HCC1395|PLA2R1--RBMS1  
-    ## 6 HCC1395|OSBPL9--CCDC178 HCC1395 OSBPL9--CCDC178 HCC1395|CCDC178--OSBPL9
+    ##   proxy_fusion_name      sample  fusion         lexsort_fusion_name   
+    ##   <chr>                  <chr>   <chr>          <chr>                 
+    ## 1 HCC1395|EIF3K--CYP39A1 HCC1395 EIF3K--CYP39A1 HCC1395|CYP39A1--EIF3K
+    ## 2 VCAP|SLMAP--ANO10      VCAP    SLMAP--ANO10   VCAP|ANO10--SLMAP     
+    ## 3 VCAP|PDE4D--FAM172A    VCAP    PDE4D--FAM172A VCAP|FAM172A--PDE4D   
+    ## 4 VCAP|HJURP--EIF4E2     VCAP    HJURP--EIF4E2  VCAP|EIF4E2--HJURP    
+    ## 5 HCC1187|KMT2E--LHFPL3  HCC1187 KMT2E--LHFPL3  HCC1187|KMT2E--LHFPL3 
+    ## 6 HCC1395|PLA2R1--RBMS1  HCC1395 PLA2R1--RBMS1  HCC1395|PLA2R1--RBMS1
 
 ``` r
 data = inner_join(TP_fusions %>% select(lexsort_fusion_name),
@@ -191,13 +191,13 @@ data = inner_join(TP_fusions %>% select(lexsort_fusion_name),
 nrow(data)
 ```
 
-    ## [1] 209
+    ## [1] 210
 
 ``` r
 data %>% select(sample, fusion) %>% unique() %>% nrow()
 ```
 
-    ## [1] 108
+    ## [1] 109
 
 ``` r
 data %>% head()
@@ -211,8 +211,8 @@ data %>% head()
     ## 2 HCC1395|CYP39A1--EI… EIF3K…      2 "EIF3K"                 8575 chr19:3863249…
     ## 3 HCC1395|CYP39A1--EI… EIF3K…      1 "EIF3K"                 8757 chr19:3863267…
     ## 4 HCC1395|CYP39A1--EI… EIF3K…     NA ""                      8757 chr19:3863267…
-    ## 5 VCAP|FAM172A--PDE4D  PDE4D…      9 "PDE4D"                19661 chr5:59768247…
-    ## 6 VCAP|FAM172A--PDE4D  PDE4D…      3 "PDE4D"                13468 chr5:59988488…
+    ## 5 VCAP|ANO10--SLMAP    SLMAP…      5 "SLMAP"                 7721 chr3:57849816…
+    ## 6 VCAP|ANO10--SLMAP    ANO10…      1 "ANO10"                 3220 chr3:43689311…
     ## # ℹ 30 more variables: RightGene <chr>, RightLocalBreakpoint <int>,
     ## #   RightBreakpoint <chr>, SpliceType <chr>, LR_FFPM <dbl>,
     ## #   JunctionReadCount <dbl>, SpanningFragCount <dbl>, est_J <dbl>, est_S <dbl>,
@@ -226,13 +226,13 @@ data %>% head()
 data %>% filter(num_LR > 0 && num_SR > 0) %>% nrow()
 ```
 
-    ## [1] 143
+    ## [1] 144
 
 ``` r
 data %>% filter(num_LR > 0 && num_SR > 0) %>% select(sample, fusion) %>% unique() %>% nrow()
 ```
 
-    ## [1] 87
+    ## [1] 88
 
 ``` r
 # by read counts
@@ -339,7 +339,7 @@ depmap_LR_vs_SR_fusion_FFPM_scatterplot
 ![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
 ``` r
-ggsave(depmap_LR_vs_SR_fusion_FFPM_scatterplot, file="depmap_LR_vs_SR_fusion_FFPM_scatterplot.svg", width=7, height=5)
+ggsave(depmap_LR_vs_SR_fusion_FFPM_scatterplot, file="depmap_LR_vs_SR_fusion_FFPM_scatterplot.svg", width=6, height=5)
 ```
 
     ## Warning: Removed 66 rows containing non-finite values (`stat_smooth()`).
@@ -354,13 +354,17 @@ cor.test(x=log2(data$LR_FFPM), y=log2(data$SR_FFPM), use='complete.obs')
     ##  Pearson's product-moment correlation
     ## 
     ## data:  log2(data$LR_FFPM) and log2(data$SR_FFPM)
-    ## t = 11.002, df = 141, p-value < 2.2e-16
+    ## t = 11.045, df = 142, p-value < 2.2e-16
     ## alternative hypothesis: true correlation is not equal to 0
     ## 95 percent confidence interval:
-    ##  0.5802527 0.7591213
+    ##  0.5807723 0.7589546
     ## sample estimates:
     ##       cor 
-    ## 0.6796648
+    ## 0.6797698
+
+``` r
+# with TP fusions:  R=0.68, p<2.2e-16
+```
 
 ``` r
 depmap_SR_enrichment_rankings_plot = SR_enriched_fusion_isoforms %>%
@@ -624,7 +628,7 @@ fusions_w_both_long_and_short = data %>%
 nrow(fusions_w_both_long_and_short)
 ```
 
-    ## [1] 87
+    ## [1] 88
 
 ``` r
 min_multi_isoforms = 3

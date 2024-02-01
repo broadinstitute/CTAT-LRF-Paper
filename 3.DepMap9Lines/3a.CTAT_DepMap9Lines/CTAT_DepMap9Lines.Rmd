@@ -1,7 +1,7 @@
 ---
 title: "CTAT_DepMap9Lines"
 author: "bhaas"
-date: '2023-12-05'
+date: '2024-02-01'
 output: github_document
 ---
 
@@ -240,7 +240,7 @@ depmap_LR_vs_SR_fusion_FFPM_scatterplot
 
 ```{r}
 
-ggsave(depmap_LR_vs_SR_fusion_FFPM_scatterplot, file="depmap_LR_vs_SR_fusion_FFPM_scatterplot.svg", width=7, height=5)
+ggsave(depmap_LR_vs_SR_fusion_FFPM_scatterplot, file="depmap_LR_vs_SR_fusion_FFPM_scatterplot.svg", width=6, height=5)
 
 
 ```
@@ -250,6 +250,8 @@ ggsave(depmap_LR_vs_SR_fusion_FFPM_scatterplot, file="depmap_LR_vs_SR_fusion_FFP
 
 
 cor.test(x=log2(data$LR_FFPM), y=log2(data$SR_FFPM), use='complete.obs')
+
+# with TP fusions:  R=0.68, p<2.2e-16
 
 ```
 
