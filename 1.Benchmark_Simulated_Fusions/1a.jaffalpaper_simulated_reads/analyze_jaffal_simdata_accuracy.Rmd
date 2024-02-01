@@ -1,7 +1,7 @@
 ---
 title: "analyze_jaffal_simdata_accuracy"
 author: "bhaas"
-date: '2023-12-05'
+date: '2024-02-01'
 output: github_document
 ---
 
@@ -82,7 +82,7 @@ p_linepoint
 
 ```{r}
 
-ggsave(p_linepoint, filename="jaffal_simdata_accuracy.paperfig.pdf", width=8, height=7)
+ggsave(p_linepoint, filename="jaffal_simdata_accuracy.paperfig.svg", width=8, height=7)
 
 ```
 
