@@ -4,6 +4,9 @@ bhaas
 2024-02-01
 
 ``` r
+PROGS = c('ctat-LR-fusion.v0.13.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.4.0'); 
+
+
 USE_PARALOG_PROXIES = FALSE
 
 
@@ -21,7 +24,9 @@ ROC_file = paste0(scored_predictions_file, ".ROC")
 
 ``` r
 fusion_preds = read.table("data/preds.collected.gencode_mapped.wAnnot.filt.pass", header=T, sep="\t", stringsAsFactors = F) %>%
-    filter(! grepl("flair", prog))
+    filter(prog %in% PROGS)
+
+fusion_preds$prog = factor(fusion_preds$prog, levels=PROGS)
 
 fusion_preds %>% head()
 ```
@@ -189,7 +194,10 @@ truth_data %>% head()
 ``` r
 #Organize according to pred class
     
-scored_data = read.table(scored_predictions_file, header=T, sep="\t", stringsAsFactors = F)
+scored_data = read.table(scored_predictions_file, header=T, sep="\t", stringsAsFactors = F) %>% 
+    filter(prog %in% PROGS)
+
+scored_data$prog = factor(scored_data$prog, levels=PROGS)
 
 scored_data %>% head()
 ```
@@ -254,9 +262,9 @@ Require min 2 calls to agree as truth set.
 ``` r
 data = read.table(ROC_file, header=T, sep="\t", stringsAsFactors = F) 
 
-progs = c('ctat-LR-fusion.v0.13.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.4.0'); 
+data = data %>% filter(prog %in% PROGS)
 
-data$prog = factor(data$prog, levels=progs)
+data$prog = factor(data$prog, levels=PROGS)
 
 
 data %>% head()
@@ -274,8 +282,6 @@ data %>% head()
 # F1 vs. min reads
 
 depmap_accuracy_lineplot = data %>% 
-    filter(prog %in% progs ) %>%
-    mutate(prog = factor(prog, levels=progs)) %>%
     ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom_line(aes(group=prog, color=prog)) +
     xlim(3,10) + ylim(0.4,0.85) +
     ggtitle("Depmap v1 fusions: F1 ~ min read support") 
