@@ -82,7 +82,9 @@ truth_data_counts = truth_data %>% rename(sample=sample_name) %>% group_by(sampl
 
 truth_data_counts %>% arrange(num_truth_fusions)
 
+
 # as few as 3 in MJ and as many as 33 in VCaP (including Illumina support!)
+
 
 ```
 
