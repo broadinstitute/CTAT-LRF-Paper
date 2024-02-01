@@ -82,13 +82,7 @@ truth_data_counts = truth_data %>% rename(sample=sample_name) %>% group_by(sampl
 
 truth_data_counts %>% arrange(num_truth_fusions)
 
-<<<<<<< HEAD
-
 # as few as 3 in MJ and as many as 33 in VCaP (including Illumina support!)
-
-=======
-# as few as 3 in MJ and as many as 33 in VCaP (including Illumina support!)
->>>>>>> 21d3edc (depmap w/ illumina update)
 
 ```
 
@@ -132,7 +126,11 @@ p_fusion_counts_barplot
 
 
 ```{r}
+<<<<<<< HEAD
 >>>>>>> 21d3edc (depmap w/ illumina update)
+=======
+>>>>>>> 9766968 (depmap w/ illumina update)
+>>>>>>> 13c78e1 (depmap w/ illumina update)
 
 ggsave(p_fusion_counts_barplot, file="depmap_fusion_counts_per_prog.barplot.svg", width=7, height=5)
 
