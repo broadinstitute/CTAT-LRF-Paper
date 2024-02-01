@@ -1,7 +1,7 @@
 pbsim3_accuracy_analysis
 ================
 bhaas
-2023-12-05
+2024-02-01
 
 # PacBio simulated fusion reads using pbsim3 (attaining HiFi accuracy)
 
