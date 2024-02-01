@@ -4,6 +4,9 @@ bhaas
 2024-02-01
 
 ``` r
+PROGS = c('ctat-LR-fusion.v0.13.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.4.0'); 
+
+
 USE_PARALOG_PROXIES = FALSE
 
 
@@ -21,7 +24,9 @@ ROC_file = paste0(scored_predictions_file, ".ROC")
 
 ``` r
 fusion_preds = read.table("data/preds.collected.gencode_mapped.wAnnot.filt.pass", header=T, sep="\t", stringsAsFactors = F) %>%
-    filter(! grepl("flair", prog))
+    filter(prog %in% PROGS)
+
+fusion_preds$prog = factor(fusion_preds$prog, levels=PROGS)
 
 fusion_preds %>% head()
 ```
@@ -165,23 +170,6 @@ p_fusion_counts_barplot
 ![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 ``` r
-# pbfusion v0.4.0 isn't part of the main paper (came out later)
-
-p_fusion_counts_barplot = fusion_preds %>% 
-     select(sample, prog, fusion) %>% unique() %>%
-    filter(prog %in% c('ctat-LR-fusion.v0.13.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.4.0')) %>%
-    mutate(prog = factor(prog, levels=c('ctat-LR-fusion.v0.13.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.4.0'))) %>%
-    group_by(sample, prog) %>% tally(name='num_fusions') %>%
-    ggplot(aes(x=prog, y=num_fusions)) + geom_col(aes(fill=prog)) + facet_wrap(~sample)  + 
-    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
- geom_hline(data=truth_data_counts, aes(yintercept=num_truth_fusions))
-
-p_fusion_counts_barplot
-```
-
-![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
-
-``` r
 ggsave(p_fusion_counts_barplot, file="depmap_fusion_counts_per_prog.barplot.svg", width=7, height=5)
 ```
 
@@ -206,7 +194,11 @@ truth_data %>% head()
 ``` r
 #Organize according to pred class
     
-scored_data = read.table(scored_predictions_file, header=T, sep="\t", stringsAsFactors = F)
+scored_data = read.table(scored_predictions_file, header=T, sep="\t", stringsAsFactors = F)  %>% 
+    filter(prog %in% PROGS)
+
+scored_data$prog = factor(scored_data$prog, levels=PROGS)
+
 
 scored_data %>% head()
 ```
@@ -262,15 +254,18 @@ scored_data %>% filter(pred_result %in% c("TP", "FP", "FN")) %>%
         theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
 ```
 
-![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 # accuracy analysis
 
 Require min 2 calls to agree as truth set.
 
 ``` r
-data = read.table(ROC_file, header=T, sep="\t", stringsAsFactors = F) %>%
-    filter(! grepl("flair", prog))
+data = read.table(ROC_file, header=T, sep="\t", stringsAsFactors = F) 
+
+data = data %>% filter(prog %in% PROGS)
+
+data$prog = factor(data$prog, levels=PROGS)
 
 data %>% head()
 ```
@@ -306,7 +301,7 @@ depmap_accuracy_lineplot
 
     ## Warning: Removed 201 rows containing missing values (`geom_line()`).
 
-![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 ``` r
 ggsave(depmap_accuracy_lineplot, file=paste0("depmap_accuracy_lineplot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=7, height=4)
@@ -328,7 +323,7 @@ depmap_TP_vs_FP_scatterplot
 
     ## Warning: Removed 354 rows containing missing values (`geom_point()`).
 
-![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
 ``` r
 ggsave(depmap_TP_vs_FP_scatterplot, file=paste0("depmap_TP_vs_FP_scatterplot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=7, height=5)
@@ -353,7 +348,7 @@ depmap_precision_recall_plot = data %>%
 depmap_precision_recall_plot
 ```
 
-![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
 ``` r
 ggsave(depmap_precision_recall_plot, file=paste0("depmap_precision_recall_plot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=5, height=3)
@@ -479,7 +474,7 @@ cosmic_fusion_preds_mult_methods
  depmap_cosmic_fusions_heatmap
 ```
 
-![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
+![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->
 
 ``` r
 ggsave(depmap_cosmic_fusions_heatmap, file=paste0("depmap_cosmic_fusions_heatmap.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=7, height=5)
@@ -532,7 +527,7 @@ upset_plot = UpSetRbyFeature::upset(truth_fusions_found_matrix, number.angles=90
 upset_plot
 ```
 
-![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-30-1.png)<!-- -->
+![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->
 
 ``` r
 pdf(file=paste0("depmap.upset_plot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".pdf"), width=20)
@@ -566,7 +561,7 @@ upset_plot_basic = UpSetR::upset(truth_fusions_found_matrix, number.angles=90, n
 upset_plot_basic
 ```
 
-![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-32-1.png)<!-- -->
+![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-31-1.png)<!-- -->
 
 ``` r
 pdf(file=paste0("depmap.upset_plot-basic.use_paralog_proxies=", USE_PARALOG_PROXIES, ".pdf"), width=20)
