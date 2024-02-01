@@ -1,7 +1,7 @@
 analyze_jaffal_simdata_accuracy
 ================
 bhaas
-2023-12-05
+2024-02-01
 
 Benchmarking analysis for the JAFFAL simulated fusion reads.
 
@@ -66,5 +66,5 @@ p_linepoint
 ![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
 ``` r
-ggsave(p_linepoint, filename="jaffal_simdata_accuracy.paperfig.pdf", width=8, height=7)
+ggsave(p_linepoint, filename="jaffal_simdata_accuracy.paperfig.svg", width=8, height=7)
 ```
