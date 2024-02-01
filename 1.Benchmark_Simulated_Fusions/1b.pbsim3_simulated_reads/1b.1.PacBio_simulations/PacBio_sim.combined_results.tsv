@@ -7,19 +7,15 @@ rep1	cov50	20	ctat-LR-fusion.v0.13.0	allow_reverse	0.984
 rep1	cov50	20	ctat-LR-fusion.v0.13.0	strict	0.984
 rep1	cov50	20	fusionseeker_s1	allow_reverse	0.975
 rep1	cov50	20	fusionseeker_s1	strict	0.497
-rep1	cov50	20	pbfusion_v0.3.1	allow_reverse	0.973
-rep1	cov50	20	pbfusion_v0.3.1	strict	0.501
 rep1	cov50	20	pbfusion_v0.4.0	allow_reverse	0.976
 rep1	cov50	20	pbfusion_v0.4.0	strict	0.976
 NA	cov50	20	JAFFAL	Exact Brkpt	0.899
 NA	cov50	20	LongGF	Exact Brkpt	0.0348
 NA	cov50	20	ctat-LR-fusion.v0.13.0	Exact Brkpt	0.957
 NA	cov50	20	fusionseeker_s1	Exact Brkpt	0.0194
-NA	cov50	20	pbfusion_v0.3.1	Exact Brkpt	0.1248
 NA	cov50	20	pbfusion_v0.4.0	Exact Brkpt	0.066
 NA	cov50	20	JAFFAL	Fuzzy Brkpt	0.925
 NA	cov50	20	LongGF	Fuzzy Brkpt	0.895
 NA	cov50	20	ctat-LR-fusion.v0.13.0	Fuzzy Brkpt	0.957
 NA	cov50	20	fusionseeker_s1	Fuzzy Brkpt	0.9084
-NA	cov50	20	pbfusion_v0.3.1	Fuzzy Brkpt	0.917
 NA	cov50	20	pbfusion_v0.4.0	Fuzzy Brkpt	0.9224

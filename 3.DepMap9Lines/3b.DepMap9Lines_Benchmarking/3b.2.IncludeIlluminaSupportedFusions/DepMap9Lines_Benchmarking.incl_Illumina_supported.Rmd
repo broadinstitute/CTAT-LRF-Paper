@@ -174,18 +174,6 @@ data %>% head()
 ```
 
 
-```{r}
-
-# F1 vs. min reads
-
-data %>% ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom_line(aes(group=prog, color=prog)) +
-    xlim(2,10) + 
-    #ylim(0.3,0.9) +
-    ggtitle("Depmap v1 fusions: F1 ~ min read support") 
-
-
-
-```
 
 ```{r}
 
@@ -195,7 +183,7 @@ data %>% ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom
 # exclude pbfusion v0.4.0 for the paper fig
 
 
-progs = c('ctat-LR-fusion.v0.13.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.3.1'); 
+progs = c('ctat-LR-fusion.v0.13.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.4.0'); 
 
 
 depmap_accuracy_lineplot = data %>% 
@@ -216,60 +204,10 @@ ggsave(depmap_accuracy_lineplot, file=paste0("depmap_accuracy_lineplot.use_paral
 ```
 
 
-
-
 ```{r}
-
-# plot TP and FP ~ min sum frags.
-
-data %>% select(prog, min_sum_frags, TP, FP) %>% 
-    gather(key=pred_class_type, value=pred_class_value, TP, FP) %>%
-    ggplot(aes(x=min_sum_frags, y=pred_class_value)) + geom_point(aes(group=pred_class_type, color=pred_class_type)) +
-    facet_wrap(~prog) +
-    xlim(3,15)
-
-
-
-```
-
-
-
-```{r}
-
-data %>% 
-    filter(prog %in% c('ctat-LR-fusion.v0.13.0', "JAFFAL")) %>%
-    select(prog, min_sum_frags, TP, FP) %>% 
-    gather(key=pred_class_type, value=pred_class_value, TP, FP) %>%
-    ggplot(aes(x=min_sum_frags, y=pred_class_value)) +
-    geom_point(aes(shape=pred_class_type, color=prog)) +
-    geom_line(aes(groups=pred_class_type, shape=pred_class_type, color=prog)) +
-    xlim(3,15)
-
-
-```
-
-
-
-```{r}
-
-# precision / recall 
-
-data %>% ggplot(aes(x=TPR, y=PPV)) + 
-    geom_point(aes(groups=prog, color=prog)) +
-    geom_line(aes(color=prog)) 
-
-```
-
-
-
-```{r}
-
-# exclude pbfusion v0.4.0
-
 
 
 depmap_TP_vs_FP_scatterplot = data %>% select(prog, min_sum_frags, TP, FP) %>% 
-    filter(prog != "pbfusion_v0.4.0") %>%
     gather(key=pred_class_type, value=pred_class_value, TP, FP) %>%
     ggplot(aes(x=min_sum_frags, y=pred_class_value)) + geom_point(aes(group=pred_class_type, color=pred_class_type)) +
     facet_wrap(~prog) +
@@ -293,7 +231,6 @@ ggsave(depmap_TP_vs_FP_scatterplot, file=paste0("depmap_TP_vs_FP_scatterplot.use
 # precision / recall 
 
 depmap_precision_recall_plot = data %>%
-      filter(prog != "pbfusion_v0.4.0") %>%
     ggplot(aes(x=TPR, y=PPV)) + 
     geom_point(aes(groups=prog, color=prog)) +
     geom_line(aes(color=prog)) +
@@ -386,22 +323,6 @@ cosmic_fusion_preds_mult_methods
  depmap_cosmic_fusions_heatmap
 
 ```
-
-```{r}
-
- depmap_cosmic_fusions_heatmap =   cosmic_fusion_preds %>%
-     filter(prog %in% progs) %>%
-    filter(proxy_fusion_name %in% cosmic_fusion_preds_mult_methods) %>%
-    
-    ggplot(aes(x=proxy_fusion_name, y=prog)) + geom_tile(aes(fill=num_reads)) + 
-    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-    scale_fill_continuous(high = "#132B43", low = "#56B1F7", na.value="white") +
-    geom_text(aes(label=num_reads), color='white')
-
- depmap_cosmic_fusions_heatmap
-
-```
-
 
 
 ```{r}

@@ -19,9 +19,9 @@ USE_PARALOG_PROXIES = FALSE
 
 if (USE_PARALOG_PROXIES) {
     # or allow for paralogs as proxies:
-    scored_predictions_file = "data/min_3.okPara_ignoreUnsure.results.scored"
+    scored_predictions_file = "data/min_2.okPara_ignoreUnsure.results.scored"
 } else {
-    scored_predictions_file = "data/min_3.ignoreUnsure.results.scored"
+    scored_predictions_file = "data/min_2.ignoreUnsure.results.scored"
 }
 
 
@@ -100,25 +100,6 @@ p_fusion_counts_barplot
 
 
 ```{r}
-# pbfusion v0.4.0 isn't part of the main paper (came out later)
-
-p_fusion_counts_barplot = fusion_preds %>% 
-     select(sample, prog, fusion) %>% unique() %>%
-    filter(prog %in% c('ctat-LR-fusion.v0.13.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.3.1')) %>%
-    mutate(prog = factor(prog, levels=c('ctat-LR-fusion.v0.13.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.3.1'))) %>%
-    group_by(sample, prog) %>% tally(name='num_fusions') %>%
-    ggplot(aes(x=prog, y=num_fusions)) + geom_col(aes(fill=prog)) + facet_wrap(~sample)  + 
-    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
- geom_hline(data=truth_data_counts, aes(yintercept=num_truth_fusions))
-
-p_fusion_counts_barplot
-
-```
-
-
-
-
-```{r}
 
 ggsave(p_fusion_counts_barplot, file="depmap_fusion_counts_per_prog.barplot.svg", width=7, height=5)
 
@@ -167,42 +148,28 @@ Require min 2 calls to agree as truth set.
 
 
 
-data = read.table(ROC_file, header=T, sep="\t", stringsAsFactors = F) %>%
-    filter(! grepl("flair", prog))
+data = read.table(ROC_file, header=T, sep="\t", stringsAsFactors = F) 
+
+progs = c('ctat-LR-fusion.v0.13.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.4.0'); 
+
+data$prog = factor(data$prog, levels=progs)
+
 
 data %>% head()
 ```
 
 
-```{r}
-
-# F1 vs. min reads
-
-data %>% ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom_line(aes(group=prog, color=prog)) +
-    xlim(2,10) + 
-    #ylim(0.3,0.9) +
-    ggtitle("Depmap v1 fusions: F1 ~ min read support") 
-
-
-
-```
 
 ```{r}
 
 
 # F1 vs. min reads
-
-# exclude pbfusion v0.4.0 for the paper fig
-
-
-progs = c('ctat-LR-fusion.v0.13.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.3.1'); 
-
 
 depmap_accuracy_lineplot = data %>% 
     filter(prog %in% progs ) %>%
     mutate(prog = factor(prog, levels=progs)) %>%
     ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom_line(aes(group=prog, color=prog)) +
-    xlim(3,10) + ylim(0.4,1) +
+    xlim(3,10) + ylim(0.4,0.85) +
     ggtitle("Depmap v1 fusions: F1 ~ min read support") 
 
 depmap_accuracy_lineplot
@@ -211,7 +178,7 @@ depmap_accuracy_lineplot
 
 ```{r}
 
-ggsave(depmap_accuracy_lineplot, file=paste0("depmap_accuracy_lineplot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=7, height=4)
+#ggsave(depmap_accuracy_lineplot, file=paste0("depmap_accuracy_lineplot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=7, height=4)
 
 ```
 
@@ -222,29 +189,21 @@ ggsave(depmap_accuracy_lineplot, file=paste0("depmap_accuracy_lineplot.use_paral
 
 # plot TP and FP ~ min sum frags.
 
-data %>% select(prog, min_sum_frags, TP, FP) %>% 
+depmap_TP_vs_FP_scatterplot  = data %>% select(prog, min_sum_frags, TP, FP) %>% 
     gather(key=pred_class_type, value=pred_class_value, TP, FP) %>%
     ggplot(aes(x=min_sum_frags, y=pred_class_value)) + geom_point(aes(group=pred_class_type, color=pred_class_type)) +
     facet_wrap(~prog) +
     xlim(3,15)
 
 
-
+depmap_TP_vs_FP_scatterplot 
 ```
 
 
 
 ```{r}
 
-data %>% 
-    filter(prog %in% c('ctat-LR-fusion.v0.13.0', "JAFFAL")) %>%
-    select(prog, min_sum_frags, TP, FP) %>% 
-    gather(key=pred_class_type, value=pred_class_value, TP, FP) %>%
-    ggplot(aes(x=min_sum_frags, y=pred_class_value)) +
-    geom_point(aes(shape=pred_class_type, color=prog)) +
-    geom_line(aes(groups=pred_class_type, shape=pred_class_type, color=prog)) +
-    xlim(3,15)
-
+#ggsave(depmap_TP_vs_FP_scatterplot, file=paste0("depmap_TP_vs_FP_scatterplot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=7, height=5)
 
 ```
 
@@ -254,58 +213,17 @@ data %>%
 
 # precision / recall 
 
-data %>% ggplot(aes(x=TPR, y=PPV)) + 
+depmap_precision_recall_plot = data %>% ggplot(aes(x=TPR, y=PPV)) + 
     geom_point(aes(groups=prog, color=prog)) +
     geom_line(aes(color=prog)) 
 
-```
-
-
-
-```{r}
-
-# exclude pbfusion v0.4.0
-
-
-
-depmap_TP_vs_FP_scatterplot = data %>% select(prog, min_sum_frags, TP, FP) %>% 
-    filter(prog != "pbfusion_v0.4.0") %>%
-    gather(key=pred_class_type, value=pred_class_value, TP, FP) %>%
-    ggplot(aes(x=min_sum_frags, y=pred_class_value)) + geom_point(aes(group=pred_class_type, color=pred_class_type)) +
-    facet_wrap(~prog) +
-    xlim(3,15)
-
-depmap_TP_vs_FP_scatterplot
-
+depmap_precision_recall_plot 
 ```
 
 
 ```{r}
 
-ggsave(depmap_TP_vs_FP_scatterplot, file=paste0("depmap_TP_vs_FP_scatterplot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=7, height=5)
-
-```
-
-
-
-```{r}
-
-# precision / recall 
-
-depmap_precision_recall_plot = data %>%
-      filter(prog != "pbfusion_v0.4.0") %>%
-    ggplot(aes(x=TPR, y=PPV)) + 
-    geom_point(aes(groups=prog, color=prog)) +
-    geom_line(aes(color=prog)) 
-    
-depmap_precision_recall_plot
-
-```
-
-
-```{r}
-
-ggsave(depmap_precision_recall_plot, file=paste0("depmap_precision_recall_plot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=5, height=3)
+#ggsave(depmap_precision_recall_plot, file=paste0("depmap_precision_recall_plot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=5, height=3)
 
 ```
 
@@ -388,7 +306,7 @@ cosmic_fusion_preds_mult_methods
 
 ```{r}
 
-ggsave(depmap_cosmic_fusions_heatmap, file=paste0("depmap_cosmic_fusions_heatmap.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=7, height=5)
+#ggsave(depmap_cosmic_fusions_heatmap, file=paste0("depmap_cosmic_fusions_heatmap.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=7, height=5)
 
 
 ```
@@ -439,9 +357,9 @@ upset_plot
 
 ```{r}
 
-pdf(file=paste0("depmap.upset_plot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".pdf"), width=20)
-UpSetRbyFeature::upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
-dev.off()
+#pdf(file=paste0("depmap.upset_plot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".pdf"), width=20)
+#UpSetRbyFeature::upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
+#dev.off()
 
 ```
 

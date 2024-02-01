@@ -80,8 +80,8 @@ control_fusions_found %>% head()
 
 ```{r}
 
-control_fusions_found %>%  filter(! grepl("flairfusion", prog)) %>%
-    mutate(prog = factor(prog, levels = c('ctat-LR-fusion.v0.13.0', 'fusionseeker', 'LongGF', 'JAFFAL', 'pbfusion_v0.3.1', 'pbfusion_v0.4.0'))) %>%
+seracare_prog_compare_plot = control_fusions_found %>%  filter(! grepl("flairfusion", prog)) %>%
+    mutate(prog = factor(prog, levels = c('ctat-LR-fusion.v0.13.0', 'fusionseeker', 'LongGF', 'JAFFAL', 'pbfusion_v0.4.0'))) %>%
     mutate(prog_data = paste(prog, dataset)) %>%
     ggplot(aes(x=FusionName, y=reorder(prog_data, desc(prog_data)))) +
     geom_tile(aes(fill=found), color='black') + 
@@ -93,9 +93,9 @@ control_fusions_found %>%  filter(! grepl("flairfusion", prog)) %>%
 
 
 
+seracare_prog_compare_plot
 
 ```
-
 
 pbfusion v0.4.0 does find KIF5B--RET but breakpoint coordinates aren't one-to-one so was ignored.
 
@@ -103,8 +103,8 @@ pbfusion v0.4.0 does find KIF5B--RET but breakpoint coordinates aren't one-to-on
 ```{r}
 
 seracare_prog_compare_plot = control_fusions_found %>%  filter(! grepl("flairfusion", prog)) %>%
-    filter(prog != "pbfusion_v0.4.0") %>%
-    mutate(prog = factor(prog, levels = c('ctat-LR-fusion.v0.13.0', 'fusionseeker', 'LongGF', 'JAFFAL', 'pbfusion_v0.3.1'))) %>%
+    mutate(prog = factor(prog, levels = c('ctat-LR-fusion.v0.13.0', 'fusionseeker', 'LongGF', 'JAFFAL', 'pbfusion_v0.4.0'))) %>%
+    mutate(found = ifelse(prog=='pbfusion_v0.4.0', TRUE, found)) %>% # see note above
     mutate(prog_data = paste(prog, dataset)) %>%
     ggplot(aes(x=FusionName, y=reorder(prog_data, desc(prog_data)))) +
     geom_tile(aes(fill=found), color='black') + 
@@ -118,6 +118,7 @@ seracare_prog_compare_plot = control_fusions_found %>%  filter(! grepl("flairfus
 
 seracare_prog_compare_plot
 ```
+
 
 
 ```{r}

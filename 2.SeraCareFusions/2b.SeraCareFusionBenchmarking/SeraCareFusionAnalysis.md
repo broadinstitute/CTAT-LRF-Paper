@@ -136,39 +136,40 @@ control_fusions_found = full_join(cross_join(control_fusions, progs),
 control_fusions_found %>% head()
 ```
 
-    ##   FusionName               prog dataset found
-    ## 1 KIF5B--RET       fusionseeker  ISOseq  TRUE
-    ## 2 KIF5B--RET    pbfusion_v0.4.0  ISOseq  TRUE
-    ## 3 KIF5B--RET             LongGF  ISOseq  TRUE
-    ## 4 KIF5B--RET    pbfusion_v0.3.1  ISOseq  TRUE
-    ## 5 KIF5B--RET        flairfusion  ISOseq  TRUE
-    ## 6 KIF5B--RET flairfusion_v1mods  ISOseq  TRUE
+    ##   FusionName                   prog   dataset found
+    ## 1 KIF5B--RET           fusionseeker    ISOseq  TRUE
+    ## 2 KIF5B--RET        pbfusion_v0.4.0    ISOseq  TRUE
+    ## 3 KIF5B--RET                 LongGF    ISOseq  TRUE
+    ## 4 KIF5B--RET                 JAFFAL    ISOseq  TRUE
+    ## 5 KIF5B--RET ctat-LR-fusion.v0.13.0    ISOseq  TRUE
+    ## 6 KIF5B--RET           fusionseeker MASseq_L1  TRUE
 
 ``` r
-control_fusions_found %>%  filter(! grepl("flairfusion", prog)) %>%
-    mutate(prog = factor(prog, levels = c('ctat-LR-fusion.v0.13.0', 'fusionseeker', 'LongGF', 'JAFFAL', 'pbfusion_v0.3.1', 'pbfusion_v0.4.0'))) %>%
+seracare_prog_compare_plot = control_fusions_found %>%  filter(! grepl("flairfusion", prog)) %>%
+    mutate(prog = factor(prog, levels = c('ctat-LR-fusion.v0.13.0', 'fusionseeker', 'LongGF', 'JAFFAL', 'pbfusion_v0.4.0'))) %>%
     mutate(prog_data = paste(prog, dataset)) %>%
     ggplot(aes(x=FusionName, y=reorder(prog_data, desc(prog_data)))) +
     geom_tile(aes(fill=found), color='black') + 
     #scale_y_reverse() +
      theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
-```
-
-![](SeraCareFusionAnalysis_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
-
-``` r
 #+
 #        theme(panel.border = element_blank(), panel.grid.major = element_blank(),
 #        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+
+
+seracare_prog_compare_plot
 ```
+
+![](SeraCareFusionAnalysis_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 pbfusion v0.4.0 does find KIF5B–RET but breakpoint coordinates aren’t
 one-to-one so was ignored.
 
 ``` r
 seracare_prog_compare_plot = control_fusions_found %>%  filter(! grepl("flairfusion", prog)) %>%
-    filter(prog != "pbfusion_v0.4.0") %>%
-    mutate(prog = factor(prog, levels = c('ctat-LR-fusion.v0.13.0', 'fusionseeker', 'LongGF', 'JAFFAL', 'pbfusion_v0.3.1'))) %>%
+    mutate(prog = factor(prog, levels = c('ctat-LR-fusion.v0.13.0', 'fusionseeker', 'LongGF', 'JAFFAL', 'pbfusion_v0.4.0'))) %>%
+    mutate(found = ifelse(prog=='pbfusion_v0.4.0', TRUE, found)) %>% # see note above
     mutate(prog_data = paste(prog, dataset)) %>%
     ggplot(aes(x=FusionName, y=reorder(prog_data, desc(prog_data)))) +
     geom_tile(aes(fill=found), color='black') + 

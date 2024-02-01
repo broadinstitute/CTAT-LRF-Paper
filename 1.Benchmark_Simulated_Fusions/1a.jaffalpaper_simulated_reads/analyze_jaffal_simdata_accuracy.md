@@ -26,7 +26,6 @@ data = bind_rows(strict_results,
 
 
 data = data %>% filter(prog %in% c(
-                                   'pbfusion_v0.3.1',
                                    'pbfusion_v0.4.0',
                                    'fusionseeker_s1',
                                    'LongGF',
@@ -65,23 +64,6 @@ p_linepoint
 ```
 
 ![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
-
-``` r
-# mention the new pbfusion v0.4.0 for supp, keep rest for main fig
-
-p_linepoint = max_F1_data %>% 
-    filter(prog != "pbfusion_v0.4.0") %>% 
-    filter(analysisType %in% c('strict', 'allow_reverse')) %>%
-    ggplot() + 
-    geom_point(aes(x=divergence, y=F1, color=prog)) +
-    geom_line(aes(x=divergence, y=F1, group=prog, color=prog)) +
-    facet_grid(vars(analysisType), vars(seqtype))
-
-
-p_linepoint
-```
-
-![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
 ``` r
 ggsave(p_linepoint, filename="jaffal_simdata_accuracy.paperfig.pdf", width=8, height=7)

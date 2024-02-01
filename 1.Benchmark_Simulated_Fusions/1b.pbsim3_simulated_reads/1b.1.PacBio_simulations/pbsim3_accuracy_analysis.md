@@ -174,26 +174,3 @@ write.table(combined_results %>%
     
     file="PacBio_sim.combined_results.tsv", sep="\t", quote=F, row.names=F)
 ```
-
-``` r
-# excluding pbfusion v0.4.0 for main fig since ordering issues were corrected after we brought it to their attention. 
-# will include the pbvusion v0.4.0 update results in the supp.
-
-# just cov50
-
-combined_results %>%
-        filter(coverage_level == 'cov50') %>%
-        filter(analysisType != "allow_revNparalogs") %>%
-        filter(prog != "pbfusion_v0.4.0") %>%
-        mutate(pass_count = as.numeric(str_replace(pass_count, "pass", ""))) %>%
-        filter(pass_count == 20) %>%
-        mutate(analysisType = factor(analysisType, 
-                            levels=c('strict', 'allow_reverse', 'Exact Brkpt', 'Fuzzy Brkpt') )) %>%
-    ggplot() +
-    geom_jitter(aes(x=analysisType, y=mean_F1, color=prog, shape=prog), width=0.2, height=0, size=rel(2)) +
-
-    facet_wrap(~coverage_level) +
-     theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
-```
-
-![](pbsim3_accuracy_analysis_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
