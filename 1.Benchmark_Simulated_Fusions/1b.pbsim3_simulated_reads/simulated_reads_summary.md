@@ -1,7 +1,7 @@
 simulate_reads_summary
 ================
 bhaas
-2024-01-07
+2024-02-01
 
 Here we build a summary figure for the pacbio HiFi and ONT R10.4.1
 chemistry simulated reads (via pbsim3).
@@ -76,29 +76,11 @@ combined_data$prog = factor(combined_data$prog, levels = c('ctat-LR-fusion.v0.13
                                                            'JAFFAL',
                                                            'LongGF',
                                                            'fusionseeker_s1',
-                                                           'pbfusion_v0.3.1',
                                                            'pbfusion_v0.4.0') )
 ```
 
 ``` r
-combined_data %>%
-    mutate(analysisType = factor(analysisType, 
-                            levels=c('strict', 'allow_reverse', 'Exact Brkpt', 'Fuzzy Brkpt') )) %>%
-    mutate(seqTech = factor(seqTech, levels=c("PacBio", "ONT"))) %>%
-     ggplot() +
-     geom_jitter(aes(x=analysisType, y=mean_F1, color=prog, shape=prog), width=0.2, height=0, size=rel(2)) +
-     facet_wrap(~seqTech) +
-     theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
-```
-
-![](simulated_reads_summary_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
-
-``` r
-# mention updated pbfusion v0.4.0 as later updated for improved performance compared to earlier version.
-
-
 paperfig = combined_data %>%
-    filter(prog != "pbfusion_v0.4.0") %>%
     mutate(analysisType = factor(analysisType, 
                             levels=c('strict', 'allow_reverse', 'Exact Brkpt', 'Fuzzy Brkpt') )) %>%
     mutate(seqTech = factor(seqTech, levels=c("PacBio", "ONT"))) %>%
@@ -111,8 +93,8 @@ paperfig = combined_data %>%
 paperfig
 ```
 
-![](simulated_reads_summary_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](simulated_reads_summary_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ``` r
-ggsave(paperfig, filename="pbsim3_bmark.paperfig.pdf", width=8, height=5)
+ggsave(paperfig, filename="pbsim3_bmark.paperfig.svg", width=8, height=5)
 ```
