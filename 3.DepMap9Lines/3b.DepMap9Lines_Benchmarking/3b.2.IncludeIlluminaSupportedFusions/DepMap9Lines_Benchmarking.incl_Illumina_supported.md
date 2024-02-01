@@ -1,7 +1,7 @@
 DepMap Fusion Benchmarking
 ================
 bhaas
-2023-12-05
+2024-02-01
 
 ``` r
 USE_PARALOG_PROXIES = FALSE
