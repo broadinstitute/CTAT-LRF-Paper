@@ -961,6 +961,7 @@ plot_fusion_expression_by_breakpoint_incl_gene_structures = function(sample_name
     p = df %>% gather(key=readtype, value=FFPM, LR_FFPM, SR_FFPM) %>% 
         filter(FFPM > 0) %>%
         ggplot() +
+        theme_bw() +
         ggtitle(paste(sample_name, fusion_name, "by FFPM")) +
         geom_point(aes(x=LeftLocalBreakpoint, y=RightLocalBreakpoint, color=readtype, size=FFPM), alpha=0.5)
     #+
@@ -1413,7 +1414,7 @@ plots = plot_fusion_expression_by_breakpoint_incl_gene_structures("SKBR3", "CYTH
 ggsave(plots[[1]], file="depmap_SKBR3_CYTH1--EIF3H_LR_vs_SR_isoforms.svg", width=9, height=6)
 
 
-ggsave(plots[[3]], file="depmap_SKBR3_CYTH1--EIF3H_LR_vs_SR_isoforms.zoomed.svg", width=9, height=6)
+ggsave(plots[[3]], file="depmap_SKBR3_CYTH1--EIF3H_LR_vs_SR_isoforms.zoomed.svg", width=6, height=4)
 ```
 
     ## Warning: Removed 36 rows containing missing values (`geom_rect()`).
