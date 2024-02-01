@@ -170,6 +170,26 @@ p_fusion_counts_barplot
 ![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 ``` r
+<<<<<<< HEAD
+=======
+# pbfusion v0.4.0 isn't part of the main paper (came out later)
+
+p_fusion_counts_barplot = fusion_preds %>% 
+     select(sample, prog, fusion) %>% unique() %>%
+    filter(prog %in% c('ctat-LR-fusion.v0.13.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.4.0')) %>%
+    mutate(prog = factor(prog, levels=c('ctat-LR-fusion.v0.13.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.4.0'))) %>%
+    group_by(sample, prog) %>% tally(name='num_fusions') %>%
+    ggplot(aes(x=prog, y=num_fusions)) + geom_col(aes(fill=prog)) + facet_wrap(~sample)  + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+ geom_hline(data=truth_data_counts, aes(yintercept=num_truth_fusions))
+
+p_fusion_counts_barplot
+```
+
+![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+``` r
+>>>>>>> 21d3edc (depmap w/ illumina update)
 ggsave(p_fusion_counts_barplot, file="depmap_fusion_counts_per_prog.barplot.svg", width=7, height=5)
 ```
 
@@ -301,7 +321,11 @@ depmap_accuracy_lineplot
 
     ## Warning: Removed 201 rows containing missing values (`geom_line()`).
 
+<<<<<<< HEAD
 ![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+=======
+![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+>>>>>>> 21d3edc (depmap w/ illumina update)
 
 ``` r
 ggsave(depmap_accuracy_lineplot, file=paste0("depmap_accuracy_lineplot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=7, height=4)
@@ -323,7 +347,11 @@ depmap_TP_vs_FP_scatterplot
 
     ## Warning: Removed 354 rows containing missing values (`geom_point()`).
 
+<<<<<<< HEAD
 ![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+=======
+![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+>>>>>>> 21d3edc (depmap w/ illumina update)
 
 ``` r
 ggsave(depmap_TP_vs_FP_scatterplot, file=paste0("depmap_TP_vs_FP_scatterplot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=7, height=5)
@@ -348,7 +376,11 @@ depmap_precision_recall_plot = data %>%
 depmap_precision_recall_plot
 ```
 
+<<<<<<< HEAD
 ![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+=======
+![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+>>>>>>> 21d3edc (depmap w/ illumina update)
 
 ``` r
 ggsave(depmap_precision_recall_plot, file=paste0("depmap_precision_recall_plot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=5, height=3)
@@ -474,7 +506,11 @@ cosmic_fusion_preds_mult_methods
  depmap_cosmic_fusions_heatmap
 ```
 
+<<<<<<< HEAD
 ![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->
+=======
+![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
+>>>>>>> 21d3edc (depmap w/ illumina update)
 
 ``` r
 ggsave(depmap_cosmic_fusions_heatmap, file=paste0("depmap_cosmic_fusions_heatmap.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=7, height=5)
@@ -527,7 +563,11 @@ upset_plot = UpSetRbyFeature::upset(truth_fusions_found_matrix, number.angles=90
 upset_plot
 ```
 
+<<<<<<< HEAD
 ![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->
+=======
+![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-30-1.png)<!-- -->
+>>>>>>> 21d3edc (depmap w/ illumina update)
 
 ``` r
 pdf(file=paste0("depmap.upset_plot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".pdf"), width=20)
@@ -561,7 +601,11 @@ upset_plot_basic = UpSetR::upset(truth_fusions_found_matrix, number.angles=90, n
 upset_plot_basic
 ```
 
+<<<<<<< HEAD
 ![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-31-1.png)<!-- -->
+=======
+![](DepMap9Lines_Benchmarking.incl_Illumina_supported_files/figure-gfm/unnamed-chunk-32-1.png)<!-- -->
+>>>>>>> 21d3edc (depmap w/ illumina update)
 
 ``` r
 pdf(file=paste0("depmap.upset_plot-basic.use_paralog_proxies=", USE_PARALOG_PROXIES, ".pdf"), width=20)
