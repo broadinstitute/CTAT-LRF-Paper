@@ -326,15 +326,16 @@ fusions_of_interest
 
     ## # A tibble: 7 × 5
     ## # Groups:   FusionName [7]
-    ##   FusionName          celltype_final tot_cells_w_fusion frac_fusion_cells annots
-    ##   <chr>               <chr>                       <int>             <dbl> <chr> 
-    ## 1 NUTM2A-AS1--RP11-2… tumor                         265             0.989 INTER…
-    ## 2 LINC01317--AC07321… tumor                           7             1     <NA>  
-    ## 3 LINC01340--RP11-45… tumor                           7             1     INTRA…
-    ## 4 GNGT1--AC002076.10  tumor                           6             1     <NA>  
-    ## 5 RP1-34H18.1--NAV3   tumor                           6             1     INTRA…
-    ## 6 DPH6-AS1--RP11-684… tumor                           5             1     INTRA…
-    ## 7 RP11-14D22.2--PRIC… tumor                           5             1     INTRA…
+    ##   FusionName               celltype_final tot_cells_w_fusion frac_fusio…¹ annots
+    ##   <chr>                    <chr>                       <int>        <dbl> <chr> 
+    ## 1 NUTM2A-AS1--RP11-203L2.4 tumor                         265        0.989 INTER…
+    ## 2 LINC01317--AC073218.1    tumor                           7        1     <NA>  
+    ## 3 LINC01340--RP11-455B3.1  tumor                           7        1     INTRA…
+    ## 4 GNGT1--AC002076.10       tumor                           6        1     <NA>  
+    ## 5 RP1-34H18.1--NAV3        tumor                           6        1     INTRA…
+    ## 6 DPH6-AS1--RP11-684B21.1  tumor                           5        1     INTRA…
+    ## 7 RP11-14D22.2--PRICKLE2   tumor                           5        1     INTRA…
+    ## # … with abbreviated variable name ¹​frac_fusion_cells
 
 NUTM2A-AS1–RP11-203L2.4 is the only relevant inter-chromosomal.
 
@@ -418,10 +419,10 @@ fusions_of_interest
 
     ## # A tibble: 1 × 5
     ## # Groups:   FusionName [1]
-    ##   FusionName               normal_cell_count tumor_cell_count frac_normal_cells
-    ##   <chr>                                <dbl>            <dbl>             <dbl>
-    ## 1 NUTM2A-AS1--RP11-203L2.4                 3              265          0.000481
-    ## # ℹ 1 more variable: frac_tumor_cells <dbl>
+    ##   FusionName               normal_cell_count tumor_cell_count frac_nor…¹ frac_…²
+    ##   <chr>                                <dbl>            <dbl>      <dbl>   <dbl>
+    ## 1 NUTM2A-AS1--RP11-203L2.4                 3              265   0.000481   0.378
+    ## # … with abbreviated variable names ¹​frac_normal_cells, ²​frac_tumor_cells
 
 ``` r
 x = 0
@@ -468,10 +469,11 @@ fusions_of_interest
 
     ## # A tibble: 1 × 6
     ## # Groups:   FusionName [1]
-    ##   FusionName               normal_cell_count tumor_cell_count frac_normal_cells
-    ##   <chr>                                <dbl>            <dbl>             <dbl>
-    ## 1 NUTM2A-AS1--RP11-203L2.4                 3              265          0.000481
-    ## # ℹ 2 more variables: frac_tumor_cells <dbl>, annots <chr>
+    ##   FusionName               normal_cell_count tumor_cell…¹ frac_…² frac_…³ annots
+    ##   <chr>                                <dbl>        <dbl>   <dbl>   <dbl> <chr> 
+    ## 1 NUTM2A-AS1--RP11-203L2.4                 3          265 4.81e-4   0.378 INTER…
+    ## # … with abbreviated variable names ¹​tumor_cell_count, ²​frac_normal_cells,
+    ## #   ³​frac_tumor_cells
 
 ``` r
 write.table(fusions_of_interest, file="M132TS.fusions_of_interest.tsv", sep="\t", quote=F, row.names = F)
@@ -572,7 +574,7 @@ Tum_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4" ) %>%
     ## 1 NUTM2A-AS1--RP11-203L2.4 FusionInspector         104                     0.392
     ## 2 NUTM2A-AS1--RP11-203L2.4 STAR-Fusion              33                     0.125
     ## 3 NUTM2A-AS1--RP11-203L2.4 ctat-LR-fusion          214                     0.808
-    ## # ℹ abbreviated name: ¹​frac_NUTM2A_AS1_fusion_positive
+    ## # … with abbreviated variable name ¹​frac_NUTM2A_AS1_fusion_positive
 
 ``` r
  p = baseplot + geom_point(data=Tum_data %>% filter(FusionName == "NUTM2A-AS1--RP11-203L2.4") %>% select(umap_1, umap_2, method) %>% unique(), 
@@ -646,7 +648,7 @@ venn_dist %>% filter(! grepl("ctat-LR-fusion", methods)) %>% summarize(sum(frac_
 # and so the remaining ~20% invvolved a combo of short and long reads
 ```
 
-\~20% by short reads alone
+~20% by short reads alone
 
 ``` r
 # double check number of tumor cells with NUTM2A-AS1 fusion = 265
@@ -677,7 +679,7 @@ Tum_data %>%
 
     ## # A tibble: 0 × 4
     ## # Groups:   FusionName [0]
-    ## # ℹ 4 variables: FusionName <chr>, celltype_final <chr>,
+    ## # … with 4 variables: FusionName <chr>, celltype_final <chr>,
     ## #   fusion_cell_counts_per_cluster <int>, frac_fusion_cells <dbl>
 
 ``` r
@@ -698,22 +700,22 @@ left_join(Tum_data %>% filter(FusionName %in% fusions_min_cell_counts$FusionName
 ```
 
     ## # A tibble: 12 × 6
-    ##    FusionName    leiden fusion_cell_counts_p…¹ frac_fusion_cells tumor_or_normal
-    ##    <chr>          <int>                  <int>             <dbl> <lgl>          
-    ##  1 NUTM2A-AS1--…      4                    221           0.630   TRUE           
-    ##  2 RP11-444D3.1…      4                      7           0.0199  TRUE           
-    ##  3 BACH2--PNRC1       0                      6           0.0171  FALSE          
-    ##  4 LINC01317--A…      4                      6           0.0171  TRUE           
-    ##  5 LINC01340--R…      4                      6           0.0171  TRUE           
-    ##  6 GNGT1--AC002…      7                      5           0.0142  TRUE           
-    ##  7 RP11-14D22.2…      4                      5           0.0142  TRUE           
-    ##  8 ZNF292--PNRC1      0                      5           0.0142  FALSE          
-    ##  9 RP1-34H18.1-…      4                      4           0.0114  TRUE           
-    ## 10 RP11-855A2.2…      4                      4           0.0114  TRUE           
-    ## 11 DPH6-AS1--RP…      4                      3           0.00855 TRUE           
-    ## 12 SRSF7--CXCR4       0                      2           0.00570 FALSE          
-    ## # ℹ abbreviated name: ¹​fusion_cell_counts_per_cluster
-    ## # ℹ 1 more variable: annots <chr>
+    ##    FusionName               leiden fusion_cell_counts_p…¹ frac_…² tumor…³ annots
+    ##    <chr>                     <int>                  <int>   <dbl> <lgl>   <chr> 
+    ##  1 NUTM2A-AS1--RP11-203L2.4      4                    221 0.630   TRUE    INTER…
+    ##  2 RP11-444D3.1--SOX5            4                      7 0.0199  TRUE    [SOX5…
+    ##  3 BACH2--PNRC1                  0                      6 0.0171  FALSE   [BACH…
+    ##  4 LINC01317--AC073218.1         4                      6 0.0171  TRUE    <NA>  
+    ##  5 LINC01340--RP11-455B3.1       4                      6 0.0171  TRUE    INTRA…
+    ##  6 GNGT1--AC002076.10            7                      5 0.0142  TRUE    <NA>  
+    ##  7 RP11-14D22.2--PRICKLE2        4                      5 0.0142  TRUE    INTRA…
+    ##  8 ZNF292--PNRC1                 0                      5 0.0142  FALSE   INTRA…
+    ##  9 RP1-34H18.1--NAV3             4                      4 0.0114  TRUE    INTRA…
+    ## 10 RP11-855A2.2--BPTF            4                      4 0.0114  TRUE    <NA>  
+    ## 11 DPH6-AS1--RP11-684B21.1       4                      3 0.00855 TRUE    INTRA…
+    ## 12 SRSF7--CXCR4                  0                      2 0.00570 FALSE   INTRA…
+    ## # … with abbreviated variable names ¹​fusion_cell_counts_per_cluster,
+    ## #   ²​frac_fusion_cells, ³​tumor_or_normal
 
 # exploring individual fusions
 
@@ -765,6 +767,10 @@ report_on_fusion("RP11-444D3.1--SOX5")
     ## 1 RP11-444D3.1--SOX5 tumor                           7               0.7 Tum  
     ## 2 RP11-444D3.1--SOX5 normal                          3               0.3 Tum
 
+``` r
+# found in 7 malignant and 3 normal cells 
+```
+
 10 cells with RP11-444D3.1–SOX5 fusion, 70% are in tumor, 30% are in
 normal clusters.
 
@@ -778,15 +784,15 @@ report_on_fusion("RP11-208G20.2--PSPHP1")
     ## [5] ctat-LR-fusion  FusionInspector STAR-Fusion    
     ## <0 rows> (or 0-length row.names)
     ## # A tibble: 0 × 5
-    ## # ℹ 5 variables: FusionName <chr>, tot_cells_w_fusion <int>,
+    ## # … with 5 variables: FusionName <chr>, tot_cells_w_fusion <int>,
     ## #   frac_tot_cells <dbl>, annots <chr>, type <chr>
     ## # A tibble: 0 × 5
     ## # Groups:   FusionName [0]
-    ## # ℹ 5 variables: FusionName <chr>, leiden <int>, tot_cells_w_fusion <int>,
+    ## # … with 5 variables: FusionName <chr>, leiden <int>, tot_cells_w_fusion <int>,
     ## #   frac_fusion_cells <dbl>, type <chr>
     ## # A tibble: 0 × 5
     ## # Groups:   FusionName [0]
-    ## # ℹ 5 variables: FusionName <chr>, celltype_final <chr>,
+    ## # … with 5 variables: FusionName <chr>, celltype_final <chr>,
     ## #   tot_cells_w_fusion <int>, frac_fusion_cells <dbl>, type <chr>
 
 none here.

@@ -53,7 +53,7 @@ Compare fusion support and isoform detection from short vs. long RNA-seq reads:
 
 Melanoma single cell analysis
 
-- 4.SingleCellFusions/4a.sc_Melanoma/M132TS_analysis.md (Figure 5a)
+- 4.SingleCellFusions/4a.sc_Melanoma/M132TS_analysis.Rmd (Figure 5a)
 
 HGSOC single cell analysis
 

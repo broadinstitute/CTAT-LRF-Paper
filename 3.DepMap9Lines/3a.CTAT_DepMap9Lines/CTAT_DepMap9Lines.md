@@ -69,21 +69,21 @@ data %>% head()
 
     ## # A tibble: 6 × 36
     ## # Rowwise: 
-    ##   fusion            num_LR LeftGene LeftLocalBreakpoint LeftBreakpoint RightGene
-    ##   <chr>              <dbl> <chr>                  <int> <chr>          <chr>    
-    ## 1 RP11-208G20.2--P…    583 RP11-20…                1093 chr7:55761799… PSPHP1   
-    ## 2 NPM1--ALK            459 NPM1                    4640 chr5:17139179… ALK      
-    ## 3 CYTH1--EIF3H         451 CYTH1                   1096 chr17:7878220… EIF3H    
-    ## 4 BAG6--SLC44A4        345 BAG6                    2050 chr6:31651656… SLC44A4  
-    ## 5 FGFR3--TACC3         343 FGFR3                   9864 chr4:1806934:+ TACC3    
-    ## 6 RP11-208G20.2--P…    330 RP11-20…                1093 chr7:55761799… PSPHP1   
-    ## # ℹ 30 more variables: RightLocalBreakpoint <int>, RightBreakpoint <chr>,
-    ## #   SpliceType <chr>, LR_FFPM <dbl>, JunctionReadCount <dbl>,
-    ## #   SpanningFragCount <dbl>, est_J <dbl>, est_S <dbl>, LeftGene_SR <chr>,
-    ## #   RightGene_SR <chr>, LargeAnchorSupport <chr>, NumCounterFusionLeft <dbl>,
+    ##   fusion  num_LR LeftG…¹ LeftL…² LeftB…³ Right…⁴ Right…⁵ Right…⁶ Splic…⁷ LR_FFPM
+    ##   <chr>    <dbl> <chr>     <int> <chr>   <chr>     <int> <chr>   <chr>     <dbl>
+    ## 1 RP11-2…    583 RP11-2…    1093 chr7:5… PSPHP1     5244 chr7:5… INCL_N…    96.0
+    ## 2 NPM1--…    459 NPM1       4640 chr5:1… ALK       40446 chr2:2… ONLY_R…   173. 
+    ## 3 CYTH1-…    451 CYTH1      1096 chr17:… EIF3H     28690 chr8:1… ONLY_R…   133. 
+    ## 4 BAG6--…    345 BAG6       2050 chr6:3… SLC44A4   25651 chr6:3… ONLY_R…    55.2
+    ## 5 FGFR3-…    343 FGFR3      9864 chr4:1… TACC3     26008 chr4:1… ONLY_R…    63.9
+    ## 6 RP11-2…    330 RP11-2…    1093 chr7:5… PSPHP1     5244 chr7:5… INCL_N…    78.8
+    ## # … with 26 more variables: JunctionReadCount <dbl>, SpanningFragCount <dbl>,
+    ## #   est_J <dbl>, est_S <dbl>, LeftGene_SR <chr>, RightGene_SR <chr>,
+    ## #   LargeAnchorSupport <chr>, NumCounterFusionLeft <dbl>,
     ## #   NumCounterFusionRight <dbl>, FAR_left <dbl>, FAR_right <dbl>,
     ## #   LeftBreakDinuc <chr>, LeftBreakEntropy <dbl>, RightBreakDinuc <chr>,
-    ## #   RightBreakEntropy <dbl>, SR_FFPM <dbl>, microh_brkpt_dist <dbl>, …
+    ## #   RightBreakEntropy <dbl>, SR_FFPM <dbl>, microh_brkpt_dist <dbl>,
+    ## #   num_microh_near_brkpt <dbl>, annots <chr>, max_LR_FFPM <dbl>, …
 
 ``` r
 write.table(data, file="DepMap_v1v2mrgd.ctatLRF_FI.consolidated.tsv", quote=F, sep="\t", row.names=F)
@@ -205,21 +205,21 @@ data %>% head()
 
     ## # A tibble: 6 × 36
     ## # Rowwise: 
-    ##   lexsort_fusion_name  fusion num_LR LeftGene LeftLocalBreakpoint LeftBreakpoint
-    ##   <chr>                <chr>   <dbl> <chr>                  <int> <chr>         
-    ## 1 HCC1395|CYP39A1--EI… EIF3K…     54 "EIF3K"                 8757 chr19:3863267…
-    ## 2 HCC1395|CYP39A1--EI… EIF3K…      2 "EIF3K"                 8575 chr19:3863249…
-    ## 3 HCC1395|CYP39A1--EI… EIF3K…      1 "EIF3K"                 8757 chr19:3863267…
-    ## 4 HCC1395|CYP39A1--EI… EIF3K…     NA ""                      8757 chr19:3863267…
-    ## 5 VCAP|ANO10--SLMAP    SLMAP…      5 "SLMAP"                 7721 chr3:57849816…
-    ## 6 VCAP|ANO10--SLMAP    ANO10…      1 "ANO10"                 3220 chr3:43689311…
-    ## # ℹ 30 more variables: RightGene <chr>, RightLocalBreakpoint <int>,
-    ## #   RightBreakpoint <chr>, SpliceType <chr>, LR_FFPM <dbl>,
-    ## #   JunctionReadCount <dbl>, SpanningFragCount <dbl>, est_J <dbl>, est_S <dbl>,
-    ## #   LeftGene_SR <chr>, RightGene_SR <chr>, LargeAnchorSupport <chr>,
-    ## #   NumCounterFusionLeft <dbl>, NumCounterFusionRight <dbl>, FAR_left <dbl>,
-    ## #   FAR_right <dbl>, LeftBreakDinuc <chr>, LeftBreakEntropy <dbl>,
-    ## #   RightBreakDinuc <chr>, RightBreakEntropy <dbl>, SR_FFPM <dbl>, …
+    ##   lexsor…¹ fusion num_LR LeftG…² LeftL…³ LeftB…⁴ Right…⁵ Right…⁶ Right…⁷ Splic…⁸
+    ##   <chr>    <chr>   <dbl> <chr>     <int> <chr>   <chr>     <int> <chr>   <chr>  
+    ## 1 HCC1395… EIF3K…     54 "EIF3K"    8757 chr19:… "CYP39…   17360 chr6:4… ONLY_R…
+    ## 2 HCC1395… EIF3K…      2 "EIF3K"    8575 chr19:… "CYP39…   17360 chr6:4… ONLY_R…
+    ## 3 HCC1395… EIF3K…      1 "EIF3K"    8757 chr19:… "CYP39…   17344 chr6:4… INCL_N…
+    ## 4 HCC1395… EIF3K…     NA ""         8757 chr19:… ""        17420 chr6:4… INCL_N…
+    ## 5 VCAP|AN… SLMAP…      5 "SLMAP"    7721 chr3:5… "ANO10"   44181 chr3:4… ONLY_R…
+    ## 6 VCAP|AN… ANO10…      1 "ANO10"    3220 chr3:4… "SLMAP"   39608 chr3:5… ONLY_R…
+    ## # … with 26 more variables: LR_FFPM <dbl>, JunctionReadCount <dbl>,
+    ## #   SpanningFragCount <dbl>, est_J <dbl>, est_S <dbl>, LeftGene_SR <chr>,
+    ## #   RightGene_SR <chr>, LargeAnchorSupport <chr>, NumCounterFusionLeft <dbl>,
+    ## #   NumCounterFusionRight <dbl>, FAR_left <dbl>, FAR_right <dbl>,
+    ## #   LeftBreakDinuc <chr>, LeftBreakEntropy <dbl>, RightBreakDinuc <chr>,
+    ## #   RightBreakEntropy <dbl>, SR_FFPM <dbl>, microh_brkpt_dist <dbl>,
+    ## #   num_microh_near_brkpt <dbl>, annots <chr>, max_LR_FFPM <dbl>, …
 
 ``` r
 # how many TP genes and isoforms have both long and short read support:
@@ -293,24 +293,25 @@ SR_enriched_fusion_isoforms %>% filter(SR_enrichment > 1)
 ```
 
     ## # A tibble: 16 × 7
-    ##    sample  fusion             fusion_iso     LR_FFPM SR_FFPM SR_enrichment  rank
-    ##    <chr>   <chr>              <chr>            <dbl>   <dbl>         <dbl> <int>
-    ##  1 SKBR3   TATDN1--GSDMB      TATDN1--GSDMB…   1.18   60.9           51.8      1
-    ##  2 SKBR3   TATDN1--GSDMB      TATDN1--GSDMB…   0.294  10.0           34.1      2
-    ##  3 K562    BCR--ABL1          BCR--ABL1 iso…   0.32    9.83          30.7      3
-    ##  4 SKBR3   TATDN1--GSDMB      TATDN1--GSDMB…   2.06   18.6            9.03     4
-    ##  5 HCC1187 PUM1--TRERF1       PUM1--TRERF1 …   1.59    7.41           4.67     5
-    ##  6 VCAP    USP10--ZDHHC7      USP10--ZDHHC7…   0.494   1.07           2.16     6
-    ##  7 VCAP    TMPRSS2--ERG       TMPRSS2--ERG …   0.165   0.340          2.06     7
-    ##  8 DMS53   RP11-59N23.3--CMAS RP11-59N23.3-…   0.239   0.482          2.02     8
-    ##  9 VCAP    TMPRSS2--ERG       TMPRSS2--ERG …   2.31    3.93           1.70     9
-    ## 10 MJ      RP11-444D3.1--SOX5 RP11-444D3.1-…   0.207   0.304          1.47    10
-    ## 11 K562    NUP214--XKR3       NUP214--XKR3 …   3.36    4.68           1.39    11
-    ## 12 VCAP    ZDHHC7--H3F3B      ZDHHC7--H3F3B…   0.165   0.186          1.12    12
-    ## 13 HCC1187 SEC22B--NOTCH2     SEC22B--NOTCH…   3.97    4.44           1.12    13
-    ## 14 HCC1187 PLXND1--TMCC1      PLXND1--TMCC1…   0.265   0.294          1.11    14
-    ## 15 SKBR3   DHX35--ITCH        DHX35--ITCH i…   0.882   0.926          1.05    15
-    ## 16 SKBR3   ANKHD1--PCDH1      ANKHD1--PCDH1…   1.18    1.19           1.01    16
+    ##    sample  fusion             fusion_iso           LR_FFPM SR_FFPM SR_en…¹  rank
+    ##    <chr>   <chr>              <chr>                  <dbl>   <dbl>   <dbl> <int>
+    ##  1 SKBR3   TATDN1--GSDMB      TATDN1--GSDMB iso 5    1.18   60.9     51.8      1
+    ##  2 SKBR3   TATDN1--GSDMB      TATDN1--GSDMB iso 8    0.294  10.0     34.1      2
+    ##  3 K562    BCR--ABL1          BCR--ABL1 iso 1        0.32    9.83    30.7      3
+    ##  4 SKBR3   TATDN1--GSDMB      TATDN1--GSDMB iso 4    2.06   18.6      9.03     4
+    ##  5 HCC1187 PUM1--TRERF1       PUM1--TRERF1 iso 1     1.59    7.41     4.67     5
+    ##  6 VCAP    USP10--ZDHHC7      USP10--ZDHHC7 iso 1    0.494   1.07     2.16     6
+    ##  7 VCAP    TMPRSS2--ERG       TMPRSS2--ERG iso 4     0.165   0.340    2.06     7
+    ##  8 DMS53   RP11-59N23.3--CMAS RP11-59N23.3--CMAS …   0.239   0.482    2.02     8
+    ##  9 VCAP    TMPRSS2--ERG       TMPRSS2--ERG iso 2     2.31    3.93     1.70     9
+    ## 10 MJ      RP11-444D3.1--SOX5 RP11-444D3.1--SOX5 …   0.207   0.304    1.47    10
+    ## 11 K562    NUP214--XKR3       NUP214--XKR3 iso 1     3.36    4.68     1.39    11
+    ## 12 VCAP    ZDHHC7--H3F3B      ZDHHC7--H3F3B iso 1    0.165   0.186    1.12    12
+    ## 13 HCC1187 SEC22B--NOTCH2     SEC22B--NOTCH2 iso 1   3.97    4.44     1.12    13
+    ## 14 HCC1187 PLXND1--TMCC1      PLXND1--TMCC1 iso 2    0.265   0.294    1.11    14
+    ## 15 SKBR3   DHX35--ITCH        DHX35--ITCH iso 1      0.882   0.926    1.05    15
+    ## 16 SKBR3   ANKHD1--PCDH1      ANKHD1--PCDH1 iso 1    1.18    1.19     1.01    16
+    ## # … with abbreviated variable name ¹​SR_enrichment
 
 ``` r
 # BCR-ABL1 has >30-fold enrichment for SR
@@ -463,22 +464,22 @@ plot_fusion_expression_by_breakpoint(sample_name, fusion_name)
 
     ## # A tibble: 13 × 8
     ## # Rowwise: 
-    ##    sample fusion   LeftLocalBreakpoint RightLocalBreakpoint num_LR est_J LR_FFPM
-    ##    <chr>  <chr>                  <int>                <int>  <dbl> <dbl>   <dbl>
-    ##  1 SKBR3  TATDN1-…                1434                23528      4  2499   1.18 
-    ##  2 SKBR3  TATDN1-…                1531                23528    123   417  36.2  
-    ##  3 SKBR3  TATDN1-…                2128                23528      3     3   0.882
-    ##  4 SKBR3  TATDN1-…                1434                23532      0     6   0    
-    ##  5 SKBR3  TATDN1-…                1434                24410      0     7   0    
-    ##  6 SKBR3  TATDN1-…                1531                24410      1     3   0.294
-    ##  7 SKBR3  TATDN1-…                1434                26465      0    21   0    
-    ##  8 SKBR3  TATDN1-…                1531                26465      3     4   0.882
-    ##  9 SKBR3  TATDN1-…                1434                27181      1   411   0.294
-    ## 10 SKBR3  TATDN1-…                1531                27181     14    42   4.12 
-    ## 11 SKBR3  TATDN1-…                1434                27467      7   763   2.06 
-    ## 12 SKBR3  TATDN1-…                1531                27467     34   111  10.0  
-    ## 13 SKBR3  TATDN1-…                1434                27956      0    10   0    
-    ## # ℹ 1 more variable: SR_FFPM <dbl>
+    ##    sample fusion        LeftLocalBreakpoint Right…¹ num_LR est_J LR_FFPM SR_FFPM
+    ##    <chr>  <chr>                       <int>   <int>  <dbl> <dbl>   <dbl>   <dbl>
+    ##  1 SKBR3  TATDN1--GSDMB                1434   23528      4  2499   1.18  60.9   
+    ##  2 SKBR3  TATDN1--GSDMB                1531   23528    123   417  36.2   10.2   
+    ##  3 SKBR3  TATDN1--GSDMB                2128   23528      3     3   0.882  0.0736
+    ##  4 SKBR3  TATDN1--GSDMB                1434   23532      0     6   0      0.146 
+    ##  5 SKBR3  TATDN1--GSDMB                1434   24410      0     7   0      0.170 
+    ##  6 SKBR3  TATDN1--GSDMB                1531   24410      1     3   0.294  0.0733
+    ##  7 SKBR3  TATDN1--GSDMB                1434   26465      0    21   0      0.512 
+    ##  8 SKBR3  TATDN1--GSDMB                1531   26465      3     4   0.882  0.0979
+    ##  9 SKBR3  TATDN1--GSDMB                1434   27181      1   411   0.294 10.0   
+    ## 10 SKBR3  TATDN1--GSDMB                1531   27181     14    42   4.12   1.03  
+    ## 11 SKBR3  TATDN1--GSDMB                1434   27467      7   763   2.06  18.6   
+    ## 12 SKBR3  TATDN1--GSDMB                1531   27467     34   111  10.0    2.70  
+    ## 13 SKBR3  TATDN1--GSDMB                1434   27956      0    10   0      0.244 
+    ## # … with abbreviated variable name ¹​RightLocalBreakpoint
 
 ![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-20-2.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-20-3.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-20-4.png)<!-- -->
 
@@ -512,10 +513,10 @@ plot_fusion_expression_by_breakpoint("K562", "BCR--ABL1")
 
     ## # A tibble: 1 × 8
     ## # Rowwise: 
-    ##   sample fusion    LeftLocalBreakpoint RightLocalBreakpoint num_LR est_J LR_FFPM
-    ##   <chr>  <chr>                   <int>                <int>  <dbl> <dbl>   <dbl>
-    ## 1 K562   BCR--ABL1               21553                43957      2   272    0.32
-    ## # ℹ 1 more variable: SR_FFPM <dbl>
+    ##   sample fusion    LeftLocalBreakpoint RightLocal…¹ num_LR est_J LR_FFPM SR_FFPM
+    ##   <chr>  <chr>                   <int>        <int>  <dbl> <dbl>   <dbl>   <dbl>
+    ## 1 K562   BCR--ABL1               21553        43957      2   272    0.32    9.83
+    ## # … with abbreviated variable name ¹​RightLocalBreakpoint
 
 ![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-21-2.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-21-3.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-21-4.png)<!-- -->
 
@@ -539,10 +540,10 @@ plot_fusion_expression_by_breakpoint("HCC1187", "PUM1--TRERF1")
 
     ## # A tibble: 1 × 8
     ## # Rowwise: 
-    ##   sample  fusion   LeftLocalBreakpoint RightLocalBreakpoint num_LR est_J LR_FFPM
-    ##   <chr>   <chr>                  <int>                <int>  <dbl> <dbl>   <dbl>
-    ## 1 HCC1187 PUM1--T…               26417                37568      6   172    1.59
-    ## # ℹ 1 more variable: SR_FFPM <dbl>
+    ##   sample  fusion       LeftLocalBreakpoint RightL…¹ num_LR est_J LR_FFPM SR_FFPM
+    ##   <chr>   <chr>                      <int>    <int>  <dbl> <dbl>   <dbl>   <dbl>
+    ## 1 HCC1187 PUM1--TRERF1               26417    37568      6   172    1.59    7.41
+    ## # … with abbreviated variable name ¹​RightLocalBreakpoint
 
 ![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-22-2.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-22-3.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-22-4.png)<!-- -->
 
@@ -566,14 +567,14 @@ plot_fusion_expression_by_breakpoint("VCAP", "TMPRSS2--ERG")
 
     ## # A tibble: 5 × 8
     ## # Rowwise: 
-    ##   sample fusion    LeftLocalBreakpoint RightLocalBreakpoint num_LR est_J LR_FFPM
-    ##   <chr>  <chr>                   <int>                <int>  <dbl> <dbl>   <dbl>
-    ## 1 VCAP   TMPRSS2-…                3407                31121      1    11   0.165
-    ## 2 VCAP   TMPRSS2-…                3538                31121      3     0   0.494
-    ## 3 VCAP   TMPRSS2-…                3407                35606     14   127   2.31 
-    ## 4 VCAP   TMPRSS2-…                3538                35606     18    17   2.96 
-    ## 5 VCAP   TMPRSS2-…                4698                35606      1     1   0.165
-    ## # ℹ 1 more variable: SR_FFPM <dbl>
+    ##   sample fusion       LeftLocalBreakpoint RightLo…¹ num_LR est_J LR_FFPM SR_FFPM
+    ##   <chr>  <chr>                      <int>     <int>  <dbl> <dbl>   <dbl>   <dbl>
+    ## 1 VCAP   TMPRSS2--ERG                3407     31121      1    11   0.165  0.340 
+    ## 2 VCAP   TMPRSS2--ERG                3538     31121      3     0   0.494 NA     
+    ## 3 VCAP   TMPRSS2--ERG                3407     35606     14   127   2.31   3.93  
+    ## 4 VCAP   TMPRSS2--ERG                3538     35606     18    17   2.96   0.526 
+    ## 5 VCAP   TMPRSS2--ERG                4698     35606      1     1   0.165  0.0927
+    ## # … with abbreviated variable name ¹​RightLocalBreakpoint
 
 ![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-23-2.png)<!-- -->
 
@@ -855,14 +856,14 @@ plot_fusion_expression_by_breakpoint("SKBR3", "CYTH1--EIF3H")
 
     ## # A tibble: 5 × 8
     ## # Rowwise: 
-    ##   sample fusion    LeftLocalBreakpoint RightLocalBreakpoint num_LR est_J LR_FFPM
-    ##   <chr>  <chr>                   <int>                <int>  <dbl> <dbl>   <dbl>
-    ## 1 SKBR3  CYTH1--E…                1096                28690    451   223  133.  
-    ## 2 SKBR3  CYTH1--E…                1096                28912     46    22   13.5 
-    ## 3 SKBR3  CYTH1--E…                1096                32601    161    64   47.3 
-    ## 4 SKBR3  CYTH1--E…                1096                36015    109    53   32.0 
-    ## 5 SKBR3  CYTH1--E…                1096                38781     10     4    2.94
-    ## # ℹ 1 more variable: SR_FFPM <dbl>
+    ##   sample fusion       LeftLocalBreakpoint RightLo…¹ num_LR est_J LR_FFPM SR_FFPM
+    ##   <chr>  <chr>                      <int>     <int>  <dbl> <dbl>   <dbl>   <dbl>
+    ## 1 SKBR3  CYTH1--EIF3H                1096     28690    451   223  133.    5.43  
+    ## 2 SKBR3  CYTH1--EIF3H                1096     28912     46    22   13.5   0.536 
+    ## 3 SKBR3  CYTH1--EIF3H                1096     32601    161    64   47.3   1.56  
+    ## 4 SKBR3  CYTH1--EIF3H                1096     36015    109    53   32.0   1.29  
+    ## 5 SKBR3  CYTH1--EIF3H                1096     38781     10     4    2.94  0.0974
+    ## # … with abbreviated variable name ¹​RightLocalBreakpoint
 
 ![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-31-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-31-2.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-31-3.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-31-4.png)<!-- -->
 
@@ -898,17 +899,17 @@ plot_fusion_expression_by_breakpoint("SKBR3", "SAMD12--MRPL13")
 
     ## # A tibble: 8 × 8
     ## # Rowwise: 
-    ##   sample fusion    LeftLocalBreakpoint RightLocalBreakpoint num_LR est_J LR_FFPM
-    ##   <chr>  <chr>                   <int>                <int>  <dbl> <dbl>   <dbl>
-    ## 1 SKBR3  SAMD12--…                2373                22212     13     9   3.82 
-    ## 2 SKBR3  SAMD12--…                3503                22212     16    23   4.70 
-    ## 3 SKBR3  SAMD12--…                3508                22212      5     3   1.47 
-    ## 4 SKBR3  SAMD12--…                2373                23336      3     3   0.882
-    ## 5 SKBR3  SAMD12--…                3503                23336     22     9   6.47 
-    ## 6 SKBR3  SAMD12--…                2373                24430      3     2   0.882
-    ## 7 SKBR3  SAMD12--…                3473                24430      3     2   0.882
-    ## 8 SKBR3  SAMD12--…                3503                24430     11     6   3.23 
-    ## # ℹ 1 more variable: SR_FFPM <dbl>
+    ##   sample fusion         LeftLocalBreakpoint Right…¹ num_LR est_J LR_FFPM SR_FFPM
+    ##   <chr>  <chr>                        <int>   <int>  <dbl> <dbl>   <dbl>   <dbl>
+    ## 1 SKBR3  SAMD12--MRPL13                2373   22212     13     9   3.82   0.32  
+    ## 2 SKBR3  SAMD12--MRPL13                3503   22212     16    23   4.70   1.10  
+    ## 3 SKBR3  SAMD12--MRPL13                3508   22212      5     3   1.47   0.144 
+    ## 4 SKBR3  SAMD12--MRPL13                2373   23336      3     3   0.882  0.0887
+    ## 5 SKBR3  SAMD12--MRPL13                3503   23336     22     9   6.47   0.310 
+    ## 6 SKBR3  SAMD12--MRPL13                2373   24430      3     2   0.882  0.0526
+    ## 7 SKBR3  SAMD12--MRPL13                3473   24430      3     2   0.882  0.0543
+    ## 8 SKBR3  SAMD12--MRPL13                3503   24430     11     6   3.23   0.168 
+    ## # … with abbreviated variable name ¹​RightLocalBreakpoint
 
 ![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-32-1.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-32-2.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-32-3.png)<!-- -->![](CTAT_DepMap9Lines_files/figure-gfm/unnamed-chunk-32-4.png)<!-- -->
 
@@ -1079,10 +1080,10 @@ plot_fusion_expression_by_breakpoint_incl_gene_structures("K562", "BCR--ABL1")
 
     ## # A tibble: 1 × 8
     ## # Rowwise: 
-    ##   sample fusion    LeftLocalBreakpoint RightLocalBreakpoint num_LR est_J LR_FFPM
-    ##   <chr>  <chr>                   <int>                <int>  <dbl> <dbl>   <dbl>
-    ## 1 K562   BCR--ABL1               21553                43957      2   272    0.32
-    ## # ℹ 1 more variable: SR_FFPM <dbl>
+    ##   sample fusion    LeftLocalBreakpoint RightLocal…¹ num_LR est_J LR_FFPM SR_FFPM
+    ##   <chr>  <chr>                   <int>        <int>  <dbl> <dbl>   <dbl>   <dbl>
+    ## 1 K562   BCR--ABL1               21553        43957      2   272    0.32    9.83
+    ## # … with abbreviated variable name ¹​RightLocalBreakpoint
     ##    fusion_name feature_type  lend  rend
     ## 1    BCR--ABL1        GeneA  1001  1129
     ## 2    BCR--ABL1        GeneA  1507  3536
@@ -1203,14 +1204,14 @@ plots = plot_fusion_expression_by_breakpoint_incl_gene_structures("VCAP", "TMPRS
 
     ## # A tibble: 5 × 8
     ## # Rowwise: 
-    ##   sample fusion    LeftLocalBreakpoint RightLocalBreakpoint num_LR est_J LR_FFPM
-    ##   <chr>  <chr>                   <int>                <int>  <dbl> <dbl>   <dbl>
-    ## 1 VCAP   TMPRSS2-…                3407                31121      1    11   0.165
-    ## 2 VCAP   TMPRSS2-…                3538                31121      3     0   0.494
-    ## 3 VCAP   TMPRSS2-…                3407                35606     14   127   2.31 
-    ## 4 VCAP   TMPRSS2-…                3538                35606     18    17   2.96 
-    ## 5 VCAP   TMPRSS2-…                4698                35606      1     1   0.165
-    ## # ℹ 1 more variable: SR_FFPM <dbl>
+    ##   sample fusion       LeftLocalBreakpoint RightLo…¹ num_LR est_J LR_FFPM SR_FFPM
+    ##   <chr>  <chr>                      <int>     <int>  <dbl> <dbl>   <dbl>   <dbl>
+    ## 1 VCAP   TMPRSS2--ERG                3407     31121      1    11   0.165  0.340 
+    ## 2 VCAP   TMPRSS2--ERG                3538     31121      3     0   0.494 NA     
+    ## 3 VCAP   TMPRSS2--ERG                3407     35606     14   127   2.31   3.93  
+    ## 4 VCAP   TMPRSS2--ERG                3538     35606     18    17   2.96   0.526 
+    ## 5 VCAP   TMPRSS2--ERG                4698     35606      1     1   0.165  0.0927
+    ## # … with abbreviated variable name ¹​RightLocalBreakpoint
     ##     fusion_name feature_type  lend  rend
     ## 1  TMPRSS2--ERG        GeneA  1001  1132
     ## 2  TMPRSS2--ERG        GeneA  1019  1132
@@ -1309,14 +1310,14 @@ plots = plot_fusion_expression_by_breakpoint_incl_gene_structures("SKBR3", "CYTH
 
     ## # A tibble: 5 × 8
     ## # Rowwise: 
-    ##   sample fusion    LeftLocalBreakpoint RightLocalBreakpoint num_LR est_J LR_FFPM
-    ##   <chr>  <chr>                   <int>                <int>  <dbl> <dbl>   <dbl>
-    ## 1 SKBR3  CYTH1--E…                1096                28690    451   223  133.  
-    ## 2 SKBR3  CYTH1--E…                1096                28912     46    22   13.5 
-    ## 3 SKBR3  CYTH1--E…                1096                32601    161    64   47.3 
-    ## 4 SKBR3  CYTH1--E…                1096                36015    109    53   32.0 
-    ## 5 SKBR3  CYTH1--E…                1096                38781     10     4    2.94
-    ## # ℹ 1 more variable: SR_FFPM <dbl>
+    ##   sample fusion       LeftLocalBreakpoint RightLo…¹ num_LR est_J LR_FFPM SR_FFPM
+    ##   <chr>  <chr>                      <int>     <int>  <dbl> <dbl>   <dbl>   <dbl>
+    ## 1 SKBR3  CYTH1--EIF3H                1096     28690    451   223  133.    5.43  
+    ## 2 SKBR3  CYTH1--EIF3H                1096     28912     46    22   13.5   0.536 
+    ## 3 SKBR3  CYTH1--EIF3H                1096     32601    161    64   47.3   1.56  
+    ## 4 SKBR3  CYTH1--EIF3H                1096     36015    109    53   32.0   1.29  
+    ## 5 SKBR3  CYTH1--EIF3H                1096     38781     10     4    2.94  0.0974
+    ## # … with abbreviated variable name ¹​RightLocalBreakpoint
     ##     fusion_name feature_type  lend  rend
     ## 1  CYTH1--EIF3H        GeneA  1001  1096
     ## 2  CYTH1--EIF3H        GeneA  1004  1096
@@ -1459,22 +1460,22 @@ plots = plot_fusion_expression_by_breakpoint_incl_gene_structures("SKBR3", "TATD
 
     ## # A tibble: 13 × 8
     ## # Rowwise: 
-    ##    sample fusion   LeftLocalBreakpoint RightLocalBreakpoint num_LR est_J LR_FFPM
-    ##    <chr>  <chr>                  <int>                <int>  <dbl> <dbl>   <dbl>
-    ##  1 SKBR3  TATDN1-…                1434                23528      4  2499   1.18 
-    ##  2 SKBR3  TATDN1-…                1531                23528    123   417  36.2  
-    ##  3 SKBR3  TATDN1-…                2128                23528      3     3   0.882
-    ##  4 SKBR3  TATDN1-…                1434                23532      0     6   0    
-    ##  5 SKBR3  TATDN1-…                1434                24410      0     7   0    
-    ##  6 SKBR3  TATDN1-…                1531                24410      1     3   0.294
-    ##  7 SKBR3  TATDN1-…                1434                26465      0    21   0    
-    ##  8 SKBR3  TATDN1-…                1531                26465      3     4   0.882
-    ##  9 SKBR3  TATDN1-…                1434                27181      1   411   0.294
-    ## 10 SKBR3  TATDN1-…                1531                27181     14    42   4.12 
-    ## 11 SKBR3  TATDN1-…                1434                27467      7   763   2.06 
-    ## 12 SKBR3  TATDN1-…                1531                27467     34   111  10.0  
-    ## 13 SKBR3  TATDN1-…                1434                27956      0    10   0    
-    ## # ℹ 1 more variable: SR_FFPM <dbl>
+    ##    sample fusion        LeftLocalBreakpoint Right…¹ num_LR est_J LR_FFPM SR_FFPM
+    ##    <chr>  <chr>                       <int>   <int>  <dbl> <dbl>   <dbl>   <dbl>
+    ##  1 SKBR3  TATDN1--GSDMB                1434   23528      4  2499   1.18  60.9   
+    ##  2 SKBR3  TATDN1--GSDMB                1531   23528    123   417  36.2   10.2   
+    ##  3 SKBR3  TATDN1--GSDMB                2128   23528      3     3   0.882  0.0736
+    ##  4 SKBR3  TATDN1--GSDMB                1434   23532      0     6   0      0.146 
+    ##  5 SKBR3  TATDN1--GSDMB                1434   24410      0     7   0      0.170 
+    ##  6 SKBR3  TATDN1--GSDMB                1531   24410      1     3   0.294  0.0733
+    ##  7 SKBR3  TATDN1--GSDMB                1434   26465      0    21   0      0.512 
+    ##  8 SKBR3  TATDN1--GSDMB                1531   26465      3     4   0.882  0.0979
+    ##  9 SKBR3  TATDN1--GSDMB                1434   27181      1   411   0.294 10.0   
+    ## 10 SKBR3  TATDN1--GSDMB                1531   27181     14    42   4.12   1.03  
+    ## 11 SKBR3  TATDN1--GSDMB                1434   27467      7   763   2.06  18.6   
+    ## 12 SKBR3  TATDN1--GSDMB                1531   27467     34   111  10.0    2.70  
+    ## 13 SKBR3  TATDN1--GSDMB                1434   27956      0    10   0      0.244 
+    ## # … with abbreviated variable name ¹​RightLocalBreakpoint
     ##      fusion_name feature_type  lend  rend
     ## 1  TATDN1--GSDMB        GeneA  1001  1434
     ## 2  TATDN1--GSDMB        GeneA  1350  1434
