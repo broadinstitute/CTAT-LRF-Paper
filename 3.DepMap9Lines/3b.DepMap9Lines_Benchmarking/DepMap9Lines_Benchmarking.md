@@ -64,7 +64,9 @@ fusion_preds %>% head()
 p = fusion_preds %>% 
     select(sample, prog, fusion) %>% unique() %>%
     group_by(sample, prog) %>% tally(name='num_fusions') %>%
-    ggplot(aes(x=prog, y=num_fusions)) + geom_col(aes(fill=prog)) + facet_wrap(~sample)  + 
+    ggplot(aes(x=prog, y=num_fusions)) +
+    theme_bw() +
+    geom_col(aes(fill=prog)) + facet_wrap(~sample)  + 
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
 
 p 
@@ -249,7 +251,9 @@ scored_data %>% head()
 scored_data %>% filter(pred_result %in% c("TP", "FP", "FN")) %>% 
     group_by(sample, prog, pred_result) %>% 
     tally(name='fusion_counts') %>%
-    ggplot(aes(x=prog, y=fusion_counts, fill=factor(pred_result, levels=c('FP', 'TP', 'FN')))) + geom_col() + facet_wrap(~sample)  +
+    ggplot(aes(x=prog, y=fusion_counts, fill=factor(pred_result, levels=c('FP', 'TP', 'FN')))) + 
+    theme_bw() +
+    geom_col() + facet_wrap(~sample)  +
         theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
 ```
 
@@ -282,7 +286,9 @@ data %>% head()
 # F1 vs. min reads
 
 depmap_accuracy_lineplot = data %>% 
-    ggplot(aes(x=min_sum_frags, y=F1)) + geom_point(aes(color=prog)) + geom_line(aes(group=prog, color=prog)) +
+    ggplot(aes(x=min_sum_frags, y=F1)) + 
+    theme_bw() +
+    geom_point(aes(color=prog)) + geom_line(aes(group=prog, color=prog)) +
     xlim(3,10) + ylim(0.4,0.85) +
     ggtitle("Depmap v1 fusions: F1 ~ min read support") 
 
@@ -304,15 +310,24 @@ depmap_accuracy_lineplot
 
 depmap_TP_vs_FP_scatterplot  = data %>% select(prog, min_sum_frags, TP, FP) %>% 
     gather(key=pred_class_type, value=pred_class_value, TP, FP) %>%
-    ggplot(aes(x=min_sum_frags, y=pred_class_value)) + geom_point(aes(group=pred_class_type, color=pred_class_type)) +
+    ggplot(aes(x=min_sum_frags, y=pred_class_value)) + 
+    theme_bw() +
+    geom_point(aes(color=pred_class_type)) +
+    geom_line(aes(groups=pred_class_type, color=pred_class_type)) +
     facet_wrap(~prog) +
     xlim(3,15)
+```
 
+    ## Warning in geom_line(aes(groups = pred_class_type, color = pred_class_type)):
+    ## Ignoring unknown aesthetics: groups
 
+``` r
 depmap_TP_vs_FP_scatterplot 
 ```
 
     ## Warning: Removed 354 rows containing missing values (`geom_point()`).
+
+    ## Warning: Removed 70 rows containing missing values (`geom_line()`).
 
 ![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
@@ -324,6 +339,7 @@ depmap_TP_vs_FP_scatterplot
 # precision / recall 
 
 depmap_precision_recall_plot = data %>% ggplot(aes(x=TPR, y=PPV)) + 
+    theme_bw() +
     geom_point(aes(groups=prog, color=prog)) +
     geom_line(aes(color=prog)) 
 ```
@@ -345,7 +361,7 @@ depmap_precision_recall_plot
 
 ``` r
 unfiltered_preds = read.table("data/preds.collected.gencode_mapped.wAnnot.gz", header=T, sep="\t") %>%
-    filter(! grepl("flair", prog))
+    filter(prog %in% PROGS)
 ```
 
 ``` r
@@ -453,7 +469,9 @@ cosmic_fusion_preds_mult_methods
  depmap_cosmic_fusions_heatmap =   cosmic_fusion_preds %>%
     filter(proxy_fusion_name %in% cosmic_fusion_preds_mult_methods) %>%
     
-    ggplot(aes(x=proxy_fusion_name, y=prog)) + geom_tile(aes(fill=num_reads)) + 
+    ggplot(aes(x=proxy_fusion_name, y=prog)) + 
+    theme_bw() +
+    geom_tile(aes(fill=num_reads)) + 
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     scale_fill_continuous(high = "#132B43", low = "#56B1F7", na.value="white") +
     geom_text(aes(label=num_reads), color='white')

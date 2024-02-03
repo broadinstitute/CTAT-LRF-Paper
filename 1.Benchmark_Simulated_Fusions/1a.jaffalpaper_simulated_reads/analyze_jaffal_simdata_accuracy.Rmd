@@ -66,7 +66,7 @@ max_F1_data = max_F1_data %>% mutate(seqtype = ifelse(seqtype == "Pac", "PacBio"
 
 p_linepoint = max_F1_data %>% 
     filter(analysisType %in% c('strict', 'allow_reverse')) %>%
-    ggplot() + 
+    ggplot() + theme_bw() +
     geom_point(aes(x=divergence, y=F1, color=prog)) +
     geom_line(aes(x=divergence, y=F1, group=prog, color=prog)) +
     facet_grid(vars(analysisType), vars(seqtype))

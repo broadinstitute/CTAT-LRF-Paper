@@ -111,7 +111,9 @@ data %>% filter(num_LR > 0 & num_SR > 0) %>% select(sample, fusion, LeftBreakpoi
 # compare long vs. short read fusion evidence, normalized by sequencing depth
 
 ``` r
-data %>% ggplot(aes(x=log10(LR_FFPM), y=log10(SR_FFPM))) + geom_point() +
+data %>% ggplot(aes(x=log10(LR_FFPM), y=log10(SR_FFPM))) + 
+    theme_bw() +
+    geom_point() +
     ggtitle("ctatLRF_FI-everything LR vs. SR fusion expression (FFPM)") +                                      
   stat_smooth(method = "lm", 
               formula = y ~ x, 
@@ -240,12 +242,14 @@ data %>% filter(num_LR > 0 && num_SR > 0) %>% select(sample, fusion) %>% unique(
 data %>% 
     select(sample, fusion_iso, num_LR, num_SR) %>% 
     gather(key=read_type, value=read_count, num_LR, num_SR) %>%
-    ggplot(aes(x=fusion_iso, y=read_count)) + geom_bar(stat='identity', position = 'dodge', aes(fill=read_type)) +
+    ggplot(aes(x=fusion_iso, y=read_count)) + 
+        theme_bw() +
+        geom_bar(stat='identity', position = 'dodge', aes(fill=read_type)) +
     
-    facet_grid(. ~ sample, scales = "free", space='free') +
-    scale_x_discrete(expand = c(0, 0.5))  +
+        facet_grid(. ~ sample, scales = "free", space='free') +
+        scale_x_discrete(expand = c(0, 0.5))  +
     
-    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+        theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
     ## Warning: Removed 66 rows containing missing values (`geom_bar()`).
@@ -261,7 +265,9 @@ data %>%
     
     mutate(FFPM = FFPM * 100) %>%
     
-    ggplot(aes(x=fusion_iso, y=FFPM)) + geom_bar(stat='identity', position = 'dodge', aes(fill=FFPM_type)) +
+    ggplot(aes(x=fusion_iso, y=FFPM)) + 
+        theme_bw() +
+        geom_bar(stat='identity', position = 'dodge', aes(fill=FFPM_type)) +
     
     facet_grid(. ~ sample, scales = "free", space='free') +
     scale_x_discrete(expand = c(0, 0.5))  +
@@ -320,7 +326,9 @@ SR_enriched_fusion_isoforms %>% filter(SR_enrichment > 1)
 ``` r
 depmap_LR_vs_SR_fusion_FFPM_scatterplot = data %>%     
     select(sample, fusion_iso, LR_FFPM, SR_FFPM) %>% 
-    ggplot(aes(x=log10(LR_FFPM), y=log10(SR_FFPM))) + geom_point() +
+    ggplot(aes(x=log10(LR_FFPM), y=log10(SR_FFPM))) + 
+    theme_bw() +
+    geom_point() +
     stat_smooth(method = "lm", 
               formula = y ~ x, 
               geom = "smooth") + 
@@ -370,7 +378,9 @@ cor.test(x=log2(data$LR_FFPM), y=log2(data$SR_FFPM), use='complete.obs')
 ``` r
 depmap_SR_enrichment_rankings_plot = SR_enriched_fusion_isoforms %>%
     mutate(rn = row_number() ) %>%
-    ggplot(aes(x=rn, y=SR_enrichment)) + geom_point() + geom_hline(yintercept = 1.0, color='purple') +
+    ggplot(aes(x=rn, y=SR_enrichment)) + 
+    theme_bw() +
+    geom_point() + geom_hline(yintercept = 1.0, color='purple') +
     scale_y_continuous(trans='log10') +
     xlab("Fusion isoform ranked by SR_enrichment")
    
@@ -401,6 +411,7 @@ plot_fusion_expression_by_breakpoint = function(sample_name, fusion_name) {
     p1 = df %>% gather(key=readtype, value=readcount, num_LR, est_J) %>% 
         filter(readcount > 0) %>%
         ggplot(aes(x=RightLocalBreakpoint, y=LeftLocalBreakpoint) ) + 
+        theme_bw() +
         ggtitle(paste(sample_name, fusion_name, "by read count")) +
         geom_point(aes(color=readtype, size=readcount), alpha=0.5) +
         facet_wrap(~readtype) 
@@ -411,6 +422,7 @@ plot_fusion_expression_by_breakpoint = function(sample_name, fusion_name) {
     p2 = df %>% gather(key=readtype, value=FFPM, LR_FFPM, SR_FFPM) %>% 
         filter(FFPM > 0) %>%
         ggplot(aes(x=RightLocalBreakpoint, y=LeftLocalBreakpoint) ) + 
+        theme_bw() +
         ggtitle(paste(sample_name, fusion_name, "by FFPM")) +
         geom_point(aes(color=readtype, size=FFPM), alpha=0.5) +
         facet_wrap(~readtype) 
@@ -419,6 +431,7 @@ plot_fusion_expression_by_breakpoint = function(sample_name, fusion_name) {
     
     p3 = df %>% gather(key=readtype, value=FFPM, LR_FFPM, SR_FFPM) %>% 
         ggplot(aes(x=RightLocalBreakpoint, y=LeftLocalBreakpoint) ) + 
+        theme_bw() +
         ggtitle(paste(sample_name, fusion_name, "by FFPM")) +
         geom_point(aes(color=readtype, fill=readtype, size=FFPM), alpha=0.5) 
     
@@ -428,6 +441,7 @@ plot_fusion_expression_by_breakpoint = function(sample_name, fusion_name) {
     p4 = df %>% gather(key=readtype, value=FFPM, LR_FFPM, SR_FFPM) %>% 
         mutate(breakpoint = paste(RightLocalBreakpoint, LeftLocalBreakpoint)) %>% 
         ggplot(aes(x=breakpoint, y=FFPM, fill=readtype) ) + 
+        theme_bw() +
         ggtitle(paste(sample_name, fusion_name, "by FFPM")) +
         geom_bar(stat='identity', position='dodge')  +
         theme(axis.text.x = element_text(angle = 90, hjust = 1))
@@ -442,7 +456,9 @@ plot_fusion_expression_by_breakpoint = function(sample_name, fusion_name) {
     
      p5 = df %>%
         mutate(breakpoint = paste(RightLocalBreakpoint, LeftLocalBreakpoint)) %>% 
-        ggplot(aes(x=LR_FFPM, y=SR_FFPM) ) +  geom_point() +  geom_abline(slope=lm_slope, intercept = lm_y_intercept) +
+        ggplot(aes(x=LR_FFPM, y=SR_FFPM) ) +  
+        theme_bw() + 
+        geom_point() +  geom_abline(slope=lm_slope, intercept = lm_y_intercept) +
         ggtitle(paste(sample_name, fusion_name, "by FFPM")) 
     
     plot(p5)
@@ -679,7 +695,9 @@ mult_iso_both_sample_fusion_names %>% arrange(desc(num_multi_iso_both_types))
 
 ``` r
 depmap_fusion_isoform_expr_LR_SR_comparison_plot =  mult_isoform_data_both_read_types %>% 
-    ggplot(aes(x=log10(LR_FFPM), y=log10(SR_FFPM))) + geom_point(aes(color=fusion)) +
+    ggplot(aes(x=log10(LR_FFPM), y=log10(SR_FFPM))) + 
+    theme_bw() +
+    geom_point(aes(color=fusion)) +
     ggtitle("restricted to fusion genes w/ multi isoforms supported by both read types") +
     stat_smooth(method = "lm", 
               formula = y ~ x, 
@@ -723,7 +741,9 @@ for (i in seq(nrow(mult_iso_both_sample_fusion_names))) {
     
     p = loc_df %>%
         mutate(breakpoint = paste(RightLocalBreakpoint, LeftLocalBreakpoint)) %>% 
-        ggplot(aes(x=LR_FFPM, y=SR_FFPM) ) +  geom_point() + geom_abline(slope=lm_slope, intercept = lm_y_intercept) +
+        ggplot(aes(x=LR_FFPM, y=SR_FFPM) ) + 
+        theme_bw() +
+        geom_point() + geom_abline(slope=lm_slope, intercept = lm_y_intercept) +
         ggtitle(paste(sample_name, fusion_name, "by FFPM")) 
     
     plot(p)
@@ -1440,7 +1460,9 @@ ggsave(plots[[1]] + xlim(800,1000) + theme_bw(), file="EIF3H_structure.svg", wid
 ``` r
 cyth1_eif3h_cor_plot =  mult_isoform_data_both_read_types %>% 
     filter(fusion=="CYTH1--EIF3H") %>%
-    ggplot(aes(x=log10(LR_FFPM), y=log10(SR_FFPM))) + geom_point(aes(color=fusion), size=rel(3), color='black') +
+    ggplot(aes(x=log10(LR_FFPM), y=log10(SR_FFPM))) + 
+    theme_bw() +
+    geom_point(aes(color=fusion), size=rel(3), color='black') +
     ggtitle("restricted to fusion genes w/ multi isoforms supported by both read types") +
     stat_smooth(method = "lm", 
               formula = y ~ x, 
