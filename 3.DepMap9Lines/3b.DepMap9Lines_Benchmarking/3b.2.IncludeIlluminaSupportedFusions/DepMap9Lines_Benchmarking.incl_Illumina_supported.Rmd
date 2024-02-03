@@ -105,32 +105,6 @@ p_fusion_counts_barplot
 
 
 ```{r}
-<<<<<<< HEAD
-=======
-# pbfusion v0.4.0 isn't part of the main paper (came out later)
-
-p_fusion_counts_barplot = fusion_preds %>% 
-     select(sample, prog, fusion) %>% unique() %>%
-    filter(prog %in% c('ctat-LR-fusion.v0.13.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.4.0')) %>%
-    mutate(prog = factor(prog, levels=c('ctat-LR-fusion.v0.13.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.4.0'))) %>%
-    group_by(sample, prog) %>% tally(name='num_fusions') %>%
-    ggplot(aes(x=prog, y=num_fusions)) + geom_col(aes(fill=prog)) + facet_wrap(~sample)  + 
-    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
- geom_hline(data=truth_data_counts, aes(yintercept=num_truth_fusions))
-
-p_fusion_counts_barplot
-
-```
-
-
-
-
-```{r}
-<<<<<<< HEAD
->>>>>>> 21d3edc (depmap w/ illumina update)
-=======
->>>>>>> 9766968 (depmap w/ illumina update)
->>>>>>> 13c78e1 (depmap w/ illumina update)
 
 ggsave(p_fusion_counts_barplot, file="depmap_fusion_counts_per_prog.barplot.svg", width=7, height=5)
 
