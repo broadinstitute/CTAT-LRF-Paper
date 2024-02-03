@@ -285,7 +285,7 @@ left_join(fusions_of_interest, Om_fusion_frac_cell_types, by='FusionName', suffi
 
 ```
 
-None of these three fusions are found in the matched normal 'Om' sample
+None of these four fusions are found in the matched normal 'Om' sample
 
 
 # Examine read type support for these fusions of interest

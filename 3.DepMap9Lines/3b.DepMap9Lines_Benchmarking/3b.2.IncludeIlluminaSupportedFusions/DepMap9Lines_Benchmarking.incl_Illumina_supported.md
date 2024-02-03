@@ -369,17 +369,17 @@ unfiltered_preds %>% head()
 
     ## # A tibble: 6 × 9
     ## # Rowwise: 
-    ##   sample prog   fusion          breakpoint      num_reads mapped_gencode_A_gen…¹
-    ##   <chr>  <chr>  <chr>           <chr>               <int> <chr>                 
-    ## 1 RT112  LongGF TACC3--FGFR3    chr4:1739701--…       341 AC016773.1,TACC3      
-    ## 2 RT112  LongGF CBX3--C15orf57  chr7:26201744-…         7 CBX3,HNRNPA2B1        
-    ## 3 RT112  LongGF MT-ND2--MT-CO1  chrM:5301--chr…         3 MT-ND2                
-    ## 4 RT112  LongGF NOP14--WHSC1    chr4:2963124--…         3 AB000466,C4orf10,NOP1…
-    ## 5 RT112  LongGF MT-ND5--MT-ATP8 chrM:13152--ch…         3 MT-ND5,MTND5          
-    ## 6 RT112  LongGF MT-ND6--MT-ND5  chrM:14623--ch…         3 MT-ND6,MTND5          
-    ## # ℹ abbreviated name: ¹​mapped_gencode_A_gene_list
-    ## # ℹ 3 more variables: mapped_gencode_B_gene_list <chr>, annots <chr>,
-    ## #   proxy_fusion_name <chr>
+    ##   sample prog   fusion          breakpo…¹ num_r…² mappe…³ mappe…⁴ annots proxy…⁵
+    ##   <chr>  <chr>  <chr>           <chr>       <int> <chr>   <chr>   <chr>  <chr>  
+    ## 1 RT112  LongGF TACC3--FGFR3    chr4:173…     341 AC0167… FGFR3   TACC3… FGFR3-…
+    ## 2 RT112  LongGF CBX3--C15orf57  chr7:262…       7 CBX3,H… AC0910… CBX3-… C15orf…
+    ## 3 RT112  LongGF MT-ND2--MT-CO1  chrM:530…       3 MT-ND2  BC0188… MT-ND… MT-CO1…
+    ## 4 RT112  LongGF NOP14--WHSC1    chr4:296…       3 AB0004… AL1328… NOP14… NOP14-…
+    ## 5 RT112  LongGF MT-ND5--MT-ATP8 chrM:131…       3 MT-ND5… J01415… MT-ND… MT-ATP…
+    ## 6 RT112  LongGF MT-ND6--MT-ND5  chrM:146…       3 MT-ND6… MT-ND5… MT-ND… MT-ND5…
+    ## # … with abbreviated variable names ¹​breakpoint, ²​num_reads,
+    ## #   ³​mapped_gencode_A_gene_list, ⁴​mapped_gencode_B_gene_list,
+    ## #   ⁵​proxy_fusion_name
 
 ``` r
 unfiltered_preds = unfiltered_preds %>% mutate(proxy_fusion_name = paste(sample, proxy_fusion_name, sep ="|"))
@@ -389,17 +389,17 @@ unfiltered_preds %>% head()
 
     ## # A tibble: 6 × 9
     ## # Rowwise: 
-    ##   sample prog   fusion          breakpoint      num_reads mapped_gencode_A_gen…¹
-    ##   <chr>  <chr>  <chr>           <chr>               <int> <chr>                 
-    ## 1 RT112  LongGF TACC3--FGFR3    chr4:1739701--…       341 AC016773.1,TACC3      
-    ## 2 RT112  LongGF CBX3--C15orf57  chr7:26201744-…         7 CBX3,HNRNPA2B1        
-    ## 3 RT112  LongGF MT-ND2--MT-CO1  chrM:5301--chr…         3 MT-ND2                
-    ## 4 RT112  LongGF NOP14--WHSC1    chr4:2963124--…         3 AB000466,C4orf10,NOP1…
-    ## 5 RT112  LongGF MT-ND5--MT-ATP8 chrM:13152--ch…         3 MT-ND5,MTND5          
-    ## 6 RT112  LongGF MT-ND6--MT-ND5  chrM:14623--ch…         3 MT-ND6,MTND5          
-    ## # ℹ abbreviated name: ¹​mapped_gencode_A_gene_list
-    ## # ℹ 3 more variables: mapped_gencode_B_gene_list <chr>, annots <chr>,
-    ## #   proxy_fusion_name <chr>
+    ##   sample prog   fusion          breakpo…¹ num_r…² mappe…³ mappe…⁴ annots proxy…⁵
+    ##   <chr>  <chr>  <chr>           <chr>       <int> <chr>   <chr>   <chr>  <chr>  
+    ## 1 RT112  LongGF TACC3--FGFR3    chr4:173…     341 AC0167… FGFR3   TACC3… RT112|…
+    ## 2 RT112  LongGF CBX3--C15orf57  chr7:262…       7 CBX3,H… AC0910… CBX3-… RT112|…
+    ## 3 RT112  LongGF MT-ND2--MT-CO1  chrM:530…       3 MT-ND2  BC0188… MT-ND… RT112|…
+    ## 4 RT112  LongGF NOP14--WHSC1    chr4:296…       3 AB0004… AL1328… NOP14… RT112|…
+    ## 5 RT112  LongGF MT-ND5--MT-ATP8 chrM:131…       3 MT-ND5… J01415… MT-ND… RT112|…
+    ## 6 RT112  LongGF MT-ND6--MT-ND5  chrM:146…       3 MT-ND6… MT-ND5… MT-ND… RT112|…
+    ## # … with abbreviated variable names ¹​breakpoint, ²​num_reads,
+    ## #   ³​mapped_gencode_A_gene_list, ⁴​mapped_gencode_B_gene_list,
+    ## #   ⁵​proxy_fusion_name
 
 ``` r
 cosmic_fusions = unfiltered_preds %>% filter(grepl("Cosmic", annots)) %>% select(sample, proxy_fusion_name) %>% unique()
@@ -447,7 +447,7 @@ cosmic_fusion_preds
     ##  8 RT112  RT112|FGFR3--TACC3 ctat-LR-fusion.v0.13.0       343
     ##  9 RT112  RT112|FGFR3--TACC3 LongGF                       341
     ## 10 RT112  RT112|FGFR3--TACC3 JAFFAL                       341
-    ## # ℹ 33 more rows
+    ## # … with 33 more rows
 
 ``` r
 # limit to those found by at least 2 of the methods
