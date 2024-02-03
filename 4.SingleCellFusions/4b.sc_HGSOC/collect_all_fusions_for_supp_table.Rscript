@@ -1,0 +1,22 @@
+#!/usr/bin/env Rscript
+
+library(tidyverse)
+    
+files = c("Patient1_Om.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.tsv.gz",
+       	  "Patient1_Tum.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.tsv.gz",
+		  "Patient2_Tum.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.tsv.gz",
+	      "Patient3_Om.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.tsv.gz",
+          "Patient3_Tum.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.tsv.gz")
+
+
+big_df = NULL
+    
+for (file in files) {
+    df = read.csv(paste0("data/", file), header=T, sep="\t")
+	message("parsing: ", file)
+  	big_df = bind_rows(big_df, df)
+}
+
+message("-writing supp table")
+write.table(big_df, file="Table_S4-HGSOC_sc.fusion_preds_by_cell.tsv", sep="\t", row.names=F, quote=F)
+
