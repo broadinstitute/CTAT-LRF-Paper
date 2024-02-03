@@ -225,6 +225,8 @@ fusions_of_interest
 
 write.table(fusions_of_interest, file="Patient2_Tum.fusions_of_interest.tsv", sep="\t", quote=F, row.names = F)
 
+# really 16 total cancer cell enriched fusions, because HOOK2--JUNB is mostly in T.NK.cells
+
 
 ```
 
