@@ -258,7 +258,7 @@ Tum_data %>% filter(FusionName %in% fusions_of_interest$FusionName) %>% select(F
 # so 16 cells with CBLC--CTC-232P5.1
 # and 8 cells with SNRNP70--ZIK1
 
-# I suspecet the non HGSOC labeling for those was a bit off and they're likely all HGSOC - see the UMAPs...
+# I suspect the non HGSOC labeling for those was a bit off and they're likely all HGSOC - see the UMAPs...
 
 ```
 
