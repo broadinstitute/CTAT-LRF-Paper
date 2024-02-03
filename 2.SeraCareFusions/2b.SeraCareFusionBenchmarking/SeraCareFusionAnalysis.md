@@ -21,7 +21,7 @@ head(data)
 ``` r
 TP_plot = data %>% 
     select(seqtype, prog, min_sum_frags, TP) %>% 
-    ggplot(aes(x=min_sum_frags, y=TP)) +
+    ggplot(aes(x=min_sum_frags, y=TP)) + theme_bw() +
     geom_point(aes(color=seqtype)) + geom_line(aes(group=seqtype, color=seqtype)) +
     facet_wrap(~prog, ncol=1)
 

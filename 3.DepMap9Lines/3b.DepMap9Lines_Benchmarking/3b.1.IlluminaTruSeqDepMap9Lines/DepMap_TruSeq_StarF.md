@@ -85,6 +85,11 @@ message("num unique fusions:", earlier_unique_set %>% select(lex_ordered_fusion_
     ## num unique fusions:354
 
 ``` r
+# num shared:  133
+# num uniquely predicted: 354
+```
+
+``` r
 # add lex_ordered_fusion_name as attribute to STARF data
 StarF_data = StarF_data %>% rowwise() %>% 
     mutate(lex_ordered_fusion_name = paste0(sample, "|", paste0(collapse="--", sort(str_split(FusionName, "--")[[1]])))) 

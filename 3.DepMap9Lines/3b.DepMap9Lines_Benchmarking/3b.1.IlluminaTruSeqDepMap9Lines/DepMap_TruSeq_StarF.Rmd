@@ -51,6 +51,10 @@ all_pred_fusions = all_pred_fusions %>% select(lex_ordered_fusion_name, type) %>
 message("num shared fusions: ", earlier_truth_set %>% select(lex_ordered_fusion_name) %>% unique() %>% nrow() )
 message("num unique fusions:", earlier_unique_set %>% select(lex_ordered_fusion_name) %>% unique() %>% nrow() )
 
+
+# num shared:  133
+# num uniquely predicted: 354
+
 ```
 
 

@@ -1,7 +1,7 @@
 CTAT_SeraCareFusion
 ================
 bhaas
-2023-12-05
+2024-02-03
 
 Fusion prediction results and benchmarking for SeraCare fusion v4 mix
 are available here:
@@ -276,7 +276,8 @@ ctatLRF_FI_control_results
 ``` r
 # by read count
 
-seracare_read_count_barplot = ctatLRF_FI_control_results %>% ggplot(aes(x=FusionName, y=num_LR)) + 
+seracare_read_count_barplot = ctatLRF_FI_control_results %>% 
+    ggplot(aes(x=FusionName, y=num_LR)) + theme_bw() +
     geom_bar(stat='identity', position='dodge', aes(fill=dataset))   + 
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
@@ -292,7 +293,8 @@ ggsave(seracare_read_count_barplot, file="seracare_read_count_barplot.svg", widt
 ``` r
 # by normalized read count
 
-seracare_FFPM_barplot = ctatLRF_FI_control_results %>% ggplot(aes(x=FusionName, y=LR_FFPM)) + 
+seracare_FFPM_barplot = ctatLRF_FI_control_results %>% 
+    ggplot(aes(x=FusionName, y=LR_FFPM)) + theme_bw() +
     geom_bar(stat='identity', position='dodge', aes(fill=dataset))   + 
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
@@ -310,7 +312,7 @@ ggsave(seracare_FFPM_barplot, file="seracare_FFPM_barplot.svg", width=9, height=
 
 ``` r
 paperfig_LR_vs_SR = ctatLRF_FI_control_results %>% gather(key=read_count_type, value=read_count, num_LR, num_SR) %>%
-    ggplot(aes(x=read_count_type, y=read_count)) +  
+    ggplot(aes(x=read_count_type, y=read_count)) +  theme_bw() +
     geom_bar(stat='identity', position = 'dodge', aes(color=dataset, fill=read_count_type)) +
     facet_wrap(~FusionName) +
       theme(axis.text.x = element_text(angle = 90, hjust = 1))  +
@@ -404,7 +406,9 @@ densVals <- function(x, y = NULL, nbin = 128, bandwidth, range.x) {
 
 mean_gene_expr$point_density <- densVals(log10(mean_gene_expr$mean_LR_gene_expr), log10(mean_gene_expr$mean_TruSeq_gene_expr))
 
-mean_gene_expr_plot = mean_gene_expr  %>% ggplot(aes(x = log10(mean_LR_gene_expr), y=log10(mean_TruSeq_gene_expr))) +
+mean_gene_expr_plot = mean_gene_expr  %>% 
+    ggplot(aes(x = log10(mean_LR_gene_expr), y=log10(mean_TruSeq_gene_expr))) +
+    theme_bw() +
   stat_density2d(geom = "raster", aes(fill = ..density.. ^ 0.25), contour = FALSE) +
   #scale_x_log10() + scale_y_log10() +
   scale_fill_gradientn(colours = colorRampPalette(c("white", blues9))(256)) +
