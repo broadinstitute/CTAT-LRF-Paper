@@ -14,5 +14,5 @@ P3_fusions = cbind(sample="Patient3_Tum", P3_fusions)
     
 supp_table = bind_rows(P1_fusions, P2_fusions, P3_fusions)
 
-write.table(supp_table, file="scHGSOC_fusions_of_interest.tsv", sep="\t", row.names=F, quote=F)
+write.table(supp_table, file="Table_S5-scHGSOC_fusions_of_interest.tsv", sep="\t", row.names=F, quote=F)
 
