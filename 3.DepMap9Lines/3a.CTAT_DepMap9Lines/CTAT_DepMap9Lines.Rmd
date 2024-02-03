@@ -58,6 +58,48 @@ data %>% head()
 ```
 
 ```{r}
+# incorporate sequenced read stats:
+
+sequenced_bases = read.table("data/DepMap.sequenced_read_stats.tsv", header=T, sep="\t", stringsAsFactors = F) %>%
+    select(cell_line, LR_num_bases, SR_num_bases)
+
+
+sequenced_bases
+```
+
+```{r}
+
+data = left_join(data, sequenced_bases,
+                 by=c('sample'='cell_line'))
+
+head(data)
+```
+```{r}
+
+data = data %>% mutate(LR_FFPGB = num_LR / (LR_num_bases / 1e9) ,
+                       SR_FFPGB = num_SR / (SR_num_bases / 1e9) )
+
+head(data) %>% select(fusion, sample, num_LR, LR_FFPGB, num_SR, SR_FFPGB)
+```
+
+
+```{r}
+
+# also, incorporate approx cost
+
+# for $500: (very course!!)
+# LR - 10e9 bases
+# SR - 15e9 bases
+
+data = data %>% mutate(LR_FFPD = num_LR / (LR_num_bases * (500/10e9)), 
+                SR_FFPD = num_SR / (SR_num_bases * (500/15e9)) )
+
+
+
+```
+
+
+```{r}
 
 write.table(data, file="DepMap_v1v2mrgd.ctatLRF_FI.consolidated.tsv", quote=F, sep="\t", row.names=F)
 
@@ -103,6 +145,25 @@ cor.test(x=log2(data$LR_FFPM), y=log2(data$SR_FFPM), use='complete.obs')
 # R=0.71, p<2.2e-16)
 
 ```
+
+
+# compare long vs. short read fusion evidence, normalized by numbers of sequenced bases
+
+```{r}
+
+data %>% ggplot(aes(x=log10(LR_FFPGB), y=log10(SR_FFPGB))) + 
+    theme_bw() +
+    geom_point() +
+    ggtitle("ctatLRF_FI-everything LR vs. SR fusion expression (FFPGB)") +                                      
+  stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth") + 
+    geom_abline(intercept=0, slope=1, color='purple')
+
+
+```
+
+
 
 
 # restrict to the TP fusions 
@@ -210,9 +271,11 @@ data %>%
 
 SR_enriched_fusion_isoforms = data %>% 
     filter(LR_FFPM > 0 & SR_FFPM > 0) %>%
-    select(sample, fusion, fusion_iso, LR_FFPM, SR_FFPM) %>% 
+    select(sample, fusion, fusion_iso, LR_FFPM, SR_FFPM, LR_FFPGB, SR_FFPGB, LR_FFPD, SR_FFPD) %>% 
     rowwise() %>%
     mutate(SR_enrichment = SR_FFPM / LR_FFPM) %>%
+    mutate(SR_enrichment_GB = SR_FFPGB / LR_FFPGB) %>%
+    mutate(SR_enrichment_pDollar = SR_FFPD / LR_FFPD) %>%
     arrange(desc(SR_enrichment)) %>%
     ungroup() %>% mutate(rank = row_number())
 
@@ -264,6 +327,52 @@ cor.test(x=log2(data$LR_FFPM), y=log2(data$SR_FFPM), use='complete.obs')
 ```
 
 
+```{r}
+
+# examine according to num sequenced bases:
+
+data %>%     
+    select(sample, fusion_iso, LR_FFPGB, SR_FFPGB) %>% 
+    ggplot(aes(x=log10(LR_FFPGB), y=log10(SR_FFPGB))) + 
+    theme_bw() +
+    geom_point() +
+    stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth") + 
+    geom_abline(intercept=0, slope=1, color='purple') +
+    geom_point(data=SR_enriched_fusion_isoforms %>% filter(SR_enrichment>=3), color='red')  +
+    geom_text_repel(data=SR_enriched_fusion_isoforms %>% filter(SR_enrichment>=3), aes(label=fusion_iso)) +
+    ggtitle("CTAT-LR-FI FFPGB Comparison for isoforms of TP fusions")
+
+
+
+```
+
+
+```{r}
+
+# examine enrichment by cost
+
+data %>%     
+    select(sample, fusion_iso, LR_FFPD, SR_FFPD) %>% 
+    ggplot(aes(x=log10(LR_FFPD), y=log10(SR_FFPD))) + 
+    theme_bw() +
+    geom_point() +
+    stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth") + 
+    geom_abline(intercept=0, slope=1, color='purple') +
+    geom_point(data=SR_enriched_fusion_isoforms %>% filter(SR_enrichment>=3), color='red')  +
+    geom_text_repel(data=SR_enriched_fusion_isoforms %>% filter(SR_enrichment>=3), aes(label=fusion_iso)) +
+    ggtitle("CTAT-LR-FI FFpDollar Comparison for isoforms of TP fusions")
+
+
+
+
+
+```
+
+
 
 
 ```{r}
@@ -274,7 +383,8 @@ depmap_SR_enrichment_rankings_plot = SR_enriched_fusion_isoforms %>%
     theme_bw() +
     geom_point() + geom_hline(yintercept = 1.0, color='purple') +
     scale_y_continuous(trans='log10') +
-    xlab("Fusion isoform ranked by SR_enrichment")
+    xlab("Fusion isoform ranked by SR_enrichment") +
+    ggtitle("SR/LR enrichment by FFPM")
    
 depmap_SR_enrichment_rankings_plot
 
@@ -287,6 +397,44 @@ ggsave(depmap_SR_enrichment_rankings_plot, file="depmap_SR_enrichment_rankings_p
 
 
 ```
+
+
+```{r}
+# redo using normalization by sequencing depth:
+
+
+SR_enriched_fusion_isoforms %>% 
+    arrange(desc(SR_enrichment_GB)) %>%
+    mutate(rn = row_number() ) %>%
+    ggplot(aes(x=rn, y=SR_enrichment_GB)) + 
+    theme_bw() +
+    geom_point() + geom_hline(yintercept = 1.0, color='purple') +
+    scale_y_continuous(trans='log10') +
+    xlab("Fusion isoform ranked by SR_enrichment_GB") +
+    ggtitle("SR/LR enrichment by FFPGB")
+
+
+```
+
+
+```{r}
+# examine by approximate cost.
+
+
+SR_enriched_fusion_isoforms %>% 
+    arrange(desc(SR_enrichment_pDollar)) %>%
+    mutate(rn = row_number() ) %>%
+    ggplot(aes(x=rn, y=SR_enrichment_pDollar)) + 
+    theme_bw() +
+    geom_point() + geom_hline(yintercept = 1.0, color='purple') +
+    scale_y_continuous(trans='log10') +
+    xlab("Fusion isoform ranked by SR_enrichment_per$") +
+    ggtitle("SR/LR enrichment by FFPD")
+
+
+
+```
+
 
 
 # examine specific fusions and breakpoint splice support
