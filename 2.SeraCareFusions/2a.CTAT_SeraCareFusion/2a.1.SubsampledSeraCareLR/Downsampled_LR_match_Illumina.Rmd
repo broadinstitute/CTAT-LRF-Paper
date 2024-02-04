@@ -1,0 +1,129 @@
+---
+title: "Downsampled_LR_match_Illumina"
+author: "bhaas"
+date: '2024-02-04'
+output: github_document
+---
+
+
+Illumina TruSeq replicates (PE 151 base reads) for SeraCare fusion mix v4 had the following read counts and number of sequenced bases:
+
+num_reads       num_bases
+6,463,483		1,951,971,866
+10,227,579		3,088,728,858
+9,972,927		3,011,823,954
+
+
+We downsampled the PacBio MAS-Iso-seq reads to match the Illumina sequencing depth for each of the replcates:
+
+num_reads       num_bases	
+1,493,570       1,951,971,866	
+2,912,707       3,088,728,856	
+2,816,561       3,011,823,930	
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+
+```{r}
+# read the downsampled LR results for ctat-LRF:
+
+rep1_data = read.table("data/SeraCareFusions_Isoseq.DOWNSAMPLED.ctat-LR-fusion.fusion_predictions.tsv", header=T, sep="\t", stringsAsFactors = F, com='') %>% mutate(dataset = "ISO-seq")
+
+rep2_data = read.table("data/SeraCareFusions_MASseq-bc08.DOWNSAMPLED.ctat-LR-fusion.fusion_predictions.tsv", header=T, sep="\t", stringsAsFactors = F, com='') %>% mutate(dataset = "MAS-seq-R1")
+
+rep3_data = read.table("data/SeraCareFusions_MASseq-bc09.DOWNSAMPLED.ctat-LR-fusion.fusion_predictions.tsv", header=T, sep="\t", stringsAsFactors = F, com='') %>% mutate(dataset = "MAS-seq-R2")
+
+LR_downsampled_results = bind_rows(rep1_data, rep2_data, rep3_data) %>%
+    rename(FusionName = X.FusionName)
+
+head(LR_downsampled_results)
+
+```
+
+```{r}
+
+seracare_targets = read.table("../data/SeraCare_fusion_targets.tsv", header=T, sep="\t", stringsAsFactors = F)
+
+seracare_targets 
+
+```
+
+
+```{r}
+
+LR_downsampled_results = left_join( cross_join(seracare_targets, data.frame(dataset=c('ISO-seq', 'MAS-seq-R1', 'MAS-seq-R2'))),
+                                    LR_downsampled_results %>% 
+                                        select(FusionName, LeftBreakpoint, RightBreakpoint, 
+                                               num_LR, LR_FFPM, dataset),
+                                    by=c('FusionName', 'LeftBreakpoint', 'RightBreakpoint', 'dataset'))
+
+```
+
+
+
+# examine number of long reads per control fusion
+
+```{r}
+
+# by read count
+
+seracare_read_count_barplot = LR_downsampled_results %>% 
+    ggplot(aes(x=FusionName, y=num_LR)) + theme_bw() +
+    geom_bar(stat='identity', position='dodge', aes(fill=dataset))   + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+seracare_read_count_barplot
+
+
+```
+
+
+
+```{r}
+
+# get the SR results from earlier.
+
+SR_results = read.table("../SeraCare_CTAT_LRF_FI_summary.tsv", header=T, sep="\t", stringsAsFactors = F) %>%
+    select(-num_LR, -LR_FFPM)
+
+SR_results %>% head()
+```
+
+```{r}
+
+combined_data = left_join(LR_downsampled_results, SR_results,
+                          by=c('FusionName', 'LeftBreakpoint', 'RightBreakpoint', 'dataset', 'RightGene', 'LeftGene'))
+
+head(combined_data)
+```
+
+```{r}
+
+sera_downsampledLR_fig = combined_data %>% gather(key=read_count_type, value=read_count, num_LR, num_SR) %>%
+    ggplot(aes(x=read_count_type, y=read_count)) +  theme_bw() +
+    geom_bar(stat='identity', position = 'dodge', aes(color=dataset, fill=read_count_type)) +
+    facet_wrap(~FusionName) +
+      theme(axis.text.x = element_text(angle = 90, hjust = 1))  +
+          geom_text(position=position_dodge(width=0.9), aes(label=read_count, group=dataset))
+
+sera_downsampledLR_fig
+```
+
+
+```{r}
+
+ggsave(sera_downsampledLR_fig, file="sera_downsampledLR_fig.svg", width=7, height=5)
+
+
+```
+
+
+
+
+

@@ -110,6 +110,11 @@ ggsave(seracare_FFPM_barplot, file="seracare_FFPM_barplot.svg", width=9, height=
 
 ```
 
+```{r}
+
+write.table(ctatLRF_FI_control_results, file="SeraCare_CTAT_LRF_FI_summary.tsv", quote=F, sep="\t", row.names=F)
+
+```
 
 # examine counts of long reads (ctatLRF) vs. short reads (FI) evidence
 
