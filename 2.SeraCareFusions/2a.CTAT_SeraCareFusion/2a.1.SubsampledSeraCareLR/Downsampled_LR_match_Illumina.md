@@ -6,16 +6,20 @@ bhaas
 Illumina TruSeq replicates (PE 151 base reads) for SeraCare fusion mix
 v4 had the following read counts and number of sequenced bases:
 
-num_reads num_bases 6,463,483 1,951,971,866 10,227,579 3,088,728,858
-9,972,927 3,011,823,954
+| num_reads  | num_bases     |
+|:-----------|:--------------|
+| 6,463,483  | 1,951,971,866 |
+| 10,227,579 | 3,088,728,858 |
+| 9,972,927  | 3,011,823,954 |
 
 We downsampled the PacBio MAS-Iso-seq reads to match the Illumina
-sequencing depth for each of the replcates:
+sequencing depth for each of the replicates:
 
-num_reads num_bases  
-1,493,570 1,951,971,866  
-2,912,707 3,088,728,856  
-2,816,561 3,011,823,930
+| num_reads | num_bases     |
+|:----------|:--------------|
+| 1,493,570 | 1,951,971,866 |
+| 2,912,707 | 3,088,728,856 |
+| 2,816,561 | 3,011,823,930 |
 
 ``` r
 # read the downsampled LR results for ctat-LRF:
