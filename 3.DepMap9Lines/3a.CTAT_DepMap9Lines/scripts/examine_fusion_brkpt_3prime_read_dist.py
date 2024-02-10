@@ -64,7 +64,7 @@ def main():
     alignments_df['read_name'] = alignments_df.apply(get_read_name, axis=1)
             
     alignments_df['long_read_fusion_token'] = alignments_df.apply(lambda x: x["FusionName"] + "::" + x['read_name'], axis=1)
-
+    
     # restrict to alignments of interest, having long and short read support at breakpoints:
     alignments_df = alignments_df[ alignments_df['long_read_fusion_token'].isin(long_read_to_local_brkpt_right.keys()) ]
 
@@ -78,7 +78,8 @@ def main():
     # get median length for read alignment beyond breakpoint
     fusion_3prime_median_lengths = fusion_3prime_lengths \
       .groupby(['FusionName', 'LeftLocalBreakpoint', 'RightLocalBreakpoint']) \
-      .agg({'threePrimeBrkLen': 'median'}) \
+      .agg({'threePrimeBrkLen': 'median',
+            'align_len' : 'median'}) \
       .reset_index(drop=False)
     
     # incorporate the LR and SR support info:
@@ -105,35 +106,40 @@ def get_read_name(row):
 # get length of 3' read alignment passed breakpoint.
 def sum_3prime_lens(grp, long_read_to_local_brkpt_right):
     first_row = grp.head(1)
+    #print(first_row)
     long_read_fusion_token = first_row['long_read_fusion_token'].values[0]
-    #print(long_read_fusion_token)
     
     local_breakpoint = long_read_to_local_brkpt_right[long_read_fusion_token]
-
+    #print(f"local_brkpt: {local_breakpoint}")
+    
     # might not be within snap distance...
     if not local_breakpoint in grp['lend'].values:
         print("Warning, missing brkpt {} for {}\n{}".format(local_breakpoint, long_read_fusion_token, grp), sys.stderr)
         return None
     
-    grp = grp[ grp['lend'] >= local_breakpoint ]
-
-    #print(grp.shape[0])
-    #print(str(local_breakpoint))
     
     threePrimeBrkLen = 0
+    align_len = 0
     for row in grp.itertuples():
         #print(row)
         seglen = row.rend - row.lend + 1
-        threePrimeBrkLen += seglen
+
+        align_len += seglen
+        
+        if row.lend >= local_breakpoint:
+            threePrimeBrkLen += seglen
 
     #print(str(threePrimeBrkLen))
 
     d = { 'long_read_fusion_token' : [long_read_fusion_token],
-                                      'threePrimeBrkLen' : [threePrimeBrkLen] }
+          'align_len' : [align_len],
+          'threePrimeBrkLen' : [threePrimeBrkLen]
+        }
     
     ret_df = pd.DataFrame.from_dict(d)
+
     return ret_df
-  
+
 
 
 if  __name__=='__main__':
