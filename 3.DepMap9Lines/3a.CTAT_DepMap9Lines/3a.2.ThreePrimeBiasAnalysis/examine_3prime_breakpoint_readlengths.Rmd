@@ -63,8 +63,8 @@ data_GB = fread("../DepMap_v1v2mrgd.ctatLRF_FI.consolidated.tsv.gz", header=T, s
 
 ```{r}
 
-data_GB = right_join(# take highest SR supported RightLocalBreakpoint
-                    data_GB %>% group_by(FusionName, RightLocalBreakpoint) %>% arrange(desc(SR_FFPGB)) %>% filter(row_number() == 1) %>% ungroup(),
+data_GB = right_join(
+                    data_GB %>% group_by(FusionName, LeftLocalBreakpoint, RightLocalBreakpoint) %>% arrange(desc(SR_FFPGB)) %>% filter(row_number() == 1) %>% ungroup(),
                     
                      data %>% select(FusionName, RightLocalBreakpoint, threePrimeBrkLen), 
                     
@@ -152,9 +152,7 @@ data_GB_min2k = data_GB %>% filter(threePrimeBrkLen >= 2000)
 
 cor.test(data_GB_min2k$`SR_GB/LR_GB`, data_GB_min2k$threePrimeBrkLen)
 
-# cor = 0.06, p =0.34  (for all)
-
-# cor = 0.20, p = 0.19 (for min 2k from breakpoint)
+# cor = 0.21, p = 0.1 (for min 2k from breakpoint)
 
 
 ```
