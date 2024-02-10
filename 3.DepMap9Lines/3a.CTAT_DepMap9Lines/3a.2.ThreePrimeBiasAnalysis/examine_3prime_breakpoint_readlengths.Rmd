@@ -81,9 +81,11 @@ data_GB = data_GB %>% mutate(`SR_GB/LR_GB` = SR_FFPGB/LR_FFPGB)
 
 ```{r}
 
-data_GB %>% ggplot(aes(y=log10(`SR_GB/LR_GB`), x=threePrimeBrkLen)) + 
+brkpt_dist_findings_plot = data_GB %>% 
+    mutate(threePrimeBrkLenAdj = ifelse(threePrimeBrkLen < 2000, 2000, threePrimeBrkLen)) %>%
+    ggplot(aes(y=log10(`SR_GB/LR_GB`), x=threePrimeBrkLen)) + 
     theme_bw() +
-    geom_point(aes(color=threePrimeBrkLen)) +
+    geom_point(aes(color=threePrimeBrkLenAdj)) +
     facet_wrap(~sample) +
     # stat_smooth(method = "lm", 
     #          formula = y ~ x, 
@@ -91,8 +93,17 @@ data_GB %>% ggplot(aes(y=log10(`SR_GB/LR_GB`), x=threePrimeBrkLen)) +
     geom_hline(yintercept=0) +
     ggtitle("short/long read support per GB sequenced ~ brkpt distance from 3' end of read")
 
+brkpt_dist_findings_plot
 
 ```
+
+```{r}
+
+ggsave(brkpt_dist_findings_plot, file="SRenrich_vs_3primebrkptdist.svg", width=9, height=7)
+
+
+```
+
 
 
 ```{r}
@@ -101,15 +112,24 @@ data_GB = data_GB %>% group_by(sample) %>% arrange(desc(`SR_GB/LR_GB`)) %>% muta
 ```
 
 ```{r}
-data_GB %>%
+SRenrich_vs_ranking_plot = data_GB %>%
+    mutate(threePrimeBrkLenAdj = ifelse(threePrimeBrkLen < 2000, 2000, threePrimeBrkLen)) %>%
     ggplot() + theme_bw() +
-    geom_point(aes(x=rn, y=log10(`SR_GB/LR_GB`), color=threePrimeBrkLen)) +
+    geom_point(aes(x=rn, y=log10(`SR_GB/LR_GB`), color=threePrimeBrkLenAdj)) +
     facet_wrap(~sample) +
     geom_hline(yintercept=0) +
     ggtitle("Fusions ranked by SR/LR support per GB sequenced")
 
+SRenrich_vs_ranking_plot
+```
+
+
+```{r}
+
+ggsave(SRenrich_vs_ranking_plot, file="SRenrich_vs_ranking.svg", width=9, height=7)
 
 ```
+
 
 
 ```{r}
@@ -120,7 +140,7 @@ data_GB %>%
     select(sample, FusionName, threePrimeBrkLen, `SR_GB/LR_GB`)
 
    
-
+# 106-fold difference in BCR::ABL1 detection from SR vs. LR based on GB sequenced.
 
 ```
 
@@ -128,11 +148,68 @@ data_GB %>%
 ```{r}
 # examine correlations
 
+data_GB_min2k = data_GB %>% filter(threePrimeBrkLen >= 2000)
 
-cor.test(data_GB$`SR_GB/LR_GB`, data_GB$threePrimeBrkLen)
+cor.test(data_GB_min2k$`SR_GB/LR_GB`, data_GB_min2k$threePrimeBrkLen)
 
-# cor = 0.06, p =0.34
+# cor = 0.06, p =0.34  (for all)
+
+# cor = 0.20, p = 0.19 (for min 2k from breakpoint)
 
 
 ```
+
+# K562 example
+
+```{r}
+
+K562_brkpt_dist_findings_plot = data_GB %>% 
+    filter(sample == "K562") %>%
+    mutate(threePrimeBrkLenAdj = ifelse(threePrimeBrkLen < 2000, 2000, threePrimeBrkLen)) %>%
+    ggplot(aes(y=log10(`SR_GB/LR_GB`), x=threePrimeBrkLen)) + 
+    theme_bw() +
+    geom_point(aes(color=threePrimeBrkLenAdj)) +
+    geom_hline(yintercept=0) +
+    ggtitle("K562 short/long read support per GB sequenced ~ brkpt distance from 3' end of read")
+
+
+K562_brkpt_dist_findings_plot
+
+
+```
+
+```{r}
+
+ggsave(K562_brkpt_dist_findings_plot, file="K562_SRenrich_vs_3primebrkptdist.svg", width=6, height=4)
+
+
+```
+
+
+
+```{r}
+
+K562_SRenrich_vs_ranking_plot = data_GB %>%
+    filter(sample=="K562") %>%
+    mutate(threePrimeBrkLenAdj = ifelse(threePrimeBrkLen < 2000, 2000, threePrimeBrkLen)) %>%
+    ggplot() + theme_bw() +
+    geom_point(aes(x=rn, y=log10(`SR_GB/LR_GB`), color=threePrimeBrkLenAdj)) +
+    geom_hline(yintercept=0) +
+    ggtitle("K562 Fusions ranked by SR/LR support per GB sequenced")
+
+K562_SRenrich_vs_ranking_plot
+
+```
+
+```{r}
+
+ggsave(K562_SRenrich_vs_ranking_plot, file="K562_SRenrich_vs_ranking.svg", width=6, height=4)
+
+
+```
+
+
+
+
+
 
