@@ -24,13 +24,13 @@ data %>% head()
     ## 4      CTD-2561J22.5--C14orf93                4371                17067
     ## 5             FGF14-IT1--FGF14                1762                13725
     ## 6                GALNT8--PRMT8               10904                33021
-    ##   threePrimeBrkLen num_LR num_SR LR_FFPM SR_FFPM       SR/LR   sample
-    ## 1               59    103   8.00  24.582  0.2333 0.009490684 DMS53.gz
-    ## 2              355      1   1.00   0.239  0.0292 0.122175732 DMS53.gz
-    ## 3              232      5  10.61   1.193  0.3095 0.259430008 DMS53.gz
-    ## 4             1528      1   1.00   0.239  0.0292 0.122175732 DMS53.gz
-    ## 5             2525      1   2.00   0.239  0.0583 0.243933054 DMS53.gz
-    ## 6             1685      6  10.11   1.432  0.2949 0.205935754 DMS53.gz
+    ##   threePrimeBrkLen align_len num_LR num_SR LR_FFPM SR_FFPM       SR/LR   sample
+    ## 1               59     169.0    103   8.00  24.582  0.2333 0.009490684 DMS53.gz
+    ## 2              355     439.0      1   1.00   0.239  0.0292 0.122175732 DMS53.gz
+    ## 3              232     667.0      5  10.61   1.193  0.3095 0.259430008 DMS53.gz
+    ## 4             1528    1763.0      1   1.00   0.239  0.0292 0.122175732 DMS53.gz
+    ## 5             2525    2809.0      1   2.00   0.239  0.0583 0.243933054 DMS53.gz
+    ## 6             1685    2022.5      6  10.11   1.432  0.2949 0.205935754 DMS53.gz
 
 ## Examine according to relative FFPM support
 
@@ -84,7 +84,7 @@ data_GB = fread("../DepMap_v1v2mrgd.ctatLRF_FI.consolidated.tsv.gz", header=T, s
 data_GB = right_join(
                     data_GB %>% group_by(FusionName, LeftLocalBreakpoint, RightLocalBreakpoint) %>% arrange(desc(SR_FFPGB)) %>% filter(row_number() == 1) %>% ungroup(),
                     
-                     data %>% select(FusionName, RightLocalBreakpoint, threePrimeBrkLen), 
+                     data %>% select(FusionName, RightLocalBreakpoint, threePrimeBrkLen, align_len), 
                     
                      by=c('FusionName', 'RightLocalBreakpoint') )
 ```
@@ -100,30 +100,102 @@ data_GB = data_GB %>% mutate(`SR_GB/LR_GB` = SR_FFPGB/LR_FFPGB)
 ```
 
 ``` r
-brkpt_dist_findings_plot = data_GB %>% 
+data_GB %>% 
     mutate(threePrimeBrkLenAdj = ifelse(threePrimeBrkLen < 2000, 2000, threePrimeBrkLen)) %>%
     ggplot(aes(y=log10(`SR_GB/LR_GB`), x=threePrimeBrkLen)) + 
     theme_bw() +
     geom_point(aes(color=threePrimeBrkLenAdj)) +
-    facet_wrap(~sample) +
-    # stat_smooth(method = "lm", 
-    #          formula = y ~ x, 
-    #          geom = "smooth")
+    stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth") +
     geom_hline(yintercept=0) +
     ggtitle("short/long read support per GB sequenced ~ brkpt distance from 3' end of read")
-
-brkpt_dist_findings_plot
 ```
+
+    ## Warning: Removed 51 rows containing non-finite values (`stat_smooth()`).
 
     ## Warning: Removed 51 rows containing missing values (`geom_point()`).
 
 ![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 ``` r
+cor.test(data_GB$threePrimeBrkLen, log10(data_GB$`SR_GB/LR_GB`))
+```
+
+    ## 
+    ##  Pearson's product-moment correlation
+    ## 
+    ## data:  data_GB$threePrimeBrkLen and log10(data_GB$`SR_GB/LR_GB`)
+    ## t = 5.6823, df = 384, p-value = 2.63e-08
+    ## alternative hypothesis: true correlation is not equal to 0
+    ## 95 percent confidence interval:
+    ##  0.1837965 0.3680867
+    ## sample estimates:
+    ##       cor 
+    ## 0.2785031
+
+``` r
+brkpt_dist_findings_plot = data_GB %>% 
+    mutate(threePrimeBrkLenAdj = ifelse(threePrimeBrkLen < 2000, 2000, threePrimeBrkLen)) %>%
+    ggplot(aes(y=log10(`SR_GB/LR_GB`), x=threePrimeBrkLen)) + 
+    theme_bw() +
+    geom_point(aes(color=threePrimeBrkLenAdj)) +
+    facet_wrap(~sample) +
+     stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth") +
+    geom_hline(yintercept=0) +
+    ggtitle("short/long read support per GB sequenced ~ brkpt distance from 3' end of read")
+
+brkpt_dist_findings_plot
+```
+
+    ## Warning: Removed 51 rows containing non-finite values (`stat_smooth()`).
+
+    ## Warning: Removed 51 rows containing missing values (`geom_point()`).
+
+![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+
+``` r
 ggsave(brkpt_dist_findings_plot, file="SRenrich_vs_3primebrkptdist.svg", width=9, height=7)
 ```
 
+    ## Warning: Removed 51 rows containing non-finite values (`stat_smooth()`).
+
     ## Warning: Removed 51 rows containing missing values (`geom_point()`).
+
+``` r
+cell_lines = data_GB %>% select(sample) %>% unique() %>% pull(sample)
+
+threeprimebrklen_summary_stats = NULL
+
+for (cell_line in cell_lines) {
+    #print(cell_line)
+    cell_line_data = data_GB %>% filter(sample == cell_line)
+    #print(cell_line_data)
+    c = cor.test(cell_line_data$threePrimeBrkLen, log10(cell_line_data$`SR_GB/LR_GB`))
+    #print(c)
+    
+    R = c$estimate
+    p = c$p.value
+    
+    threeprimebrklen_summary_stats = bind_rows(threeprimebrklen_summary_stats, data.frame(sample=cell_line, R=R, p=p))
+    
+}
+
+threeprimebrklen_summary_stats %>% arrange(p, R)
+```
+
+    ##          sample           R            p
+    ## cor...1 HCC1187  0.67739619 5.771054e-10
+    ## cor...2    K562  0.63604842 1.202175e-04
+    ## cor...3    VCAP  0.23844855 4.848666e-02
+    ## cor...4    KIJK  0.53129350 9.260243e-02
+    ## cor...5   SKBR3  0.17268262 9.424523e-02
+    ## cor...6   DMS53  0.18056608 2.245269e-01
+    ## cor...7      MJ  0.22553635 6.674316e-01
+    ## cor...8   RT112 -0.08456064 7.386793e-01
+    ## cor...9 HCC1395  0.04253139 7.839897e-01
 
 ``` r
 data_GB = data_GB %>% group_by(sample) %>% arrange(desc(`SR_GB/LR_GB`)) %>% mutate(rn=row_number()) %>% ungroup() 
@@ -143,7 +215,7 @@ SRenrich_vs_ranking_plot
 
     ## Warning: Removed 51 rows containing missing values (`geom_point()`).
 
-![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 ``` r
 ggsave(SRenrich_vs_ranking_plot, file="SRenrich_vs_ranking.svg", width=9, height=7)
@@ -219,7 +291,7 @@ K562_brkpt_dist_findings_plot
 
     ## Warning: Removed 1 rows containing missing values (`geom_point()`).
 
-![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
 ``` r
 ggsave(K562_brkpt_dist_findings_plot, file="K562_SRenrich_vs_3primebrkptdist.svg", width=6, height=4)
@@ -241,10 +313,120 @@ K562_SRenrich_vs_ranking_plot
 
     ## Warning: Removed 1 rows containing missing values (`geom_point()`).
 
-![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
 
 ``` r
 ggsave(K562_SRenrich_vs_ranking_plot, file="K562_SRenrich_vs_ranking.svg", width=6, height=4)
 ```
 
     ## Warning: Removed 1 rows containing missing values (`geom_point()`).
+
+# Examine SR enrichment \~ fusion transcript length
+
+``` r
+data_GB %>% ggplot(aes(x=align_len, y=log10(`SR_GB/LR_GB`))) + geom_point() +
+    theme_bw() +
+    stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth") +
+      geom_hline(yintercept=0) +
+    ggtitle("SR/LR ~ alignment length")
+```
+
+    ## Warning: Removed 51 rows containing non-finite values (`stat_smooth()`).
+
+    ## Warning: Removed 51 rows containing missing values (`geom_point()`).
+
+![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+
+``` r
+cor.test(data_GB$align_len, log10(data_GB$`SR_GB/LR_GB`))
+```
+
+    ## 
+    ##  Pearson's product-moment correlation
+    ## 
+    ## data:  data_GB$align_len and log10(data_GB$`SR_GB/LR_GB`)
+    ## t = 6.582, df = 384, p-value = 1.526e-10
+    ## alternative hypothesis: true correlation is not equal to 0
+    ## 95 percent confidence interval:
+    ##  0.2257625 0.4053370
+    ## sample estimates:
+    ##       cor 
+    ## 0.3184033
+
+``` r
+data_GB %>% ggplot(aes(x=align_len, y=log10(`SR_GB/LR_GB`))) + geom_point() +
+    theme_bw() +
+    stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth") +
+    facet_wrap(~sample) +
+    ggtitle("SR/LR ~ alignment length per cell line")
+```
+
+    ## Warning: Removed 51 rows containing non-finite values (`stat_smooth()`).
+
+    ## Warning: Removed 51 rows containing missing values (`geom_point()`).
+
+![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
+
+``` r
+cell_lines = data_GB %>% select(sample) %>% unique() %>% pull(sample)
+
+summary_stats = NULL
+
+for (cell_line in cell_lines) {
+    #print(cell_line)
+    cell_line_data = data_GB %>% filter(sample == cell_line)
+    #print(cell_line_data)
+    c = cor.test(cell_line_data$align_len, log10(cell_line_data$`SR_GB/LR_GB`))
+    #print(c)
+    
+    R = c$estimate
+    p = c$p.value
+    
+    summary_stats = bind_rows(summary_stats, data.frame(sample=cell_line, R=R, p=p))
+    
+}
+
+summary_stats %>% arrange(p, R)
+```
+
+    ##          sample           R            p
+    ## cor...1 HCC1187  0.73483834 3.206855e-12
+    ## cor...2    K562  0.72941546 3.238620e-06
+    ## cor...3    VCAP  0.29727467 1.311638e-02
+    ## cor...4   RT112  0.48436157 4.165241e-02
+    ## cor...5 HCC1395  0.27527159 7.052925e-02
+    ## cor...6   DMS53  0.13899255 3.514609e-01
+    ## cor...7   SKBR3  0.08323079 4.226185e-01
+    ## cor...8      MJ  0.20958874 6.902202e-01
+    ## cor...9    KIJK -0.02463739 9.426796e-01
+
+# we find the most distal breakpoints with the longest fusion RNAs
+
+``` r
+data_GB %>% ggplot(aes(x=align_len, y=threePrimeBrkLen)) + geom_point()
+```
+
+![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->
+
+``` r
+cor.test(data_GB$threePrimeBrkLen, data_GB$align_len)
+```
+
+    ## 
+    ##  Pearson's product-moment correlation
+    ## 
+    ## data:  data_GB$threePrimeBrkLen and data_GB$align_len
+    ## t = 36.712, df = 435, p-value < 2.2e-16
+    ## alternative hypothesis: true correlation is not equal to 0
+    ## 95 percent confidence interval:
+    ##  0.8445616 0.8906449
+    ## sample estimates:
+    ##       cor 
+    ## 0.8694825
+
+ie. if the breakpoint is far away from the 3’ end, we’ll obviously only
+capture it with the longest of fusion reads sequenced.

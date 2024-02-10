@@ -66,7 +66,7 @@ data_GB = fread("../DepMap_v1v2mrgd.ctatLRF_FI.consolidated.tsv.gz", header=T, s
 data_GB = right_join(
                     data_GB %>% group_by(FusionName, LeftLocalBreakpoint, RightLocalBreakpoint) %>% arrange(desc(SR_FFPGB)) %>% filter(row_number() == 1) %>% ungroup(),
                     
-                     data %>% select(FusionName, RightLocalBreakpoint, threePrimeBrkLen), 
+                     data %>% select(FusionName, RightLocalBreakpoint, threePrimeBrkLen, align_len), 
                     
                      by=c('FusionName', 'RightLocalBreakpoint') )
 
@@ -79,6 +79,34 @@ data_GB = data_GB %>% mutate(`SR_GB/LR_GB` = SR_FFPGB/LR_FFPGB)
 
 ```
 
+
+
+```{r}
+
+data_GB %>% 
+    mutate(threePrimeBrkLenAdj = ifelse(threePrimeBrkLen < 2000, 2000, threePrimeBrkLen)) %>%
+    ggplot(aes(y=log10(`SR_GB/LR_GB`), x=threePrimeBrkLen)) + 
+    theme_bw() +
+    geom_point(aes(color=threePrimeBrkLenAdj)) +
+    stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth") +
+    geom_hline(yintercept=0) +
+    ggtitle("short/long read support per GB sequenced ~ brkpt distance from 3' end of read")
+
+
+```
+
+
+```{r}
+
+
+cor.test(data_GB$threePrimeBrkLen, log10(data_GB$`SR_GB/LR_GB`))
+
+
+```
+
+
 ```{r}
 
 brkpt_dist_findings_plot = data_GB %>% 
@@ -87,9 +115,9 @@ brkpt_dist_findings_plot = data_GB %>%
     theme_bw() +
     geom_point(aes(color=threePrimeBrkLenAdj)) +
     facet_wrap(~sample) +
-    # stat_smooth(method = "lm", 
-    #          formula = y ~ x, 
-    #          geom = "smooth")
+     stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth") +
     geom_hline(yintercept=0) +
     ggtitle("short/long read support per GB sequenced ~ brkpt distance from 3' end of read")
 
@@ -103,6 +131,35 @@ ggsave(brkpt_dist_findings_plot, file="SRenrich_vs_3primebrkptdist.svg", width=9
 
 
 ```
+
+
+
+
+```{r}
+
+cell_lines = data_GB %>% select(sample) %>% unique() %>% pull(sample)
+
+threeprimebrklen_summary_stats = NULL
+
+for (cell_line in cell_lines) {
+    #print(cell_line)
+    cell_line_data = data_GB %>% filter(sample == cell_line)
+    #print(cell_line_data)
+    c = cor.test(cell_line_data$threePrimeBrkLen, log10(cell_line_data$`SR_GB/LR_GB`))
+    #print(c)
+    
+    R = c$estimate
+    p = c$p.value
+    
+    threeprimebrklen_summary_stats = bind_rows(threeprimebrklen_summary_stats, data.frame(sample=cell_line, R=R, p=p))
+    
+}
+
+threeprimebrklen_summary_stats %>% arrange(p, R)
+
+
+```
+
 
 
 
@@ -206,8 +263,92 @@ ggsave(K562_SRenrich_vs_ranking_plot, file="K562_SRenrich_vs_ranking.svg", width
 
 ```
 
+# Examine SR enrichment ~ fusion transcript length
 
 
+```{r}
+
+
+data_GB %>% ggplot(aes(x=align_len, y=log10(`SR_GB/LR_GB`))) + geom_point() +
+    theme_bw() +
+    stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth") +
+      geom_hline(yintercept=0) +
+    ggtitle("SR/LR ~ alignment length")
+
+
+```
+
+
+```{r}
+
+
+cor.test(data_GB$align_len, log10(data_GB$`SR_GB/LR_GB`))
+
+
+```
+
+
+
+```{r}
+
+
+data_GB %>% ggplot(aes(x=align_len, y=log10(`SR_GB/LR_GB`))) + geom_point() +
+    theme_bw() +
+    stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth") +
+    facet_wrap(~sample) +
+    ggtitle("SR/LR ~ alignment length per cell line")
+
+
+```
+
+
+```{r}
+
+cell_lines = data_GB %>% select(sample) %>% unique() %>% pull(sample)
+
+summary_stats = NULL
+
+for (cell_line in cell_lines) {
+    #print(cell_line)
+    cell_line_data = data_GB %>% filter(sample == cell_line)
+    #print(cell_line_data)
+    c = cor.test(cell_line_data$align_len, log10(cell_line_data$`SR_GB/LR_GB`))
+    #print(c)
+    
+    R = c$estimate
+    p = c$p.value
+    
+    summary_stats = bind_rows(summary_stats, data.frame(sample=cell_line, R=R, p=p))
+    
+}
+
+summary_stats %>% arrange(p, R)
+
+
+```
+
+
+# we find the most distal breakpoints with the longest fusion RNAs
+
+```{r}
+
+data_GB %>% ggplot(aes(x=align_len, y=threePrimeBrkLen)) + geom_point()
+
+
+
+```
+```{r}
+
+cor.test(data_GB$threePrimeBrkLen, data_GB$align_len)
+
+
+```
+
+ie. if the breakpoint is far away from the 3' end, we'll obviously only capture it with the longest of fusion reads sequenced.
 
 
 
