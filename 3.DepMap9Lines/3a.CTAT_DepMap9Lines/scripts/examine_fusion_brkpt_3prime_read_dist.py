@@ -46,14 +46,16 @@ def main():
     df['LR_accessions'] = df['LR_accessions'].apply(lambda x: x.split(","))
     df = df.explode('LR_accessions')
 
+    
     # get list of the reads and the breakpoints of interest.
-    long_read_to_local_brkpt = dict()
+    long_read_to_local_brkpt_right = dict()
+    long_read_to_local_brkpt_left = dict()
     for index,row in df.iterrows():
         fusion_name = row['FusionName']
         long_read = row['LR_accessions']
         long_read_fusion_token = "::".join([fusion_name, long_read])
-        long_read_to_local_brkpt[long_read_fusion_token] = row['RightLocalBreakpoint']
-    
+        long_read_to_local_brkpt_right[long_read_fusion_token] = row['RightLocalBreakpoint']
+        long_read_to_local_brkpt_left[long_read_fusion_token] = row['LeftLocalBreakpoint']
 
     # parse alignments, get coords for downstream alignment segments.
     alignments_df = pd.read_csv(gff3_read_alignments_file, sep="\t", header=None,
@@ -64,9 +66,9 @@ def main():
     alignments_df['long_read_fusion_token'] = alignments_df.apply(lambda x: x["FusionName"] + "::" + x['read_name'], axis=1)
 
     # restrict to alignments of interest, having long and short read support at breakpoints:
-    alignments_df = alignments_df[ alignments_df['long_read_fusion_token'].isin(long_read_to_local_brkpt.keys()) ]
+    alignments_df = alignments_df[ alignments_df['long_read_fusion_token'].isin(long_read_to_local_brkpt_right.keys()) ]
 
-    fusion_3prime_lengths =  alignments_df.groupby('long_read_fusion_token').apply(sum_3prime_lens, long_read_to_local_brkpt).reset_index(drop=True)
+    fusion_3prime_lengths =  alignments_df.groupby('long_read_fusion_token').apply(sum_3prime_lens, long_read_to_local_brkpt_right).reset_index(drop=True)
 
     # merge fusion info with breakpoint 3' read length info
     df['long_read_fusion_token'] = df.apply(lambda x: x["FusionName"] + "::" + x['LR_accessions'], axis=1)
@@ -75,13 +77,13 @@ def main():
 
     # get median length for read alignment beyond breakpoint
     fusion_3prime_median_lengths = fusion_3prime_lengths \
-      .groupby(['FusionName', 'RightLocalBreakpoint']) \
+      .groupby(['FusionName', 'LeftLocalBreakpoint', 'RightLocalBreakpoint']) \
       .agg({'threePrimeBrkLen': 'median'}) \
       .reset_index(drop=False)
     
     # incorporate the LR and SR support info:
-    fusion_3prime_median_lengths = fusion_3prime_median_lengths.merge(df[['FusionName','RightLocalBreakpoint','num_LR', 'num_SR', 'LR_FFPM', 'SR_FFPM']],
-                                   on=['FusionName', 'RightLocalBreakpoint']).drop_duplicates()
+    fusion_3prime_median_lengths = fusion_3prime_median_lengths.merge(df[['FusionName','LeftLocalBreakpoint', 'RightLocalBreakpoint','num_LR', 'num_SR', 'LR_FFPM', 'SR_FFPM']],
+                                   on=['FusionName', 'LeftLocalBreakpoint', 'RightLocalBreakpoint']).drop_duplicates()
 
     fusion_3prime_median_lengths['SR/LR'] = fusion_3prime_median_lengths.apply(lambda x: (x['SR_FFPM']/x['LR_FFPM']), axis=1)
 
@@ -101,12 +103,12 @@ def get_read_name(row):
             
 
 # get length of 3' read alignment passed breakpoint.
-def sum_3prime_lens(grp, long_read_to_local_brkpt):
+def sum_3prime_lens(grp, long_read_to_local_brkpt_right):
     first_row = grp.head(1)
     long_read_fusion_token = first_row['long_read_fusion_token'].values[0]
     #print(long_read_fusion_token)
     
-    local_breakpoint = long_read_to_local_brkpt[long_read_fusion_token]
+    local_breakpoint = long_read_to_local_brkpt_right[long_read_fusion_token]
 
     # might not be within snap distance...
     if not local_breakpoint in grp['lend'].values:
