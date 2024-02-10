@@ -1,0 +1,138 @@
+---
+title: "examine_3prime_breakpoint_readlengths"
+author: "bhaas"
+date: '2024-02-10'
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+```{r}
+
+files = list.files("../data/", "*read_lengths.tsv.gz")
+
+data = NULL
+
+for (file in files) {
+    df = read.table(paste0("../data/", file), sep="\t", header=T, check.names = FALSE)
+    df$sample = str_replace(file, ".3prime_brkpt_read_lengths.tsv", "")
+    data = bind_rows(data, df)
+}
+
+data %>% head()
+```
+
+## Examine according to relative FFPM support
+
+```{r}
+
+data %>% ggplot(aes(y=`SR/LR`, x=threePrimeBrkLen)) + geom_point() +
+    facet_wrap(~sample, scale='free') +
+     stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth") 
+
+
+```
+
+
+
+```{r}
+
+data %>% ggplot(aes(y=log10(`SR/LR`), x=threePrimeBrkLen)) + geom_point() +
+    facet_wrap(~sample) +
+     stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth")
+
+
+```
+
+
+# Examine according to reads per GB sequenced.
+
+```{r}
+library(data.table)
+data_GB = fread("../DepMap_v1v2mrgd.ctatLRF_FI.consolidated.tsv.gz", header=T, sep="\t", stringsAsFactors = F, drop=c("LR_accessions", "JunctionReads", "SpanningFrags", "CounterFusionLeftReads", "CounterFusionRightReads")) %>% rename(FusionName = fusion)
+
+```
+
+```{r}
+
+data_GB = right_join(# take highest SR supported RightLocalBreakpoint
+                    data_GB %>% group_by(FusionName, RightLocalBreakpoint) %>% arrange(desc(SR_FFPGB)) %>% filter(row_number() == 1) %>% ungroup(),
+                    
+                     data %>% select(FusionName, RightLocalBreakpoint, threePrimeBrkLen), 
+                    
+                     by=c('FusionName', 'RightLocalBreakpoint') )
+
+```
+
+
+```{r}
+
+data_GB = data_GB %>% mutate(`SR_GB/LR_GB` = SR_FFPGB/LR_FFPGB)
+
+```
+
+```{r}
+
+data_GB %>% ggplot(aes(y=log10(`SR_GB/LR_GB`), x=threePrimeBrkLen)) + 
+    theme_bw() +
+    geom_point(aes(color=threePrimeBrkLen)) +
+    facet_wrap(~sample) +
+    # stat_smooth(method = "lm", 
+    #          formula = y ~ x, 
+    #          geom = "smooth")
+    geom_hline(yintercept=0) +
+    ggtitle("short/long read support per GB sequenced ~ brkpt distance from 3' end of read")
+
+
+```
+
+
+```{r}
+
+data_GB = data_GB %>% group_by(sample) %>% arrange(desc(`SR_GB/LR_GB`)) %>% mutate(rn=row_number()) %>% ungroup() 
+```
+
+```{r}
+data_GB %>%
+    ggplot() + theme_bw() +
+    geom_point(aes(x=rn, y=log10(`SR_GB/LR_GB`), color=threePrimeBrkLen)) +
+    facet_wrap(~sample) +
+    geom_hline(yintercept=0) +
+    ggtitle("Fusions ranked by SR/LR support per GB sequenced")
+
+
+```
+
+
+```{r}
+
+data_GB %>%
+    filter(rn <= 5) %>%
+    arrange(sample, rn) %>%
+    select(sample, FusionName, threePrimeBrkLen, `SR_GB/LR_GB`)
+
+   
+
+
+```
+
+
+```{r}
+# examine correlations
+
+
+cor.test(data_GB$`SR_GB/LR_GB`, data_GB$threePrimeBrkLen)
+
+# cor = 0.06, p =0.34
+
+
+```
+
