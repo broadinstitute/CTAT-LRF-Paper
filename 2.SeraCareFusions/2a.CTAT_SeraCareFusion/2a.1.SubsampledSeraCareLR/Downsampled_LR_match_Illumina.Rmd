@@ -124,7 +124,6 @@ sera_downsampledLR_fig
 
 ggsave(sera_downsampledLR_fig, file="sera_downsampledLR_fig.svg", width=7, height=5)
 
-
 ```
 
 

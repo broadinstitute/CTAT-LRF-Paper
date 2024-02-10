@@ -14,7 +14,7 @@ library(ggrepel)
 
 ```{r}
 
-files = paste0("data/", list.files("data/", "*abridged.tsv.gz"))
+files = paste0("data/", list.files("data/", "*.ctat-LR-fusion.fusion_predictions.tsv.gz"))
 
 files
 ```
@@ -28,8 +28,8 @@ for (filename in files) {
     
     message("-parsing: ", filename)
     df = read.table(filename, header=T, sep="\t", com='') 
-    samplename = str_replace(filename, "data/DepMap_v1v2mrgd_", "")
-    samplename = str_replace(samplename, ".ctat-LR-fusion.fusion_predictions.abridged.tsv.gz", "")
+    samplename = str_replace(filename, "data/", "")
+    samplename = str_replace(samplename, ".ctat-LR-fusion.fusion_predictions.tsv.gz", "")
     df$sample = samplename
     
     data = rbind(data, df)
@@ -60,7 +60,7 @@ data %>% head()
 ```{r}
 # incorporate sequenced read stats:
 
-sequenced_bases = read.table("data/DepMap.sequenced_read_stats.tsv", header=T, sep="\t", stringsAsFactors = F) %>%
+sequenced_bases = read.table("data/DepMap.sequenced_read_stats.tsv.gz", header=T, sep="\t", stringsAsFactors = F) %>%
     select(cell_line, LR_num_bases, SR_num_bases)
 
 
@@ -113,10 +113,10 @@ write.table(data, file="DepMap_v1v2mrgd.ctatLRF_FI.consolidated.tsv", quote=F, s
 
 # How many fusion gene pairs and isoforms if require both long and short read support for breakpoints?
 data %>% filter(num_LR > 0 & num_SR > 0) %>% select(sample, fusion) %>% unique() %>% nrow()
-# 204
+# 213
 
 data %>% filter(num_LR > 0 & num_SR > 0) %>% select(sample, fusion, LeftBreakpoint, RightBreakpoint) %>% unique() %>% nrow()
-# 268
+# 288
 
 ```
 
@@ -142,7 +142,7 @@ data %>% ggplot(aes(x=log10(LR_FFPM), y=log10(SR_FFPM))) +
 
 cor.test(x=log2(data$LR_FFPM), y=log2(data$SR_FFPM), use='complete.obs')
 
-# R=0.71, p<2.2e-16)
+# R=0.70, p<2.2e-16)
 
 ```
 
@@ -322,7 +322,7 @@ ggsave(depmap_LR_vs_SR_fusion_FFPM_scatterplot, file="depmap_LR_vs_SR_fusion_FFP
 
 cor.test(x=log2(data$LR_FFPM), y=log2(data$SR_FFPM), use='complete.obs')
 
-# with TP fusions:  R=0.68, p<2.2e-16
+# with TP fusions:  R=0.66, p<2.2e-16
 
 ```
 
