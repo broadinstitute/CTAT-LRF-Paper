@@ -420,7 +420,6 @@ SR_enriched_fusion_isoforms %>%
 ```{r}
 # examine by approximate cost.
 
-
 SR_enriched_fusion_isoforms %>% 
     arrange(desc(SR_enrichment_pDollar)) %>%
     mutate(rn = row_number() ) %>%
@@ -430,7 +429,6 @@ SR_enriched_fusion_isoforms %>%
     scale_y_continuous(trans='log10') +
     xlab("Fusion isoform ranked by SR_enrichment_per$") +
     ggtitle("SR/LR enrichment by FFPD")
-
 
 
 ```
