@@ -32,7 +32,7 @@ Comparison of control fusions found by various predictors for SeraCare fusion mi
 
 >Note, you should install this customized R library for the feature-based UpsetR plots: https://github.com/fusiontranscripts/UpSetRbyFeature (see top of that README for installation instructions)
     
-Comparing fusion prediction results for DepMap cell lines for various predictors:
+### Comparing fusion prediction results for DepMap cell lines for various predictors:
     
 - 3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/DepMap9Lines_Benchmarking.Rmd 
 
@@ -44,9 +44,13 @@ Revisit benchmarking including the 17 additional illumina-supported fusions into
 
 - 3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.IncludeIlluminaSupportedFusions/DepMap9Lines_Benchmarking.incl_Illumina_supported.Rmd (Figure 4a,b,c, and Supplementary Figure S2)
 
-Compare fusion support and isoform detection from short vs. long RNA-seq reads:
+### Compare fusion support and isoform detection from short vs. long RNA-seq reads:
     
-- 3.DepMap9Lines/3a.CTAT_DepMap9Lines/CTAT_DepMap9Lines.Rmd (Figure 4d,e,f, Supplementary S3)
+- 3.DepMap9Lines/3a.CTAT_DepMap9Lines/CTAT_DepMap9Lines.Rmd (Figure 4d,e,f, Supplementary S4)
+
+Examine SR vs. LR support according to distance of the breakpoint from the 3' end
+
+- 3.DepMap9Lines/3a.CTAT_DepMap9Lines/3a.2.ThreePrimeBiasAnalysis (Supplementary S3)
 
 
 ## Long Read Fusion Isoform Detection from Tumor Single Cell Transcriptomes
