@@ -9,6 +9,7 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(ggrepel)
+library(data.table)
 ```
 
 
@@ -27,7 +28,7 @@ data = NULL
 for (filename in files) {
     
     message("-parsing: ", filename)
-    df = read.table(filename, header=T, sep="\t", com='') 
+    df = fread(filename,  header=T, sep="\t", stringsAsFactors = F, drop=c("LR_accessions", "JunctionReads", "SpanningFrags", "CounterFusionLeftReads", "CounterFusionRightReads")) 
     samplename = str_replace(filename, "data/", "")
     samplename = str_replace(samplename, ".ctat-LR-fusion.fusion_predictions.tsv.gz", "")
     df$sample = samplename
@@ -35,15 +36,8 @@ for (filename in files) {
     data = rbind(data, df)
 }
 
-
-```
-
-
-
-```{r}
-
 data = data %>% 
-    rename(fusion = X.FusionName, SR_FFPM = FFPM) %>%  
+    rename(fusion = `#FusionName`, SR_FFPM = FFPM) %>%  
     mutate(num_SR = est_J + est_S) %>%
     group_by(sample, fusion) %>% arrange(desc(num_LR), desc(num_SR))  %>% mutate(fusion_iso = paste(fusion, 'iso', row_number())) %>% ungroup()
   
@@ -619,7 +613,7 @@ mult_isoform_data_both_read_types = left_join(mult_iso_both_sample_fusion_names,
 
 mult_iso_both_sample_fusion_names %>% arrange(desc(num_multi_iso_both_types))
 
-# 5 fusions with at least 3 splicing isoforms each:
+# 7 fusions with at least 3 splicing isoforms each:
 
 ```
 
