@@ -18,14 +18,14 @@ def main():
     
     parser.add_argument("--gff3_read_alignments", type=str, required=True, help="gff3 read alignments")
     parser.add_argument("--fusion_predictions", type=str, required=True, help="ctat-LRF-FI fusion predictions tsv")
-    parser.add_argument("--output", required=True, help="output tsv file")
+    parser.add_argument("--output_prefix", required=True, help="output prefix")
     
     args = parser.parse_args()
 
 
     gff3_read_alignments_file = args.gff3_read_alignments
     fusion_predictions_tsv = args.fusion_predictions
-    output_file = args.output
+    output_prefix = args.output_prefix
     
 
     # require SR and LR support:
@@ -41,7 +41,7 @@ def main():
     df = df.reset_index(drop=True)
     
     df = df[ ['FusionName', 'num_LR', 'num_SR', 'LeftLocalBreakpoint', 'LeftBreakpoint', 
-          'RightLocalBreakpoint', 'SpliceType', 'LR_FFPM', 'SR_FFPM', 'LR_accessions' ] ].copy()
+          'RightLocalBreakpoint', 'RightBreakpoint', 'SpliceType', 'LR_FFPM', 'SR_FFPM', 'LR_accessions' ] ].copy()
 
     df['LR_accessions'] = df['LR_accessions'].apply(lambda x: x.split(","))
     df = df.explode('LR_accessions')
@@ -74,7 +74,8 @@ def main():
     df['long_read_fusion_token'] = df.apply(lambda x: x["FusionName"] + "::" + x['LR_accessions'], axis=1)
 
     fusion_3prime_lengths = df.merge(fusion_3prime_lengths, how='left', on='long_read_fusion_token')
-
+    fusion_3prime_lengths.to_csv(output_prefix + ".per_read.tsv", sep="\t", index=False)
+    
     # get median length for read alignment beyond breakpoint
     fusion_3prime_median_lengths = fusion_3prime_lengths \
       .groupby(['FusionName', 'LeftLocalBreakpoint', 'RightLocalBreakpoint']) \
@@ -89,7 +90,7 @@ def main():
     fusion_3prime_median_lengths['SR/LR'] = fusion_3prime_median_lengths.apply(lambda x: (x['SR_FFPM']/x['LR_FFPM']), axis=1)
 
 
-    fusion_3prime_median_lengths.to_csv(output_file, sep="\t", index=False)
+    fusion_3prime_median_lengths.to_csv(output_prefix + ".tsv", sep="\t", index=False)
     
     
     sys.exit(0)

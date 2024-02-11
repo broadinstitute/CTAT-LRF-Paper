@@ -100,7 +100,7 @@ data_GB = data_GB %>% mutate(`SR_GB/LR_GB` = SR_FFPGB/LR_FFPGB)
 ```
 
 ``` r
-data_GB %>% 
+SR_LR_ratio_vs_3prime_brkpt_dist_plot = data_GB %>% 
     mutate(threePrimeBrkLenAdj = ifelse(threePrimeBrkLen < 2000, 2000, threePrimeBrkLen)) %>%
     ggplot(aes(y=log10(`SR_GB/LR_GB`), x=threePrimeBrkLen)) + 
     theme_bw() +
@@ -110,6 +110,8 @@ data_GB %>%
               geom = "smooth") +
     geom_hline(yintercept=0) +
     ggtitle("short/long read support per GB sequenced ~ brkpt distance from 3' end of read")
+
+SR_LR_ratio_vs_3prime_brkpt_dist_plot
 ```
 
     ## Warning: Removed 51 rows containing non-finite values (`stat_smooth()`).
@@ -117,6 +119,14 @@ data_GB %>%
     ## Warning: Removed 51 rows containing missing values (`geom_point()`).
 
 ![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+``` r
+ggsave(SR_LR_ratio_vs_3prime_brkpt_dist_plot, file="SR_LR_ratio_vs_3prime_brkpt_dist_plot.svg", width=6, height=4)
+```
+
+    ## Warning: Removed 51 rows containing non-finite values (`stat_smooth()`).
+
+    ## Warning: Removed 51 rows containing missing values (`geom_point()`).
 
 ``` r
 cor.test(data_GB$threePrimeBrkLen, log10(data_GB$`SR_GB/LR_GB`))
@@ -133,6 +143,10 @@ cor.test(data_GB$threePrimeBrkLen, log10(data_GB$`SR_GB/LR_GB`))
     ## sample estimates:
     ##       cor 
     ## 0.2785031
+
+``` r
+# R=0.28, p=2.6e-8
+```
 
 ``` r
 brkpt_dist_findings_plot = data_GB %>% 
@@ -154,7 +168,7 @@ brkpt_dist_findings_plot
 
     ## Warning: Removed 51 rows containing missing values (`geom_point()`).
 
-![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 ``` r
 ggsave(brkpt_dist_findings_plot, file="SRenrich_vs_3primebrkptdist.svg", width=9, height=7)
@@ -215,7 +229,7 @@ SRenrich_vs_ranking_plot
 
     ## Warning: Removed 51 rows containing missing values (`geom_point()`).
 
-![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
 ``` r
 ggsave(SRenrich_vs_ranking_plot, file="SRenrich_vs_ranking.svg", width=9, height=7)
@@ -247,30 +261,9 @@ data_GB %>%
 
 ``` r
 # 106-fold difference in BCR::ABL1 detection from SR vs. LR based on GB sequenced.
-```
 
-``` r
-# examine correlations
-
-data_GB_min2k = data_GB %>% filter(threePrimeBrkLen >= 2000)
-
-cor.test(data_GB_min2k$`SR_GB/LR_GB`, data_GB_min2k$threePrimeBrkLen)
-```
-
-    ## 
-    ##  Pearson's product-moment correlation
-    ## 
-    ## data:  data_GB_min2k$`SR_GB/LR_GB` and data_GB_min2k$threePrimeBrkLen
-    ## t = 1.6872, df = 60, p-value = 0.09675
-    ## alternative hypothesis: true correlation is not equal to 0
-    ## 95 percent confidence interval:
-    ##  -0.03901312  0.43924765
-    ## sample estimates:
-    ##       cor 
-    ## 0.2128289
-
-``` r
-# cor = 0.21, p = 0.1 (for min 2k from breakpoint)
+# sample  FusionName 3'-len  SR_GB/LR_GB
+# K562  BCR--ABL1   4649.5  105.7
 ```
 
 # K562 example
@@ -283,11 +276,16 @@ K562_brkpt_dist_findings_plot = data_GB %>%
     theme_bw() +
     geom_point(aes(color=threePrimeBrkLenAdj)) +
     geom_hline(yintercept=0) +
+     stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth") +
     ggtitle("K562 short/long read support per GB sequenced ~ brkpt distance from 3' end of read")
 
 
 K562_brkpt_dist_findings_plot
 ```
+
+    ## Warning: Removed 1 rows containing non-finite values (`stat_smooth()`).
 
     ## Warning: Removed 1 rows containing missing values (`geom_point()`).
 
@@ -297,7 +295,33 @@ K562_brkpt_dist_findings_plot
 ggsave(K562_brkpt_dist_findings_plot, file="K562_SRenrich_vs_3primebrkptdist.svg", width=6, height=4)
 ```
 
+    ## Warning: Removed 1 rows containing non-finite values (`stat_smooth()`).
+
     ## Warning: Removed 1 rows containing missing values (`geom_point()`).
+
+``` r
+# K562 BCR::ABL1 log10(SR/LR) is only significantly correlated with 3' breakpoint read length when BCR--ABL1 is included
+
+K562_data_GB = data_GB %>% filter(sample == "K562") %>% filter(FusionName != "BCR--ABL1")
+
+cor.test(K562_data_GB$threePrimeBrkLen, log10(K562_data_GB$`SR_GB/LR_GB`))
+```
+
+    ## 
+    ##  Pearson's product-moment correlation
+    ## 
+    ## data:  K562_data_GB$threePrimeBrkLen and log10(K562_data_GB$`SR_GB/LR_GB`)
+    ## t = 1.9054, df = 28, p-value = 0.06704
+    ## alternative hypothesis: true correlation is not equal to 0
+    ## 95 percent confidence interval:
+    ##  -0.02445982  0.62301995
+    ## sample estimates:
+    ##       cor 
+    ## 0.3387949
+
+``` r
+# cor = 0.34, p=0.07
+```
 
 ``` r
 K562_SRenrich_vs_ranking_plot = data_GB %>%
@@ -313,13 +337,36 @@ K562_SRenrich_vs_ranking_plot
 
     ## Warning: Removed 1 rows containing missing values (`geom_point()`).
 
-![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
 ``` r
 ggsave(K562_SRenrich_vs_ranking_plot, file="K562_SRenrich_vs_ranking.svg", width=6, height=4)
 ```
 
     ## Warning: Removed 1 rows containing missing values (`geom_point()`).
+
+Worth noting, there are 2 long reads we find supporting K562 BCR::ABL1.
+The read lengths are:
+
+7373 4540
+
+and here’s info from the alignment lengths:
+
+0 FusionName 1 num_LR 2 num_SR 3 LeftLocalBreakpoint 4 LeftBreakpoint 5
+RightLocalBreakpoint 6 RightBreakpoint 7 SpliceType 8 LR_FFPM 9 SR_FFPM
+10 LR_accessions 11 long_read_fusion_token 12 align_len 13
+threePrimeBrkLen
+
+0 BCR–ABL1 1 2.0 2 372.27 3 21553 4 chr22:23290413:+ 5 43957 6
+chr9:130854064:+ 7 ONLY_REF_SPLICE 8 0.32 9 9.8283 10
+m84056_230620_213907_s3/221317094/ccs/6083_10623 11
+BCR–ABL1::m84056_230620_213907_s3/221317094/ccs/6083_10623 12 4539 13
+4000
+
+0 BCR–ABL1 1 2.0 2 372.27 3 21553 4 chr22:23290413:+ 5 43957 6
+chr9:130854064:+ 7 ONLY_REF_SPLICE 8 0.32 9 9.8283 10
+m84056_230620_213907_s3/89655393/ccs/902_8275 11
+BCR–ABL1::m84056_230620_213907_s3/89655393/ccs/902_8275 12 7381 13 5299
 
 # Examine SR enrichment \~ fusion transcript length
 
@@ -337,7 +384,7 @@ data_GB %>% ggplot(aes(x=align_len, y=log10(`SR_GB/LR_GB`))) + geom_point() +
 
     ## Warning: Removed 51 rows containing missing values (`geom_point()`).
 
-![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
 
 ``` r
 cor.test(data_GB$align_len, log10(data_GB$`SR_GB/LR_GB`))
@@ -369,7 +416,7 @@ data_GB %>% ggplot(aes(x=align_len, y=log10(`SR_GB/LR_GB`))) + geom_point() +
 
     ## Warning: Removed 51 rows containing missing values (`geom_point()`).
 
-![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
+![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
 
 ``` r
 cell_lines = data_GB %>% select(sample) %>% unique() %>% pull(sample)
@@ -410,7 +457,7 @@ summary_stats %>% arrange(p, R)
 data_GB %>% ggplot(aes(x=align_len, y=threePrimeBrkLen)) + geom_point()
 ```
 
-![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->
+![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
 
 ``` r
 cor.test(data_GB$threePrimeBrkLen, data_GB$align_len)

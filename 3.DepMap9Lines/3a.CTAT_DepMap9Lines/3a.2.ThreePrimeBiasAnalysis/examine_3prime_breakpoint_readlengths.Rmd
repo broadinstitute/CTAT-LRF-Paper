@@ -83,7 +83,7 @@ data_GB = data_GB %>% mutate(`SR_GB/LR_GB` = SR_FFPGB/LR_FFPGB)
 
 ```{r}
 
-data_GB %>% 
+SR_LR_ratio_vs_3prime_brkpt_dist_plot = data_GB %>% 
     mutate(threePrimeBrkLenAdj = ifelse(threePrimeBrkLen < 2000, 2000, threePrimeBrkLen)) %>%
     ggplot(aes(y=log10(`SR_GB/LR_GB`), x=threePrimeBrkLen)) + 
     theme_bw() +
@@ -94,6 +94,11 @@ data_GB %>%
     geom_hline(yintercept=0) +
     ggtitle("short/long read support per GB sequenced ~ brkpt distance from 3' end of read")
 
+SR_LR_ratio_vs_3prime_brkpt_dist_plot
+```
+
+```{r}
+ggsave(SR_LR_ratio_vs_3prime_brkpt_dist_plot, file="SR_LR_ratio_vs_3prime_brkpt_dist_plot.svg", width=6, height=4)
 
 ```
 
@@ -103,6 +108,7 @@ data_GB %>%
 
 cor.test(data_GB$threePrimeBrkLen, log10(data_GB$`SR_GB/LR_GB`))
 
+# R=0.28, p=2.6e-8
 
 ```
 
@@ -199,20 +205,13 @@ data_GB %>%
    
 # 106-fold difference in BCR::ABL1 detection from SR vs. LR based on GB sequenced.
 
-```
-
-
-```{r}
-# examine correlations
-
-data_GB_min2k = data_GB %>% filter(threePrimeBrkLen >= 2000)
-
-cor.test(data_GB_min2k$`SR_GB/LR_GB`, data_GB_min2k$threePrimeBrkLen)
-
-# cor = 0.21, p = 0.1 (for min 2k from breakpoint)
+# sample  FusionName 3'-len  SR_GB/LR_GB
+# K562	BCR--ABL1	4649.5	105.7
 
 
 ```
+
+
 
 # K562 example
 
@@ -225,6 +224,9 @@ K562_brkpt_dist_findings_plot = data_GB %>%
     theme_bw() +
     geom_point(aes(color=threePrimeBrkLenAdj)) +
     geom_hline(yintercept=0) +
+     stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth") +
     ggtitle("K562 short/long read support per GB sequenced ~ brkpt distance from 3' end of read")
 
 
@@ -239,6 +241,19 @@ ggsave(K562_brkpt_dist_findings_plot, file="K562_SRenrich_vs_3primebrkptdist.svg
 
 
 ```
+
+```{r}
+
+# K562 BCR::ABL1 log10(SR/LR) is only significantly correlated with 3' breakpoint read length when BCR--ABL1 is included
+
+K562_data_GB = data_GB %>% filter(sample == "K562") %>% filter(FusionName != "BCR--ABL1")
+
+cor.test(K562_data_GB$threePrimeBrkLen, log10(K562_data_GB$`SR_GB/LR_GB`))
+
+# cor = 0.34, p=0.07
+
+```
+
 
 
 
@@ -262,6 +277,61 @@ ggsave(K562_SRenrich_vs_ranking_plot, file="K562_SRenrich_vs_ranking.svg", width
 
 
 ```
+
+Worth noting, there are 2 long reads we find supporting K562 BCR::ABL1.  The read lengths are:
+
+7373
+4540
+
+
+and here's info from the alignment lengths:
+
+0       FusionName
+1       num_LR
+2       num_SR
+3       LeftLocalBreakpoint
+4       LeftBreakpoint
+5       RightLocalBreakpoint
+6       RightBreakpoint
+7       SpliceType
+8       LR_FFPM
+9       SR_FFPM
+10      LR_accessions
+11      long_read_fusion_token
+12      align_len
+13      threePrimeBrkLen
+
+0       BCR--ABL1
+1       2.0
+2       372.27
+3       21553
+4       chr22:23290413:+
+5       43957
+6       chr9:130854064:+
+7       ONLY_REF_SPLICE
+8       0.32
+9       9.8283
+10      m84056_230620_213907_s3/221317094/ccs/6083_10623
+11      BCR--ABL1::m84056_230620_213907_s3/221317094/ccs/6083_10623
+12      4539
+13      4000
+
+0       BCR--ABL1
+1       2.0
+2       372.27
+3       21553
+4       chr22:23290413:+
+5       43957
+6       chr9:130854064:+
+7       ONLY_REF_SPLICE
+8       0.32
+9       9.8283
+10      m84056_230620_213907_s3/89655393/ccs/902_8275
+11      BCR--ABL1::m84056_230620_213907_s3/89655393/ccs/902_8275
+12      7381
+13      5299
+
+
 
 # Examine SR enrichment ~ fusion transcript length
 
@@ -349,6 +419,5 @@ cor.test(data_GB$threePrimeBrkLen, data_GB$align_len)
 ```
 
 ie. if the breakpoint is far away from the 3' end, we'll obviously only capture it with the longest of fusion reads sequenced.
-
 
 
