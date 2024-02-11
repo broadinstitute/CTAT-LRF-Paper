@@ -320,7 +320,7 @@ Tum_umap_data = full_join(Tum_umap_data, seurat_clusters, by='barcodes') %>% ren
 
 
 ```{r}
-baseplot = Tum_umap_data %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + geom_point(aes(color=celltype_final))
+baseplot = Tum_umap_data %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() + geom_point(aes(color=celltype_final))
 
 baseplot
 
@@ -459,7 +459,7 @@ tumor_cell_counts_by_methods  %>% filter(FusionName == "NTN1--CDRT15P2")
 ```{r}
 
 
-baseplot = Tum_umap_data %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + geom_point(aes(color=factor(cluster_id)))
+baseplot = Tum_umap_data %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() + geom_point(aes(color=factor(cluster_id)))
 
 
 x = 0
@@ -643,7 +643,7 @@ tumor_umap %>% head()
 ```{r}
 
 tumor_umap %>% select(barcodes, UMAP_1.allcells, UMAP_2.allcells) %>% unique() %>% 
-    ggplot(aes(x=UMAP_1.allcells, y=UMAP_2.allcells)) +
+    ggplot(aes(x=UMAP_1.allcells, y=UMAP_2.allcells)) + theme_bw() +
     geom_point() + ggtitle("UMAP for tumor subset in all-cells umap")
 
 ```
@@ -651,7 +651,7 @@ tumor_umap %>% select(barcodes, UMAP_1.allcells, UMAP_2.allcells) %>% unique() %
 
 ```{r}
  tumor_umap %>% select(barcodes, UMAP_1.tum_only, UMAP_2.tum_only, seurat_clusters) %>% unique() %>% 
-    ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only, shape=as.factor(seurat_clusters))) +
+    ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only, shape=as.factor(seurat_clusters))) + theme_bw() +
     geom_point(size=rel(2)) + ggtitle("UMAP for tumor subset in tum-only umap")
 
 
@@ -664,6 +664,7 @@ tumor_umap %>% select(barcodes, UMAP_1.allcells, UMAP_2.allcells) %>% unique() %
 
 tum_only_umap_baseplot = tumor_umap %>% select(barcodes, UMAP_1.tum_only, UMAP_2.tum_only, seurat_clusters) %>% unique() %>% 
     ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + #, shape=as.factor(seurat_clusters))) +
+    theme_bw() +
     geom_point(size=rel(2)) + ggtitle("UMAP for tumor subset in tum-only umap")
 
 
