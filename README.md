@@ -48,24 +48,29 @@ Analysis: [2.SeraCareFusions/2b.SeraCareFusionBenchmarking/SeraCareFusionAnalysi
 >Note, you should install this customized R library for the feature-based UpsetR plots: https://github.com/fusiontranscripts/UpSetRbyFeature (see top of that README for installation instructions)
     
 ### Comparing fusion prediction results for DepMap cell lines for various predictors:
+
+
+Fusion predictions for all the methods: [https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/cancer_cell_lines/prog_results](https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/cancer_cell_lines/prog_results)
+        
+Analysis: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/DepMap9Lines_Benchmarking.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/DepMap9Lines_Benchmarking.md)
+
+### Evaluate Illumina read support for fusion predictions as per STAR-Fusion:
+
+STAR-Fusion predictions based on the Illumina TruSeq are available [here](https://github.com/broadinstitute/CTAT-LRF-Paper/blob/main/3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.1.IlluminaTruSeqDepMap9Lines/data/DepMap.v1v2mrgd.StarF.consolidated.tsv.gz).
     
-- 3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/DepMap9Lines_Benchmarking.Rmd 
+Analysis: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.1.IlluminaTruSeqDepMap9Lines/DepMap_TruSeq_StarF.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.1.IlluminaTruSeqDepMap9Lines/DepMap_TruSeq_StarF.md)
 
-Evaluate Illumina read support for fusion predictions as per STAR-Fusion:
+### Revisit benchmarking including the additional illumina-supported fusions into the truth set:
 
-- 3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.1.IlluminaTruSeqDepMap9Lines/DepMap_TruSeq_StarF.Rmd
-
-Revisit benchmarking including the 17 additional illumina-supported fusions into the truth set:
-
-- 3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.IncludeIlluminaSupportedFusions/DepMap9Lines_Benchmarking.incl_Illumina_supported.Rmd (Figure 4a,b,c, and Supplementary Figure S2)
+Analysis: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.IncludeIlluminaSupportedFusions/DepMap9Lines_Benchmarking.incl_Illumina_supported.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.IncludeIlluminaSupportedFusions/DepMap9Lines_Benchmarking.incl_Illumina_supported.md) (Figure 4a,b,c, and Supplementary Figure S2)
 
 ### Compare fusion support and isoform detection from short vs. long RNA-seq reads:
     
-- 3.DepMap9Lines/3a.CTAT_DepMap9Lines/CTAT_DepMap9Lines.Rmd (Figure 4d,e,f, Supplementary S4)
+Analysis: [3.DepMap9Lines/3a.CTAT_DepMap9Lines/CTAT_DepMap9Lines.Rmd](3.DepMap9Lines/3a.CTAT_DepMap9Lines/CTAT_DepMap9Lines.md) (Figure 4d,e,f, Supplementary S4)
 
-Examine SR vs. LR support according to distance of the breakpoint from the 3' end
+### Examine SR vs. LR support according to distance of the breakpoint from the 3' end
 
-- 3.DepMap9Lines/3a.CTAT_DepMap9Lines/3a.2.ThreePrimeBiasAnalysis (Supplementary S3)
+Analysis: [3.DepMap9Lines/3a.CTAT_DepMap9Lines/3a.2.ThreePrimeBiasAnalysis/examine_3prime_breakpoint_readlengths.Rmd](3.DepMap9Lines/3a.CTAT_DepMap9Lines/3a.2.ThreePrimeBiasAnalysis/examine_3prime_breakpoint_readlengths.md) (Supplementary S3)
 
 
 ## Long Read Fusion Isoform Detection from Tumor Single Cell Transcriptomes
