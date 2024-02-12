@@ -75,24 +75,22 @@ Analysis: [3.DepMap9Lines/3a.CTAT_DepMap9Lines/3a.2.ThreePrimeBiasAnalysis/exami
 
 ## Long Read Fusion Isoform Detection from Tumor Single Cell Transcriptomes
 
-Melanoma single cell analysis
+### Melanoma single cell analysis
 
-- 4.SingleCellFusions/4a.sc_Melanoma/M132TS_analysis.Rmd (Figure 5a)
-
-HGSOC single cell analysis
-
-Analysis of HGSOC Patient-1
+The melanoma patient sample RNA-seq is protected and available under dbgap: [phs003200.v1.p1](https://www.ncbi.nlm.nih.gov/gap/advanced_search/?TERM=phs003200.v1.p1)
     
-- 4.SingleCellFusions/4b.sc_HGSOC/Patient1_analysis.Rmd (Figure 6)
+Analysis: [4.SingleCellFusions/4a.sc_Melanoma/M132TS_analysis.Rmd](4.SingleCellFusions/4a.sc_Melanoma/M132TS_analysis.md) (Figure 5a)
 
-Analysis of HGSOC Patient-2
+### High Grade Serous Ovarian Cancer (HGSOC) single cell analysis
 
-- 4.SingleCellFusions/4b.sc_HGSOC/Patient2_analysis.Rmd
-
-Analysis of HGSOC Patient-3
-
-- 4.SingleCellFusions/4b.sc_HGSOC/Patient3_analysis.Rmd
+These data are available at EGA under accessions [EGAD00001009814 - PacBio and EGAD00001009815 - Illumina](https://ega-archive.org/studies/EGAS00001006807)  
     
+Analysis of HGSOC Patient-1 :  [4.SingleCellFusions/4b.sc_HGSOC/Patient1_analysis.Rmd](4.SingleCellFusions/4b.sc_HGSOC/Patient1_analysis.md) (Figure 6)
+
+Analysis of HGSOC Patient-2 : [4.SingleCellFusions/4b.sc_HGSOC/Patient2_analysis.Rmd](4.SingleCellFusions/4b.sc_HGSOC/Patient2_analysis.md)
+
+Analysis of HGSOC Patient-3 : [4.SingleCellFusions/4b.sc_HGSOC/Patient3_analysis.Rmd](4.SingleCellFusions/4b.sc_HGSOC/Patient3_analysis.md)
+
 
 # Miscellaneous
 
@@ -100,6 +98,6 @@ Analysis of HGSOC Patient-3
 
 Shows that ctat-minimap2 in chimeric only mode is 4x faster than regular mode.
     
--  5.Misc/5.1.ctat-mm2-timings/ctat-mm2-timings.Rmd
+Analysis: [5.Misc/5.1.ctat-mm2-timings/ctat-mm2-timings.Rmd](5.Misc/5.1.ctat-mm2-timings/ctat-mm2-timings.md)
 
 
