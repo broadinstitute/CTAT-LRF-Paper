@@ -28,13 +28,19 @@ Analysis: [1.Benchmark_Simulated_Fusions/1b.pbsim3_simulated_reads/simulated_rea
 
 ## Long Read Fusion Isoform Detection with a Reference Fusion Control RNA Sample
 
-Fusions found by ctat-LR-fusion for long reads or FusionInspector for short reads:
+SeraCare Fusion Mix v4 was sequenced using [PacBio MAS-ISO-seq/Kinnex](https://data.broadinstitute.org/Trinity/CTAT-LR-Fusion_PAPER/SeraCareFusionMixV4/SeraCareFusionV4-MAS-ISO-seq/) and by [Illumina TruSeq](https://data.broadinstitute.org/Trinity/CTAT-LR-Fusion_PAPER/SeraCareFusionMixV4/SeraCareFusionV4-TruSeq/) (see links for reads in fastq format). 
+    
+### Fusions found by ctat-LR-fusion for long reads or FusionInspector for short reads
 
-- 2.SeraCareFusions/2a.CTAT_SeraCareFusion/CTAT_SeraCareFusion.Rmd (Figure 3a, Supp Figure S1)
+Fusion predictions for combined ctat-LR-Fusion w/ FusionInspector: [https://github.com/broadinstitute/CTAT-LRF-Paper/tree/main/2.SeraCareFusions/2a.CTAT_SeraCareFusion/data/ctatLRF_FI](https://github.com/broadinstitute/CTAT-LRF-Paper/tree/main/2.SeraCareFusions/2a.CTAT_SeraCareFusion/data/ctatLRF_FI)
 
-Comparison of control fusions found by various predictors for SeraCare fusion mix:
+Analysis: [2.SeraCareFusions/2a.CTAT_SeraCareFusion/CTAT_SeraCareFusion.Rmd](2.SeraCareFusions/2a.CTAT_SeraCareFusion/CTAT_SeraCareFusion.md) (Figure 3a, Supp Figure S1)
 
-- 2.SeraCareFusions/2b.SeraCareFusionBenchmarking/SeraCareFusionAnalysis.Rmd (Figure 3b)
+### Comparison of control fusions found by various predictors for SeraCare fusion mix:
+
+Fusion prediction results for all methods: [https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/SeraCareFusions/prog_results](https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/SeraCareFusions/prog_results) 
+    
+Analysis: 2.SeraCareFusions/2b.SeraCareFusionBenchmarking/SeraCareFusionAnalysis.Rmd (Figure 3b)
 
     
 ## Long Read Fusion Isoform Detection from MAS-Iso-seq of Nine Cancer Cell Lines
