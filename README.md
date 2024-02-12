@@ -40,7 +40,7 @@ Analysis: [2.SeraCareFusions/2a.CTAT_SeraCareFusion/CTAT_SeraCareFusion.Rmd](2.S
 
 Fusion prediction results for all methods: [https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/SeraCareFusions/prog_results](https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/SeraCareFusions/prog_results) 
     
-Analysis: 2.SeraCareFusions/2b.SeraCareFusionBenchmarking/SeraCareFusionAnalysis.Rmd (Figure 3b)
+Analysis: [2.SeraCareFusions/2b.SeraCareFusionBenchmarking/SeraCareFusionAnalysis.Rmd](2.SeraCareFusions/2b.SeraCareFusionBenchmarking/SeraCareFusionAnalysis.md) (Figure 3b)
 
     
 ## Long Read Fusion Isoform Detection from MAS-Iso-seq of Nine Cancer Cell Lines
