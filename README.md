@@ -18,8 +18,12 @@ Analysis: [1.Benchmark_Simulated_Fusions/1a.jaffalpaper_simulated_reads/analyze_
 
 
 ### Benchmarking using pbsim3 simulated reads, focused on breakpoint detection accuracy:
-    
-- 1.Benchmark_Simulated_Fusions/1b.pbsim3_simulated_reads/simulated_reads_summary.Rmd (Figure 2c)
+
+PacBio and ONT R10.4.1 fusion reads were simulated using PBSIM3. Reads are available at [https://zenodo.org/records/10650516](https://zenodo.org/records/10650516)
+
+Fusion prediction results are available for [PacBio](https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/simulated_data/pbio_pbsim3_part5/prog_results) and [ONT](https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/simulated_data/ONT_pbsim3_part5/prog_results)
+        
+Analysis: [1.Benchmark_Simulated_Fusions/1b.pbsim3_simulated_reads/simulated_reads_summary.Rmd](1.Benchmark_Simulated_Fusions/1b.pbsim3_simulated_reads/simulated_reads_summary.md) (Figure 2c)
 
 
 ## Long Read Fusion Isoform Detection with a Reference Fusion Control RNA Sample
