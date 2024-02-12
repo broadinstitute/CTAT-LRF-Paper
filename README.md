@@ -8,11 +8,16 @@ This repo focuses on analyses and figure generation for the manuscript.  For com
 
 ## Fusion Transcript Detection Accuracy Using Simulated Long Reads
 
-Benchmarking using the JAFFAL simulated fusion reads: 
-    
-- 1.Benchmark_Simulated_Fusions/1a.jaffalpaper_simulated_reads/analyze_jaffal_simdata_accuracy.Rmd (Figure 2b)
+### Benchmarking using the JAFFAL simulated fusion reads: 
 
-Benchmarking using pbsim3 simulated reads, focused on breakpoint detection accuracy:
+The JAFFAL (Badread) simulated fusion reads were obtained from: [https://ndownloader.figshare.com/files/27676470](https://ndownloader.figshare.com/files/27676470)
+
+Fusion prediction results available [here](https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/simulated_data/sim_jaffal/prog_results)
+        
+Analysis: [1.Benchmark_Simulated_Fusions/1a.jaffalpaper_simulated_reads/analyze_jaffal_simdata_accuracy.Rmd](1.Benchmark_Simulated_Fusions/1a.jaffalpaper_simulated_reads/analyze_jaffal_simdata_accuracy.md) (Figure 2b)
+
+
+### Benchmarking using pbsim3 simulated reads, focused on breakpoint detection accuracy:
     
 - 1.Benchmark_Simulated_Fusions/1b.pbsim3_simulated_reads/simulated_reads_summary.Rmd (Figure 2c)
 

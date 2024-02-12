@@ -220,7 +220,7 @@ The others have few cells and are likely cis-spliced fusions.
 
 ```{r}
 
-baseplot = Tum_umap_data %>% ggplot(aes(x=umap_1, y=umap_2)) + geom_point()
+baseplot = Tum_umap_data %>% ggplot(aes(x=umap_1, y=umap_2)) + theme_bw() + geom_point()
 
 baseplot + geom_point(aes(color=as.factor(leiden)))
 
@@ -229,7 +229,7 @@ baseplot + geom_point(aes(color=as.factor(leiden)))
 
 ```{r}
 
-Tum_umap_data %>% ggplot(aes(x=umap_1, y=umap_2)) + geom_point(aes(color=CST3))
+Tum_umap_data %>% ggplot(aes(x=umap_1, y=umap_2)) + theme_bw() + geom_point(aes(color=CST3))
 
 ```
 
@@ -240,7 +240,7 @@ TUMOR_CLUSTERS = c(4,7)
 Tum_umap_data = Tum_umap_data %>% mutate(tumor = leiden %in% TUMOR_CLUSTERS)
 
 Tum_umap_data %>%
-    ggplot(aes(x=umap_1, y=umap_2)) + geom_point(aes(color=tumor))
+    ggplot(aes(x=umap_1, y=umap_2)) + theme_bw() + geom_point(aes(color=tumor))
 
 
 ```
