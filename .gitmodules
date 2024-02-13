@@ -1,0 +1,3 @@
+[submodule "LR-FusionBenchmarking"]
+	path = LR-FusionBenchmarking
+	url = https://github.com/fusiontranscripts/LR-FusionBenchmarking.git
