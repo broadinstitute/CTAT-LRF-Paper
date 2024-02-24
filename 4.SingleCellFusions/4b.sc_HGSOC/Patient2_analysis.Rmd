@@ -219,13 +219,25 @@ fusions_of_interest = left_join(fusions_of_interest,
           fusion_annots)
 
 fusions_of_interest
+
+
+# really 16 total cancer cell enriched fusions, because HOOK2--JUNB is mostly in T.NK.cells
+
 ```
+
+
+```{r}
+
+fusions_of_interest = left_join(fusions_of_interest, Tum_cell_counts_by_method_spread,
+                                by=c('FusionName',"celltype_final") ) 
+
+fusions_of_interest
+```
+
 
 ```{r}
 
 write.table(fusions_of_interest, file="Patient2_Tum.fusions_of_interest.tsv", sep="\t", quote=F, row.names = F)
-
-# really 16 total cancer cell enriched fusions, because HOOK2--JUNB is mostly in T.NK.cells
 
 
 ```

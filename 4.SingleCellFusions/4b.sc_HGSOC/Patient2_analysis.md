@@ -386,9 +386,36 @@ fusions_of_interest
     ## 17 HOOK2--JUNB        T.NK.cells                      5             0.833 HOOK2…
 
 ``` r
-write.table(fusions_of_interest, file="Patient2_Tum.fusions_of_interest.tsv", sep="\t", quote=F, row.names = F)
-
 # really 16 total cancer cell enriched fusions, because HOOK2--JUNB is mostly in T.NK.cells
+```
+
+``` r
+fusions_of_interest = left_join(fusions_of_interest, Tum_cell_counts_by_method_spread,
+                                by=c('FusionName',"celltype_final") ) 
+
+fusions_of_interest
+```
+
+    ## # A tibble: 41 × 10
+    ## # Groups:   FusionName [17]
+    ##    FusionName      celltype_final tot_cells_w_fusion frac_fusion_cells annots   
+    ##    <chr>           <chr>                       <int>             <dbl> <chr>    
+    ##  1 IGF2BP2--TESPA1 HGSOC                         176             0.989 IGF2BP2-…
+    ##  2 IGF2BP2--TESPA1 HGSOC                         176             0.989 IGF2BP2-…
+    ##  3 IGF2BP2--TESPA1 HGSOC                         176             0.989 IGF2BP2-…
+    ##  4 IGF2BP2--TESPA1 HGSOC                         176             0.989 IGF2BP2-…
+    ##  5 IGF2BP2--TESPA1 HGSOC                         176             0.989 IGF2BP2-…
+    ##  6 PSMB7--SCAI     HGSOC                          52             0.981 PSMB7--S…
+    ##  7 PSMB7--SCAI     HGSOC                          52             0.981 PSMB7--S…
+    ##  8 PSMB7--SCAI     HGSOC                          52             0.981 PSMB7--S…
+    ##  9 PSMB7--SCAI     HGSOC                          52             0.981 PSMB7--S…
+    ## 10 SRSF7--DHX57    HGSOC                          36             0.973 SRSF7--D…
+    ## # ℹ 31 more rows
+    ## # ℹ 5 more variables: LeftBreakpoint <chr>, RightBreakpoint <chr>,
+    ## #   `ctat-LR-fusion` <int>, FusionInspector <int>, `STAR-Fusion` <int>
+
+``` r
+write.table(fusions_of_interest, file="Patient2_Tum.fusions_of_interest.tsv", sep="\t", quote=F, row.names = F)
 ```
 
 ``` r
@@ -522,7 +549,7 @@ Tum_cell_counts_by_method %>%
                  theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
 
 # Examine fusions of interest in UMAPs
 
@@ -536,7 +563,7 @@ baseplot
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
 ``` r
 # Examine each fusion of interest according to UMAP cell positioning
@@ -560,71 +587,167 @@ for (fusion in  fusions_of_interest$FusionName) {
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-2.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-2.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-3.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-3.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-4.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-4.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-5.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-5.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-6.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-6.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-7.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-7.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-8.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-8.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-9.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-9.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-10.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-10.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-11.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-11.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-12.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-12.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-13.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-13.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-14.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-14.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-15.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-15.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-16.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-16.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-17.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-17.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-18.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-19.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-20.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-21.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-22.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-23.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-24.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-25.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-26.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-27.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-28.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-29.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-30.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-31.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-32.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-33.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-34.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-35.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-36.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-37.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-38.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-39.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-40.png)<!-- -->
+
+    ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-41.png)<!-- -->
 
 ``` r
 # make a pdf containing these plots
@@ -636,6 +759,30 @@ for (p in plots) {
 ```
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
+    ## Removed 34 rows containing missing values (`geom_point()`).
     ## Removed 34 rows containing missing values (`geom_point()`).
     ## Removed 34 rows containing missing values (`geom_point()`).
     ## Removed 34 rows containing missing values (`geom_point()`).
@@ -702,7 +849,7 @@ tumor_cell_counts %>%
     ggtitle("Patient2_Tum Fusions of Interest: Cell Counts")
 ```
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
 
 ``` r
 # Examine Venn for cells detected according to combinations of methods.

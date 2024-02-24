@@ -245,11 +245,30 @@ fusions_of_interest = Tum_fusion_frac_cell_types %>% filter(celltype_final == "H
 
 
 
-write.table(left_join(fusions_of_interest, fusion_annots), file="Patient3_Tum.fusions_of_interest.tsv", sep="\t", row.names=F, quote=F)
-
 
 fusions_of_interest
 ```
+
+
+```{r}
+
+fusions_of_interest = left_join(fusions_of_interest, Tum_cell_counts_by_method_spread,
+                                by=c('FusionName', 'celltype_final') )
+
+
+fusions_of_interest 
+
+
+```
+
+
+```{r}
+
+write.table(left_join(fusions_of_interest, fusion_annots), file="Patient3_Tum.fusions_of_interest.tsv", sep="\t", row.names=F, quote=F)
+
+
+```
+
 
 ```{r}
 Tum_data %>% filter(FusionName %in% fusions_of_interest$FusionName) %>% select(FusionName, cell_barcode, celltype_final) %>% unique() %>%

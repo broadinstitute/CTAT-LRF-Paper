@@ -467,12 +467,8 @@ fusions_of_interest = Tum_fusion_frac_cell_types %>% filter(celltype_final == "H
 
 
 
-write.table(left_join(fusions_of_interest, fusion_annots), file="Patient1_Tum.fusions_of_interest.tsv", sep="\t", row.names=F, quote=F)
-```
 
-    ## Joining with `by = join_by(FusionName)`
 
-``` r
 fusions_of_interest
 ```
 
@@ -538,6 +534,12 @@ fusions_of_interest
     ## # ℹ 5 more variables: RightBreakpoint <chr>, `ctat-LR-fusion` <int>,
     ## #   FusionInspector <int>, `STAR-Fusion` <int>, annots <chr>
 
+``` r
+write.table(left_join(fusions_of_interest, fusion_annots), file="Patient1_Tum.fusions_of_interest.tsv", sep="\t", row.names=F, quote=F)
+```
+
+    ## Joining with `by = join_by(FusionName, annots)`
+
 RAPGEF5–AGMO was found by short and long reads. The others were found
 only by the long reads.
 
@@ -557,7 +559,7 @@ baseplot = Tum_umap_data %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() + geom
 baseplot
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
 
 ``` r
 x = 0
@@ -577,7 +579,7 @@ for (fusion in  fusions_of_interest$FusionName) {
 }
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-24-2.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-24-3.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-24-4.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-25-2.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-25-3.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-25-4.png)<!-- -->
 
 ``` r
 pdf("Patient1_Tum.fusions_of_interest.pdf")
@@ -616,7 +618,7 @@ fusion_of_interest_cell_counts  %>%
     ggtitle("Patient1_Tum Fusions of Interest: Cell Counts")
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
 
 ``` r
 # breakdown by combinations of methods per cell
@@ -662,7 +664,7 @@ p = baseplot +
 p
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-30-1.png)<!-- -->
 
 ``` r
 ggsave(p, file="HGSOC_Patient1_umap.svg", width=7, height=5)
@@ -722,7 +724,7 @@ for (fusion in  fusions_of_interest$FusionName) {
 }
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-34-1.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-34-2.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-34-3.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-34-4.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-35-1.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-35-2.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-35-3.png)<!-- -->![](Patient1_analysis_files/figure-gfm/unnamed-chunk-35-4.png)<!-- -->
 
 The SMG7 and RAPGEF5–AGMO fusions appear in different tumor subclusters.
 
@@ -1172,7 +1174,7 @@ tumor_umap %>% select(barcodes, UMAP_1.allcells, UMAP_2.allcells) %>% unique() %
 
     ## Warning: Removed 13 rows containing missing values (`geom_point()`).
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-48-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-49-1.png)<!-- -->
 
 ``` r
  tumor_umap %>% select(barcodes, UMAP_1.tum_only, UMAP_2.tum_only, seurat_clusters) %>% unique() %>% 
@@ -1180,7 +1182,7 @@ tumor_umap %>% select(barcodes, UMAP_1.allcells, UMAP_2.allcells) %>% unique() %
     geom_point(size=rel(2)) + ggtitle("UMAP for tumor subset in tum-only umap")
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-49-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-50-1.png)<!-- -->
 
 ``` r
 tum_only_umap_baseplot = tumor_umap %>% select(barcodes, UMAP_1.tum_only, UMAP_2.tum_only, seurat_clusters) %>% unique() %>% 
@@ -1192,7 +1194,7 @@ tum_only_umap_baseplot = tumor_umap %>% select(barcodes, UMAP_1.tum_only, UMAP_2
 tum_only_umap_baseplot
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-50-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-51-1.png)<!-- -->
 
 ``` r
 tumor_cells_only_fig = tum_only_umap_baseplot + 
@@ -1210,7 +1212,7 @@ tumor_cells_only_fig = tum_only_umap_baseplot +
 tumor_cells_only_fig
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-51-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-52-1.png)<!-- -->
 
 ``` r
 ggsave(tumor_cells_only_fig, file="scHGSOC_Patient1_tumor_cells_only_fig.svg", width=7, height=5)

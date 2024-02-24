@@ -268,7 +268,6 @@ fusions_of_interest = Tum_fusion_frac_cell_types %>% filter(celltype_final == "H
 
 
 
-write.table(left_join(fusions_of_interest, fusion_annots), file="Patient1_Tum.fusions_of_interest.tsv", sep="\t", row.names=F, quote=F)
 
 
 fusions_of_interest
@@ -300,6 +299,17 @@ fusions_of_interest = left_join(fusions_of_interest, fusion_annots)
 
 fusions_of_interest
 ```
+
+```{r}
+
+
+
+write.table(left_join(fusions_of_interest, fusion_annots), file="Patient1_Tum.fusions_of_interest.tsv", sep="\t", row.names=F, quote=F)
+
+
+
+```
+
 
 
 RAPGEF5--AGMO was found by short and long reads. The others were found only by the long reads.

@@ -167,26 +167,25 @@ Om_fusion_frac_cell_types %>% filter(tot_cells_w_fusion >= MIN_CELLS)
 
     ## # A tibble: 17 × 4
     ## # Groups:   FusionName [10]
-    ##    FusionName                   celltype_final    tot_cells_w_fusion frac_fusi…¹
-    ##    <chr>                        <chr>                          <int>       <dbl>
-    ##  1 ZCCHC8--RSRC2                Mesothelial.cells                 68      0.459 
-    ##  2 RP11-208G20.2--PSPHP1        Mesothelial.cells                 63      0.741 
-    ##  3 ZCCHC8--RSRC2                T.NK.cells                        40      0.270 
-    ##  4 RP11-384F7.2--LSAMP          Mesothelial.cells                 19      0.95  
-    ##  5 ZCCHC8--RSRC2                Myeloid.cells                     19      0.128 
-    ##  6 ZCCHC8--RSRC2                Fibroblasts                       17      0.115 
-    ##  7 RP11-208G20.2--PSPHP1        T.NK.cells                        11      0.129 
-    ##  8 RP11-32B5.7--RP11-116P24.2   T.NK.cells                         8      0.615 
-    ##  9 RP11-32B5.7--RP11-403B2.6    T.NK.cells                         8      0.615 
-    ## 10 CTD-2008L17.1--RP11-456O19.2 Mesothelial.cells                  7      1     
-    ## 11 RP11-208G20.2--PSPHP1        Myeloid.cells                      7      0.0824
-    ## 12 RP11-420N3.2--RBFOX1         Mesothelial.cells                  6      1     
-    ## 13 RP11-855A2.2--BPTF           Mesothelial.cells                  6      0.75  
-    ## 14 HOOK2--JUNB                  Fibroblasts                        5      0.625 
-    ## 15 ROR2--NFIL3                  Mesothelial.cells                  5      1     
-    ## 16 RP11-32B5.7--RP11-116P24.2   Mesothelial.cells                  5      0.385 
-    ## 17 RP11-32B5.7--RP11-403B2.6    Mesothelial.cells                  5      0.385 
-    ## # … with abbreviated variable name ¹​frac_fusion_cells
+    ##    FusionName                celltype_final tot_cells_w_fusion frac_fusion_cells
+    ##    <chr>                     <chr>                       <int>             <dbl>
+    ##  1 ZCCHC8--RSRC2             Mesothelial.c…                 68            0.459 
+    ##  2 RP11-208G20.2--PSPHP1     Mesothelial.c…                 63            0.741 
+    ##  3 ZCCHC8--RSRC2             T.NK.cells                     40            0.270 
+    ##  4 RP11-384F7.2--LSAMP       Mesothelial.c…                 19            0.95  
+    ##  5 ZCCHC8--RSRC2             Myeloid.cells                  19            0.128 
+    ##  6 ZCCHC8--RSRC2             Fibroblasts                    17            0.115 
+    ##  7 RP11-208G20.2--PSPHP1     T.NK.cells                     11            0.129 
+    ##  8 RP11-32B5.7--RP11-116P24… T.NK.cells                      8            0.615 
+    ##  9 RP11-32B5.7--RP11-403B2.6 T.NK.cells                      8            0.615 
+    ## 10 CTD-2008L17.1--RP11-456O… Mesothelial.c…                  7            1     
+    ## 11 RP11-208G20.2--PSPHP1     Myeloid.cells                   7            0.0824
+    ## 12 RP11-420N3.2--RBFOX1      Mesothelial.c…                  6            1     
+    ## 13 RP11-855A2.2--BPTF        Mesothelial.c…                  6            0.75  
+    ## 14 HOOK2--JUNB               Fibroblasts                     5            0.625 
+    ## 15 ROR2--NFIL3               Mesothelial.c…                  5            1     
+    ## 16 RP11-32B5.7--RP11-116P24… Mesothelial.c…                  5            0.385 
+    ## 17 RP11-32B5.7--RP11-403B2.6 Mesothelial.c…                  5            0.385
 
 # P3 Tumor
 
@@ -543,7 +542,7 @@ Tum_fusion_frac_cell_types %>% filter(tot_cells_w_fusion >= MIN_CELLS)
     ##  8 ZCCHC8--RSRC2         Fibroblasts                       19            0.0640
     ##  9 RP11-208G20.2--PSPHP1 Mesothelial.cells                 18            0.129 
     ## 10 CBLC--CTC-232P5.1     HGSOC                             14            0.875 
-    ## # … with 19 more rows
+    ## # ℹ 19 more rows
 
 ``` r
 # identify tumor-enriched fusions:
@@ -553,12 +552,7 @@ fusions_of_interest = Tum_fusion_frac_cell_types %>% filter(celltype_final == "H
 
 
 
-write.table(left_join(fusions_of_interest, fusion_annots), file="Patient3_Tum.fusions_of_interest.tsv", sep="\t", row.names=F, quote=F)
-```
 
-    ## Joining with `by = join_by(FusionName)`
-
-``` r
 fusions_of_interest
 ```
 
@@ -568,6 +562,33 @@ fusions_of_interest
     ##   <chr>             <chr>                       <int>             <dbl>
     ## 1 CBLC--CTC-232P5.1 HGSOC                          14             0.875
     ## 2 SNRNP70--ZIK1     HGSOC                           7             0.875
+
+``` r
+fusions_of_interest = left_join(fusions_of_interest, Tum_cell_counts_by_method_spread,
+                                by=c('FusionName', 'celltype_final') )
+
+
+fusions_of_interest 
+```
+
+    ## # A tibble: 6 × 9
+    ## # Groups:   FusionName [2]
+    ##   FusionName  celltype_final tot_cells_w_fusion frac_fusion_cells LeftBreakpoint
+    ##   <chr>       <chr>                       <int>             <dbl> <chr>         
+    ## 1 CBLC--CTC-… HGSOC                          14             0.875 chr19:4478440…
+    ## 2 CBLC--CTC-… HGSOC                          14             0.875 chr19:4478441…
+    ## 3 CBLC--CTC-… HGSOC                          14             0.875 chr19:4478105…
+    ## 4 CBLC--CTC-… HGSOC                          14             0.875 chr19:4478136…
+    ## 5 CBLC--CTC-… HGSOC                          14             0.875 chr19:4477828…
+    ## 6 SNRNP70--Z… HGSOC                           7             0.875 chr19:4909870…
+    ## # ℹ 4 more variables: RightBreakpoint <chr>, `ctat-LR-fusion` <int>,
+    ## #   FusionInspector <int>, `STAR-Fusion` <int>
+
+``` r
+write.table(left_join(fusions_of_interest, fusion_annots), file="Patient3_Tum.fusions_of_interest.tsv", sep="\t", row.names=F, quote=F)
+```
+
+    ## Joining with `by = join_by(FusionName)`
 
 ``` r
 Tum_data %>% filter(FusionName %in% fusions_of_interest$FusionName) %>% select(FusionName, cell_barcode, celltype_final) %>% unique() %>%
@@ -588,7 +609,7 @@ Tum_data %>% filter(FusionName %in% fusions_of_interest$FusionName) %>% select(F
 # so 16 cells with CBLC--CTC-232P5.1
 # and 8 cells with SNRNP70--ZIK1
 
-# I suspecet the non HGSOC labeling for those was a bit off and they're likely all HGSOC - see the UMAPs...
+# I suspect the non HGSOC labeling for those was a bit off and they're likely all HGSOC - see the UMAPs...
 ```
 
 ``` r
@@ -597,15 +618,20 @@ Tum_data %>% filter(FusionName %in% fusions_of_interest$FusionName) %>% select(F
 left_join(fusions_of_interest, Om_fusion_frac_cell_types, by='FusionName', suffix=c('.Tum', '.Om'))
 ```
 
-    ## # A tibble: 2 × 7
+    ## # A tibble: 6 × 12
     ## # Groups:   FusionName [2]
-    ##   FusionName        celltype_final.Tum tot_cel…¹ frac_…² cellt…³ tot_c…⁴ frac_…⁵
-    ##   <chr>             <chr>                  <int>   <dbl> <chr>     <int>   <dbl>
-    ## 1 CBLC--CTC-232P5.1 HGSOC                     14   0.875 <NA>         NA      NA
-    ## 2 SNRNP70--ZIK1     HGSOC                      7   0.875 <NA>         NA      NA
-    ## # … with abbreviated variable names ¹​tot_cells_w_fusion.Tum,
-    ## #   ²​frac_fusion_cells.Tum, ³​celltype_final.Om, ⁴​tot_cells_w_fusion.Om,
-    ## #   ⁵​frac_fusion_cells.Om
+    ##   FusionName     celltype_final.Tum tot_cells_w_fusion.Tum frac_fusion_cells.Tum
+    ##   <chr>          <chr>                               <int>                 <dbl>
+    ## 1 CBLC--CTC-232… HGSOC                                  14                 0.875
+    ## 2 CBLC--CTC-232… HGSOC                                  14                 0.875
+    ## 3 CBLC--CTC-232… HGSOC                                  14                 0.875
+    ## 4 CBLC--CTC-232… HGSOC                                  14                 0.875
+    ## 5 CBLC--CTC-232… HGSOC                                  14                 0.875
+    ## 6 SNRNP70--ZIK1  HGSOC                                   7                 0.875
+    ## # ℹ 8 more variables: LeftBreakpoint <chr>, RightBreakpoint <chr>,
+    ## #   `ctat-LR-fusion` <int>, FusionInspector <int>, `STAR-Fusion` <int>,
+    ## #   celltype_final.Om <chr>, tot_cells_w_fusion.Om <int>,
+    ## #   frac_fusion_cells.Om <dbl>
 
 ``` r
 # only 2 fusions of interest
@@ -617,7 +643,8 @@ left_join(fusions_of_interest, Om_fusion_frac_cell_types, by='FusionName', suffi
 fusions_of_interest = left_join(fusions_of_interest, Tum_cell_counts_by_method_spread)
 ```
 
-    ## Joining with `by = join_by(FusionName, celltype_final)`
+    ## Joining with `by = join_by(FusionName, celltype_final, LeftBreakpoint,
+    ## RightBreakpoint, `ctat-LR-fusion`, FusionInspector, `STAR-Fusion`)`
 
 ``` r
 fusions_of_interest
@@ -625,17 +652,16 @@ fusions_of_interest
 
     ## # A tibble: 6 × 9
     ## # Groups:   FusionName [2]
-    ##   FusionName     cellt…¹ tot_c…² frac_…³ LeftB…⁴ Right…⁵ ctat-…⁶ Fusio…⁷ STAR-…⁸
-    ##   <chr>          <chr>     <int>   <dbl> <chr>   <chr>     <int>   <int>   <int>
-    ## 1 CBLC--CTC-232… HGSOC        14   0.875 chr19:… chr19:…      11       6       4
-    ## 2 CBLC--CTC-232… HGSOC        14   0.875 chr19:… chr19:…       8       3       3
-    ## 3 CBLC--CTC-232… HGSOC        14   0.875 chr19:… chr19:…       6       2       1
-    ## 4 CBLC--CTC-232… HGSOC        14   0.875 chr19:… chr19:…       3       1       1
-    ## 5 CBLC--CTC-232… HGSOC        14   0.875 chr19:… chr19:…       1      NA      NA
-    ## 6 SNRNP70--ZIK1  HGSOC         7   0.875 chr19:… chr19:…       7      NA      NA
-    ## # … with abbreviated variable names ¹​celltype_final, ²​tot_cells_w_fusion,
-    ## #   ³​frac_fusion_cells, ⁴​LeftBreakpoint, ⁵​RightBreakpoint, ⁶​`ctat-LR-fusion`,
-    ## #   ⁷​FusionInspector, ⁸​`STAR-Fusion`
+    ##   FusionName  celltype_final tot_cells_w_fusion frac_fusion_cells LeftBreakpoint
+    ##   <chr>       <chr>                       <int>             <dbl> <chr>         
+    ## 1 CBLC--CTC-… HGSOC                          14             0.875 chr19:4478440…
+    ## 2 CBLC--CTC-… HGSOC                          14             0.875 chr19:4478441…
+    ## 3 CBLC--CTC-… HGSOC                          14             0.875 chr19:4478105…
+    ## 4 CBLC--CTC-… HGSOC                          14             0.875 chr19:4478136…
+    ## 5 CBLC--CTC-… HGSOC                          14             0.875 chr19:4477828…
+    ## 6 SNRNP70--Z… HGSOC                           7             0.875 chr19:4909870…
+    ## # ℹ 4 more variables: RightBreakpoint <chr>, `ctat-LR-fusion` <int>,
+    ## #   FusionInspector <int>, `STAR-Fusion` <int>
 
 ``` r
 fusions_of_interest = left_join(fusions_of_interest, fusion_annots)
@@ -649,17 +675,16 @@ fusions_of_interest
 
     ## # A tibble: 6 × 10
     ## # Groups:   FusionName [2]
-    ##   Fusio…¹ cellt…² tot_c…³ frac_…⁴ LeftB…⁵ Right…⁶ ctat-…⁷ Fusio…⁸ STAR-…⁹ annots
-    ##   <chr>   <chr>     <int>   <dbl> <chr>   <chr>     <int>   <int>   <int> <chr> 
-    ## 1 CBLC--… HGSOC        14   0.875 chr19:… chr19:…      11       6       4 CBLC-…
-    ## 2 CBLC--… HGSOC        14   0.875 chr19:… chr19:…       8       3       3 CBLC-…
-    ## 3 CBLC--… HGSOC        14   0.875 chr19:… chr19:…       6       2       1 CBLC-…
-    ## 4 CBLC--… HGSOC        14   0.875 chr19:… chr19:…       3       1       1 CBLC-…
-    ## 5 CBLC--… HGSOC        14   0.875 chr19:… chr19:…       1      NA      NA CBLC-…
-    ## 6 SNRNP7… HGSOC         7   0.875 chr19:… chr19:…       7      NA      NA SNRNP…
-    ## # … with abbreviated variable names ¹​FusionName, ²​celltype_final,
-    ## #   ³​tot_cells_w_fusion, ⁴​frac_fusion_cells, ⁵​LeftBreakpoint, ⁶​RightBreakpoint,
-    ## #   ⁷​`ctat-LR-fusion`, ⁸​FusionInspector, ⁹​`STAR-Fusion`
+    ##   FusionName  celltype_final tot_cells_w_fusion frac_fusion_cells LeftBreakpoint
+    ##   <chr>       <chr>                       <int>             <dbl> <chr>         
+    ## 1 CBLC--CTC-… HGSOC                          14             0.875 chr19:4478440…
+    ## 2 CBLC--CTC-… HGSOC                          14             0.875 chr19:4478441…
+    ## 3 CBLC--CTC-… HGSOC                          14             0.875 chr19:4478105…
+    ## 4 CBLC--CTC-… HGSOC                          14             0.875 chr19:4478136…
+    ## 5 CBLC--CTC-… HGSOC                          14             0.875 chr19:4477828…
+    ## 6 SNRNP70--Z… HGSOC                           7             0.875 chr19:4909870…
+    ## # ℹ 5 more variables: RightBreakpoint <chr>, `ctat-LR-fusion` <int>,
+    ## #   FusionInspector <int>, `STAR-Fusion` <int>, annots <chr>
 
 ``` r
 # only long reads detect SNRNP70--ZIK1
@@ -673,7 +698,7 @@ baseplot = Tum_umap_data %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + geom_point(aes(co
 baseplot
 ```
 
-![](Patient3_analysis_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
+![](Patient3_analysis_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
 
 ``` r
 x = 0
@@ -693,7 +718,7 @@ for (fusion in  unique(fusions_of_interest$FusionName)) {
 }
 ```
 
-![](Patient3_analysis_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->![](Patient3_analysis_files/figure-gfm/unnamed-chunk-25-2.png)<!-- -->
+![](Patient3_analysis_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->![](Patient3_analysis_files/figure-gfm/unnamed-chunk-27-2.png)<!-- -->
 
 ``` r
 pdf("Patient3_Tum.fusions_of_interest.pdf")
@@ -730,7 +755,7 @@ fusion_of_interest_cell_counts  %>%
     ggtitle("Patient3_Tum Fusions of Interest: Cell Counts")
 ```
 
-![](Patient3_analysis_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
+![](Patient3_analysis_files/figure-gfm/unnamed-chunk-30-1.png)<!-- -->
 
 ``` r
 # breakdown by combinations of methods per cell
@@ -773,23 +798,22 @@ tumor_cell_counts_by_methods_by_isoform
 
     ## # A tibble: 14 × 3
     ## # Groups:   fusion [6]
-    ##    fusion                                             method          cell_cou…¹
+    ##    fusion                                             method         cell_counts
     ##    <chr>                                              <chr>                <int>
     ##  1 CBLC--CTC-232P5.1 chr19:44778284:+ chr19:6012120:+ ctat-LR-fusion           1
-    ##  2 CBLC--CTC-232P5.1 chr19:44781051:+ chr19:6012120:+ FusionInspector          2
+    ##  2 CBLC--CTC-232P5.1 chr19:44781051:+ chr19:6012120:+ FusionInspect…           2
     ##  3 CBLC--CTC-232P5.1 chr19:44781051:+ chr19:6012120:+ STAR-Fusion              1
     ##  4 CBLC--CTC-232P5.1 chr19:44781051:+ chr19:6012120:+ ctat-LR-fusion           6
-    ##  5 CBLC--CTC-232P5.1 chr19:44781363:+ chr19:6012120:+ FusionInspector          2
+    ##  5 CBLC--CTC-232P5.1 chr19:44781363:+ chr19:6012120:+ FusionInspect…           2
     ##  6 CBLC--CTC-232P5.1 chr19:44781363:+ chr19:6012120:+ STAR-Fusion              2
     ##  7 CBLC--CTC-232P5.1 chr19:44781363:+ chr19:6012120:+ ctat-LR-fusion           5
-    ##  8 CBLC--CTC-232P5.1 chr19:44784401:+ chr19:6012120:+ FusionInspector          8
+    ##  8 CBLC--CTC-232P5.1 chr19:44784401:+ chr19:6012120:+ FusionInspect…           8
     ##  9 CBLC--CTC-232P5.1 chr19:44784401:+ chr19:6012120:+ STAR-Fusion              5
     ## 10 CBLC--CTC-232P5.1 chr19:44784401:+ chr19:6012120:+ ctat-LR-fusion          13
-    ## 11 CBLC--CTC-232P5.1 chr19:44784417:+ chr19:6012120:+ FusionInspector          3
+    ## 11 CBLC--CTC-232P5.1 chr19:44784417:+ chr19:6012120:+ FusionInspect…           3
     ## 12 CBLC--CTC-232P5.1 chr19:44784417:+ chr19:6012120:+ STAR-Fusion              3
     ## 13 CBLC--CTC-232P5.1 chr19:44784417:+ chr19:6012120:+ ctat-LR-fusion          10
     ## 14 SNRNP70--ZIK1 chr19:49098704:+ chr19:57590011:+    ctat-LR-fusion           8
-    ## # … with abbreviated variable name ¹​cell_counts
 
 ``` r
 tumor_cell_counts_by_methods_by_isoform %>%
@@ -799,7 +823,7 @@ tumor_cell_counts_by_methods_by_isoform %>%
     ggtitle("Patient 3 Fusions of interest")
 ```
 
-![](Patient3_analysis_files/figure-gfm/unnamed-chunk-31-1.png)<!-- -->
+![](Patient3_analysis_files/figure-gfm/unnamed-chunk-33-1.png)<!-- -->
 
 ``` r
 # co-expression of CBLC--CTC-232P5.1 and SNRNP70--ZIK1 in cells
@@ -1143,30 +1167,28 @@ report_on_fusion("RP11-208G20.2--PSPHP1")
     ## 1 RP11-208G20.2--PSPHP1                 85          0.205 Om   
     ## # A tibble: 4 × 5
     ## # Groups:   FusionName [1]
-    ##   FusionName            celltype_final    tot_cells_w_fusion frac_fusion…¹ type 
-    ##   <chr>                 <chr>                          <int>         <dbl> <chr>
-    ## 1 RP11-208G20.2--PSPHP1 Mesothelial.cells                 63        0.741  Om   
-    ## 2 RP11-208G20.2--PSPHP1 T.NK.cells                        11        0.129  Om   
-    ## 3 RP11-208G20.2--PSPHP1 Myeloid.cells                      7        0.0824 Om   
-    ## 4 RP11-208G20.2--PSPHP1 Fibroblasts                        4        0.0471 Om   
-    ## # … with abbreviated variable name ¹​frac_fusion_cells
+    ##   FusionName           celltype_final tot_cells_w_fusion frac_fusion_cells type 
+    ##   <chr>                <chr>                       <int>             <dbl> <chr>
+    ## 1 RP11-208G20.2--PSPH… Mesothelial.c…                 63            0.741  Om   
+    ## 2 RP11-208G20.2--PSPH… T.NK.cells                     11            0.129  Om   
+    ## 3 RP11-208G20.2--PSPH… Myeloid.cells                   7            0.0824 Om   
+    ## 4 RP11-208G20.2--PSPH… Fibroblasts                     4            0.0471 Om   
     ## # A tibble: 1 × 4
     ##   FusionName            tot_cells_w_fusion frac_tot_cells type 
     ##   <chr>                              <int>          <dbl> <chr>
     ## 1 RP11-208G20.2--PSPHP1                139          0.215 Tum  
     ## # A tibble: 8 × 5
     ## # Groups:   FusionName [1]
-    ##   FusionName            celltype_final    tot_cells_w_fusion frac_fusion…¹ type 
-    ##   <chr>                 <chr>                          <int>         <dbl> <chr>
-    ## 1 RP11-208G20.2--PSPHP1 T.NK.cells                        41       0.295   Tum  
-    ## 2 RP11-208G20.2--PSPHP1 Myeloid.cells                     34       0.245   Tum  
-    ## 3 RP11-208G20.2--PSPHP1 HGSOC                             26       0.187   Tum  
-    ## 4 RP11-208G20.2--PSPHP1 Mesothelial.cells                 18       0.129   Tum  
-    ## 5 RP11-208G20.2--PSPHP1 Fibroblasts                       10       0.0719  Tum  
-    ## 6 RP11-208G20.2--PSPHP1 B.cells                            8       0.0576  Tum  
-    ## 7 RP11-208G20.2--PSPHP1 B.cells.memory                     1       0.00719 Tum  
-    ## 8 RP11-208G20.2--PSPHP1 B.cells.naive                      1       0.00719 Tum  
-    ## # … with abbreviated variable name ¹​frac_fusion_cells
+    ##   FusionName           celltype_final tot_cells_w_fusion frac_fusion_cells type 
+    ##   <chr>                <chr>                       <int>             <dbl> <chr>
+    ## 1 RP11-208G20.2--PSPH… T.NK.cells                     41           0.295   Tum  
+    ## 2 RP11-208G20.2--PSPH… Myeloid.cells                  34           0.245   Tum  
+    ## 3 RP11-208G20.2--PSPH… HGSOC                          26           0.187   Tum  
+    ## 4 RP11-208G20.2--PSPH… Mesothelial.c…                 18           0.129   Tum  
+    ## 5 RP11-208G20.2--PSPH… Fibroblasts                    10           0.0719  Tum  
+    ## 6 RP11-208G20.2--PSPH… B.cells                         8           0.0576  Tum  
+    ## 7 RP11-208G20.2--PSPH… B.cells.memory                  1           0.00719 Tum  
+    ## 8 RP11-208G20.2--PSPH… B.cells.naive                   1           0.00719 Tum
 
 ## RP11-384F7.2–LSAMP
 
@@ -1200,23 +1222,21 @@ report_on_fusion("RP11-384F7.2--LSAMP")
     ## 1 RP11-384F7.2--LSAMP                 20         0.0482 Om   
     ## # A tibble: 2 × 5
     ## # Groups:   FusionName [1]
-    ##   FusionName          celltype_final    tot_cells_w_fusion frac_fusion_c…¹ type 
-    ##   <chr>               <chr>                          <int>           <dbl> <chr>
-    ## 1 RP11-384F7.2--LSAMP Mesothelial.cells                 19            0.95 Om   
-    ## 2 RP11-384F7.2--LSAMP Fibroblasts                        1            0.05 Om   
-    ## # … with abbreviated variable name ¹​frac_fusion_cells
+    ##   FusionName          celltype_final  tot_cells_w_fusion frac_fusion_cells type 
+    ##   <chr>               <chr>                        <int>             <dbl> <chr>
+    ## 1 RP11-384F7.2--LSAMP Mesothelial.ce…                 19              0.95 Om   
+    ## 2 RP11-384F7.2--LSAMP Fibroblasts                      1              0.05 Om   
     ## # A tibble: 1 × 4
     ##   FusionName          tot_cells_w_fusion frac_tot_cells type 
     ##   <chr>                            <int>          <dbl> <chr>
     ## 1 RP11-384F7.2--LSAMP                 13         0.0201 Tum  
     ## # A tibble: 3 × 5
     ## # Groups:   FusionName [1]
-    ##   FusionName          celltype_final    tot_cells_w_fusion frac_fusion_c…¹ type 
-    ##   <chr>               <chr>                          <int>           <dbl> <chr>
-    ## 1 RP11-384F7.2--LSAMP Mesothelial.cells                  7           0.538 Tum  
-    ## 2 RP11-384F7.2--LSAMP Fibroblasts                        4           0.308 Tum  
-    ## 3 RP11-384F7.2--LSAMP HGSOC                              2           0.154 Tum  
-    ## # … with abbreviated variable name ¹​frac_fusion_cells
+    ##   FusionName          celltype_final  tot_cells_w_fusion frac_fusion_cells type 
+    ##   <chr>               <chr>                        <int>             <dbl> <chr>
+    ## 1 RP11-384F7.2--LSAMP Mesothelial.ce…                  7             0.538 Tum  
+    ## 2 RP11-384F7.2--LSAMP Fibroblasts                      4             0.308 Tum  
+    ## 3 RP11-384F7.2--LSAMP HGSOC                            2             0.154 Tum
 
 ## RP11-444D3.1–SOX5
 
@@ -1258,20 +1278,18 @@ report_on_fusion("RP11-444D3.1--SOX5")
     ## 1 RP11-444D3.1--SOX5                  5         0.0120 Om   
     ## # A tibble: 2 × 5
     ## # Groups:   FusionName [1]
-    ##   FusionName         celltype_final    tot_cells_w_fusion frac_fusion_ce…¹ type 
-    ##   <chr>              <chr>                          <int>            <dbl> <chr>
-    ## 1 RP11-444D3.1--SOX5 Fibroblasts                        4              0.8 Om   
-    ## 2 RP11-444D3.1--SOX5 Mesothelial.cells                  1              0.2 Om   
-    ## # … with abbreviated variable name ¹​frac_fusion_cells
+    ##   FusionName         celltype_final   tot_cells_w_fusion frac_fusion_cells type 
+    ##   <chr>              <chr>                         <int>             <dbl> <chr>
+    ## 1 RP11-444D3.1--SOX5 Fibroblasts                       4               0.8 Om   
+    ## 2 RP11-444D3.1--SOX5 Mesothelial.cel…                  1               0.2 Om   
     ## # A tibble: 1 × 4
     ##   FusionName         tot_cells_w_fusion frac_tot_cells type 
     ##   <chr>                           <int>          <dbl> <chr>
     ## 1 RP11-444D3.1--SOX5                  7         0.0108 Tum  
     ## # A tibble: 3 × 5
     ## # Groups:   FusionName [1]
-    ##   FusionName         celltype_final    tot_cells_w_fusion frac_fusion_ce…¹ type 
-    ##   <chr>              <chr>                          <int>            <dbl> <chr>
-    ## 1 RP11-444D3.1--SOX5 Fibroblasts                        5            0.714 Tum  
-    ## 2 RP11-444D3.1--SOX5 HGSOC                              1            0.143 Tum  
-    ## 3 RP11-444D3.1--SOX5 Mesothelial.cells                  1            0.143 Tum  
-    ## # … with abbreviated variable name ¹​frac_fusion_cells
+    ##   FusionName         celltype_final   tot_cells_w_fusion frac_fusion_cells type 
+    ##   <chr>              <chr>                         <int>             <dbl> <chr>
+    ## 1 RP11-444D3.1--SOX5 Fibroblasts                       5             0.714 Tum  
+    ## 2 RP11-444D3.1--SOX5 HGSOC                             1             0.143 Tum  
+    ## 3 RP11-444D3.1--SOX5 Mesothelial.cel…                  1             0.143 Tum
