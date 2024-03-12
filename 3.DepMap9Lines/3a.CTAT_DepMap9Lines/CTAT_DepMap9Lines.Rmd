@@ -620,6 +620,24 @@ mult_iso_both_sample_fusion_names %>% arrange(desc(num_multi_iso_both_types))
 
 ## Compare read support for fusion isoforms across each fusion gene
 
+
+```{r}
+
+
+depmap_fusion_isoform_expr_LR_SR_comparison_plot =  mult_isoform_data_both_read_types %>% 
+    ggplot(aes(x=LR_FFPM, y=SR_FFPM)) + 
+    theme_bw() +
+    geom_point(aes(color=fusion)) +
+    ggtitle("restricted to fusion genes w/ multi isoforms supported by both read types") +
+    stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth") +
+    facet_wrap(~fusion, scale='free')
+
+depmap_fusion_isoform_expr_LR_SR_comparison_plot
+```
+
+
 ```{r}
 
 
@@ -673,7 +691,11 @@ for (i in seq(nrow(mult_iso_both_sample_fusion_names))) {
     plot(p)
     
     if(nrow(loc_df)>2) {
+        message(fusion_name, " Cor: FFPM  ")
         print(cor.test(loc_df$LR_FFPM, loc_df$SR_FFPM))
+    
+        message(fusion_name, " Cor: log10(FFPM)  ")
+        print(cor.test(log10(loc_df$LR_FFPM), log10(loc_df$SR_FFPM)))
     }
     
     
