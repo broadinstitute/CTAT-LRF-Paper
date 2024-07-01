@@ -15,7 +15,6 @@ docker build -t jaffal .
 ## CTAT-LR-fusion
 
 ```{bash}
-docker pull trinityctat/ctat_lr_fusion:0.11.1-dev
 docker pull trinityctat/ctat_lr_fusion:0.13.0
 ```
 
@@ -43,7 +42,6 @@ gs://fc-d438f734-542a-445f-96e1-e07b4a7cddbc/references/gencode.v22.chr_patch_ha
 ## pbfusion
 
 ``` {bash}
-docker pull trinityctat/pbfusion:v0.3.1
 docker pull trinityctat/pbfusion:v0.4.0
 ```
 
