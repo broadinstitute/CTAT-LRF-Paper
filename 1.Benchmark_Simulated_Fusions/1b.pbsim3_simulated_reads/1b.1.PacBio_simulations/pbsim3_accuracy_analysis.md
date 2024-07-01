@@ -113,9 +113,9 @@ combined_results %>% head()
     ## 1 rep1    cov5                    5 JAFFAL allow_revNparalogs   0.971
     ## 2 rep1    cov5                    5 JAFFAL allow_reverse        0.958
     ## 3 rep1    cov5                    5 JAFFAL strict               0.958
-    ## 4 rep1    cov5                    5 LongGF allow_revNparalogs   0.969
-    ## 5 rep1    cov5                    5 LongGF allow_reverse        0.962
-    ## 6 rep1    cov5                    5 LongGF strict               0.494
+    ## 4 rep1    cov5                    5 LongGF allow_revNparalogs   0.973
+    ## 5 rep1    cov5                    5 LongGF allow_reverse        0.967
+    ## 6 rep1    cov5                    5 LongGF strict               0.497
 
 ``` r
 combined_results %>%
