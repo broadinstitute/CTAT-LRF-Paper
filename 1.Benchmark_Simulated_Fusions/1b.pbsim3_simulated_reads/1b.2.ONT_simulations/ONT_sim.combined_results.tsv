@@ -3,19 +3,19 @@ cov50	JAFFAL	allow_reverse	0.971
 cov50	JAFFAL	strict	0.971
 cov50	LongGF	allow_reverse	0.9718
 cov50	LongGF	strict	0.499
-cov50	ctat-LR-fusion.v0.13.0	allow_reverse	0.984
-cov50	ctat-LR-fusion.v0.13.0	strict	0.984
-cov50	fusionseeker_s1	allow_reverse	0.984
-cov50	fusionseeker_s1	strict	0.502
-cov50	pbfusion_v0.4.0	allow_reverse	0.977
-cov50	pbfusion_v0.4.0	strict	0.977
+cov50	ctat-LR-fusion	allow_reverse	0.985
+cov50	ctat-LR-fusion	strict	0.985
+cov50	fusionseeker	allow_reverse	0.98
+cov50	fusionseeker	strict	0.5
+cov50	pbfusion	allow_reverse	0.1964
+cov50	pbfusion	strict	0.1964
 cov50	JAFFAL	Exact Brkpt	0.931
 cov50	LongGF	Exact Brkpt	0.012
-cov50	ctat-LR-fusion.v0.13.0	Exact Brkpt	0.956
-cov50	fusionseeker_s1	Exact Brkpt	0.0208
-cov50	pbfusion_v0.4.0	Exact Brkpt	0.066
+cov50	ctat-LR-fusion	Exact Brkpt	0.957
+cov50	fusionseeker	Exact Brkpt	0.02
+cov50	pbfusion	Exact Brkpt	0
 cov50	JAFFAL	Fuzzy Brkpt	0.944
-cov50	LongGF	Fuzzy Brkpt	0.914
-cov50	ctat-LR-fusion.v0.13.0	Fuzzy Brkpt	0.956
-cov50	fusionseeker_s1	Fuzzy Brkpt	0.938
-cov50	pbfusion_v0.4.0	Fuzzy Brkpt	0.922
+cov50	LongGF	Fuzzy Brkpt	0.913
+cov50	ctat-LR-fusion	Fuzzy Brkpt	0.957
+cov50	fusionseeker	Fuzzy Brkpt	0.904
+cov50	pbfusion	Fuzzy Brkpt	0.0292

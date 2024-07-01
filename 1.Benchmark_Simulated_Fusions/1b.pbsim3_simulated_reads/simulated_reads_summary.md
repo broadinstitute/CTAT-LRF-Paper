@@ -18,20 +18,20 @@ pacbio_summary_data = pacbio_summary_data %>% mutate(seqTech = "PacBio")
 pacbio_summary_data %>% head()
 ```
 
-    ##   rep_num coverage_level pass_count                   prog  analysisType
-    ## 1    rep1          cov50         20                 JAFFAL allow_reverse
-    ## 2    rep1          cov50         20                 JAFFAL        strict
-    ## 3    rep1          cov50         20                 LongGF allow_reverse
-    ## 4    rep1          cov50         20                 LongGF        strict
-    ## 5    rep1          cov50         20 ctat-LR-fusion.v0.13.0 allow_reverse
-    ## 6    rep1          cov50         20 ctat-LR-fusion.v0.13.0        strict
-    ##   mean_F1 seqTech
-    ## 1  0.9536  PacBio
-    ## 2  0.9536  PacBio
-    ## 3  0.9634  PacBio
-    ## 4  0.4958  PacBio
-    ## 5  0.9840  PacBio
-    ## 6  0.9840  PacBio
+    ##   rep_num coverage_level pass_count           prog  analysisType mean_F1
+    ## 1    rep1          cov50         20         JAFFAL allow_reverse  0.9536
+    ## 2    rep1          cov50         20         JAFFAL        strict  0.9536
+    ## 3    rep1          cov50         20         LongGF allow_reverse  0.9632
+    ## 4    rep1          cov50         20         LongGF        strict  0.4970
+    ## 5    rep1          cov50         20 ctat-LR-fusion allow_reverse  0.9840
+    ## 6    rep1          cov50         20 ctat-LR-fusion        strict  0.9840
+    ##   seqTech
+    ## 1  PacBio
+    ## 2  PacBio
+    ## 3  PacBio
+    ## 4  PacBio
+    ## 5  PacBio
+    ## 6  PacBio
 
 ``` r
 ONT_summary_data = read.table("1b.2.ONT_simulations/ONT_sim.combined_results.tsv", header=T, sep="\t")
@@ -41,13 +41,13 @@ ONT_summary_data = ONT_summary_data %>% mutate(seqTech = "ONT")
 ONT_summary_data %>% head()
 ```
 
-    ##   coverage_level                   prog  analysisType mean_F1 seqTech
-    ## 1          cov50                 JAFFAL allow_reverse  0.9710     ONT
-    ## 2          cov50                 JAFFAL        strict  0.9710     ONT
-    ## 3          cov50                 LongGF allow_reverse  0.9718     ONT
-    ## 4          cov50                 LongGF        strict  0.4990     ONT
-    ## 5          cov50 ctat-LR-fusion.v0.13.0 allow_reverse  0.9840     ONT
-    ## 6          cov50 ctat-LR-fusion.v0.13.0        strict  0.9840     ONT
+    ##   coverage_level           prog  analysisType mean_F1 seqTech
+    ## 1          cov50         JAFFAL allow_reverse  0.9710     ONT
+    ## 2          cov50         JAFFAL        strict  0.9710     ONT
+    ## 3          cov50         LongGF allow_reverse  0.9718     ONT
+    ## 4          cov50         LongGF        strict  0.4990     ONT
+    ## 5          cov50 ctat-LR-fusion allow_reverse  0.9850     ONT
+    ## 6          cov50 ctat-LR-fusion        strict  0.9850     ONT
 
 ``` r
 combined_data = bind_rows(pacbio_summary_data, ONT_summary_data)
@@ -56,27 +56,27 @@ combined_data = bind_rows(pacbio_summary_data, ONT_summary_data)
 combined_data %>% head()
 ```
 
-    ##   rep_num coverage_level pass_count                   prog  analysisType
-    ## 1    rep1          cov50         20                 JAFFAL allow_reverse
-    ## 2    rep1          cov50         20                 JAFFAL        strict
-    ## 3    rep1          cov50         20                 LongGF allow_reverse
-    ## 4    rep1          cov50         20                 LongGF        strict
-    ## 5    rep1          cov50         20 ctat-LR-fusion.v0.13.0 allow_reverse
-    ## 6    rep1          cov50         20 ctat-LR-fusion.v0.13.0        strict
-    ##   mean_F1 seqTech
-    ## 1  0.9536  PacBio
-    ## 2  0.9536  PacBio
-    ## 3  0.9634  PacBio
-    ## 4  0.4958  PacBio
-    ## 5  0.9840  PacBio
-    ## 6  0.9840  PacBio
+    ##   rep_num coverage_level pass_count           prog  analysisType mean_F1
+    ## 1    rep1          cov50         20         JAFFAL allow_reverse  0.9536
+    ## 2    rep1          cov50         20         JAFFAL        strict  0.9536
+    ## 3    rep1          cov50         20         LongGF allow_reverse  0.9632
+    ## 4    rep1          cov50         20         LongGF        strict  0.4970
+    ## 5    rep1          cov50         20 ctat-LR-fusion allow_reverse  0.9840
+    ## 6    rep1          cov50         20 ctat-LR-fusion        strict  0.9840
+    ##   seqTech
+    ## 1  PacBio
+    ## 2  PacBio
+    ## 3  PacBio
+    ## 4  PacBio
+    ## 5  PacBio
+    ## 6  PacBio
 
 ``` r
-combined_data$prog = factor(combined_data$prog, levels = c('ctat-LR-fusion.v0.13.0',
+combined_data$prog = factor(combined_data$prog, levels = c('ctat-LR-fusion',
                                                            'JAFFAL',
                                                            'LongGF',
-                                                           'fusionseeker_s1',
-                                                           'pbfusion_v0.4.0') )
+                                                           'fusionseeker',
+                                                           'pbfusion') )
 ```
 
 ``` r

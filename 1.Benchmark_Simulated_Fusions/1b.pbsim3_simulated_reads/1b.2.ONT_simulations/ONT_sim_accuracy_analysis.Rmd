@@ -24,8 +24,7 @@ Results are analyzed below:
 
 ```{r}
 
-max_F1_data = read.table("data/max_F1_summary.tsv", header=T, sep="\t") %>% 
-    filter(! grepl("flair", prog)) 
+max_F1_data = read.table("data/max_F1_summary.tsv", header=T, sep="\t") 
 
 max_F1_data %>% head()
 
@@ -70,8 +69,7 @@ mean_samples_F1 %>%
 
 
 ```{r}
-breakpoint_data = read.table("data/breakpoint_maxF1_data.tsv", sep="\t", header=T) %>%
-    filter(prog != 'flairfusion')
+breakpoint_data = read.table("data/breakpoint_maxF1_data.tsv", sep="\t", header=T) 
     
 
 

@@ -15,26 +15,25 @@ Results are analyzed below:
 ## fusion pair accuracy
 
 ``` r
-max_F1_data = read.table("data/max_F1_summary.tsv", header=T, sep="\t") %>% 
-    filter(! grepl("flair", prog)) 
+max_F1_data = read.table("data/max_F1_summary.tsv", header=T, sep="\t") 
 
 max_F1_data %>% head()
 ```
 
-    ##   coverage_level sample_count                   prog min_sum_frags  TP FP FN
-    ## 1          cov50      sample1        fusionseeker_s1             1 498  1  2
-    ## 2          cov50      sample2        fusionseeker_s1             1 498  2  2
-    ## 3          cov50      sample5        fusionseeker_s1             3 494  2  6
-    ## 4          cov50      sample2 ctat-LR-fusion.v0.13.0             4 493  2  7
-    ## 5          cov50      sample4        fusionseeker_s1             2 495  2  5
-    ## 6          cov50      sample4 ctat-LR-fusion.v0.13.0             6 495  0  5
-    ##    TPR PPV    F1       analysisType
-    ## 1 1.00   1 1.000 allow_revNparalogs
-    ## 2 1.00   1 1.000 allow_revNparalogs
-    ## 3 0.99   1 0.995 allow_revNparalogs
-    ## 4 0.99   1 0.995 allow_revNparalogs
-    ## 5 0.99   1 0.995 allow_revNparalogs
-    ## 6 0.99   1 0.995 allow_revNparalogs
+    ##   coverage_level sample_count           prog min_sum_frags  TP FP FN  TPR  PPV
+    ## 1          cov50      sample4 ctat-LR-fusion             6 495  0  5 0.99 1.00
+    ## 2          cov50      sample4   fusionseeker             2 495  2  5 0.99 1.00
+    ## 3          cov50      sample2   fusionseeker             1 498  7  2 1.00 0.99
+    ## 4          cov50      sample2 ctat-LR-fusion             4 493  2  7 0.99 1.00
+    ## 5          cov50      sample1 ctat-LR-fusion             2 490  2 10 0.98 1.00
+    ## 6          cov50      sample1 ctat-LR-fusion             2 490  2 10 0.98 1.00
+    ##      F1       analysisType
+    ## 1 0.995 allow_revNparalogs
+    ## 2 0.995 allow_revNparalogs
+    ## 3 0.995 allow_revNparalogs
+    ## 4 0.995 allow_revNparalogs
+    ## 5 0.990             strict
+    ## 6 0.990      allow_reverse
 
 ``` r
 # barplot
@@ -72,8 +71,7 @@ mean_samples_F1 %>%
 ## breakpoint results
 
 ``` r
-breakpoint_data = read.table("data/breakpoint_maxF1_data.tsv", sep="\t", header=T) %>%
-    filter(prog != 'flairfusion')
+breakpoint_data = read.table("data/breakpoint_maxF1_data.tsv", sep="\t", header=T) 
     
 
 
@@ -90,6 +88,8 @@ brkpt_accuracy_plot = breakpoint_data %>% ggplot(aes(x=prog, y=F1, fill=sample_c
 
 brkpt_accuracy_plot 
 ```
+
+    ## Warning: Removed 6 rows containing missing values (`geom_bar()`).
 
 ![](ONT_sim_accuracy_analysis_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
@@ -129,7 +129,7 @@ combined_results %>% head()
     ## 2 cov5           JAFFAL allow_reverse        0.952
     ## 3 cov5           JAFFAL strict               0.952
     ## 4 cov5           LongGF allow_revNparalogs   0.967
-    ## 5 cov5           LongGF allow_reverse        0.961
+    ## 5 cov5           LongGF allow_reverse        0.960
     ## 6 cov5           LongGF strict               0.491
 
 \`

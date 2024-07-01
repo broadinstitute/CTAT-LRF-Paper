@@ -4,7 +4,7 @@ bhaas
 2024-02-01
 
 ``` r
-PROGS = c('ctat-LR-fusion.v0.13.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.4.0'); 
+PROGS = c('ctat-LR-fusion', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion'); 
 
 
 USE_PARALOG_PROXIES = FALSE
@@ -31,34 +31,41 @@ fusion_preds$prog = factor(fusion_preds$prog, levels=PROGS)
 fusion_preds %>% head()
 ```
 
-    ##   sample   prog        fusion                      breakpoint num_reads
-    ## 1  RT112 LongGF  TACC3--FGFR3      chr4:1739701--chr4:1806934       341
-    ## 2  RT112 LongGF  NOP14--WHSC1      chr4:2963124--chr4:1945833         3
-    ## 3   KIJK LongGF     ALK--NPM1   chr2:29223528--chr5:171391798       458
-    ## 4   KIJK LongGF TAF12--YTHDF2    chr1:28622165--chr1:28743988        48
-    ## 5   KIJK LongGF  RBMS3--LUZP2   chr3:29434744--chr11:24891958         4
-    ## 6   VCAP LongGF   PRKCH--VWA2 chr14:61443108--chr10:114248764       116
-    ##                                                                                                                                                         mapped_gencode_A_gene_list
-    ## 1                                                                                                                                                                 AC016773.1,TACC3
-    ## 2                                                                                                                                    AB000466,C4orf10,NOP14,NOP14-AS1,RP11-520M5.5
-    ## 3                                                                                                            AC093756.1,AC106870.1,AC106870.2,AC106899.1,ALK,Metazoa_SRP,RN7SL516P
-    ## 4                                                                                                                                                    AP006222.1,HYDIN2,RAB42,TAF12
-    ## 5 AC012262.1,AC021068.1,AC092796.1,AC097361.1,AC098650.1,AC099048.1,AC109586.1,AX746710,BC128113,LINC00693,MESTP4,MTND4LP9,RBMS3,RBMS3-AS1,RBMS3-AS2,RBMS3-AS3,RP11-9J18.1,RPS12P5
-    ## 6                            AL355916.1,AL355916.2,AL355916.3,AL359220.1,BC050301,NF1P11,PRKCH,RP11-47I22.1,RP11-47I22.4,RP11-597A11.10,RP11-902B17.1,SNORD112,SNORD112.24,TMEM30B
-    ##                                   mapped_gencode_B_gene_list
-    ## 1                                                      FGFR3
-    ## 2         AL132868.1,NSD2,SCARNA22,SCARNA23,SCARNA23.1,WHSC1
-    ## 3                                            AL732372.2,NPM1
-    ## 4                                   AP006222.1,HYDIN2,YTHDF2
-    ## 5      AC115990.1,AP007216.1,CTC-830E23.1,LUZP2,RP11-643C9.1
-    ## 6 AC005383.1,AURKAP2,AURKAPS2,CTB-1144G6.5,CTB-1144G6.6,VWA2
-    ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                annots
-    ## 1 TACC3--FGFR3:[TACC3:Oncogene];[FGFR3:Oncogene,FGFR3:ArcherDX_panel,FGFR3:FoundationOne_panel,FGFR3:OncomapV4_panel,FGFR3:OncocartaV1_panel];[ChimerPub];INTRACHROMOSOMAL[chr4:0.05Mb];NEIGHBORS[48131];;(recip)FGFR3--TACC3:[FGFR3:Oncogene,FGFR3:ArcherDX_panel,FGFR3:FoundationOne_panel,FGFR3:OncomapV4_panel,FGFR3:OncocartaV1_panel];[TACC3:Oncogene];[ChimerKB,DepMap2023,ChimerSeq,TCGA_StarF2019,CCLE_StarF2019,YOSHIHARA_TCGA,Klijn_CellLines,DEEPEST2019,GUO2018CR_TCGA,ChimerPub,TumorFusionsNAR2018,Cosmic];INTRACHROMOSOMAL[chr4:0.05Mb];LOCAL_REARRANGEMENT:+:[48131]
-    ## 2                                                                                                                                                                                                                                                                                                                                                                                                                                                     NOP14--WHSC1:[WHSC1:Oncogene];INTRACHROMOSOMAL[chr4:0.96Mb];;(recip)WHSC1--NOP14:[WHSC1:Oncogene];INTRACHROMOSOMAL[chr4:0.96Mb]
-    ## 3                                       ALK--NPM1:[ALK:Oncogene,ALK:FoundationOne_panel,ALK:ArcherDX_panel];[NPM1:Oncogene,NPM1:OncomapV4_panel,NPM1:ArcherDX_panel,NPM1:FoundationOne_panel];[ChimerKB,chimerdb_pubmed,chimerdb_omim];INTERCHROMOSOMAL[chr2--chr5];;(recip)NPM1--ALK:[NPM1:Oncogene,NPM1:OncomapV4_panel,NPM1:ArcherDX_panel,NPM1:FoundationOne_panel];[ALK:Oncogene,ALK:FoundationOne_panel,ALK:ArcherDX_panel];[Mitelman,ChimerKB,DepMap2023,ChimerSeq,CCLE_StarF2019,Klijn_CellLines,chimerdb_omim,chimerdb_pubmed,ChimerPub,Cosmic];INTERCHROMOSOMAL[chr5--chr2]
-    ## 4                                                                                                                                                                                                                                                                                                                                                                                                 TAF12--YTHDF2:INTRACHROMOSOMAL[chr1:0.09Mb];LOCAL_INVERSION:-:+:[93536];;(recip)YTHDF2--TAF12:[DepMap2023,CCLE_StarF2019];INTRACHROMOSOMAL[chr1:0.09Mb];LOCAL_INVERSION:+:-:[93536]
-    ## 5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       RBMS3--LUZP2:INTERCHROMOSOMAL[chr3--chr11];;(recip)LUZP2--RBMS3:INTERCHROMOSOMAL[chr11--chr3]
-    ## 6                                                                                                                                                                                                                                                                                                                                                                                                                                                           PRKCH--VWA2:INTERCHROMOSOMAL[chr14--chr10];;(recip)VWA2--PRKCH:[DepMap2023,CCLE_StarF2019];INTERCHROMOSOMAL[chr10--chr14]
+    ##    sample           prog               fusion                     breakpoint
+    ## 1 HCC1395 ctat-LR-fusion PDIA5--CH507-513H4.1  chr3:123124343--chr21:8222961
+    ## 2 HCC1395 ctat-LR-fusion       EIF3K--CYP39A1  chr19:38632678--chr6:46639668
+    ## 3 HCC1395 ctat-LR-fusion        PRRC2B--FUBP3 chr9:131394263--chr9:130609954
+    ## 4 HCC1395 ctat-LR-fusion        PLA2R1--RBMS1 chr2:159976068--chr2:160303487
+    ## 5 HCC1395 ctat-LR-fusion         RAB7A--LRCH3 chr3:128726359--chr3:197865423
+    ## 6 HCC1395 ctat-LR-fusion        HELZ--HMGB1P7 chr17:67239356--chr17:67067610
+    ##   num_reads
+    ## 1       140
+    ## 2        54
+    ## 3        46
+    ## 4        40
+    ## 5        26
+    ## 6        18
+    ##                                                                                        mapped_gencode_A_gene_list
+    ## 1                                                                                            MIR7110,PDIA5,SEC22A
+    ## 2                                                                                                        EIF3K,M9
+    ## 3 AL358781.1,AL358781.2,BAT2L,DKFZp781F05101,LQFBS-1,PRRC2B,RP11-334J6.4,RP11-334J6.7,SNORD62A,SNORD62B,hCG_30195
+    ## 4                                                                                     AC093642.5,LINC01881,PLA2R1
+    ## 5                         AC023598.1,AC117508.1,FTH1P4,MARK2P8,Metazoa_SRP,RAB7A,RN7SL698P,RP11-689D3.4,RPS15AP16
+    ## 6                          AC007448.2,AC007448.3,AC007448.4,HELZ,RP11-401F2.1,RP11-401F2.3,RP11-401F2.4,RPL36AP48
+    ##                                                                                                                                                                                                                                                                                                                          mapped_gencode_B_gene_list
+    ## 1 AK057572,AL592188.2,AL592188.3,AL592188.4,AL592188.8,CH507-513H4.1,CH507-513H4.6,CH507-528H12.1,FP236383.1,FP236383.10,FP236383.2,FP236383.3,FP236383.8,FP671120.1,FP671120.2,FP671120.3,FP671120.4,FP671120.7,LOC100008587,MIR3648-1,MIR3648-2,MIR3687-1,MIR3687-2,MIR6724-1,MIR6724-3,RF01518,RNA18S5,RNA28S5,RNA5-8S5,RNA5-8SN2,RNA5-8SN5,pRNA
+    ## 2                                                                                                                                                                                                                                                                                                                               CYP39A1,RP3-347E1.2
+    ## 3                                                                                                                                                                                                                                                                                                                        FUBP3,LOC100272217,MIR6856
+    ## 4                                                                                                                                                                                                                                                                                   AC093642.5,LINC01881,MIR4785,RBMS1,RMRPP3,RNase_MRP,RNase_MRP.4
+    ## 5                                                                                                                                                                                                                                                                                                                       AC055764.1,AC144530.1,LRCH3
+    ## 6                                                                                                                                                                                                                                                                                                                                  ARHGAP12,HMGB1P7
+    ##                                                                                                                                               annots
+    ## 1                                      PDIA5--CH507-513H4.1:INTERCHROMOSOMAL[chr3--chr21];;(recip)CH507-513H4.1--PDIA5:INTERCHROMOSOMAL[chr21--chr3]
+    ## 2 EIF3K--CYP39A1:[Klijn_CellLines,Cosmic,ChimerKB,CCLE_StarF2019];INTERCHROMOSOMAL[chr19--chr6];;(recip)CYP39A1--EIF3K:INTERCHROMOSOMAL[chr6--chr19]
+    ## 3                                   PRRC2B--FUBP3:[CCLE_StarF2019];INTRACHROMOSOMAL[chr9:0.76Mb];;(recip)FUBP3--PRRC2B:INTRACHROMOSOMAL[chr9:0.76Mb]
+    ## 4   PLA2R1--RBMS1:[CCLE_StarF2019,Klijn_CellLines,ChimerKB,Cosmic];INTRACHROMOSOMAL[chr2:0.21Mb];;(recip)RBMS1--PLA2R1:INTRACHROMOSOMAL[chr2:0.21Mb]
+    ## 5                                   RAB7A--LRCH3:[CCLE_StarF2019];INTRACHROMOSOMAL[chr3:68.98Mb];;(recip)LRCH3--RAB7A:INTRACHROMOSOMAL[chr3:68.98Mb]
+    ## 6                                                  HELZ--HMGB1P7:INTERCHROMOSOMAL[chr17--chr10];;(recip)HMGB1P7--HELZ:INTERCHROMOSOMAL[chr10--chr17]
 
 ``` r
 p = fusion_preds %>% 
@@ -84,20 +91,20 @@ truth_data = read.table("data/preds.collected.gencode_mapped.wAnnot.filt.pass.pr
 truth_data %>% head()
 ```
 
-    ##        proxy_fusion_name
-    ## 1 HCC1395|EIF3K--CYP39A1
-    ## 2      VCAP|SLMAP--ANO10
-    ## 3    VCAP|PDE4D--FAM172A
-    ## 4     VCAP|HJURP--EIF4E2
-    ## 5  HCC1187|KMT2E--LHFPL3
-    ## 6  HCC1395|PLA2R1--RBMS1
-    ##                                                          prog_names num_progs
-    ## 1 JAFFAL,LongGF,ctat-LR-fusion.v0.13.0,fusionseeker,pbfusion_v0.4.0         5
-    ## 2 JAFFAL,LongGF,ctat-LR-fusion.v0.13.0,fusionseeker,pbfusion_v0.4.0         5
-    ## 3 JAFFAL,LongGF,ctat-LR-fusion.v0.13.0,fusionseeker,pbfusion_v0.4.0         5
-    ## 4 JAFFAL,LongGF,ctat-LR-fusion.v0.13.0,fusionseeker,pbfusion_v0.4.0         5
-    ## 5 JAFFAL,LongGF,ctat-LR-fusion.v0.13.0,fusionseeker,pbfusion_v0.4.0         5
-    ## 6 JAFFAL,LongGF,ctat-LR-fusion.v0.13.0,fusionseeker,pbfusion_v0.4.0         5
+    ##        proxy_fusion_name                                         prog_names
+    ## 1   VCAP|C16orf70--ENKD1 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 2   HCC1395|MFSD3--MROH1 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 3 HCC1187|SEC22B--NOTCH2 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 4     VCAP|INPP4A--HJURP JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 5    SKBR3|KLHDC2--SNTB1 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 6  HCC1187|PLXND1--TMCC1 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ##   num_progs
+    ## 1         5
+    ## 2         5
+    ## 3         5
+    ## 4         5
+    ## 5         5
+    ## 6         5
 
 ``` r
 truth_data$sample_name = sapply(truth_data$proxy_fusion_name, function(x) { str_split(x, "\\|")[[1]][1]})
@@ -105,27 +112,20 @@ truth_data$sample_name = sapply(truth_data$proxy_fusion_name, function(x) { str_
 head(truth_data)
 ```
 
-    ##        proxy_fusion_name
-    ## 1 HCC1395|EIF3K--CYP39A1
-    ## 2      VCAP|SLMAP--ANO10
-    ## 3    VCAP|PDE4D--FAM172A
-    ## 4     VCAP|HJURP--EIF4E2
-    ## 5  HCC1187|KMT2E--LHFPL3
-    ## 6  HCC1395|PLA2R1--RBMS1
-    ##                                                          prog_names num_progs
-    ## 1 JAFFAL,LongGF,ctat-LR-fusion.v0.13.0,fusionseeker,pbfusion_v0.4.0         5
-    ## 2 JAFFAL,LongGF,ctat-LR-fusion.v0.13.0,fusionseeker,pbfusion_v0.4.0         5
-    ## 3 JAFFAL,LongGF,ctat-LR-fusion.v0.13.0,fusionseeker,pbfusion_v0.4.0         5
-    ## 4 JAFFAL,LongGF,ctat-LR-fusion.v0.13.0,fusionseeker,pbfusion_v0.4.0         5
-    ## 5 JAFFAL,LongGF,ctat-LR-fusion.v0.13.0,fusionseeker,pbfusion_v0.4.0         5
-    ## 6 JAFFAL,LongGF,ctat-LR-fusion.v0.13.0,fusionseeker,pbfusion_v0.4.0         5
-    ##   sample_name
-    ## 1     HCC1395
-    ## 2        VCAP
-    ## 3        VCAP
-    ## 4        VCAP
-    ## 5     HCC1187
-    ## 6     HCC1395
+    ##        proxy_fusion_name                                         prog_names
+    ## 1   VCAP|C16orf70--ENKD1 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 2   HCC1395|MFSD3--MROH1 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 3 HCC1187|SEC22B--NOTCH2 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 4     VCAP|INPP4A--HJURP JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 5    SKBR3|KLHDC2--SNTB1 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 6  HCC1187|PLXND1--TMCC1 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ##   num_progs sample_name
+    ## 1         5        VCAP
+    ## 2         5     HCC1395
+    ## 3         5     HCC1187
+    ## 4         5        VCAP
+    ## 5         5       SKBR3
+    ## 6         5     HCC1187
 
 ``` r
 truth_data_counts = truth_data %>% rename(sample=sample_name) %>% group_by(sample) %>% tally(name='num_truth_fusions')
@@ -140,9 +140,9 @@ truth_data_counts %>% arrange(num_truth_fusions)
     ## 2 RT112                   3
     ## 3 KIJK                    7
     ## 4 K562                    9
-    ## 5 HCC1187                15
+    ## 5 HCC1187                14
     ## 6 DMS53                  19
-    ## 7 HCC1395                21
+    ## 7 HCC1395                22
     ## 8 SKBR3                  25
     ## 9 VCAP                   31
 
@@ -184,14 +184,14 @@ truth_data %>% head()
 ```
 
     ## # A tibble: 6 × 4
-    ##   proxy_fusion_name      prog_names             num_progs sample_name
-    ##   <chr>                  <chr>                      <int> <chr>      
-    ## 1 HCC1395|EIF3K--CYP39A1 JAFFAL                         5 HCC1395    
-    ## 2 HCC1395|EIF3K--CYP39A1 LongGF                         5 HCC1395    
-    ## 3 HCC1395|EIF3K--CYP39A1 ctat-LR-fusion.v0.13.0         5 HCC1395    
-    ## 4 HCC1395|EIF3K--CYP39A1 fusionseeker                   5 HCC1395    
-    ## 5 HCC1395|EIF3K--CYP39A1 pbfusion_v0.4.0                5 HCC1395    
-    ## 6 VCAP|SLMAP--ANO10      JAFFAL                         5 VCAP
+    ##   proxy_fusion_name    prog_names     num_progs sample_name
+    ##   <chr>                <chr>              <int> <chr>      
+    ## 1 VCAP|C16orf70--ENKD1 JAFFAL                 5 VCAP       
+    ## 2 VCAP|C16orf70--ENKD1 LongGF                 5 VCAP       
+    ## 3 VCAP|C16orf70--ENKD1 ctat-LR-fusion         5 VCAP       
+    ## 4 VCAP|C16orf70--ENKD1 fusionseeker           5 VCAP       
+    ## 5 VCAP|C16orf70--ENKD1 pbfusion               5 VCAP       
+    ## 6 HCC1395|MFSD3--MROH1 JAFFAL                 5 HCC1395
 
 ``` r
 #Organize according to pred class
@@ -204,48 +204,55 @@ scored_data$prog = factor(scored_data$prog, levels=PROGS)
 scored_data %>% head()
 ```
 
-    ##   pred_result  proxy_fusion_name proxy_fusion_type sample   prog        fusion
-    ## 1          TP RT112|FGFR3--TACC3    recip_selected  RT112 LongGF  TACC3--FGFR3
-    ## 2          TP RT112|NOP14--WHSC1            tie_lt  RT112 LongGF  NOP14--WHSC1
-    ## 3          TP     KIJK|NPM1--ALK    recip_selected   KIJK LongGF     ALK--NPM1
-    ## 4          TP KIJK|YTHDF2--TAF12    recip_selected   KIJK LongGF TAF12--YTHDF2
-    ## 5          TP  KIJK|LUZP2--RBMS3            tie_lt   KIJK LongGF  RBMS3--LUZP2
-    ## 6          TP   VCAP|VWA2--PRKCH    recip_selected   VCAP LongGF   PRKCH--VWA2
-    ##                        breakpoint num_reads
-    ## 1      chr4:1739701--chr4:1806934       341
-    ## 2      chr4:2963124--chr4:1945833         3
-    ## 3   chr2:29223528--chr5:171391798       458
-    ## 4    chr1:28622165--chr1:28743988        48
-    ## 5   chr3:29434744--chr11:24891958         4
-    ## 6 chr14:61443108--chr10:114248764       116
-    ##                                                                                                                                                         mapped_gencode_A_gene_list
-    ## 1                                                                                                                                                                 AC016773.1,TACC3
-    ## 2                                                                                                                                    AB000466,C4orf10,NOP14,NOP14-AS1,RP11-520M5.5
-    ## 3                                                                                                            AC093756.1,AC106870.1,AC106870.2,AC106899.1,ALK,Metazoa_SRP,RN7SL516P
-    ## 4                                                                                                                                                    AP006222.1,HYDIN2,RAB42,TAF12
-    ## 5 AC012262.1,AC021068.1,AC092796.1,AC097361.1,AC098650.1,AC099048.1,AC109586.1,AX746710,BC128113,LINC00693,MESTP4,MTND4LP9,RBMS3,RBMS3-AS1,RBMS3-AS2,RBMS3-AS3,RP11-9J18.1,RPS12P5
-    ## 6                            AL355916.1,AL355916.2,AL355916.3,AL359220.1,BC050301,NF1P11,PRKCH,RP11-47I22.1,RP11-47I22.4,RP11-597A11.10,RP11-902B17.1,SNORD112,SNORD112.24,TMEM30B
-    ##                                   mapped_gencode_B_gene_list
-    ## 1                                                      FGFR3
-    ## 2         AL132868.1,NSD2,SCARNA22,SCARNA23,SCARNA23.1,WHSC1
-    ## 3                                            AL732372.2,NPM1
-    ## 4                                   AP006222.1,HYDIN2,YTHDF2
-    ## 5      AC115990.1,AP007216.1,CTC-830E23.1,LUZP2,RP11-643C9.1
-    ## 6 AC005383.1,AURKAP2,AURKAPS2,CTB-1144G6.5,CTB-1144G6.6,VWA2
-    ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                annots
-    ## 1 TACC3--FGFR3:[TACC3:Oncogene];[FGFR3:Oncogene,FGFR3:ArcherDX_panel,FGFR3:FoundationOne_panel,FGFR3:OncomapV4_panel,FGFR3:OncocartaV1_panel];[ChimerPub];INTRACHROMOSOMAL[chr4:0.05Mb];NEIGHBORS[48131];;(recip)FGFR3--TACC3:[FGFR3:Oncogene,FGFR3:ArcherDX_panel,FGFR3:FoundationOne_panel,FGFR3:OncomapV4_panel,FGFR3:OncocartaV1_panel];[TACC3:Oncogene];[ChimerKB,DepMap2023,ChimerSeq,TCGA_StarF2019,CCLE_StarF2019,YOSHIHARA_TCGA,Klijn_CellLines,DEEPEST2019,GUO2018CR_TCGA,ChimerPub,TumorFusionsNAR2018,Cosmic];INTRACHROMOSOMAL[chr4:0.05Mb];LOCAL_REARRANGEMENT:+:[48131]
-    ## 2                                                                                                                                                                                                                                                                                                                                                                                                                                                     NOP14--WHSC1:[WHSC1:Oncogene];INTRACHROMOSOMAL[chr4:0.96Mb];;(recip)WHSC1--NOP14:[WHSC1:Oncogene];INTRACHROMOSOMAL[chr4:0.96Mb]
-    ## 3                                       ALK--NPM1:[ALK:Oncogene,ALK:FoundationOne_panel,ALK:ArcherDX_panel];[NPM1:Oncogene,NPM1:OncomapV4_panel,NPM1:ArcherDX_panel,NPM1:FoundationOne_panel];[ChimerKB,chimerdb_pubmed,chimerdb_omim];INTERCHROMOSOMAL[chr2--chr5];;(recip)NPM1--ALK:[NPM1:Oncogene,NPM1:OncomapV4_panel,NPM1:ArcherDX_panel,NPM1:FoundationOne_panel];[ALK:Oncogene,ALK:FoundationOne_panel,ALK:ArcherDX_panel];[Mitelman,ChimerKB,DepMap2023,ChimerSeq,CCLE_StarF2019,Klijn_CellLines,chimerdb_omim,chimerdb_pubmed,ChimerPub,Cosmic];INTERCHROMOSOMAL[chr5--chr2]
-    ## 4                                                                                                                                                                                                                                                                                                                                                                                                 TAF12--YTHDF2:INTRACHROMOSOMAL[chr1:0.09Mb];LOCAL_INVERSION:-:+:[93536];;(recip)YTHDF2--TAF12:[DepMap2023,CCLE_StarF2019];INTRACHROMOSOMAL[chr1:0.09Mb];LOCAL_INVERSION:+:-:[93536]
-    ## 5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       RBMS3--LUZP2:INTERCHROMOSOMAL[chr3--chr11];;(recip)LUZP2--RBMS3:INTERCHROMOSOMAL[chr11--chr3]
-    ## 6                                                                                                                                                                                                                                                                                                                                                                                                                                                           PRKCH--VWA2:INTERCHROMOSOMAL[chr14--chr10];;(recip)VWA2--PRKCH:[DepMap2023,CCLE_StarF2019];INTERCHROMOSOMAL[chr10--chr14]
-    ##                                       explanation    selected_fusion
-    ## 1 first encounter of TP LongGF,RT112|FGFR3--TACC3 RT112|FGFR3--TACC3
-    ## 2 first encounter of TP LongGF,RT112|NOP14--WHSC1 RT112|NOP14--WHSC1
-    ## 3     first encounter of TP LongGF,KIJK|NPM1--ALK     KIJK|NPM1--ALK
-    ## 4 first encounter of TP LongGF,KIJK|YTHDF2--TAF12 KIJK|YTHDF2--TAF12
-    ## 5  first encounter of TP LongGF,KIJK|LUZP2--RBMS3  KIJK|LUZP2--RBMS3
-    ## 6   first encounter of TP LongGF,VCAP|VWA2--PRKCH   VCAP|VWA2--PRKCH
+    ##   pred_result            proxy_fusion_name proxy_fusion_type  sample
+    ## 1          TP HCC1395|PDIA5--CH507-513H4.1   dominant_choice HCC1395
+    ## 2          TP       HCC1395|EIF3K--CYP39A1   dominant_choice HCC1395
+    ## 3          TP        HCC1395|PRRC2B--FUBP3   dominant_choice HCC1395
+    ## 4          TP        HCC1395|PLA2R1--RBMS1   dominant_choice HCC1395
+    ## 5          TP         HCC1395|RAB7A--LRCH3   dominant_choice HCC1395
+    ## 6          FP        HCC1395|HELZ--HMGB1P7         orig_name HCC1395
+    ##             prog               fusion                     breakpoint num_reads
+    ## 1 ctat-LR-fusion PDIA5--CH507-513H4.1  chr3:123124343--chr21:8222961       140
+    ## 2 ctat-LR-fusion       EIF3K--CYP39A1  chr19:38632678--chr6:46639668        54
+    ## 3 ctat-LR-fusion        PRRC2B--FUBP3 chr9:131394263--chr9:130609954        46
+    ## 4 ctat-LR-fusion        PLA2R1--RBMS1 chr2:159976068--chr2:160303487        40
+    ## 5 ctat-LR-fusion         RAB7A--LRCH3 chr3:128726359--chr3:197865423        26
+    ## 6 ctat-LR-fusion        HELZ--HMGB1P7 chr17:67239356--chr17:67067610        18
+    ##                                                                                        mapped_gencode_A_gene_list
+    ## 1                                                                                            MIR7110,PDIA5,SEC22A
+    ## 2                                                                                                        EIF3K,M9
+    ## 3 AL358781.1,AL358781.2,BAT2L,DKFZp781F05101,LQFBS-1,PRRC2B,RP11-334J6.4,RP11-334J6.7,SNORD62A,SNORD62B,hCG_30195
+    ## 4                                                                                     AC093642.5,LINC01881,PLA2R1
+    ## 5                         AC023598.1,AC117508.1,FTH1P4,MARK2P8,Metazoa_SRP,RAB7A,RN7SL698P,RP11-689D3.4,RPS15AP16
+    ## 6                          AC007448.2,AC007448.3,AC007448.4,HELZ,RP11-401F2.1,RP11-401F2.3,RP11-401F2.4,RPL36AP48
+    ##                                                                                                                                                                                                                                                                                                                          mapped_gencode_B_gene_list
+    ## 1 AK057572,AL592188.2,AL592188.3,AL592188.4,AL592188.8,CH507-513H4.1,CH507-513H4.6,CH507-528H12.1,FP236383.1,FP236383.10,FP236383.2,FP236383.3,FP236383.8,FP671120.1,FP671120.2,FP671120.3,FP671120.4,FP671120.7,LOC100008587,MIR3648-1,MIR3648-2,MIR3687-1,MIR3687-2,MIR6724-1,MIR6724-3,RF01518,RNA18S5,RNA28S5,RNA5-8S5,RNA5-8SN2,RNA5-8SN5,pRNA
+    ## 2                                                                                                                                                                                                                                                                                                                               CYP39A1,RP3-347E1.2
+    ## 3                                                                                                                                                                                                                                                                                                                        FUBP3,LOC100272217,MIR6856
+    ## 4                                                                                                                                                                                                                                                                                   AC093642.5,LINC01881,MIR4785,RBMS1,RMRPP3,RNase_MRP,RNase_MRP.4
+    ## 5                                                                                                                                                                                                                                                                                                                       AC055764.1,AC144530.1,LRCH3
+    ## 6                                                                                                                                                                                                                                                                                                                                  ARHGAP12,HMGB1P7
+    ##                                                                                                                                               annots
+    ## 1                                      PDIA5--CH507-513H4.1:INTERCHROMOSOMAL[chr3--chr21];;(recip)CH507-513H4.1--PDIA5:INTERCHROMOSOMAL[chr21--chr3]
+    ## 2 EIF3K--CYP39A1:[Klijn_CellLines,Cosmic,ChimerKB,CCLE_StarF2019];INTERCHROMOSOMAL[chr19--chr6];;(recip)CYP39A1--EIF3K:INTERCHROMOSOMAL[chr6--chr19]
+    ## 3                                   PRRC2B--FUBP3:[CCLE_StarF2019];INTRACHROMOSOMAL[chr9:0.76Mb];;(recip)FUBP3--PRRC2B:INTRACHROMOSOMAL[chr9:0.76Mb]
+    ## 4   PLA2R1--RBMS1:[CCLE_StarF2019,Klijn_CellLines,ChimerKB,Cosmic];INTRACHROMOSOMAL[chr2:0.21Mb];;(recip)RBMS1--PLA2R1:INTRACHROMOSOMAL[chr2:0.21Mb]
+    ## 5                                   RAB7A--LRCH3:[CCLE_StarF2019];INTRACHROMOSOMAL[chr3:68.98Mb];;(recip)LRCH3--RAB7A:INTRACHROMOSOMAL[chr3:68.98Mb]
+    ## 6                                                  HELZ--HMGB1P7:INTERCHROMOSOMAL[chr17--chr10];;(recip)HMGB1P7--HELZ:INTERCHROMOSOMAL[chr10--chr17]
+    ##                                                         explanation
+    ## 1 first encounter of TP ctat-LR-fusion,HCC1395|PDIA5--CH507-513H4.1
+    ## 2       first encounter of TP ctat-LR-fusion,HCC1395|EIF3K--CYP39A1
+    ## 3        first encounter of TP ctat-LR-fusion,HCC1395|PRRC2B--FUBP3
+    ## 4        first encounter of TP ctat-LR-fusion,HCC1395|PLA2R1--RBMS1
+    ## 5         first encounter of TP ctat-LR-fusion,HCC1395|RAB7A--LRCH3
+    ## 6 first encounter of FP fusion ctat-LR-fusion,HCC1395|HELZ--HMGB1P7
+    ##                selected_fusion
+    ## 1 HCC1395|PDIA5--CH507-513H4.1
+    ## 2       HCC1395|EIF3K--CYP39A1
+    ## 3        HCC1395|PRRC2B--FUBP3
+    ## 4        HCC1395|PLA2R1--RBMS1
+    ## 5         HCC1395|RAB7A--LRCH3
+    ## 6                            .
 
 ``` r
 scored_data %>% filter(pred_result %in% c("TP", "FP", "FN")) %>% 
@@ -274,13 +281,13 @@ data$prog = factor(data$prog, levels=PROGS)
 data %>% head()
 ```
 
-    ##           prog min_sum_frags  TP  FP FN  TPR  PPV    F1
-    ## 1 fusionseeker             3 115 267 18 0.86 0.30 0.445
-    ## 2 fusionseeker             4  95 148 38 0.71 0.39 0.503
-    ## 3 fusionseeker             5  82  76 51 0.62 0.52 0.566
-    ## 4 fusionseeker             6  75  62 58 0.56 0.55 0.555
-    ## 5 fusionseeker             7  69  44 64 0.52 0.61 0.561
-    ## 6 fusionseeker             8  68  35 65 0.51 0.66 0.575
+    ##             prog min_sum_frags  TP FP FN  TPR  PPV    F1
+    ## 1 ctat-LR-fusion             3 105 21 28 0.79 0.83 0.810
+    ## 2 ctat-LR-fusion             4  91 15 42 0.68 0.86 0.759
+    ## 3 ctat-LR-fusion             5  80 14 53 0.60 0.85 0.703
+    ## 4 ctat-LR-fusion             6  77 12 56 0.58 0.87 0.696
+    ## 5 ctat-LR-fusion             7  71  7 62 0.53 0.91 0.670
+    ## 6 ctat-LR-fusion             8  68  7 65 0.51 0.91 0.654
 
 ``` r
 # F1 vs. min reads
@@ -295,9 +302,9 @@ depmap_accuracy_lineplot = data %>%
 depmap_accuracy_lineplot
 ```
 
-    ## Warning: Removed 201 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 200 rows containing missing values (`geom_point()`).
 
-    ## Warning: Removed 201 rows containing missing values (`geom_line()`).
+    ## Warning: Removed 200 rows containing missing values (`geom_line()`).
 
 ![](DepMap9Lines_Benchmarking_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
@@ -325,7 +332,7 @@ depmap_TP_vs_FP_scatterplot  = data %>% select(prog, min_sum_frags, TP, FP) %>%
 depmap_TP_vs_FP_scatterplot 
 ```
 
-    ## Warning: Removed 354 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 352 rows containing missing values (`geom_point()`).
 
     ## Warning: Removed 70 rows containing missing values (`geom_line()`).
 
@@ -372,14 +379,14 @@ unfiltered_preds %>% head()
 
     ## # A tibble: 6 × 9
     ## # Rowwise: 
-    ##   sample prog   fusion          breakpoint      num_reads mapped_gencode_A_gen…¹
-    ##   <chr>  <chr>  <chr>           <chr>               <int> <chr>                 
-    ## 1 RT112  LongGF TACC3--FGFR3    chr4:1739701--…       341 AC016773.1,TACC3      
-    ## 2 RT112  LongGF CBX3--C15orf57  chr7:26201744-…         7 CBX3,HNRNPA2B1        
-    ## 3 RT112  LongGF MT-ND2--MT-CO1  chrM:5301--chr…         3 MT-ND2                
-    ## 4 RT112  LongGF NOP14--WHSC1    chr4:2963124--…         3 AB000466,C4orf10,NOP1…
-    ## 5 RT112  LongGF MT-ND5--MT-ATP8 chrM:13152--ch…         3 MT-ND5,MTND5          
-    ## 6 RT112  LongGF MT-ND6--MT-ND5  chrM:14623--ch…         3 MT-ND6,MTND5          
+    ##   sample  prog           fusion      breakpoint num_reads mapped_gencode_A_gen…¹
+    ##   <chr>   <chr>          <chr>       <chr>          <int> <chr>                 
+    ## 1 HCC1395 ctat-LR-fusion PDIA5--CH5… chr3:1231…       140 MIR7110,PDIA5,SEC22A  
+    ## 2 HCC1395 ctat-LR-fusion EIF3K--CYP… chr19:386…        54 EIF3K,M9              
+    ## 3 HCC1395 ctat-LR-fusion PRRC2B--FU… chr9:1313…        46 AL358781.1,AL358781.2…
+    ## 4 HCC1395 ctat-LR-fusion PLA2R1--RB… chr2:1599…        40 AC093642.5,LINC01881,…
+    ## 5 HCC1395 ctat-LR-fusion RAB7A--LRC… chr3:1287…        26 AC023598.1,AC117508.1…
+    ## 6 HCC1395 ctat-LR-fusion TMEM104--R… chr17:747…        19 TMEM104               
     ## # ℹ abbreviated name: ¹​mapped_gencode_A_gene_list
     ## # ℹ 3 more variables: mapped_gencode_B_gene_list <chr>, annots <chr>,
     ## #   proxy_fusion_name <chr>
@@ -392,14 +399,14 @@ unfiltered_preds %>% head()
 
     ## # A tibble: 6 × 9
     ## # Rowwise: 
-    ##   sample prog   fusion          breakpoint      num_reads mapped_gencode_A_gen…¹
-    ##   <chr>  <chr>  <chr>           <chr>               <int> <chr>                 
-    ## 1 RT112  LongGF TACC3--FGFR3    chr4:1739701--…       341 AC016773.1,TACC3      
-    ## 2 RT112  LongGF CBX3--C15orf57  chr7:26201744-…         7 CBX3,HNRNPA2B1        
-    ## 3 RT112  LongGF MT-ND2--MT-CO1  chrM:5301--chr…         3 MT-ND2                
-    ## 4 RT112  LongGF NOP14--WHSC1    chr4:2963124--…         3 AB000466,C4orf10,NOP1…
-    ## 5 RT112  LongGF MT-ND5--MT-ATP8 chrM:13152--ch…         3 MT-ND5,MTND5          
-    ## 6 RT112  LongGF MT-ND6--MT-ND5  chrM:14623--ch…         3 MT-ND6,MTND5          
+    ##   sample  prog           fusion      breakpoint num_reads mapped_gencode_A_gen…¹
+    ##   <chr>   <chr>          <chr>       <chr>          <int> <chr>                 
+    ## 1 HCC1395 ctat-LR-fusion PDIA5--CH5… chr3:1231…       140 MIR7110,PDIA5,SEC22A  
+    ## 2 HCC1395 ctat-LR-fusion EIF3K--CYP… chr19:386…        54 EIF3K,M9              
+    ## 3 HCC1395 ctat-LR-fusion PRRC2B--FU… chr9:1313…        46 AL358781.1,AL358781.2…
+    ## 4 HCC1395 ctat-LR-fusion PLA2R1--RB… chr2:1599…        40 AC093642.5,LINC01881,…
+    ## 5 HCC1395 ctat-LR-fusion RAB7A--LRC… chr3:1287…        26 AC023598.1,AC117508.1…
+    ## 6 HCC1395 ctat-LR-fusion TMEM104--R… chr17:747…        19 TMEM104               
     ## # ℹ abbreviated name: ¹​mapped_gencode_A_gene_list
     ## # ℹ 3 more variables: mapped_gencode_B_gene_list <chr>, annots <chr>,
     ## #   proxy_fusion_name <chr>
@@ -414,16 +421,16 @@ cosmic_fusions
     ## # Rowwise: 
     ##    sample  proxy_fusion_name     
     ##    <chr>   <chr>                 
-    ##  1 RT112   RT112|FGFR3--TACC3    
-    ##  2 KIJK    KIJK|ALK--NPM1        
-    ##  3 VCAP    VCAP|ERG--TMPRSS2     
-    ##  4 HCC1395 HCC1395|CYP39A1--EIF3K
-    ##  5 HCC1395 HCC1395|PLA2R1--RBMS1 
-    ##  6 K562    K562|ABL1--BCR        
-    ##  7 HCC1187 HCC1187|AGPAT5--MCPH1 
-    ##  8 HCC1187 HCC1187|PLXND1--TMCC1 
-    ##  9 RT112   RT112|FBXL18--RNF216  
-    ## 10 HCC1187 HCC1187|GPBP1L1--MAST2
+    ##  1 HCC1395 HCC1395|CYP39A1--EIF3K
+    ##  2 HCC1395 HCC1395|PLA2R1--RBMS1 
+    ##  3 K562    K562|ABL1--BCR        
+    ##  4 RT112   RT112|FGFR3--TACC3    
+    ##  5 VCAP    VCAP|ERG--TMPRSS2     
+    ##  6 HCC1187 HCC1187|AGPAT5--MCPH1 
+    ##  7 HCC1187 HCC1187|PLXND1--TMCC1 
+    ##  8 KIJK    KIJK|ALK--NPM1        
+    ##  9 HCC1187 HCC1187|GPBP1L1--MAST2
+    ## 10 RT112   RT112|FBXL18--RNF216  
     ## 11 HCC1395 HCC1395|AGPAT5--MCPH1
 
 ``` r
@@ -438,18 +445,18 @@ cosmic_fusion_preds
 ```
 
     ## # A tibble: 43 × 4
-    ##    sample proxy_fusion_name  prog                   num_reads
-    ##    <chr>  <chr>              <chr>                      <int>
-    ##  1 KIJK   KIJK|ALK--NPM1     ctat-LR-fusion.v0.13.0       462
-    ##  2 KIJK   KIJK|ALK--NPM1     fusionseeker                 459
-    ##  3 KIJK   KIJK|ALK--NPM1     LongGF                       458
-    ##  4 KIJK   KIJK|ALK--NPM1     pbfusion_v0.4.0              453
-    ##  5 KIJK   KIJK|ALK--NPM1     JAFFAL                       358
-    ##  6 RT112  RT112|FGFR3--TACC3 pbfusion_v0.4.0              345
-    ##  7 RT112  RT112|FGFR3--TACC3 fusionseeker                 344
-    ##  8 RT112  RT112|FGFR3--TACC3 ctat-LR-fusion.v0.13.0       343
-    ##  9 RT112  RT112|FGFR3--TACC3 LongGF                       341
-    ## 10 RT112  RT112|FGFR3--TACC3 JAFFAL                       341
+    ##    sample proxy_fusion_name  prog           num_reads
+    ##    <chr>  <chr>              <chr>              <int>
+    ##  1 KIJK   KIJK|ALK--NPM1     ctat-LR-fusion       462
+    ##  2 KIJK   KIJK|ALK--NPM1     fusionseeker         459
+    ##  3 KIJK   KIJK|ALK--NPM1     LongGF               458
+    ##  4 KIJK   KIJK|ALK--NPM1     pbfusion             453
+    ##  5 KIJK   KIJK|ALK--NPM1     JAFFAL               358
+    ##  6 RT112  RT112|FGFR3--TACC3 pbfusion             345
+    ##  7 RT112  RT112|FGFR3--TACC3 fusionseeker         344
+    ##  8 RT112  RT112|FGFR3--TACC3 ctat-LR-fusion       343
+    ##  9 RT112  RT112|FGFR3--TACC3 LongGF               341
+    ## 10 RT112  RT112|FGFR3--TACC3 JAFFAL               341
     ## # ℹ 33 more rows
 
 ``` r
@@ -504,13 +511,13 @@ truth_fusions_found %>% group_by(prog) %>% tally() %>% arrange(desc(n))
 ```
 
     ## # A tibble: 5 × 2
-    ##   prog                       n
-    ##   <chr>                  <int>
-    ## 1 fusionseeker             115
-    ## 2 ctat-LR-fusion.v0.13.0   104
-    ## 3 pbfusion_v0.4.0           94
-    ## 4 JAFFAL                    90
-    ## 5 LongGF                    80
+    ##   prog               n
+    ##   <chr>          <int>
+    ## 1 fusionseeker     115
+    ## 2 ctat-LR-fusion   105
+    ## 3 pbfusion          94
+    ## 4 JAFFAL            89
+    ## 5 LongGF            82
 
 ``` r
 truth_fusions_found_matrix = truth_fusions_found %>% mutate(found = 1) %>% spread(key=prog, value=found, fill=0)
