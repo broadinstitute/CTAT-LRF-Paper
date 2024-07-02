@@ -23,6 +23,8 @@ workflow mergefusionWorkflow {
         File pbmmi
         File pbfusion_gtf_bin
         String platform
+        String pbmm2_platform = 'pacbio'
+        
 
         File genome_lib_tar_mm2_only
         File genome_lib_tar_with_STAR_idx
@@ -131,7 +133,7 @@ workflow mergefusionWorkflow {
                     input_fasta = seqtkTask.fa,
                     sample_id = sample_id,
                     pbmmi = pbmmi,
-                    platform = platform,
+                    pbmm2_platform = pbmm2_platform,
                     monitoring_script = monitoring_script,
                     runtime_environment = runtime_environment4
             }
@@ -479,7 +481,7 @@ task pbmm2 {
         File? input_fasta
         String sample_id
         File pbmmi
-        String platform
+        String pbmm2_platform = 'pacbio'
 
         File monitoring_script
         RuntimeEnvironment runtime_environment
@@ -487,7 +489,7 @@ task pbmm2 {
 
     command <<<
         bash ~{monitoring_script} > ~{sample_id}_monitoring.log &
-        if [[ ~{platform} == 'pacbio' ]]; then
+        if [[ ~{pbmm2_platform} == 'pacbio' ]]; then
             pbmm2 align --num-threads ~{runtime_environment.cpu} --preset ISOSEQ --sort ~{pbmmi} ~{input_fasta} ~{sample_id}.bam
         else
             pbmm2 align --num-threads ~{runtime_environment.cpu} --preset CCS --sort ~{pbmmi} ~{input_fasta} ~{sample_id}.bam
