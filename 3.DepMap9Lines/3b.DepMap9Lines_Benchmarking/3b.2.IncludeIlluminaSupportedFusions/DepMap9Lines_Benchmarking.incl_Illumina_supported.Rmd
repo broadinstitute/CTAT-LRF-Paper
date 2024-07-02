@@ -14,7 +14,7 @@ library(tidyverse)
 
 ```{r}
 
-PROGS = c('ctat-LR-fusion.v0.13.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.4.0'); 
+PROGS = c('ctat-LR-fusion', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion'); 
 
 
 USE_PARALOG_PROXIES = FALSE
@@ -180,7 +180,7 @@ data %>% head()
 # exclude pbfusion v0.4.0 for the paper fig
 
 
-progs = c('ctat-LR-fusion.v0.13.0', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion_v0.4.0'); 
+progs = c('ctat-LR-fusion', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion'); 
 
 
 depmap_accuracy_lineplot = data %>% 

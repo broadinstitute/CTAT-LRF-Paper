@@ -91,13 +91,13 @@ truth_data = read.table("data/preds.collected.gencode_mapped.wAnnot.filt.pass.pr
 truth_data %>% head()
 ```
 
-    ##        proxy_fusion_name                                         prog_names
-    ## 1   VCAP|C16orf70--ENKD1 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
-    ## 2   HCC1395|MFSD3--MROH1 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
-    ## 3 HCC1187|SEC22B--NOTCH2 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
-    ## 4     VCAP|INPP4A--HJURP JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
-    ## 5    SKBR3|KLHDC2--SNTB1 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
-    ## 6  HCC1187|PLXND1--TMCC1 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ##     proxy_fusion_name                                         prog_names
+    ## 1 VCAP|PIK3C2A--TEAD1 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 2 DMS53|PEX5L--STRADB JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 3 SKBR3|TATDN1--GSDMB JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 4  VCAP|INPP4A--HJURP JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 5 VCAP|PDE4D--FAM172A JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 6 VCAP|NDUFAF2--MAST4 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
     ##   num_progs
     ## 1         5
     ## 2         5
@@ -112,20 +112,20 @@ truth_data$sample_name = sapply(truth_data$proxy_fusion_name, function(x) { str_
 head(truth_data)
 ```
 
-    ##        proxy_fusion_name                                         prog_names
-    ## 1   VCAP|C16orf70--ENKD1 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
-    ## 2   HCC1395|MFSD3--MROH1 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
-    ## 3 HCC1187|SEC22B--NOTCH2 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
-    ## 4     VCAP|INPP4A--HJURP JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
-    ## 5    SKBR3|KLHDC2--SNTB1 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
-    ## 6  HCC1187|PLXND1--TMCC1 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ##     proxy_fusion_name                                         prog_names
+    ## 1 VCAP|PIK3C2A--TEAD1 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 2 DMS53|PEX5L--STRADB JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 3 SKBR3|TATDN1--GSDMB JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 4  VCAP|INPP4A--HJURP JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 5 VCAP|PDE4D--FAM172A JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 6 VCAP|NDUFAF2--MAST4 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
     ##   num_progs sample_name
     ## 1         5        VCAP
-    ## 2         5     HCC1395
-    ## 3         5     HCC1187
+    ## 2         5       DMS53
+    ## 3         5       SKBR3
     ## 4         5        VCAP
-    ## 5         5       SKBR3
-    ## 6         5     HCC1187
+    ## 5         5        VCAP
+    ## 6         5        VCAP
 
 ``` r
 truth_data_counts = truth_data %>% rename(sample=sample_name) %>% group_by(sample) %>% tally(name='num_truth_fusions')
@@ -184,14 +184,14 @@ truth_data %>% head()
 ```
 
     ## # A tibble: 6 × 4
-    ##   proxy_fusion_name    prog_names     num_progs sample_name
-    ##   <chr>                <chr>              <int> <chr>      
-    ## 1 VCAP|C16orf70--ENKD1 JAFFAL                 5 VCAP       
-    ## 2 VCAP|C16orf70--ENKD1 LongGF                 5 VCAP       
-    ## 3 VCAP|C16orf70--ENKD1 ctat-LR-fusion         5 VCAP       
-    ## 4 VCAP|C16orf70--ENKD1 fusionseeker           5 VCAP       
-    ## 5 VCAP|C16orf70--ENKD1 pbfusion               5 VCAP       
-    ## 6 HCC1395|MFSD3--MROH1 JAFFAL                 5 HCC1395
+    ##   proxy_fusion_name   prog_names     num_progs sample_name
+    ##   <chr>               <chr>              <int> <chr>      
+    ## 1 VCAP|PIK3C2A--TEAD1 JAFFAL                 5 VCAP       
+    ## 2 VCAP|PIK3C2A--TEAD1 LongGF                 5 VCAP       
+    ## 3 VCAP|PIK3C2A--TEAD1 ctat-LR-fusion         5 VCAP       
+    ## 4 VCAP|PIK3C2A--TEAD1 fusionseeker           5 VCAP       
+    ## 5 VCAP|PIK3C2A--TEAD1 pbfusion               5 VCAP       
+    ## 6 DMS53|PEX5L--STRADB JAFFAL                 5 DMS53
 
 ``` r
 #Organize according to pred class
@@ -210,7 +210,7 @@ scored_data %>% head()
     ## 3          TP        HCC1395|PRRC2B--FUBP3   dominant_choice HCC1395
     ## 4          TP        HCC1395|PLA2R1--RBMS1   dominant_choice HCC1395
     ## 5          TP         HCC1395|RAB7A--LRCH3   dominant_choice HCC1395
-    ## 6          FP        HCC1395|HELZ--HMGB1P7         orig_name HCC1395
+    ## 6          TP        HCC1395|HELZ--HMGB1P7         orig_name HCC1395
     ##             prog               fusion                     breakpoint num_reads
     ## 1 ctat-LR-fusion PDIA5--CH507-513H4.1  chr3:123124343--chr21:8222961       140
     ## 2 ctat-LR-fusion       EIF3K--CYP39A1  chr19:38632678--chr6:46639668        54
@@ -245,14 +245,14 @@ scored_data %>% head()
     ## 3        first encounter of TP ctat-LR-fusion,HCC1395|PRRC2B--FUBP3
     ## 4        first encounter of TP ctat-LR-fusion,HCC1395|PLA2R1--RBMS1
     ## 5         first encounter of TP ctat-LR-fusion,HCC1395|RAB7A--LRCH3
-    ## 6 first encounter of FP fusion ctat-LR-fusion,HCC1395|HELZ--HMGB1P7
+    ## 6       first encounter of TP ctat-LR-fusion,HCC1395|ARHGAP12--HELZ
     ##                selected_fusion
     ## 1 HCC1395|PDIA5--CH507-513H4.1
     ## 2       HCC1395|EIF3K--CYP39A1
     ## 3        HCC1395|PRRC2B--FUBP3
     ## 4        HCC1395|PLA2R1--RBMS1
     ## 5         HCC1395|RAB7A--LRCH3
-    ## 6                            .
+    ## 6       HCC1395|ARHGAP12--HELZ
 
 ``` r
 scored_data %>% filter(pred_result %in% c("TP", "FP", "FN")) %>% 
@@ -281,13 +281,13 @@ data$prog = factor(data$prog, levels=PROGS)
 data %>% head()
 ```
 
-    ##             prog min_sum_frags  TP FP FN  TPR  PPV    F1
-    ## 1 ctat-LR-fusion             3 105 21 28 0.79 0.83 0.810
-    ## 2 ctat-LR-fusion             4  91 15 42 0.68 0.86 0.759
-    ## 3 ctat-LR-fusion             5  80 14 53 0.60 0.85 0.703
-    ## 4 ctat-LR-fusion             6  77 12 56 0.58 0.87 0.696
-    ## 5 ctat-LR-fusion             7  71  7 62 0.53 0.91 0.670
-    ## 6 ctat-LR-fusion             8  68  7 65 0.51 0.91 0.654
+    ##     prog min_sum_frags TP FP FN  TPR PPV    F1
+    ## 1 LongGF             3 82  0 51 0.62   1 0.765
+    ## 2 LongGF             4 71  0 62 0.53   1 0.693
+    ## 3 LongGF             5 61  0 72 0.46   1 0.630
+    ## 4 LongGF             6 57  0 76 0.43   1 0.601
+    ## 5 LongGF             7 53  0 80 0.40   1 0.571
+    ## 6 LongGF             8 52  0 81 0.39   1 0.561
 
 ``` r
 # F1 vs. min reads
@@ -513,10 +513,10 @@ truth_fusions_found %>% group_by(prog) %>% tally() %>% arrange(desc(n))
     ## # A tibble: 5 × 2
     ##   prog               n
     ##   <chr>          <int>
-    ## 1 fusionseeker     115
-    ## 2 ctat-LR-fusion   105
+    ## 1 fusionseeker     126
+    ## 2 ctat-LR-fusion   106
     ## 3 pbfusion          94
-    ## 4 JAFFAL            89
+    ## 4 JAFFAL            91
     ## 5 LongGF            82
 
 ``` r
