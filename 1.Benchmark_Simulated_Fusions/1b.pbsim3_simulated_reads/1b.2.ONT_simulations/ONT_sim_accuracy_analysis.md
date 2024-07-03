@@ -21,8 +21,8 @@ max_F1_data %>% head()
 ```
 
     ##   coverage_level sample_count           prog min_sum_frags  TP FP FN  TPR  PPV
-    ## 1          cov50      sample4 ctat-LR-fusion             6 495  0  5 0.99 1.00
-    ## 2          cov50      sample4   fusionseeker             2 495  2  5 0.99 1.00
+    ## 1          cov50      sample4   fusionseeker             2 495  2  5 0.99 1.00
+    ## 2          cov50      sample4 ctat-LR-fusion             6 495  0  5 0.99 1.00
     ## 3          cov50      sample2   fusionseeker             1 498  7  2 1.00 0.99
     ## 4          cov50      sample2 ctat-LR-fusion             4 493  2  7 0.99 1.00
     ## 5          cov50      sample1 ctat-LR-fusion             2 490  2 10 0.98 1.00
@@ -88,8 +88,6 @@ brkpt_accuracy_plot = breakpoint_data %>% ggplot(aes(x=prog, y=F1, fill=sample_c
 
 brkpt_accuracy_plot 
 ```
-
-    ## Warning: Removed 6 rows containing missing values (`geom_bar()`).
 
 ![](ONT_sim_accuracy_analysis_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
