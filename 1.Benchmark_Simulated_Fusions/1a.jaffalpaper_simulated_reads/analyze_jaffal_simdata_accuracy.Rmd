@@ -91,6 +91,86 @@ ggsave(p_linepoint, filename="jaffal_simdata_accuracy.paperfig.svg", width=8, he
 ```
 
 
+# examine precision/recall
+
+- restrict to the 95% identity set where all perform best.
+
+```{r}
+
+data %>% filter(analysisType == "allow_reverse") %>% 
+         filter(divergence == 95) %>%
+         filter(TPR > 0.05) %>%
+    ggplot(aes(x=TPR, y=PPV)) + geom_point(aes(color=prog)) + 
+    geom_line(aes(groups=prog, color=prog)) +
+    theme_bw() + 
+    facet_wrap(~seqtype)
+
+
+```
+
+
+
+```{r}
+
+data %>% filter(analysisType == "allow_reverse") %>% 
+         filter(divergence == 95) %>%
+         #filter(TPR > 0.05) %>%
+         select(seqtype, prog, min_sum_frags, TP, FP) %>% gather(key='TP_or_FP', value='count', TP, FP) %>%
+    ggplot(aes(x=min_sum_frags, y=count)) + geom_point(aes(color=TP_or_FP)) + geom_line(aes(groups=prog, color=TP_or_FP)) +
+    #geom_line(aes(groups=prog, color=prog)) +
+    theme_bw() + 
+    # facet_wrap(~seqtype)
+    facet_grid(vars(prog), vars(seqtype))
+
+
+```
+
+Plot just the TPs
+
+
+
+
+```{r}
+
+
+data %>% filter(analysisType == "allow_reverse") %>% 
+         filter(divergence == 95) %>%
+         #filter(TPR > 0.05) %>%
+         select(seqtype, prog, min_sum_frags, TP, FP) %>% gather(key='TP_or_FP', value='count', TP, FP) %>%
+    filter(TP_or_FP == 'TP') %>%
+   
+    ggplot(aes(x=min_sum_frags, y=count)) + geom_point(color='#00BFC4') + geom_line(aes(groups=prog), color='#00BFC4') +
+    #geom_line(aes(groups=prog, color=prog)) +
+    theme_bw() + 
+    # facet_wrap(~seqtype)
+    facet_grid(vars(prog), vars(seqtype)) + 
+    xlab("min long read count") +
+    ggtitle("Reads at 95% identity, TPs vs. min read count")
+
+
+```
+
+
+```{r}
+
+
+data %>% filter(analysisType == "allow_reverse") %>% 
+         filter(divergence == 95) %>%
+         #filter(TPR > 0.05) %>%
+         select(seqtype, prog, min_sum_frags, TP, FP) %>% gather(key='TP_or_FP', value='count', TP, FP) %>%
+    filter(TP_or_FP == 'FP') %>%
+   
+    ggplot(aes(x=min_sum_frags, y=count)) + geom_point(color='#F8766D') + geom_line(aes(groups=prog), color='#F8766D') +
+    #geom_line(aes(groups=prog, color=prog)) +
+    theme_bw() + 
+    # facet_wrap(~seqtype)
+    facet_grid(vars(prog), vars(seqtype)) + 
+    xlab("min long read count") +
+    ggtitle("Reads at 95% identity, FPs vs. min read count")
+
+
+```
+
 
 
 
