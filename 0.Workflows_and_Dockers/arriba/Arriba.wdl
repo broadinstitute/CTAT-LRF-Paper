@@ -46,30 +46,20 @@ task Arriba_task {
 
     set -ex
 
-    # tar xvf ~{arriba_genome_ref_tar}
+    tar xvf ~{arriba_genome_ref_tar}
 
+    /arriba*/run_arriba.sh ArribaReferences/STAR_index_GRCh38_GENCODE38 ArribaReferences/*.gtf ArribaReferences/*.fa  ArribaReferences/blacklist_*.tsv.gz ArribaReferences/known_fusions_*.tsv.gz ArribaReferences/protein_domains_*.gff3 ~{threads} ~{left_fq} ~{right_fq}  
 
-    echo /arriba*/run_arriba.sh ArribaReferences/STAR_index_GRCh38_GENCODE38 ArribaReferences/*.gtf ArribaReferences/*.fa  ArribaReferences/blacklist_*.tsv.gz ArribaReferences/known_fusions_*.tsv.gz ArribaReferences/protein_domains_*.gff3 ~{threads} ~{left_fq} ~{right_fq}  
-
-
-
-    
-    
-    #/arriba*/run_arriba.sh  STAR_index_hs37d5viral_GENCODE19/ GENCODE19.gtf hs37d5viral.fa database/blacklist_hg19_hs37d5_GRCh37_v2.4.0.tsv.gz database/known_fusions_hg19_hs37d5_GRCh37_v2.4.0.tsv.gz database/protein_domains_hg19_hs37d5_GRCh37_v2.4.0.gff3 8 test/read1.fastq.gz test/read2.fastq.gz
-
-
-
-
-
-    # /arriba*/run_arriba.sh /references/STAR_index_* /references/*.gtf /references/*.fa /references/blacklist_*.tsv.gz /references/known_fusions_*.tsv.gz /references/protein_domains_*.gff3 ${THREADS-8} /read1.fastq.gz $(ls /read2.fastq.gz 2> /dev/null)' > /usr/local/bin/arriba.sh && \
-
+    mv fusions.tsv ~{sample_id}.Arriba.fusions.tsv
+      
 
   >>>
 
   output {
-     File arriba_fusions = "~{sample_id}.fusions.tsv"
+     File arriba_fusions = "~{sample_id}.Arriba.fusions.tsv"
   }
-    
+
+  
 
   runtime {
     #preemptible: preemptible
