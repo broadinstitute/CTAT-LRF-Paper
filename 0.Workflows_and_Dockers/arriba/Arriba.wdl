@@ -4,7 +4,7 @@ workflow Arriba_wf {
 
   input {
     File arriba_genome_ref_tar = "gs://mdl-refs/GRCh38/ArribaGRCh38/ArribaReferences.tar"
-    Strong docker = "uhrigs/arriba:2.4.0"
+    String docker = "uhrigs/arriba:2.4.0"
 
     String sample_id
     File left_fq
@@ -16,7 +16,7 @@ workflow Arriba_wf {
     input:
       arriba_genome_ref_tar = arriba_genome_ref_tar,
       docker = docker,
-      sample_id = sample_kd,
+      sample_id = sample_id,
       left_fq = left_fq,
       right_fq = right_fq
   }
@@ -29,8 +29,8 @@ workflow Arriba_wf {
 
 task Arriba_task {
   input {
-    File arriba_genome_ref_tar = "gs://mdl-refs/GRCh38/ArribaGRCh38/ArribaReferences.tar"
-    Strong docker = "uhrigs/arriba:2.4.0"
+    File arriba_genome_ref_tar
+    String docker
 
     String sample_id
     File left_fq
@@ -40,7 +40,7 @@ task Arriba_task {
 
   }
 
-  Int disk_space = ceil(1+size(arriba_genome_ref_tar, "GB")*10 + size(left_fq, "GB")*2))
+  Int disk_space = ceil(1+size(arriba_genome_ref_tar, "GB")*10 + size(left_fq, "GB")*2)
 
   command <<<
 
