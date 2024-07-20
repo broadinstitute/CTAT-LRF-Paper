@@ -13,14 +13,40 @@ library(tidyverse)
 
 ```{r}
 
-# parse STAR-Fusion predictions based on Illumina reads
+# parse Arriba predictions based on Illumina reads
 
-StarF_data = read.table("data/DepMap.v1v2mrgd.StarF.consolidated.tsv.gz", header=T, sep="\t", com='') %>%
-    rename(sample = X.sample, FusionName = X.FusionName)
+arriba_dir = "data/Arriba_fusions"
 
-StarF_data %>% head()
+arriba_fusion_files = list.files(arriba_dir, pattern="*.Arriba.fusions.tsv.gz")
+
+arriba_fusions_df = NULL
+
+for (arriba_file in arriba_fusion_files) {
+    
+    arriba_file_path = paste0(arriba_dir, "/", arriba_file)
+    message("parsing ", arriba_file_path)
+    arriba_fusions = read.csv(arriba_file_path, header=T, sep="\t", com='')
+    
+    arriba_fusions$sample = arriba_file
+    
+    arriba_fusions_df = bind_rows(arriba_fusions_df, arriba_fusions)
+    
+    
+}
+
+arriba_fusions_df$sample = str_replace(arriba_fusions_df$sample, "DepMap_v1v2mrgd_", "")
+arriba_fusions_df$sample = str_replace(arriba_fusions_df$sample, ".Arriba.fusions.tsv.gz", "")
+
+arriba_fusions_df = arriba_fusions_df %>% rename(gene1 = X.gene1)
+
+arriba_fusions_df = arriba_fusions_df %>% rowwise() %>% mutate(lex_ordered_fusion_name = paste0(sample, "|", paste0(collapse="--", sort(c(gene1, gene2)))))
+
+arriba_fusions_df = arriba_fusions_df %>% select(lex_ordered_fusion_name, sample, gene1, gene2, confidence, split_reads1, split_reads2)
+
+arriba_fusions_df %>% head()
 
 ```
+
 
 ```{r}
 
@@ -59,14 +85,7 @@ message("num unique fusions:", earlier_unique_set %>% select(lex_ordered_fusion_
 
 
 
-```{r}
 
-# add lex_ordered_fusion_name as attribute to STARF data
-StarF_data = StarF_data %>% rowwise() %>% 
-    mutate(lex_ordered_fusion_name = paste0(sample, "|", paste0(collapse="--", sort(str_split(FusionName, "--")[[1]])))) 
-
-
-```
 
 
 ```{r}
@@ -74,7 +93,7 @@ StarF_data = StarF_data %>% rowwise() %>%
 # define those fusions in the truth set as illumina-supported or not.
 
 all_pred_fusions_illum_support_indicated = all_pred_fusions %>% 
-    mutate(Illumina_support = (lex_ordered_fusion_name %in% StarF_data$lex_ordered_fusion_name))
+    mutate(Illumina_support = (lex_ordered_fusion_name %in% arriba_fusions_df$lex_ordered_fusion_name))
 
 
 all_pred_fusions_illum_support_indicated_summary = all_pred_fusions_illum_support_indicated %>% 
@@ -83,7 +102,7 @@ all_pred_fusions_illum_support_indicated_summary = all_pred_fusions_illum_suppor
 
 all_pred_fusions_illum_support_indicated_summary
 
-# 79 shared and 12 unique have illumina support
+# 79 shared and 35 unique have illumina support
 
 ```
 
@@ -100,13 +119,13 @@ all_pred_fusions_illum_support_indicated %>% filter(type=='unique' & Illumina_su
 
 ```{r}
 
-StarF_overlapping_preds = inner_join(all_pred_fusions_illum_support_indicated, StarF_data, by='lex_ordered_fusion_name', multiple='all')
+Arriba_overlapping_preds = inner_join(all_pred_fusions_illum_support_indicated, arriba_fusions_df, by='lex_ordered_fusion_name', multiple='all')
 
 
-StarF_overlapping_preds = StarF_overlapping_preds %>% select(lex_ordered_fusion_name, type, sample, FusionName) %>% unique()
+Arriba_overlapping_preds = Arriba_overlapping_preds%>% select(lex_ordered_fusion_name, sample, type) %>% unique()
 
 
-StarF_overlapping_preds
+Arriba_overlapping_preds
 ```
 
 
@@ -116,7 +135,7 @@ StarF_overlapping_preds
 
 # all Illumina supported ones
 
-full_join(StarF_overlapping_preds,
+full_join(Arriba_overlapping_preds,
           all_pred_fusions_illum_support_indicated %>% filter(Illumina_support),
           by=c('lex_ordered_fusion_name',
                'type')
@@ -127,53 +146,11 @@ full_join(StarF_overlapping_preds,
 
 
 
-```{r}
-
-
-StarF_overlapping_preds = StarF_overlapping_preds %>% rowwise() %>% 
-    mutate(proxy_fusion_name = paste0(sample, "|", FusionName)) %>%
-    select(proxy_fusion_name, type, sample, FusionName, lex_ordered_fusion_name) %>% unique()
-
-StarF_overlapping_preds
-
-# combining shared and uniquely pred fusions w/ illum support
-
-```
-
-
-
 
 
 ```{r}
 
-full_join(StarF_overlapping_preds,
-          all_pred_fusions_illum_support_indicated %>% filter(Illumina_support),
-          by=c('lex_ordered_fusion_name','type')
-          )
-
-```
-
-
-```{r}
-
-StarF_overlapping_preds %>% filter(type=="shared")
-
-```
-
-```{r}
-
-StarF_overlapping_preds %>% filter(type=="shared") %>% group_by(lex_ordered_fusion_name) %>% tally() %>% filter(n>1)
-
-```
-
-
-VCAP|ANO10--SLMAP is found by STARF in both orientations:  SLMAP--ANO10 and ANO10--SLMAP
-
-so, 81 lexically sorted fusions here
-
-```{r}
-
-StarF_overlapping_preds %>% filter(type=="unique")
+Arriba_overlapping_preds %>% filter(type=="unique")
 
 # 12 of the uniquely pred fusions have illumina support
 
@@ -183,8 +160,8 @@ StarF_overlapping_preds %>% filter(type=="unique")
 
 ```{r}
 
-write.table(StarF_overlapping_preds, 
-            file="StarFusion_Illumina_supported_fusions.tsv", sep="\t", row.names=F, quote=F)
+write.table(Arriba_overlapping_preds, 
+            file="Arriba_Illumina_supported_fusions.tsv", sep="\t", row.names=F, quote=F)
 
 
 ```
