@@ -46,6 +46,14 @@ earlier_unique_set = earlier_unique_set %>% rowwise() %>% mutate(lex_ordered_fus
 
 all_pred_fusions = bind_rows(earlier_truth_set, earlier_unique_set) 
 
+proxy_fusion_name_mapping = all_pred_fusions %>% select(proxy_fusion_name, lex_ordered_fusion_name) %>% unique()
+
+```
+
+
+
+```{r}
+
 all_pred_fusions = all_pred_fusions %>% select(lex_ordered_fusion_name, type) %>% unique()
 
 message("num shared fusions: ", earlier_truth_set %>% select(lex_ordered_fusion_name) %>% unique() %>% nrow() )
@@ -125,13 +133,19 @@ full_join(StarF_overlapping_preds,
 ```
 
 
+```{r}
+# incorporate proxy fusion name
+
+StarF_overlapping_preds = left_join(StarF_overlapping_preds, proxy_fusion_name_mapping, by='lex_ordered_fusion_name')
+
+```
+
 
 
 ```{r}
 
 
-StarF_overlapping_preds = StarF_overlapping_preds %>% rowwise() %>% 
-    mutate(proxy_fusion_name = paste0(sample, "|", FusionName)) %>%
+StarF_overlapping_preds = StarF_overlapping_preds %>%
     select(proxy_fusion_name, type, sample, FusionName, lex_ordered_fusion_name) %>% unique()
 
 StarF_overlapping_preds

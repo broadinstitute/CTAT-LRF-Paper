@@ -43,6 +43,8 @@ arriba_fusions_df = arriba_fusions_df %>% rowwise() %>% mutate(lex_ordered_fusio
 
 arriba_fusions_df = arriba_fusions_df %>% select(lex_ordered_fusion_name, sample, gene1, gene2, confidence, split_reads1, split_reads2)
 
+arriba_fusions_df = arriba_fusions_df %>% rowwise() %>% mutate(FusionName = paste0(collapse="--", c(gene1, gene2) ) )
+
 arriba_fusions_df %>% head()
 
 ```
@@ -71,6 +73,15 @@ earlier_unique_set = earlier_unique_set %>% rowwise() %>% mutate(FusionName = st
 earlier_unique_set = earlier_unique_set %>% rowwise() %>% mutate(lex_ordered_fusion_name = paste0(sample, "|", paste0(collapse="--", sort(str_split(FusionName, "--")[[1]])))) 
 
 all_pred_fusions = bind_rows(earlier_truth_set, earlier_unique_set) 
+
+proxy_fusion_name_mapping = all_pred_fusions %>% select(proxy_fusion_name, lex_ordered_fusion_name) %>% unique()
+
+
+```
+
+
+```{r}
+
 
 all_pred_fusions = all_pred_fusions %>% select(lex_ordered_fusion_name, type) %>% unique()
 
@@ -122,10 +133,21 @@ all_pred_fusions_illum_support_indicated %>% filter(type=='unique' & Illumina_su
 Arriba_overlapping_preds = inner_join(all_pred_fusions_illum_support_indicated, arriba_fusions_df, by='lex_ordered_fusion_name', multiple='all')
 
 
-Arriba_overlapping_preds = Arriba_overlapping_preds%>% select(lex_ordered_fusion_name, sample, type) %>% unique()
+Arriba_overlapping_preds = Arriba_overlapping_preds%>% select(lex_ordered_fusion_name, sample, type, FusionName) %>% unique()
 
 
 Arriba_overlapping_preds
+```
+
+
+```{r}
+# add proxy fusion name
+
+Arriba_overlapping_preds = inner_join(Arriba_overlapping_preds, proxy_fusion_name_mapping, by='lex_ordered_fusion_name')
+
+
+
+Arriba_overlapping_preds = Arriba_overlapping_preds  %>% select(proxy_fusion_name, type, sample, FusionName, lex_ordered_fusion_name)
 ```
 
 
@@ -152,7 +174,7 @@ full_join(Arriba_overlapping_preds,
 
 Arriba_overlapping_preds %>% filter(type=="unique")
 
-# 12 of the uniquely pred fusions have illumina support
+# 35 of the uniquely pred fusions have illumina support
 
 ```
 
