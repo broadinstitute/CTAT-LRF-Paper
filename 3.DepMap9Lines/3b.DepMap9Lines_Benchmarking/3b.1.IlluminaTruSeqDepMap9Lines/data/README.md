@@ -1,4 +1,4 @@
-Run on Terra:
+STAR-Fusion: Run on Terra:
         https://app.terra.bio/#workspaces/methods-dev-lab/LR_Fusion_Benchmarking/job_history/c150ae25-fe49-4013-8421-c0ef023a73a8
 
 
@@ -34,4 +34,7 @@ sample_id
 use_ssd
 true
 
+
+Arriba: Run on Terra:
+    https://app.terra.bio/#workspaces/methods-dev-lab/LR_Fusion_Benchmarking/job_history/6b4bae3c-9dbb-4cfd-9eb0-f8153473c117
 
