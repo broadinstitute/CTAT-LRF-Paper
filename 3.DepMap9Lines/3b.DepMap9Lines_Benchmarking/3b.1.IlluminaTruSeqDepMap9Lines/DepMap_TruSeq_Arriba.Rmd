@@ -47,6 +47,9 @@ arriba_fusions_df = arriba_fusions_df %>% rowwise() %>% mutate(FusionName = past
 
 arriba_fusions_df = arriba_fusions_df %>% filter(confidence == 'high')
 
+
+write.table(arriba_fusions_df, file="all_arriba_high_preds.tsv", quote=F, sep="\t", row.names=F)
+
 arriba_fusions_df %>% head()
 
 ```

@@ -1,0 +1,128 @@
+---
+title: "Examine_PR_AUC_varied_minReads"
+author: "bhaas"
+date: '2024-07-21'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+```{r}
+
+files = c(
+"__bmark_min-1-read/data/min_2.ignoreUnsure.results.scored.PR.AUC",
+"__bmark_min-1-read/data/min_3.ignoreUnsure.results.scored.PR.AUC",
+"__bmark_min-2-reads/data/min_2.ignoreUnsure.results.scored.PR.AUC",
+"__bmark_min-2-reads/data/min_3.ignoreUnsure.results.scored.PR.AUC",
+"__bmark_min-3-reads/data/min_2.ignoreUnsure.results.scored.PR.AUC",
+"__bmark_min-3-reads/data/min_3.ignoreUnsure.results.scored.PR.AUC",
+"__bmark_min-4-reads/data/min_2.ignoreUnsure.results.scored.PR.AUC",
+"__bmark_min-4-reads/data/min_3.ignoreUnsure.results.scored.PR.AUC",
+"__bmark_min-5-reads/data/min_2.ignoreUnsure.results.scored.PR.AUC",
+"__bmark_min-5-reads/data/min_3.ignoreUnsure.results.scored.PR.AUC",
+"__bmark_min-6-reads/data/min_2.ignoreUnsure.results.scored.PR.AUC",
+"__bmark_min-6-reads/data/min_3.ignoreUnsure.results.scored.PR.AUC",
+"__bmark_min-7-reads/data/min_2.ignoreUnsure.results.scored.PR.AUC",
+"__bmark_min-7-reads/data/min_3.ignoreUnsure.results.scored.PR.AUC",
+"__bmark_min-8-reads/data/min_2.ignoreUnsure.results.scored.PR.AUC",
+"__bmark_min-8-reads/data/min_3.ignoreUnsure.results.scored.PR.AUC",
+"__bmark_min-9-reads/data/min_2.ignoreUnsure.results.scored.PR.AUC",
+"__bmark_min-9-reads/data/min_3.ignoreUnsure.results.scored.PR.AUC",
+"__bmark_min-10-reads/data/min_2.ignoreUnsure.results.scored.PR.AUC",
+"__bmark_min-10-reads/data/min_3.ignoreUnsure.results.scored.PR.AUC"
+)
+
+```
+
+
+```{r}
+
+OK_PARA = FALSE
+
+if (OK_PARA) {
+    files = c(
+    "__bmark_min-1-read/data/min_2.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "__bmark_min-1-read/data/min_3.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "__bmark_min-2-reads/data/min_2.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "__bmark_min-2-reads/data/min_3.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "__bmark_min-3-reads/data/min_2.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "__bmark_min-3-reads/data/min_3.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "__bmark_min-4-reads/data/min_2.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "__bmark_min-4-reads/data/min_3.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "__bmark_min-5-reads/data/min_2.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "__bmark_min-5-reads/data/min_3.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "__bmark_min-6-reads/data/min_2.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "__bmark_min-6-reads/data/min_3.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "__bmark_min-7-reads/data/min_2.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "__bmark_min-7-reads/data/min_3.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "__bmark_min-8-reads/data/min_2.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "__bmark_min-8-reads/data/min_3.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "__bmark_min-9-reads/data/min_2.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "__bmark_min-9-reads/data/min_3.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "__bmark_min-10-reads/data/min_2.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "__bmark_min-10-reads/data/min_3.okPara_ignoreUnsure.results.scored.PR.AUC"
+    )
+
+}
+
+
+
+
+```
+
+
+
+```{r}
+
+PR_AUC_df = NULL
+
+for (file in files) {
+    
+    df = read.csv(file, sep="\t", header=F, stringsAsFactors = F)
+    colnames(df) = c('prog', 'AUC')
+    df$fname = file
+
+    PR_AUC_df = bind_rows(PR_AUC_df, df)
+}
+
+
+PR_AUC_df %>% head()
+```
+
+```{r}
+
+PR_AUC_df = PR_AUC_df %>% rowwise() %>% mutate(min_reads = as.numeric(str_match(fname, "min-(\\d+)-read")[[2]]) )
+
+PR_AUC_df %>% head()
+```
+
+
+
+```{r}
+
+PR_AUC_df = PR_AUC_df %>% rowwise() %>% mutate(min_progs_agree = as.numeric(str_match(fname, "min_(\\d+)\\.")[[2]]) )
+
+PR_AUC_df %>% head()
+```
+
+
+```{r}
+
+PR_AUC_df %>% ggplot(aes(x=prog, y=AUC)) + 
+    geom_col(aes(fill=prog)) +
+    theme_bw() +
+    facet_grid(vars(min_progs_agree), vars(min_reads)) +
+    theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+
+
+```
+
+
+
+

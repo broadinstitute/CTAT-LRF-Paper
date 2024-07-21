@@ -74,6 +74,8 @@ StarF_data = StarF_data %>% rowwise() %>%
     mutate(lex_ordered_fusion_name = paste0(sample, "|", paste0(collapse="--", sort(str_split(FusionName, "--")[[1]])))) 
 
 
+write.table(StarF_data, file="all_STARF_preds.tsv", sep="\t", quote=F, row.names=F)
+
 ```
 
 

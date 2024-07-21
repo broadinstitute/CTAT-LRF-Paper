@@ -1,0 +1,251 @@
+---
+title: "ExamineFusionPredCounts"
+author: "bhaas"
+date: '2024-07-21'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+```{r}
+
+fusion_preds = read.csv("__bmark_min-1-read/data/preds.collected.gencode_mapped.wAnnot.gz", header=T, sep="\t") %>% 
+    select(sample, prog, num_reads, fusion)
+
+fusion_preds =  fusion_preds %>% rowwise() %>% mutate(lex_ordered_fusion_name = paste0(sample, "|", paste0(collapse="--", sort(str_split(fusion, "--")[[1]])))) 
+
+```
+
+
+```{r}
+
+fusion_preds = fusion_preds %>% rowwise() %>% mutate(lex_fusion = paste0(collapse="--", sort(str_split(fusion, "--")[[1]])))
+
+```
+
+
+```{r}
+
+# remove messy fusions
+# defined as having at least 3 reads and predicted across mult samples
+
+messy_fusions = fusion_preds %>% filter(num_reads >= 3) %>% select(sample, lex_fusion) %>% unique() %>%
+    group_by(lex_fusion) %>% tally() %>% filter(n>1) %>% pull(lex_fusion)
+
+fusion_preds = fusion_preds %>% filter(! lex_fusion %in% messy_fusions)    
+
+length(messy_fusions)
+
+```
+
+
+
+
+
+```{r}
+
+arriba_fusion_preds = read.csv("3b.1.IlluminaTruSeqDepMap9Lines/all_arriba_high_preds.tsv", sep="\t", header=T, stringsAsFactors = F)
+
+starF_preds = read.csv("3b.1.IlluminaTruSeqDepMap9Lines/all_STARF_preds.tsv", sep="\t", header=T, stringsAsFactors = F)
+
+
+```
+
+```{r}
+
+illumina_preds = bind_rows(arriba_fusion_preds %>% select(sample, lex_ordered_fusion_name) %>% unique() %>% mutate(prog='arriba'),
+                           starF_preds %>% select(sample, lex_ordered_fusion_name) %>% unique() %>% mutate(prog='starF')
+                           )
+
+illumina_preds = illumina_preds %>% group_by(sample, lex_ordered_fusion_name) %>% mutate(progs = paste0(collapse=',', prog)) %>%
+    ungroup() %>% select(sample, lex_ordered_fusion_name, progs) %>% unique()
+
+illumina_preds %>% head()
+```
+
+```{r}
+
+table(illumina_preds$progs)
+
+```
+
+
+```{r}
+
+illumina_preds %>% group_by(sample, progs) %>% tally() 
+
+```
+
+
+
+
+```{r}
+
+illumina_preds %>% group_by(sample, progs) %>% tally() %>%
+    ggplot(aes(x=sample, y=n, fill=progs)) + geom_col()
+
+
+```
+
+
+```{r}
+
+
+fusion_preds = fusion_preds %>% mutate(illumina_supported = lex_ordered_fusion_name %in% illumina_preds$lex_ordered_fusion_name)
+nrow(fusion_preds)
+# take top supported fusion call per prog in case mult isoforms
+fusion_preds = fusion_preds %>% group_by(prog, lex_ordered_fusion_name) %>% arrange(desc(num_reads)) %>% filter(row_number() == 1) %>% ungroup()
+
+nrow(fusion_preds)
+```
+
+
+```{r}
+
+fusion_counts_df = NULL
+
+for (i in seq(1,10)) {
+    
+    fusion_counts = fusion_preds %>% filter(num_reads >= i) %>% group_by(prog, illumina_supported) %>% tally() %>% mutate(min_reads=i)
+
+    fusion_counts_df = bind_rows(fusion_counts_df, fusion_counts)
+    
+}
+
+fusion_counts_df %>% head()
+
+```
+
+```{r}
+
+fusion_counts_df %>% ggplot(aes(x=prog, y=n)) + geom_col(aes(fill=illumina_supported)) +
+    facet_wrap(~min_reads, scale='free_y') +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+
+```
+
+
+```{r}
+
+frac_fusion_illum_supported = fusion_counts_df %>% spread(key=illumina_supported, value=n) %>% 
+    mutate(frac_illum_supported = `TRUE` / (`TRUE`+`FALSE`)) 
+
+
+```
+
+
+```{r}
+
+frac_fusion_illum_supported %>% ggplot(aes(x=min_reads, y=frac_illum_supported)) + geom_line(aes(groups=prog, color=prog)) +
+    geom_point(aes(color=prog)) +
+    theme_bw()
+
+```
+
+
+# examine min 2 agree profile
+
+```{r}
+
+fusion_preds_min_agree = fusion_preds %>% select(prog, lex_ordered_fusion_name) %>% unique() %>%
+    group_by(lex_ordered_fusion_name) %>% tally() %>% filter(n>1)
+
+fusion_preds_min_agree %>% head()
+
+```
+
+```{r}
+
+fusion_preds = fusion_preds %>% mutate(min2_agree = lex_ordered_fusion_name %in% (fusion_preds_min_agree %>% filter(n>=2) %>% pull(lex_ordered_fusion_name)) )
+
+
+fusion_preds = fusion_preds %>% mutate(min3_agree = lex_ordered_fusion_name %in% (fusion_preds_min_agree %>% filter(n>=3) %>% pull(lex_ordered_fusion_name)) )
+
+fusion_preds %>% head()
+
+```
+
+```{r}
+
+fusion_counts_min2_agree_df = NULL
+
+for (i in seq(1,10)) {
+    
+    fusion_counts_min2_agree = fusion_preds %>% filter(num_reads >= i) %>% group_by(prog, min2_agree) %>% tally() %>% mutate(min_reads=i)
+
+    fusion_counts_min2_agree_df = bind_rows(fusion_counts_min2_agree_df, fusion_counts_min2_agree)
+    
+}
+
+fusion_counts_min2_agree_df %>% head()
+
+```
+
+
+```{r}
+
+frac_fusion_min2_agree = fusion_counts_min2_agree_df %>% spread(key=min2_agree, value=n, fill=0) %>% 
+    mutate(frac_min2_agree = `TRUE` / (`TRUE`+`FALSE`)) 
+
+
+
+frac_fusion_min2_agree %>% head()
+
+```
+
+
+```{r}
+
+frac_fusion_min2_agree %>% ggplot(aes(x=min_reads, y=frac_min2_agree)) + geom_line(aes(groups=prog, color=prog)) +
+    geom_point(aes(color=prog)) +
+    theme_bw()
+
+```
+
+
+# min 3 agree
+
+```{r}
+
+fusion_counts_min3_agree_df = NULL
+
+for (i in seq(1,10)) {
+    
+    fusion_counts_min3_agree = fusion_preds %>% filter(num_reads >= i) %>% group_by(prog, min3_agree) %>% tally() %>% mutate(min_reads=i)
+
+    fusion_counts_min3_agree_df = bind_rows(fusion_counts_min3_agree_df, fusion_counts_min3_agree)
+    
+}
+
+fusion_counts_min3_agree_df %>% head()
+
+```
+
+```{r}
+
+frac_fusion_min3_agree = fusion_counts_min3_agree_df %>% spread(key=min3_agree, value=n, fill=0) %>% 
+    mutate(frac_min3_agree = `TRUE` / (`TRUE`+`FALSE`)) 
+
+
+
+frac_fusion_min3_agree %>% head()
+
+```
+
+
+
+```{r}
+
+frac_fusion_min3_agree %>% ggplot(aes(x=min_reads, y=frac_min3_agree)) + geom_line(aes(groups=prog, color=prog)) +
+    geom_point(aes(color=prog)) +
+    theme_bw()
+
+```
+
+
+
+
