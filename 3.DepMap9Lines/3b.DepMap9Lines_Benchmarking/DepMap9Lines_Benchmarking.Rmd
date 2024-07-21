@@ -181,8 +181,10 @@ depmap_accuracy_lineplot = data %>%
     ggplot(aes(x=min_sum_frags, y=F1)) + 
     theme_bw() +
     geom_point(aes(color=prog)) + geom_line(aes(group=prog, color=prog)) +
-    xlim(3,10) + ylim(0.4,0.85) +
-    ggtitle("Depmap v1 fusions: F1 ~ min read support") 
+    xlim(2,10) + 
+    #ylim(0.15,0.4) +
+    ggtitle("Depmap v1 fusions: F1 ~ min read support")  # +
+    #scale_y_continuous(trans='log10')
 
 depmap_accuracy_lineplot
 ```
@@ -194,6 +196,27 @@ depmap_accuracy_lineplot
 
 ```
 
+
+```{r}
+
+PR_data = read.csv("data/min_2.okPara_ignoreUnsure.results.scored.PR", header=T, sep="\t", stringsAsFactors = F)
+
+PR_data %>% ggplot(aes(x=recall, y=precision)) + geom_line(aes(groups=prog, color=prog)) + theme_bw() +
+    ggtitle("Precision/Recall Plot")
+
+
+```
+
+
+```{r}
+
+PR_AUC = read.csv("data/min_2.okPara_ignoreUnsure.results.scored.PR.AUC", header=F, sep="\t")
+
+colnames(PR_AUC) = c('prog', 'AUC')
+
+PR_AUC %>% ggplot(aes(x=prog, y=AUC)) + geom_col(aes(fill=prog)) + ggtitle("PR-AUC") + theme_bw()
+
+```
 
 
 
@@ -208,7 +231,7 @@ depmap_TP_vs_FP_scatterplot  = data %>% select(prog, min_sum_frags, TP, FP) %>%
     geom_point(aes(color=pred_class_type)) +
     geom_line(aes(groups=pred_class_type, color=pred_class_type)) +
     facet_wrap(~prog) +
-    xlim(3,15)
+    xlim(2,15)
 
 
 depmap_TP_vs_FP_scatterplot 

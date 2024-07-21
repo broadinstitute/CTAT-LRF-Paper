@@ -26,7 +26,7 @@ StarF_data %>% head()
 
 # process earlier long-read defined proxy truth set info:
 
-earlier_truth_set_file = "../data/preds.collected.gencode_mapped.wAnnot.filt.pass.proxy_assignments.byProgAgree.min_2.truth_set"
+earlier_truth_set_file = "../__bmark_min-1-read/data/preds.collected.gencode_mapped.wAnnot.filt.pass.proxy_assignments.byProgAgree.min_2.truth_set"
 earlier_truth_set = read.table(earlier_truth_set_file, header=T, sep="\t") %>% mutate(type='shared')
 
 earlier_truth_set = earlier_truth_set  %>% rowwise() %>% mutate(sample = str_split(proxy_fusion_name, "\\|")[[1]][1])
@@ -36,7 +36,7 @@ earlier_truth_set = earlier_truth_set %>% rowwise() %>% mutate(lex_ordered_fusio
 
 
 # unique set
-earlier_unique_set_file = "../data/preds.collected.gencode_mapped.wAnnot.filt.pass.proxy_assignments.byProgAgree.min_2.unique_set"
+earlier_unique_set_file = "../__bmark_min-1-read/data/preds.collected.gencode_mapped.wAnnot.filt.pass.proxy_assignments.byProgAgree.min_2.unique_set"
 earlier_unique_set = read.table(earlier_unique_set_file, header=T, sep="\t") %>% mutate(type='unique')
 
 earlier_unique_set = earlier_unique_set  %>% rowwise() %>% mutate(sample = str_split(proxy_fusion_name, "\\|")[[1]][1])
@@ -60,8 +60,8 @@ message("num shared fusions: ", earlier_truth_set %>% select(lex_ordered_fusion_
 message("num unique fusions:", earlier_unique_set %>% select(lex_ordered_fusion_name) %>% unique() %>% nrow() )
 
 
-# num shared:  133
-# num uniquely predicted: 349
+# num shared:  25419
+# num uniquely predicted: 32969
 
 ```
 
@@ -91,7 +91,7 @@ all_pred_fusions_illum_support_indicated_summary = all_pred_fusions_illum_suppor
 
 all_pred_fusions_illum_support_indicated_summary
 
-# 79 shared and 12 unique have illumina support
+# 110 shared and 9 unique have illumina support
 
 ```
 
@@ -189,7 +189,7 @@ so, 81 lexically sorted fusions here
 
 StarF_overlapping_preds %>% filter(type=="unique")
 
-# 12 of the uniquely pred fusions have illumina support
+# 9 of the uniquely pred fusions have illumina support
 
 ```
 

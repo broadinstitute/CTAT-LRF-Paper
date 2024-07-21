@@ -81,7 +81,7 @@ combined_df %>% select(lex_ordered_fusion_name, type, progs) %>% unique() %>% gr
 
 
 
-# arriba: uniquely supports 30
+# arriba: uniquely supports 21
 # starF: uniquely supports 7
 
 ```
