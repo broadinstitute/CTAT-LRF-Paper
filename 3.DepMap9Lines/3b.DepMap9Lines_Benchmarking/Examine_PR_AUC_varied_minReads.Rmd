@@ -33,7 +33,18 @@ files = c(
 "__bmark_min-9-reads/data/min_2.ignoreUnsure.results.scored.PR.AUC",
 "__bmark_min-9-reads/data/min_3.ignoreUnsure.results.scored.PR.AUC",
 "__bmark_min-10-reads/data/min_2.ignoreUnsure.results.scored.PR.AUC",
-"__bmark_min-10-reads/data/min_3.ignoreUnsure.results.scored.PR.AUC"
+"__bmark_min-10-reads/data/min_3.ignoreUnsure.results.scored.PR.AUC",
+"./__bmark_min-1-read/data/min_4.ignoreUnsure.results.scored.PR.AUC",
+"./__bmark_min-2-reads/data/min_4.ignoreUnsure.results.scored.PR.AUC",
+"./__bmark_min-3-reads/data/min_4.ignoreUnsure.results.scored.PR.AUC",
+"./__bmark_min-4-reads/data/min_4.ignoreUnsure.results.scored.PR.AUC",
+"./__bmark_min-5-reads/data/min_4.ignoreUnsure.results.scored.PR.AUC",
+"./__bmark_min-6-reads/data/min_4.ignoreUnsure.results.scored.PR.AUC",
+"./__bmark_min-7-reads/data/min_4.ignoreUnsure.results.scored.PR.AUC",
+"./__bmark_min-8-reads/data/min_4.ignoreUnsure.results.scored.PR.AUC",
+"./__bmark_min-9-reads/data/min_4.ignoreUnsure.results.scored.PR.AUC",
+"./__bmark_min-10-reads/data/min_4.ignoreUnsure.results.scored.PR.AUC"
+
 )
 
 ```
@@ -64,7 +75,18 @@ if (OK_PARA) {
     "__bmark_min-9-reads/data/min_2.okPara_ignoreUnsure.results.scored.PR.AUC",
     "__bmark_min-9-reads/data/min_3.okPara_ignoreUnsure.results.scored.PR.AUC",
     "__bmark_min-10-reads/data/min_2.okPara_ignoreUnsure.results.scored.PR.AUC",
-    "__bmark_min-10-reads/data/min_3.okPara_ignoreUnsure.results.scored.PR.AUC"
+    "__bmark_min-10-reads/data/min_3.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "./__bmark_min-1-read/data/min_4.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "./__bmark_min-2-reads/data/min_4.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "./__bmark_min-3-reads/data/min_4.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "./__bmark_min-4-reads/data/min_4.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "./__bmark_min-5-reads/data/min_4.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "./__bmark_min-6-reads/data/min_4.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "./__bmark_min-7-reads/data/min_4.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "./__bmark_min-8-reads/data/min_4.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "./__bmark_min-9-reads/data/min_4.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "./__bmark_min-10-reads/data/min_4.okPara_ignoreUnsure.results.scored.PR.AUC"
+    
     )
 
 }
@@ -122,6 +144,40 @@ PR_AUC_df %>% ggplot(aes(x=prog, y=AUC)) +
 
 
 ```
+
+
+```{r}
+
+write.table(PR_AUC_df %>% select(prog, min_reads, min_progs_agree, AUC), file="PR_AUC_summary.tsv", quote=F, sep="\t", row.names=F)
+
+
+```
+
+
+
+
+```{r}
+# assign rankings
+
+PR_AUC_df = PR_AUC_df %>% group_by(min_reads, min_progs_agree) %>% mutate(ranking = rank(-1*AUC, ties.method='average'))
+
+
+```
+
+
+
+```{r}
+
+PR_AUC_df %>% ggplot(aes(x=prog, y=ranking)) + geom_violin() +
+    geom_jitter(aes(color=min_reads, shape=as.factor(min_progs_agree)), width=0.2) +
+    theme_bw()
+
+```
+
+
+
+
+
 
 
 
