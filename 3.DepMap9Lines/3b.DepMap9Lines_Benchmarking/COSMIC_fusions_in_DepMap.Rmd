@@ -1,0 +1,99 @@
+---
+title: "DepMap Fusion Benchmarking"
+author: "bhaas"
+date: '2024-02-01'
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+# Examine COSMIC fusions among these cell lines, predicted with any number of reads as evidence.
+
+```{r}
+
+unfiltered_preds = read.table("__bmark_min-1-read/data/preds.collected.gencode_mapped.wAnnot.gz", header=T, sep="\t") 
+
+```
+
+```{r}
+
+unfiltered_preds = unfiltered_preds %>% rowwise() %>% mutate(proxy_fusion_name = paste(sort(str_split(fusion, "--")[[1]]), collapse="--"))
+
+unfiltered_preds %>% head()
+```
+
+
+
+```{r}
+
+unfiltered_preds = unfiltered_preds %>% mutate(proxy_fusion_name = paste(sample, proxy_fusion_name, sep ="|"))
+
+unfiltered_preds %>% head()
+
+```
+
+
+
+```{r}
+
+cosmic_fusions = unfiltered_preds %>% filter(grepl("Cosmic", annots)) %>% select(sample, proxy_fusion_name) %>% unique()
+
+cosmic_fusions 
+```
+
+```{r}
+
+cosmic_fusion_preds= left_join(cosmic_fusions, 
+                                unfiltered_preds %>% select(proxy_fusion_name, prog, num_reads),
+                                by='proxy_fusion_name') %>%
+    # select only top-supported breakpoint entry, just in case.
+    group_by(sample, proxy_fusion_name, prog) %>% 
+        arrange(desc(num_reads)) %>% filter(row_number() == 1) %>% ungroup()
+
+cosmic_fusion_preds
+```
+
+
+```{r}
+
+# limit to those found by at least 2 of the methods
+cosmic_fusion_preds_mult_methods = cosmic_fusion_preds %>% select(proxy_fusion_name, prog) %>% unique() %>% 
+    group_by(proxy_fusion_name) %>% tally() %>% 
+    filter(n>1) %>% 
+    pull(proxy_fusion_name)
+
+
+cosmic_fusion_preds_mult_methods
+
+```
+
+
+
+```{r}
+
+ depmap_cosmic_fusions_heatmap =   cosmic_fusion_preds %>%
+    filter(proxy_fusion_name %in% cosmic_fusion_preds_mult_methods) %>%
+    
+    ggplot(aes(x=proxy_fusion_name, y=prog)) + 
+    theme_bw() +
+    geom_tile(aes(fill=num_reads)) + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    scale_fill_continuous(high = "#132B43", low = "#56B1F7", na.value="white") +
+    geom_text(aes(label=num_reads), color='white')
+
+ depmap_cosmic_fusions_heatmap
+
+```
+
+
+```{r}
+
+ggsave(depmap_cosmic_fusions_heatmap, file=paste0("depmap_cosmic_fusions_heatmap.svg"), width=7, height=5)
+
+
+```
+
