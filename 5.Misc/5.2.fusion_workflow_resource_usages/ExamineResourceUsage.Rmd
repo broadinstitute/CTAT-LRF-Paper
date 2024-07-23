@@ -1,0 +1,50 @@
+---
+title: "examine_resource_usage"
+author: "bhaas"
+date: '2024-07-23'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+```{r}
+
+resource_usage_df = read.csv("resource_usage.stats.tsv", header=T, sep="\t")
+
+resource_usage_df %>% head()
+
+```
+
+
+```{r}
+
+resource_usage_df %>% ggplot(aes(x=sample, y=exec_time_min)) + geom_col(aes(fill=prog)) + facet_wrap(~prog) +
+   theme_bw() +
+   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    ggtitle("Execution time (minutes)")
+   
+```
+
+
+```{r}
+
+resource_usage_df %>% ggplot(aes(x=sample, y=max_memory_GiB)) + geom_col(aes(fill=prog)) + facet_wrap(~prog) +
+   theme_bw() +
+   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    ggtitle("Max RAM usage (GiB)")
+   
+
+
+```
+
+
+
+
+
+
+
+
+
