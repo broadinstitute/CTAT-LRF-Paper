@@ -1,0 +1,232 @@
+---
+title: "SGNex_ONT_eval"
+author: "bhaas"
+date: '2024-07-24'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+```{r}
+
+PREDS_FILE = "data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.gz"
+
+# or use the version with ctat-LRF restricted to spliced fusions for comparison.
+PREDS_FILE = "data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.EXCLUDE_NONSPLICED.gz"
+
+
+```
+
+
+```{r}
+
+read_support = read.csv(PREDS_FILE, header=T, sep="\t")
+
+read_support$sample = str_replace(read_support$sample, "-EV_directRNA", "_EVdirectRNA")
+
+read_support$core_sample_name = sapply(read_support$sample, function(x)(str_split(x, "_")[[1]][2]))
+
+read_support$seqtype = sapply(read_support$sample, function(x)(str_split(x, "_")[[1]][3]))
+
+read_support$proxy_fusion_name = str_replace(read_support$proxy_fusion_name, "^SGNex_.*\\|", "")
+
+read_support = read_support %>% mutate(proxy_fusion_name = paste0(core_sample_name, "|", proxy_fusion_name))
+
+read_support %>% head()
+
+```
+
+
+```{r}
+
+# restrict to dominant isoform in each sample
+
+nrow(read_support)
+
+read_support_sample = read_support %>% group_by(proxy_fusion_name, prog, sample) %>% arrange(desc(num_reads)) %>%
+    filter(row_number() == 1) %>%
+    ungroup()
+
+nrow(read_support_sample)
+```
+
+
+```{r}
+# aggregate across core sample names
+
+read_support_agg = read_support_sample %>% group_by(proxy_fusion_name, prog, core_sample_name) %>% 
+    summarize(sum_reads = sum(num_reads))
+
+nrow(read_support_agg)
+```
+
+
+
+```{r}
+
+validated_fusions = data.frame(validated_fusion = c(
+"MCF7|BCAS4--BCAS3",
+"MCF7|ARFGEF2--SULF2",
+"MCF7|RPS6KB1--VMP1",
+"MCF7|GCN1L1--MSI1",
+"MCF7|AC099850.1--VMP1",
+"MCF7|SMARCA4--CARM1",
+"MCF7|SLC25A24--NBPF6",
+"MCF7|USP31--CRYL1",
+"MCF7|TBL1XR1--RGS17",
+"MCF7|TAF4--BRIP1",
+"MCF7|RPS6KB1--DIAPH3",
+"MCF7|AHCYL1--RAD51C",
+"MCF7|ABCA5--PPP4R1L",
+"MCF7|C16orf45--ABCC1",
+"MCF7|C16orf62--IQCK",
+"MCF7|TXLNG--SYAP1",
+"MCF7|MYO6--SENP6",
+"MCF7|POP1--MATN2",
+"MCF7|GATAD2B--NUP210L",
+"MCF7|ESR1--CCDC170",
+"MCF7|DEPDC1B--ELOVL7",
+"MCF7|ATXN7L3--FAM171A2",
+"MCF7|SYTL2--PICALM",
+"MCF7|ADAMTS19--SLC27A6",
+"MCF7|ARHGAP19--DRG1",
+"MCF7|MYO9B--FCHO1",
+"MCF7|PAPOLA--AK7",
+"MCF7|ANKS1A--UHRF1BP1",
+"MCF7|ATP1A1--ZFP64",
+"MCF7|B3GNTL1--SLC9A8",
+"MCF7|BCAS3--AMPD1",
+"MCF7|BCAS3--ATXN7",
+"MCF7|BCAS4--ZMYND8",
+"MCF7|CHEK2--XBP1",
+"MCF7|KCND3--PPM1E",
+"MCF7|RP11-145E5.5--CDKN2B-AS1",
+"MCF7|NAV1--GPR37L1",
+"MCF7|NCOA3--SULF2",
+"MCF7|PLCG1--TOP1",
+"MCF7|PNPLA7--DPH7",
+"MCF7|PTPRG--CCDC129",
+"MCF7|PTPRN2--FAM62B",
+"MCF7|RAD51C--ATXN7",
+"MCF7|RSBN1--AP4B1-AS1",
+"MCF7|SGPP2--ULK4",
+"MCF7|SULF2--PRICKLE2",
+"MCF7|TEX14--PTPRG",
+"MCF7|TOP1--CR593014",
+"MCF7|TSPAN9--TEAD4",
+"MCF7|UBE2V1--TBX2",
+"MCF7|VAV3--AP4B1-AS1",
+"MCF7|ZMYND8--USP32",
+"MCF7|MYH9--EIF3D",
+"K562|NUP214--XKR3",
+"K562|PRIM1--NACA",
+"K562|BRK1--VHL",
+"K562|ACCS--EXT2",
+"K562|SLC29A1--HSP90AB1",
+"K562|BCR--ABL1",
+"A549|SCAMP2--WDR72",
+"A549|RICTOR--FYB"
+) )
+
+
+```
+
+
+```{r}
+# supplement with illumina-supported.
+illumina_supported_fusions = read.csv("K562.illum_supported.tsv", header=T, sep="\t", stringsAsFactors = F) %>%
+    select(proxy_fusion_name) %>% rename(validated_fusion = proxy_fusion_name)
+
+illumina_supported_fusions
+```
+
+```{r}
+
+illum_found_fusions = read_support_agg %>% ungroup() %>% filter(proxy_fusion_name %in% illumina_supported_fusions$validated_fusion) %>% select(proxy_fusion_name) %>% unique()
+
+extra_illum_valid_fusions = illum_found_fusions %>% filter(! proxy_fusion_name %in% validated_fusions$validated_fusion)
+
+extra_illum_valid_fusions
+```
+
+```{r}
+
+validated_fusions = bind_rows(validated_fusions, extra_illum_valid_fusions %>% rename(validated_fusion = proxy_fusion_name))
+
+validated_fusions
+```
+
+
+
+```{r}
+
+# which validated fusions do we find?
+
+validated_fusions %>% filter( validated_fusion %in% read_support_agg$proxy_fusion_name) 
+
+```
+
+
+
+
+```{r}
+
+# which validated fusions are missing?
+
+validated_fusions %>% filter( ! validated_fusion %in% read_support_agg$proxy_fusion_name) 
+
+
+```
+
+
+```{r}
+
+read_support_agg = read_support_agg %>% mutate(validated_fusion = (proxy_fusion_name %in% validated_fusions$validated_fusion)) 
+
+```
+
+```{r}
+
+read_support_agg_scored = read_support_agg %>% 
+    #group_by(seqtype, prog, sample)  %>%
+     group_by(prog) %>%
+     arrange(desc(sum_reads), desc(validated_fusion)) %>% 
+    mutate(num_valid = cumsum(validated_fusion), num_other = cumsum(! validated_fusion))
+
+read_support_agg_scored %>% filter(prog == 'ctat-LR-fusion') 
+```
+
+```{r}
+
+read_support_agg_scored %>% filter(prog == 'JAFFAL')
+
+
+```
+
+
+
+
+```{r}
+
+alpha_val = 0.2
+
+read_support_agg_scored %>% 
+    ggplot(aes(x=num_other, y=num_valid)) + 
+    geom_point(aes(color=prog), alpha=alpha_val) + 
+    geom_line(aes(color=prog)) +
+    scale_x_continuous(trans='log10') + theme_bw()
+
+
+```
+
+
+
+
+
+
+
+

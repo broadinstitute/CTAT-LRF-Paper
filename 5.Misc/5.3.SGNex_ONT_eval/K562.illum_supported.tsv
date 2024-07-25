@@ -1,0 +1,8 @@
+proxy_fusion_name	type	sample	FusionName	lex_ordered_fusion_name	progs
+K562|BAG6--SLC44A4	shared	K562	BAG6--SLC44A4	K562|BAG6--SLC44A4	arriba,starF
+K562|IMMP2L--DOCK4	shared	K562	IMMP2L--DOCK4	K562|DOCK4--IMMP2L	arriba,starF
+K562|NUP214--XKR3	shared	K562	NUP214--XKR3	K562|NUP214--XKR3	arriba,starF
+K562|CEP70--FAIM	shared	K562	CEP70--FAIM	K562|CEP70--FAIM	arriba,starF
+K562|BCR--ABL1	shared	K562	BCR--ABL1	K562|ABL1--BCR	arriba,starF
+K562|C16orf87--ORC6	shared	K562	C16orf87--ORC6	K562|C16orf87--ORC6	arriba,starF
+K562|RP11-307P5.1--SASH1	shared	K562	RP11-307P5.1--SASH1	K562|RP11-307P5.1--SASH1	arriba,starF
