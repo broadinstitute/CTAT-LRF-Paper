@@ -234,6 +234,52 @@ Based on the slope of the line, would be ~35x better detection based on LR than 
 
 
 
+```{r}
+
+stats::fivenum(ctatLRF_FI_control_results$LR_FFPM)
+
+```
+
+```{r}
+
+stats::fivenum(ctatLRF_FI_control_results$SR_FFPM)
+
+```
+
+```{r}
+
+stats::fivenum(ctatLRF_FI_control_results$LR_FFPM) / stats::fivenum(ctatLRF_FI_control_results$SR_FFPM)
+
+```
+
+so ~20x to ~35x more LR than SR for control fusion reads.
+
+
+```{r}
+# what about the non-control fusions?
+
+noncontrol_fusions = ctatLRF_FI_data %>% filter(! FusionName %in% control_fusions$FusionName) %>% filter(LR_FFPM > 0 & SR_FFPM > 0)
+
+noncontrol_fusions 
+```
+
+```{r}
+
+
+noncontrol_fusions$LR_FFPM
+
+noncontrol_fusions$SR_FFPM
+
+noncontrol_fusions$LR_FFPM / noncontrol_fusions$SR_FFPM
+
+stats::fivenum(noncontrol_fusions$LR_FFPM / noncontrol_fusions$SR_FFPM)
+```
+
+Don't have many good examples, but rougly 1x to 10x LR to SR for LR support seems likely 
+
+
+
+
 # compare gene expression levels between long and short reads:
 
 ```{r}
@@ -366,4 +412,128 @@ ctatLRF_FI_control_results_w_arriba %>% gather(key=read_count_type, value=read_c
           geom_text(position=position_dodge(width=0.9), aes(label=read_count, group=dataset))
 
 ```
+
+
+# Examine reads per gene in LR vs. SR for all genes
+
+```{r}
+
+LR_read_gene_counts = read.csv("data/expr_quant/LR.salmon.gene.counts.matrix.gz", header=T, sep="\t", stringsAsFactors = F) %>%
+    rename(gene_id = X)
+
+colnames(LR_read_gene_counts) = c('gene_id', 'LR_r1', 'LR_r2', 'LR_r3')
+
+LR_read_gene_counts %>% head()
+
+
+```
+
+
+```{r}
+
+SR_read_gene_counts = read.csv("data/expr_quant/TruSeq.salmon.gene.counts.matrix.gz", header=T, sep="\t", stringsAsFactors = F) %>%
+    rename(gene_id = X)
+
+colnames(SR_read_gene_counts) = c('gene_id', 'SR_r1', 'SR_r2', 'SR_r3')
+
+SR_read_gene_counts %>% head()
+```
+
+
+```{r}
+
+gene_read_counts = left_join(LR_read_gene_counts, SR_read_gene_counts, by='gene_id')
+
+gene_read_counts %>% head()
+```
+
+```{r}
+
+gene_read_counts %>% ggplot(aes(x=LR_r1, y=SR_r1)) + geom_point() +
+    theme_bw() + 
+    scale_x_continuous(trans='log10') +
+    scale_y_continuous(trans='log10') +
+  stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth")
+
+```
+
+```{r}
+
+
+# convert to CPM
+col_sums = gene_read_counts %>% select(-gene_id) %>% summarize(sum_LR_r1 = sum(LR_r1), 
+                                                               sum_LR_r2 = sum(LR_r2),
+                                                               sum_LR_r3 = sum(LR_r3),
+                                                               sum_SR_r1 = sum(SR_r1),
+                                                               sum_SR_r2 = sum(SR_r2),
+                                                               sum_SR_r3 = sum(SR_r3) )
+
+col_sums
+
+```
+
+
+
+```{r}
+
+gene_read_CPM = gene_read_counts %>%
+    mutate(LR_r1_CPM = LR_r1 / col_sums$sum_LR_r1 * 1e6) %>%
+    mutate(LR_r2_CPM = LR_r2 / col_sums$sum_LR_r2 * 1e6) %>%
+    mutate(LR_r3_CPM = LR_r3 / col_sums$sum_LR_r3 * 1e6) %>%
+    
+    mutate(SR_r1_CPM = SR_r1 / col_sums$sum_SR_r1 * 1e6) %>%
+    mutate(SR_r2_CPM = SR_r2 / col_sums$sum_SR_r2 * 1e6) %>%
+    mutate(SR_r3_CPM = SR_r3 / col_sums$sum_SR_r3 * 1e6) %>%
+    
+    select(LR_r1_CPM, LR_r2_CPM, LR_r3_CPM,
+           SR_r1_CPM, SR_r2_CPM, SR_r3_CPM) 
+
+```
+
+```{r}
+
+gene_read_CPM_means = gene_read_CPM %>% rowwise() %>%
+    mutate(mean_LR_CPM = mean(LR_r1_CPM, LR_r2_CPM, LR_r3_CPM),
+           mean_SR_CPM = mean(SR_r1_CPM, SR_r2_CPM, SR_r3_CPM) )  %>%
+    select(mean_LR_CPM, mean_SR_CPM)
+
+
+```
+
+
+```{r}
+
+gene_read_CPM_means %>% 
+   ggplot(aes(x=mean_LR_CPM, y=mean_SR_CPM)) + geom_point() +
+    theme_bw() + 
+    scale_x_continuous(trans='log10') +
+    scale_y_continuous(trans='log10') +
+     stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth")
+
+
+```
+
+
+```{r}
+gene_read_CPM_means = gene_read_CPM_means %>% filter(mean_LR_CPM > 10 & mean_SR_CPM > 10) %>% 
+    mutate(SR_div_LR = mean_SR_CPM/mean_LR_CPM) 
+```
+
+
+
+
+```{r}
+
+median(gene_read_CPM_means$SR_div_LR)
+
+```
+
+So a median of ~4x as many short reads as long reads per gene
+
+
+
 
