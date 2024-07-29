@@ -54,6 +54,49 @@ ctatLRF_FI_data %>% head()
 
 ```{r}
 
+p = ctatLRF_FI_data %>% ggplot(aes(x=LR_FFPM, y=SR_FFPM)) + geom_point() +  
+    theme_bw() +
+ stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth")
+
+p
+```
+
+```{r}
+
+lm(ctatLRF_FI_data$LR_FFPM ~ ctatLRF_FI_data$SR_FFPM  )
+
+```
+
+
+```{r}
+
+p + geom_point(data=ctatLRF_FI_data %>% filter(FusionName %in% control_fusions$FusionName), color='red')
+
+```
+
+
+```{r}
+# conpare FFPM values LR vs. SR
+
+ctatLRF_FI_data %>% select(FusionName, LR_FFPM, SR_FFPM) %>% 
+    filter (! is.na(SR_FFPM)) %>% filter(! is.na(LR_FFPM)) %>%
+    mutate(LR_div_SR_FFPM = LR_FFPM/SR_FFPM) %>% 
+    mutate(control_fusion = (FusionName %in% control_fusions$FusionName)) %>%
+    ggplot() + 
+    theme_bw() +
+    geom_boxplot(aes(x=control_fusion, y=LR_div_SR_FFPM))
+
+
+```
+
+The spike-in control fusions do appear to be better captured by MAS-ISO-seq than the non-control fusions.
+
+
+
+```{r}
+
 # restrict fusion calls to the 16 control fusions
 
 ctatLRF_FI_control_results = left_join( cross_join(control_fusions, data.frame(dataset=c('ISO-seq', 'MAS-seq-R1', 'MAS-seq-R2'))),
@@ -275,17 +318,52 @@ cor.test(log10(mean_gene_expr$mean_LR_gene_expr), log10(mean_gene_expr$mean_TruS
 
 ```
 
-# exanube Arriba short read findings:
+# examine Arriba short read findings:
 
 ```{r}
 
 arriba_1 = read.csv("data/arriba/MDL_163_SeraSeqFusion_1.arriba.fusions.tsv.gz", header=T, sep="\t", com='', stringsAsFactors = F)
+arriba_1$dataset = "ISO-seq"
+
 
 arriba_2 = read.csv("data/arriba/MDL_163_SeraSeqFusion_2.arriba.fusions.tsv.gz", header=T, sep="\t", com='', stringsAsFactors = F)
+arriba_2$dataset = "MAS-seq-R1"
+
 
 arriba_3 = read.csv("data/arriba/MDL_163_SeraSeqFusion_2.arriba.fusions.tsv.gz", header=T, sep="\t", com='', stringsAsFactors = F)
+arriba_3$dataset = "MAS-seq-R2"
+
+
+arriba_data = bind_rows(arriba_1, arriba_2, arriba_3)
+
+arriba_data = arriba_data %>% 
+    mutate(FusionName = paste0(X.gene1, "--", gene2) ) %>%
+    mutate(num_reads = split_reads1 + split_reads2 + discordant_mates) %>%
+    select(FusionName, num_reads, dataset)
+
+arriba_data %>% head()
+```
+
+```{r}
+
+ctatLRF_FI_control_results_w_arriba = left_join(ctatLRF_FI_control_results  %>% filter(FusionName %in% control_fusions$FusionName),
+                                                arriba_data %>% filter(FusionName %in% control_fusions$FusionName) %>% mutate(arriba_SR = num_reads),
+                                                by=c('FusionName', 'dataset') ) %>%
+    mutate(arriba_SR = ifelse(is.na(arriba_SR), 0, arriba_SR))
 
 ```
 
 
+
+```{r}
+
+ctatLRF_FI_control_results_w_arriba %>% gather(key=read_count_type, value=read_count, num_LR, num_SR, arriba_SR) %>%
+    mutate(read_count_type = factor(read_count_type, levels=c('num_LR', 'num_SR', 'arriba_SR'))) %>%
+    ggplot(aes(x=read_count_type, y=read_count)) +  theme_bw() +
+    geom_bar(stat='identity', position = 'dodge', aes(color=dataset, fill=read_count_type)) +
+    facet_wrap(~FusionName) +
+      theme(axis.text.x = element_text(angle = 90, hjust = 1))  +
+          geom_text(position=position_dodge(width=0.9), aes(label=read_count, group=dataset))
+
+```
 
