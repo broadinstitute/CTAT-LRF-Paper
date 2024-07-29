@@ -157,6 +157,40 @@ ctatLRF_FI_control_results %>% summarize(max_LR_support=max(num_LR), min_LR_supp
 ```
 
 
+
+```{r}
+
+# compare the normalized read support FFPM values
+
+ctatLRF_FI_control_results %>% ggplot(aes(x=LR_FFPM, y=SR_FFPM)) + geom_point() +
+    theme_bw() +
+  stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth")
+
+
+```
+
+
+```{r}
+
+
+lm(ctatLRF_FI_control_results$SR_FFPM ~ ctatLRF_FI_control_results$LR_FFPM)
+
+```
+
+```{r}
+
+plot(ctatLRF_FI_control_results$LR_FFPM, ctatLRF_FI_control_results$SR_FFPM )
+abline(a=0.05671, b=0.02847)
+
+
+```
+
+Based on the slope of the line, would be ~35x better detection based on LR than SR, but obviously a lot of variance around that.
+
+
+
 # compare gene expression levels between long and short reads:
 
 ```{r}
@@ -238,6 +272,18 @@ ggsave(mean_gene_expr_plot, file="SeraCare_LR_vs_SR_gene_expr_scatter_density_pl
 
 cor.test(log10(mean_gene_expr$mean_LR_gene_expr), log10(mean_gene_expr$mean_TruSeq_gene_expr))
 
+
+```
+
+# exanube Arriba short read findings:
+
+```{r}
+
+arriba_1 = read.csv("data/arriba/MDL_163_SeraSeqFusion_1.arriba.fusions.tsv.gz", header=T, sep="\t", com='', stringsAsFactors = F)
+
+arriba_2 = read.csv("data/arriba/MDL_163_SeraSeqFusion_2.arriba.fusions.tsv.gz", header=T, sep="\t", com='', stringsAsFactors = F)
+
+arriba_3 = read.csv("data/arriba/MDL_163_SeraSeqFusion_2.arriba.fusions.tsv.gz", header=T, sep="\t", com='', stringsAsFactors = F)
 
 ```
 
