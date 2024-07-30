@@ -1,0 +1,110 @@
+---
+title: "GrepMatchedFusionCells"
+author: "bhaas"
+date: '2024-07-29'
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+```{r}
+
+cells_matched = read.csv("data/grep_matching_LR.tsv", header=F, sep="\t", stringsAsFactors = F)
+
+colnames(cells_matched) = c('cell_barcode', 'UMI', 'read_name')
+
+cells_matched %>% head()
+
+```
+
+```{r}
+
+umap_info = read.csv("../data/M132TS.bc_to_umap_n_leiden.tsv", header=T, sep="\t", stringsAsFactors = F)
+
+umap_info %>% head()
+```
+
+```{r}
+
+umap_info = umap_info %>% mutate(grep_NUTM2A_fusion_cell = (index %in% cells_matched$cell_barcode))
+
+```
+
+
+```{r}
+
+umap_info %>% filter(grep_NUTM2A_fusion_cell) %>% select(index) %>% unique() %>% nrow()
+
+# 200 cells identified by grep w/ NUTM2A breakpoint seqs
+
+```
+
+
+```{r}
+
+umap_info %>% ggplot(aes(x=umap_1, y=umap_2)) + geom_point(aes(color=grep_NUTM2A_fusion_cell))
+
+
+```
+
+```{r}
+
+ctat_LRF_fusions = read.csv("../data/M132TS.melanoma_sc.filtered_cells_and_dedup_umis.tsv.gz", header=T, sep="\t", stringsAsFactors = F) %>%
+    filter(FusionName == "NUTM2A-AS1--RP11-203L2.4")
+
+ctat_LRF_fusions %>% head()
+
+```
+
+```{r}
+
+fusion_by_method = bind_rows(ctat_LRF_fusions %>% select(cell_barcode, method, leiden),
+                             umap_info %>% filter(grep_NUTM2A_fusion_cell) %>% select(index, leiden) %>%
+                                 rename(cell_barcode = index) %>% mutate(method='grep') )
+
+
+```
+
+
+```{r}
+
+fusion_counts_by_method = fusion_by_method %>% unique() %>% group_by(cell_barcode) %>% mutate(methods=paste(collapse=',', method)) %>%
+    ungroup() %>%
+    select(cell_barcode, methods, leiden) %>% unique() %>%
+    group_by(methods, leiden) %>% tally()
+
+fusion_counts_by_method
+```
+
+
+```{r}
+
+# cells identified via 'grep' breakpoint method
+
+fusion_counts_by_method %>% filter(grepl("grep", methods))
+
+# only 2 cells identified uniquely by grep, both tumor cells
+
+```
+
+
+```{r}
+
+# what's found outside the tumor cells?
+
+fusion_counts_by_method %>% filter(! leiden %in% c(4,7))
+
+
+```
+
+Grep with breakpoint seqs identified many cells with the NUTM2A fusion, but all were tumor cells.
+
+
+
+
+
+
