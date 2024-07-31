@@ -264,3 +264,84 @@ depmap_precision_recall_plot
 ```
 
 
+## Examine Illumina FNs according to progs
+
+```{r}
+
+FN_preds = read.csv("data/eval_illum_supported.ignoreUnsure.results.scored", header=T, sep="\t", stringsAsFactors = F) %>% filter(pred_result == "FN")
+
+FN_preds
+
+
+```
+
+
+```{r}
+
+FN_preds %>% select(proxy_fusion_name, prog) %>% 
+    unique() %>% group_by(proxy_fusion_name) %>% 
+    mutate(progs = paste(prog, collapse=","), num_progs = n() ) %>%
+    select(proxy_fusion_name, progs, num_progs) %>% unique() %>%
+    arrange(desc(num_progs))
+
+
+```
+
+No example of a STARF,Arriba-supported fusion missed by all 5 LR fusion finders.
+
+In other words, all Illumina-identified fusions (agreed upon by STARF and Arriba) were reported by at least one of the LR fusion finders.
+
+
+
+# Examine truth set fusion sensitivity by method
+
+```{r}
+library(UpSetRbyFeature)
+
+truth_fusions_found = read.table(scored_predictions_file, sep="\t", header=T) %>% 
+    filter(pred_result == "TP") %>% 
+    select(prog, selected_fusion) %>% unique()
+
+truth_fusions_found %>% select(selected_fusion) %>% unique() %>% nrow()
+
+
+```
+
+```{r}
+
+truth_fusions_found %>% group_by(prog) %>% tally() %>% arrange(desc(n))
+
+
+```
+
+
+```{r}
+
+truth_fusions_found_matrix = truth_fusions_found %>% mutate(found = 1) %>% spread(key=prog, value=found, fill=0)
+
+
+truth_fusion_names = truth_fusions_found_matrix%>% pull(selected_fusion)
+
+truth_fusions_found_matrix =  truth_fusions_found_matrix %>% select(-selected_fusion)
+
+truth_fusions_found_matrix = data.frame(truth_fusions_found_matrix)
+rownames(truth_fusions_found_matrix) = truth_fusion_names
+
+
+
+upset_plot = UpSetRbyFeature::upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
+
+upset_plot
+
+```
+
+
+```{r}
+
+#pdf(file=paste0("depmap.upset_plot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".pdf"), width=20)
+#UpSetRbyFeature::upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
+#dev.off()
+
+```
+
+

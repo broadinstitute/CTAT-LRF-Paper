@@ -47,12 +47,15 @@ cosmic_fusions
 
 ```{r}
 
+# sum read counts across isoforms for each fusion
+
 cosmic_fusion_preds= left_join(cosmic_fusions, 
-                                unfiltered_preds %>% select(proxy_fusion_name, prog, num_reads),
+                                unfiltered_preds %>% select(proxy_fusion_name, prog, breakpoint, num_reads),
                                 by='proxy_fusion_name') %>%
-    # select only top-supported breakpoint entry, just in case.
-    group_by(sample, proxy_fusion_name, prog) %>% 
-        arrange(desc(num_reads)) %>% filter(row_number() == 1) %>% ungroup()
+    group_by(sample, proxy_fusion_name, prog) %>%
+    mutate(num_reads = sum(num_reads)) %>%
+    ungroup() %>%
+    select(sample, proxy_fusion_name, prog, num_reads) %>% unique()
 
 cosmic_fusion_preds
 ```
@@ -77,7 +80,6 @@ cosmic_fusion_preds_mult_methods
 
  depmap_cosmic_fusions_heatmap =   cosmic_fusion_preds %>%
     filter(proxy_fusion_name %in% cosmic_fusion_preds_mult_methods) %>%
-    
     ggplot(aes(x=proxy_fusion_name, y=prog)) + 
     theme_bw() +
     geom_tile(aes(fill=num_reads)) + 
