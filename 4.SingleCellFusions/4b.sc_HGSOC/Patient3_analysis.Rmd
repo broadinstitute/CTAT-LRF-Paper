@@ -433,6 +433,21 @@ tumor_cell_counts_by_methods_by_isoform
 
 ```{r}
 
+# counts of cells according to CBLC--CTC-232P5.1  fusion isoforms and corresponding read type / method
+
+tumor_cell_counts_by_methods_by_isoform %>% 
+    filter(grepl("CBLC", fusion)) %>%
+    ggplot(aes(x=fusion, y=cell_counts, fill=method)) + geom_bar(stat='identity', position='dodge') +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+
+
+```
+
+
+
+```{r}
+
 tumor_cell_counts_by_methods_by_isoform %>%
               ggplot(aes(x=fusion, y=cell_counts, fill=method)) + 
                  geom_bar(stat='identity', position='dodge') +

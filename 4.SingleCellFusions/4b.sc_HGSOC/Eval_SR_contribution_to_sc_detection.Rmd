@@ -1,0 +1,74 @@
+---
+title: "Eval_SR_contribution_to_sc_detection"
+author: "bhaas"
+date: '2024-08-01'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+```{r}
+
+data = read.csv("Table_S4-HGSOC_sc.fusion_preds_by_cell.tsv.gz", header=T, sep="\t", stringsAsFactors = F)
+
+data %>% head()
+
+```
+
+```{r}
+
+nrow(data)
+# restrict to fusions found by long reads
+fusions_longreads = data %>% filter(method == "ctat-LR-fusion") %>% select(dataset, FusionName) %>% unique()
+
+data = left_join(fusions_longreads, data, by=c('dataset', 'FusionName'))
+
+nrow(data)
+```
+
+
+```{r}
+
+cell_fusion_by_methods = data %>% select(dataset, FusionName, cell_barcode, method) %>% unique() %>%
+    group_by(dataset, FusionName, cell_barcode) %>% 
+    mutate(methods = paste(method, collapse=",")) %>%
+    select(dataset, FusionName, cell_barcode, methods) %>% unique()
+
+cell_fusion_by_methods %>% head()
+```
+
+```{r}
+
+pct_cells_by_fusion_methods = cell_fusion_by_methods %>% group_by(dataset, methods) %>% tally() %>%
+     mutate(pct=prop.table(n) * 100)
+
+
+pct_cells_by_fusion_methods
+
+```
+
+
+```{r}
+
+pct_cells_by_fusion_methods %>%
+    ggplot(aes(x=methods, y=pct)) + 
+    theme_bw() +
+    geom_col()  + facet_wrap(~dataset)  + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+```
+
+
+```{r}
+
+pct_cells_by_fusion_methods %>% filter(! grepl("ctat-LR", methods)) %>% group_by(dataset) %>% summarize(sum(pct))
+
+```
+Overall, appears that the short reads contributed less than 1% of cell identifications outside of the long reads for these data.
+
+
+

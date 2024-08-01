@@ -712,6 +712,240 @@ ggsave(tumor_cells_only_fig, file="scHGSOC_Patient1_tumor_cells_only_fig.svg", w
 ```
 
 
+# examine expression of parent genes involved in fusions of interest
+
+```{r}
+
+gene_expr_data = read.csv("data/P1_Tum.fusion_parent_gene_exprs.Illumina10x.matrix", header=T, row.names=1, sep="\t")
+
+gene_expr_data[gene_expr_data == 0] = NA
+
+gene_names = rownames(gene_expr_data)
+barcodes = colnames(gene_expr_data)
+
+gene_expr_data = t(gene_expr_data)
+
+gene_expr_data = tibble(data.frame(gene_expr_data))
+
+gene_expr_data$barcode = barcodes
+
+head(gene_expr_data)
+
+```
+
+```{r}
+
+tumor_umap_w_expr = left_join(tumor_umap, gene_expr_data, by=c('barcodes'='barcode'))
+
+```
+
+## explore fusion  'SMG7--CH507-513H4.1'
+
+
+
+
+
+```{r}
+
+
+tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.allcells, y=UMAP_2.allcells)) + theme_bw() + 
+    geom_point(aes(color=ENSG00000116698.SMG7))  +
+    
+    geom_point(data=tumor_umap_w_expr %>% 
+                   filter(FusionName == 'SMG7--CH507-513H4.1'), 
+                aes(shape=FusionName, color=ENSG00000116698.SMG7), size=rel(5)) 
+
+```
+
+
+```{r}
+
+
+tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + theme_bw() + 
+    geom_point(aes(color=ENSG00000116698.SMG7))  +
+    
+    geom_point(data=tumor_umap_w_expr %>% 
+                   filter(FusionName == 'SMG7--CH507-513H4.1'), 
+                aes(shape=FusionName, color=ENSG00000116698.SMG7), size=rel(5)) 
+
+```
+
+```{r}
+
+Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() + 
+    
+    geom_point(aes(color=celltype_final)) #+
+     
+    #geom_point(aes(color=ENSG00000116698.SMG7))  + 
+    
+    #geom_point(data=Tum_data_w_expr %>% 
+    #               filter(FusionName == 'SMG7--CH507-513H4.1'),
+    #            aes(color=ENSG00000116698.SMG7), size=rel(5)) 
+
+
+```
+
+
+```{r}
+
+Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() + 
+
+     
+    geom_point(aes(color=ENSG00000116698.SMG7))  + 
+    
+    geom_point(data=Tum_data_w_expr %>% 
+                   filter(FusionName == 'SMG7--CH507-513H4.1'),
+                aes(color=ENSG00000116698.SMG7), size=rel(5)) 
+
+
+```
+
+
+
+
+```{r}
+
+# ENSG00000278996.1	chr21	8197620	8227646	+	CH507-513H4.1	lincRNA
+
+tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + theme_bw() + 
+    geom_point(aes(color=ENSG00000278996.FP671120.4))  + #CH507-513H4.1
+    
+    geom_point(data=tumor_umap_w_expr %>% 
+                   filter(FusionName == 'SMG7--CH507-513H4.1'),
+                aes(shape=FusionName, color=ENSG00000278996.FP671120.4), size=rel(5)) 
+
+```
+
+
+
+```{r}
+
+Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() + 
+    geom_point(aes(color=ENSG00000278996.FP671120.4))  + 
+    
+    geom_point(data=Tum_data_w_expr %>% 
+                   filter(FusionName == 'SMG7--CH507-513H4.1'),
+                aes(shape=FusionName, color=ENSG00000278996.FP671120.4), size=rel(5)) 
+
+
+```
+
+
+## RAPGEF5--AGMO
+
+
+```{r}
+
+tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + theme_bw() + 
+    geom_point(aes(color=ENSG00000136237.RAPGEF5))  + 
+    
+    geom_point(data=tumor_umap_w_expr %>% 
+                   filter(FusionName == 'RAPGEF5--AGMO'),
+                aes(shape=FusionName, color=ENSG00000136237.RAPGEF5), size=rel(5)) 
+
+```
+
+
+```{r}
+
+Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() + 
+    geom_point(aes(color=ENSG00000136237.RAPGEF5))  + 
+    
+    geom_point(data=Tum_data_w_expr %>% 
+                   filter(FusionName == 'RAPGEF5--AGMO'),
+                aes(shape=FusionName, color=ENSG00000136237.RAPGEF5), size=rel(5)) 
+
+
+```
+
+
+
+
+```{r}
+
+tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + theme_bw() + 
+    geom_point(aes(color=ENSG00000187546.AGMO))  + 
+    
+    geom_point(data=tumor_umap_w_expr %>% 
+                   filter(FusionName == 'RAPGEF5--AGMO'),
+                aes(shape=FusionName, color=ENSG00000187546.AGMO), size=rel(5)) 
+
+
+```
+
+```{r}
+
+Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() + 
+    geom_point(aes(color=ENSG00000187546.AGMO))  + 
+    
+    geom_point(data=Tum_data_w_expr %>% 
+                   filter(FusionName == 'RAPGEF5--AGMO'),
+                aes(shape=FusionName, color=ENSG00000187546.AGMO), size=rel(5)) 
+
+
+```
+
+
+
+
+## fusion GS1-279B7.2--GNG4
+
+
+
+```{r}
+
+#ENSG00000273004.1	chr1	185317779	185318530	+	GS1-279B7.2	lincRNA
+
+tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + theme_bw() + 
+    geom_point(aes(color=ENSG00000273004.AL078644.2))  + 
+    
+    geom_point(data=tumor_umap_w_expr %>% 
+                   filter(FusionName == 'GS1-279B7.2--GNG4'),
+                aes(shape=FusionName, color=ENSG00000273004.AL078644.2), size=rel(5), alpha=0.7) 
+
+```
+
+
+
+```{r}
+
+Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() + 
+    geom_point(aes(color=ENSG00000273004.AL078644.2))  + 
+    
+    geom_point(data=Tum_data_w_expr %>% 
+                   filter(FusionName == 'GS1-279B7.2--GNG4'),
+                aes(shape=FusionName, color=ENSG00000273004.AL078644.2), size=rel(5)) 
+
+
+```
+
+
+
+```{r}
+
+tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + theme_bw() + 
+    geom_point(aes(color=ENSG00000168243.GNG4))  + 
+    
+    geom_point(data=tumor_umap_w_expr %>% 
+                   filter(FusionName == 'GS1-279B7.2--GNG4'),
+                aes(shape=FusionName, color=ENSG00000168243.GNG4), size=rel(5)) 
+
+
+```
+
+```{r}
+
+Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() + 
+    geom_point(aes(color=ENSG00000168243.GNG4))  + 
+    
+    geom_point(data=Tum_data_w_expr %>% 
+                   filter(FusionName == 'GS1-279B7.2--GNG4'),
+                aes(shape=FusionName, color=ENSG00000168243.GNG4), size=rel(5)) 
+
+
+```
+
+
 
 
 
