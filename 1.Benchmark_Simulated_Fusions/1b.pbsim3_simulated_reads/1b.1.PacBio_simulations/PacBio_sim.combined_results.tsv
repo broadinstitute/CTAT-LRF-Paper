@@ -1,4 +1,14 @@
 rep_num	coverage_level	pass_count	prog	analysisType	mean_F1
+rep1	cov5	20	JAFFAL	allow_reverse	0.9336
+rep1	cov5	20	JAFFAL	strict	0.9336
+rep1	cov5	20	LongGF	allow_reverse	0.9492
+rep1	cov5	20	LongGF	strict	0.4884
+rep1	cov5	20	ctat-LR-fusion	allow_reverse	0.976
+rep1	cov5	20	ctat-LR-fusion	strict	0.976
+rep1	cov5	20	fusionseeker	allow_reverse	0.9658
+rep1	cov5	20	fusionseeker	strict	0.491
+rep1	cov5	20	pbfusion	allow_reverse	0.977
+rep1	cov5	20	pbfusion	strict	0.977
 rep1	cov50	20	JAFFAL	allow_reverse	0.9536
 rep1	cov50	20	JAFFAL	strict	0.9536
 rep1	cov50	20	LongGF	allow_reverse	0.9632
@@ -9,6 +19,16 @@ rep1	cov50	20	fusionseeker	allow_reverse	0.975
 rep1	cov50	20	fusionseeker	strict	0.497
 rep1	cov50	20	pbfusion	allow_reverse	0.976
 rep1	cov50	20	pbfusion	strict	0.976
+NA	cov5	20	JAFFAL	Exact Brkpt	0.8846
+NA	cov5	20	LongGF	Exact Brkpt	0.0188
+NA	cov5	20	ctat-LR-fusion	Exact Brkpt	0.95
+NA	cov5	20	fusionseeker	Exact Brkpt	0.02
+NA	cov5	20	pbfusion	Exact Brkpt	0.065
+NA	cov5	20	JAFFAL	Fuzzy Brkpt	0.9096
+NA	cov5	20	LongGF	Fuzzy Brkpt	0.9248
+NA	cov5	20	ctat-LR-fusion	Fuzzy Brkpt	0.95
+NA	cov5	20	fusionseeker	Fuzzy Brkpt	0.9324
+NA	cov5	20	pbfusion	Fuzzy Brkpt	0.9186
 NA	cov50	20	JAFFAL	Exact Brkpt	0.899
 NA	cov50	20	LongGF	Exact Brkpt	0.0242
 NA	cov50	20	ctat-LR-fusion	Exact Brkpt	0.959

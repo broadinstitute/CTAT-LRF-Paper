@@ -14,6 +14,14 @@ cp ~/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/simulated_data/our_pbsim3_sims/pb
 cp ~/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/simulated_data/our_pbsim3_sims/pbio_pbsim3_part5/breakpoint_maxF1_data.tsv .
 
 
+cp ~/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/simulated_data/our_pbsim3_sims/pbio_pbsim3_part5/all_combined_results.PR_AUC.tsv .
+
+cp ~/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/simulated_data/our_pbsim3_sims/pbio_pbsim3_part5/mean_PR_AUC_summary.tsv .
+
+cp ~/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/simulated_data/our_pbsim3_sims/pbio_pbsim3_part5/breakpoint_all_mean_PR_AUC_data.tsv .
+
+
+
 
 
 
