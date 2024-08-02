@@ -1,0 +1,41 @@
+coverage_level	prog	analysisType	mean_F1
+cov5	JAFFAL	allow_reverse	0.9054
+cov5	JAFFAL	strict	0.9054
+cov5	LongGF	allow_reverse	0.9226
+cov5	LongGF	strict	0.4748
+cov5	ctat-LR-fusion	allow_reverse	0.936
+cov5	ctat-LR-fusion	strict	0.936
+cov5	fusionseeker	allow_reverse	0.9288
+cov5	fusionseeker	strict	0.476
+cov5	pbfusion	allow_reverse	0.933
+cov5	pbfusion	strict	0.933
+cov50	JAFFAL	allow_reverse	0.925
+cov50	JAFFAL	strict	0.925
+cov50	LongGF	allow_reverse	0.934
+cov50	LongGF	strict	0.478
+cov50	ctat-LR-fusion	allow_reverse	0.939
+cov50	ctat-LR-fusion	strict	0.939
+cov50	fusionseeker	allow_reverse	0.937
+cov50	fusionseeker	strict	0.479
+cov50	pbfusion	allow_reverse	0.937
+cov50	pbfusion	strict	0.937
+cov5	JAFFAL	Exact Brkpt	0.9014
+cov5	LongGF	Exact Brkpt	0.0154
+cov5	ctat-LR-fusion	Exact Brkpt	0.957
+cov5	fusionseeker	Exact Brkpt	0.0188
+cov5	pbfusion	Exact Brkpt	0.0628
+cov5	JAFFAL	Fuzzy Brkpt	0.9274
+cov5	LongGF	Fuzzy Brkpt	0.8866
+cov5	ctat-LR-fusion	Fuzzy Brkpt	0.957
+cov5	fusionseeker	Fuzzy Brkpt	0.9186
+cov5	pbfusion	Fuzzy Brkpt	0.9128
+cov50	JAFFAL	Exact Brkpt	0.931
+cov50	LongGF	Exact Brkpt	0.012
+cov50	ctat-LR-fusion	Exact Brkpt	0.957
+cov50	fusionseeker	Exact Brkpt	0.02
+cov50	pbfusion	Exact Brkpt	0.065
+cov50	JAFFAL	Fuzzy Brkpt	0.943
+cov50	LongGF	Fuzzy Brkpt	0.912
+cov50	ctat-LR-fusion	Fuzzy Brkpt	0.957
+cov50	fusionseeker	Fuzzy Brkpt	0.941
+cov50	pbfusion	Fuzzy Brkpt	0.9206

@@ -1,0 +1,41 @@
+analysisType	prog	rep_num	coverage_level	pass_count	mean_AUC
+strict	pbfusion	rep1	cov5	20	0.892
+strict	ctat-LR-fusion	rep1	cov5	20	0.87
+strict	JAFFAL	rep1	cov5	20	0.812
+strict	fusionseeker	rep1	cov5	20	0.232
+strict	LongGF	rep1	cov5	20	0.23
+strict	pbfusion	rep1	cov50	20	0.904
+strict	ctat-LR-fusion	rep1	cov50	20	0.89
+strict	JAFFAL	rep1	cov50	20	0.858
+strict	LongGF	rep1	cov50	20	0.24
+strict	fusionseeker	rep1	cov50	20	0.238
+allow_reverse	pbfusion	rep1	cov5	20	0.892
+allow_reverse	fusionseeker	rep1	cov5	20	0.89
+allow_reverse	ctat-LR-fusion	rep1	cov5	20	0.87
+allow_reverse	LongGF	rep1	cov5	20	0.86
+allow_reverse	JAFFAL	rep1	cov5	20	0.812
+allow_reverse	fusionseeker	rep1	cov50	20	0.918
+allow_reverse	pbfusion	rep1	cov50	20	0.904
+allow_reverse	LongGF	rep1	cov50	20	0.89
+allow_reverse	ctat-LR-fusion	rep1	cov50	20	0.89
+allow_reverse	JAFFAL	rep1	cov50	20	0.858
+Exact Brkpt	ctat-LR-fusion	rep1	cov5	20	0.904
+Exact Brkpt	JAFFAL	rep1	cov5	20	0.8
+Exact Brkpt	pbfusion	rep1	cov5	20	0.006
+Exact Brkpt	LongGF	rep1	cov5	20	0
+Exact Brkpt	fusionseeker	rep1	cov5	20	0
+Exact Brkpt	ctat-LR-fusion	rep1	cov50	20	0.926
+Exact Brkpt	JAFFAL	rep1	cov50	20	0.842
+Exact Brkpt	pbfusion	rep1	cov50	20	0.006
+Exact Brkpt	LongGF	rep1	cov50	20	0
+Exact Brkpt	fusionseeker	rep1	cov50	20	0
+Fuzzy Brkpt	ctat-LR-fusion	rep1	cov5	20	0.904
+Fuzzy Brkpt	fusionseeker	rep1	cov5	20	0.896
+Fuzzy Brkpt	LongGF	rep1	cov5	20	0.88
+Fuzzy Brkpt	pbfusion	rep1	cov5	20	0.86
+Fuzzy Brkpt	JAFFAL	rep1	cov5	20	0.848
+Fuzzy Brkpt	ctat-LR-fusion	rep1	cov50	20	0.926
+Fuzzy Brkpt	LongGF	rep1	cov50	20	0.904
+Fuzzy Brkpt	JAFFAL	rep1	cov50	20	0.892
+Fuzzy Brkpt	pbfusion	rep1	cov50	20	0.872
+Fuzzy Brkpt	fusionseeker	rep1	cov50	20	0.858
