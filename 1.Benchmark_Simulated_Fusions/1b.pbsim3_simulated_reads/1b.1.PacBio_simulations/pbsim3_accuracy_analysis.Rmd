@@ -119,7 +119,7 @@ combined_results %>% head()
 ```{r}
 
 combined_results %>%
-        filter(analysisType != "allow_revNparalogs") %>%
+        filter(analysisType %in% c('strict', 'allow_reverse', 'Exact Brkpt', 'Fuzzy Brkpt') ) %>%
         ggplot() + theme_bw() +
         geom_point(aes(x=pass_count, y=mean_F1, color=prog)) +
         geom_line(aes(x=pass_count, y=mean_F1, group=prog, color=prog)) +
@@ -130,7 +130,7 @@ combined_results %>%
 ```{r}
 
 combined_results %>%
-        filter(analysisType != "allow_revNparalogs") %>%
+        filter(analysisType %in% c('strict', 'allow_reverse', 'Exact Brkpt', 'Fuzzy Brkpt') ) %>%
         mutate(pass_count = as.numeric(str_replace(pass_count, "pass", ""))) %>%
         filter(pass_count == 20) %>%
         mutate(analysisType = factor(analysisType, 
@@ -150,7 +150,7 @@ combined_results %>%
 
 combined_results %>%
         filter(coverage_level == 'cov50') %>%
-        filter(analysisType != "allow_revNparalogs") %>%
+        filter(analysisType %in% c('strict', 'allow_reverse', 'Exact Brkpt', 'Fuzzy Brkpt') ) %>%
         mutate(pass_count = as.numeric(str_replace(pass_count, "pass", ""))) %>%
         filter(pass_count == 20) %>%
         mutate(analysisType = factor(analysisType, 
@@ -170,7 +170,7 @@ combined_results %>%
 
 write.table(combined_results %>%
         #filter(coverage_level == 'cov50') %>%
-        filter(analysisType != "allow_revNparalogs") %>%
+        filter(analysisType %in% c('strict', 'allow_reverse', 'Exact Brkpt', 'Fuzzy Brkpt') ) %>%
         mutate(pass_count = as.numeric(str_replace(pass_count, "pass", ""))) %>%
         filter(pass_count == 20) %>%
         mutate(analysisType = factor(analysisType, 
@@ -264,7 +264,7 @@ combined_AUC_results %>% head()
 ```{r}
 
 combined_AUC_results %>%
-        filter(! analysisType %in% c("strict_allow_paralogs", "allow_revNparalogs") ) %>%
+        filter(analysisType %in% c('strict', 'allow_reverse', 'Exact Brkpt', 'Fuzzy Brkpt') ) %>%
         ggplot() + theme_bw() +
         geom_point(aes(x=pass_count, y=mean_AUC, color=prog)) +
         geom_line(aes(x=pass_count, y=mean_AUC, group=prog, color=prog)) +
@@ -275,7 +275,7 @@ combined_AUC_results %>%
 ```{r}
 
 combined_AUC_results %>%
-        filter(! analysisType %in% c("strict_allow_paralogs", "allow_revNparalogs") ) %>%
+        filter(analysisType %in% c('strict', 'allow_reverse', 'Exact Brkpt', 'Fuzzy Brkpt') ) %>%
         mutate(pass_count = as.numeric(str_replace(pass_count, "pass", ""))) %>%
         filter(pass_count == 20) %>%
         mutate(analysisType = factor(analysisType, 
@@ -295,7 +295,7 @@ combined_AUC_results %>%
 # just cov5
 combined_AUC_results %>%
         filter(coverage_level == "cov5") %>%
-        filter(! analysisType %in% c("strict_allow_paralogs", "allow_revNparalogs") ) %>%
+        filter(analysisType %in% c('strict', 'allow_reverse', 'Exact Brkpt', 'Fuzzy Brkpt') ) %>%
         mutate(pass_count = as.numeric(str_replace(pass_count, "pass", ""))) %>%
         filter(pass_count == 20) %>%
         mutate(analysisType = factor(analysisType, 
