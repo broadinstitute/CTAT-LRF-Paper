@@ -10,22 +10,24 @@ Analysis was performed here:
 
 Results are analyzed below:
 
+# Examine peak F1
+
 ``` r
 # parse accuracy statistics from benchmarking:
 
-strict_results = read.table("data/strict.combined_results.ROC.tsv", header=T, sep="\t", stringsAsFactors = F)
-strict_results$analysisType="strict"
+ROC_strict_results = read.table("data/strict_allow_paralogs.combined_results.ROC.tsv", header=T, sep="\t", stringsAsFactors = F)
+ROC_strict_results$analysisType="strict_AP"
 
-allow_reverse_results = read.table("data/allow_reverse.combined_results.ROC.tsv", header=T, sep="\t", stringsAsFactors = F)
-allow_reverse_results$analysisType="allow_reverse"
-
-
-
-data = bind_rows(strict_results,
-                 allow_reverse_results)
+ROC_allow_reverse_results = read.table("data/allow_rev_and_paralogs.combined_results.ROC.tsv", header=T, sep="\t", stringsAsFactors = F)
+ROC_allow_reverse_results$analysisType="allow_reverse_AP"
 
 
-data = data %>% filter(prog %in% c(
+
+ROC_data = bind_rows(ROC_strict_results,
+                     ROC_allow_reverse_results)
+
+
+ROC_data = ROC_data %>% filter(prog %in% c(
                                    'pbfusion',
                                    'fusionseeker',
                                    'LongGF',
@@ -36,7 +38,7 @@ data = data %>% filter(prog %in% c(
 
 # extract the maximum F1 value for each program and target data set: 
 
-max_F1_data = data %>% group_by(analysisType, prog, seqtype, divergence) %>% 
+max_F1_data = ROC_data %>% group_by(analysisType, prog, seqtype, divergence) %>% 
     arrange(desc(F1)) %>% filter(row_number() == 1) %>% ungroup()
 
 
@@ -46,7 +48,7 @@ ranked_progs = max_F1_data  %>% group_by(prog) %>% summarize(mean_F1 = mean(F1))
 
 max_F1_data$prog = factor(max_F1_data$prog, levels=ranked_progs$prog)
 
-max_F1_data$analysisType = factor(max_F1_data$analysisType, levels=c('strict', 'allow_reverse'))
+max_F1_data$analysisType = factor(max_F1_data$analysisType, levels=c('strict_AP', 'allow_reverse_AP'))
 
 max_F1_data = max_F1_data %>% mutate(seqtype = ifelse(seqtype == "Pac", "PacBio", seqtype))
 
@@ -55,21 +57,21 @@ max_F1_data$seqtype = factor(max_F1_data$seqtype, levels=c("PacBio", "ONT"))
 ```
 
 ``` r
-p_linepoint = max_F1_data %>% 
-    filter(analysisType %in% c('strict', 'allow_reverse')) %>%
+p_F1_linepoint = max_F1_data %>% 
+    filter(analysisType %in% c('strict_AP', 'allow_reverse_AP')) %>%
     ggplot() + theme_bw() +
     geom_point(aes(x=divergence, y=F1, color=prog)) +
     geom_line(aes(x=divergence, y=F1, group=prog, color=prog)) +
     facet_grid(vars(analysisType), vars(seqtype))
 
 
-p_linepoint
+p_F1_linepoint
 ```
 
 ![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
 ``` r
-ggsave(p_linepoint, filename="jaffal_simdata_accuracy.paperfig.svg", width=8, height=7)
+ggsave(p_F1_linepoint, filename="jaffal_simdata_accuracy.F1.paperfig.svg", width=8, height=7)
 ```
 
 # examine precision/recall
@@ -77,7 +79,7 @@ ggsave(p_linepoint, filename="jaffal_simdata_accuracy.paperfig.svg", width=8, he
 -   restrict to the 95% identity set where all perform best.
 
 ``` r
-data %>% filter(analysisType == "allow_reverse") %>% 
+ROC_data %>% filter(analysisType == "allow_reverse_AP") %>% 
          filter(divergence == 95) %>%
          filter(TPR > 0.05) %>%
     ggplot(aes(x=TPR, y=PPV)) + geom_point(aes(color=prog)) + 
@@ -92,7 +94,7 @@ data %>% filter(analysisType == "allow_reverse") %>%
 ![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 ``` r
-data %>% filter(analysisType == "allow_reverse") %>% 
+ROC_data %>% filter(analysisType == "allow_reverse_AP") %>% 
          filter(divergence == 95) %>%
          #filter(TPR > 0.05) %>%
          select(seqtype, prog, min_sum_frags, TP, FP) %>% gather(key='TP_or_FP', value='count', TP, FP) %>%
@@ -111,7 +113,7 @@ data %>% filter(analysisType == "allow_reverse") %>%
 Plot just the TPs
 
 ``` r
-data %>% filter(analysisType == "allow_reverse") %>% 
+ROC_data %>% filter(analysisType == "allow_reverse_AP") %>% 
          filter(divergence == 95) %>%
          #filter(TPR > 0.05) %>%
          select(seqtype, prog, min_sum_frags, TP, FP) %>% gather(key='TP_or_FP', value='count', TP, FP) %>%
@@ -132,7 +134,7 @@ data %>% filter(analysisType == "allow_reverse") %>%
 ![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 ``` r
-data %>% filter(analysisType == "allow_reverse") %>% 
+ROC_data %>% filter(analysisType == "allow_reverse_AP") %>% 
          filter(divergence == 95) %>%
          #filter(TPR > 0.05) %>%
          select(seqtype, prog, min_sum_frags, TP, FP) %>% gather(key='TP_or_FP', value='count', TP, FP) %>%
@@ -151,3 +153,72 @@ data %>% filter(analysisType == "allow_reverse") %>%
     ## aesthetics: groups
 
 ![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+## Examine PR-AUC vs. divergence
+
+``` r
+# parse accuracy statistics from benchmarking:
+
+PR_AUC_strict_results = read.table("data/strict_allow_paralogs.combined_results.PR_AUC.tsv", header=T, sep="\t", stringsAsFactors = F)
+PR_AUC_strict_results$analysisType="strict_AP"
+
+PR_AUC_allow_reverse_results = read.table("data/allow_rev_and_paralogs.combined_results.PR_AUC.tsv", header=T, sep="\t", stringsAsFactors = F)
+PR_AUC_allow_reverse_results$analysisType="allow_reverse_AP"
+
+
+
+PR_AUC_data = bind_rows(PR_AUC_strict_results,
+                        PR_AUC_allow_reverse_results)
+
+
+PR_AUC_data = PR_AUC_data %>% filter(prog %in% c(
+                                   'pbfusion',
+                                   'fusionseeker',
+                                   'LongGF',
+                                   'JAFFAL',
+                                   'ctat-LR-fusion')
+                       )
+
+PR_AUC_data %>% head()
+```
+
+    ##   seqtype divergence           prog  AUC analysisType
+    ## 1     ONT         95 ctat-LR-fusion 0.96    strict_AP
+    ## 2     ONT         95         JAFFAL 0.91    strict_AP
+    ## 3     ONT         95   fusionseeker 0.27    strict_AP
+    ## 4     ONT         95         LongGF 0.22    strict_AP
+    ## 5     ONT         95       pbfusion 0.09    strict_AP
+    ## 6     Pac         85 ctat-LR-fusion 0.83    strict_AP
+
+``` r
+# rank programs 
+
+ranked_progs = PR_AUC_data  %>% group_by(prog) %>% summarize(mean_AUC = mean(AUC)) %>% arrange(desc(mean_AUC))
+
+PR_AUC_data$prog = factor(PR_AUC_data$prog, levels=ranked_progs$prog)
+
+PR_AUC_data$analysisType = factor(PR_AUC_data$analysisType, levels=c('strict_AP', 'allow_reverse_AP'))
+
+PR_AUC_data = PR_AUC_data %>% mutate(seqtype = ifelse(seqtype == "Pac", "PacBio", seqtype))
+
+
+PR_AUC_data$seqtype = factor(PR_AUC_data$seqtype, levels=c("PacBio", "ONT"))
+```
+
+``` r
+p_AUC_linepoint = PR_AUC_data %>% 
+    filter(analysisType %in% c('strict_AP', 'allow_reverse_AP')) %>%
+    ggplot() + theme_bw() +
+    geom_point(aes(x=divergence, y=AUC, color=prog)) +
+    geom_line(aes(x=divergence, y=AUC, group=prog, color=prog)) +
+    facet_grid(vars(analysisType), vars(seqtype))
+
+
+p_AUC_linepoint
+```
+
+![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+``` r
+ggsave(p_AUC_linepoint, filename="jaffal_simdata_accuracy.PR_AUC.paperfig.svg", width=8, height=7)
+```
