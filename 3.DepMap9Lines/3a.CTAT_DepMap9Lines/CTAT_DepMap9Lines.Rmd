@@ -614,7 +614,7 @@ mult_isoform_data_both_read_types = left_join(mult_iso_both_sample_fusion_names,
 
 mult_iso_both_sample_fusion_names %>% arrange(desc(num_multi_iso_both_types))
 
-# 7 fusions with at least 3 splicing isoforms each:
+# 6 fusions with at least 3 splicing isoforms each:
 
 ```
 
@@ -713,12 +713,7 @@ plot_fusion_expression_by_breakpoint("SKBR3", "CYTH1--EIF3H")
 
 ```
 
-```{r}
 
-plot_fusion_expression_by_breakpoint("SKBR3", "SAMD12--MRPL13")
-
-
-```
 
 # include gene structure info in plots
 

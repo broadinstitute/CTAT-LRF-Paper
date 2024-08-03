@@ -80,6 +80,21 @@ library(data.table)
 data_GB = fread("../DepMap_v1v2mrgd.ctatLRF_FI.consolidated.tsv.gz", header=T, sep="\t", stringsAsFactors = F, drop=c("LR_accessions", "JunctionReads", "SpanningFrags", "CounterFusionLeftReads", "CounterFusionRightReads")) %>% rename(FusionName = fusion)
 ```
 
+    ## Warning in fread("../DepMap_v1v2mrgd.ctatLRF_FI.consolidated.tsv.gz", header =
+    ## T, : Column name 'LR_accessions' (drop[1]) not found
+
+    ## Warning in fread("../DepMap_v1v2mrgd.ctatLRF_FI.consolidated.tsv.gz", header =
+    ## T, : Column name 'JunctionReads' (drop[2]) not found
+
+    ## Warning in fread("../DepMap_v1v2mrgd.ctatLRF_FI.consolidated.tsv.gz", header =
+    ## T, : Column name 'SpanningFrags' (drop[3]) not found
+
+    ## Warning in fread("../DepMap_v1v2mrgd.ctatLRF_FI.consolidated.tsv.gz", header =
+    ## T, : Column name 'CounterFusionLeftReads' (drop[4]) not found
+
+    ## Warning in fread("../DepMap_v1v2mrgd.ctatLRF_FI.consolidated.tsv.gz", header =
+    ## T, : Column name 'CounterFusionRightReads' (drop[5]) not found
+
 ``` r
 data_GB = right_join(
                     data_GB %>% group_by(FusionName, LeftLocalBreakpoint, RightLocalBreakpoint) %>% arrange(desc(SR_FFPGB)) %>% filter(row_number() == 1) %>% ungroup(),

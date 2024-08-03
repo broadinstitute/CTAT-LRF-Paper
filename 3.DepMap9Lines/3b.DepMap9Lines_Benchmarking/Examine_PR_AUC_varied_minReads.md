@@ -1,18 +1,9 @@
----
-title: "Examine_PR_AUC_varied_minReads"
-author: "bhaas"
-date: '2024-07-21'
-output: github_document
----
+Examine_PR_AUC_varied_minReads
+================
+bhaas
+2024-07-21
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-library(tidyverse)
-```
-
-
-```{r}
-
+``` r
 files = c(
 "__bmark_min-1-read/data/min_2.ignoreUnsure.results.scored.PR.AUC",
 "__bmark_min-1-read/data/min_3.ignoreUnsure.results.scored.PR.AUC",
@@ -46,12 +37,9 @@ files = c(
 "./__bmark_min-10-reads/data/min_4.ignoreUnsure.results.scored.PR.AUC"
 
 )
-
 ```
 
-
-```{r}
-
+``` r
 OK_PARA = FALSE
 
 if (OK_PARA) {
@@ -90,16 +78,9 @@ if (OK_PARA) {
     )
 
 }
-
-
-
-
 ```
 
-
-
-```{r}
-
+``` r
 PR_AUC_df = NULL
 
 for (file in files) {
@@ -115,25 +96,56 @@ for (file in files) {
 PR_AUC_df %>% head()
 ```
 
-```{r}
+    ##             prog  AUC
+    ## 1       pbfusion 0.76
+    ## 2         LongGF 0.54
+    ## 3   fusionseeker 0.48
+    ## 4 ctat-LR-fusion 0.35
+    ## 5         JAFFAL 0.29
+    ## 6         LongGF 0.76
+    ##                                                              fname
+    ## 1 __bmark_min-1-read/data/min_2.ignoreUnsure.results.scored.PR.AUC
+    ## 2 __bmark_min-1-read/data/min_2.ignoreUnsure.results.scored.PR.AUC
+    ## 3 __bmark_min-1-read/data/min_2.ignoreUnsure.results.scored.PR.AUC
+    ## 4 __bmark_min-1-read/data/min_2.ignoreUnsure.results.scored.PR.AUC
+    ## 5 __bmark_min-1-read/data/min_2.ignoreUnsure.results.scored.PR.AUC
+    ## 6 __bmark_min-1-read/data/min_3.ignoreUnsure.results.scored.PR.AUC
 
+``` r
 PR_AUC_df = PR_AUC_df %>% rowwise() %>% mutate(min_reads = as.numeric(str_match(fname, "min-(\\d+)-read")[[2]]) )
 
 PR_AUC_df %>% head()
 ```
 
+    ## # A tibble: 6 × 4
+    ## # Rowwise: 
+    ##   prog             AUC fname                                           min_reads
+    ##   <chr>          <dbl> <chr>                                               <dbl>
+    ## 1 pbfusion        0.76 __bmark_min-1-read/data/min_2.ignoreUnsure.res…         1
+    ## 2 LongGF          0.54 __bmark_min-1-read/data/min_2.ignoreUnsure.res…         1
+    ## 3 fusionseeker    0.48 __bmark_min-1-read/data/min_2.ignoreUnsure.res…         1
+    ## 4 ctat-LR-fusion  0.35 __bmark_min-1-read/data/min_2.ignoreUnsure.res…         1
+    ## 5 JAFFAL          0.29 __bmark_min-1-read/data/min_2.ignoreUnsure.res…         1
+    ## 6 LongGF          0.76 __bmark_min-1-read/data/min_3.ignoreUnsure.res…         1
 
-
-```{r}
-
+``` r
 PR_AUC_df = PR_AUC_df %>% rowwise() %>% mutate(min_progs_agree = as.numeric(str_match(fname, "min_(\\d+)\\.")[[2]]) )
 
 PR_AUC_df %>% head()
 ```
 
+    ## # A tibble: 6 × 5
+    ## # Rowwise: 
+    ##   prog             AUC fname                           min_reads min_progs_agree
+    ##   <chr>          <dbl> <chr>                               <dbl>           <dbl>
+    ## 1 pbfusion        0.76 __bmark_min-1-read/data/min_2.…         1               2
+    ## 2 LongGF          0.54 __bmark_min-1-read/data/min_2.…         1               2
+    ## 3 fusionseeker    0.48 __bmark_min-1-read/data/min_2.…         1               2
+    ## 4 ctat-LR-fusion  0.35 __bmark_min-1-read/data/min_2.…         1               2
+    ## 5 JAFFAL          0.29 __bmark_min-1-read/data/min_2.…         1               2
+    ## 6 LongGF          0.76 __bmark_min-1-read/data/min_3.…         1               3
 
-```{r}
-
+``` r
 PR_AUC_df %>% ggplot(aes(x=prog, y=AUC)) + 
     geom_col(aes(fill=prog)) +
     theme_bw() +
@@ -141,58 +153,33 @@ PR_AUC_df %>% ggplot(aes(x=prog, y=AUC)) +
     theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank())
-
-
 ```
 
+![](Examine_PR_AUC_varied_minReads_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
-```{r}
-
+``` r
 write.table(PR_AUC_df %>% select(prog, min_reads, min_progs_agree, AUC), file="PR_AUC_summary.tsv", quote=F, sep="\t", row.names=F)
-
-
 ```
 
-
-
-
-```{r}
+``` r
 # assign rankings
 
 PR_AUC_df = PR_AUC_df %>% group_by(min_reads, min_progs_agree) %>% mutate(ranking = rank(-1*AUC, ties.method='average'))
-
-
 ```
 
-
-```{r}
-
+``` r
 program_overall_ranking = PR_AUC_df %>% group_by(prog) %>% summarize(mean_ranking = mean(ranking)) %>% arrange(mean_ranking) %>%
     pull(prog)
-
-
-
 ```
 
-```{r}
-
+``` r
 PR_AUC_df$prog = factor(PR_AUC_df$prog, levels = program_overall_ranking)
-
 ```
 
-
-```{r}
-
+``` r
 PR_AUC_df %>% ggplot(aes(x=prog, y=-1 * ranking)) + geom_violin() +
     geom_jitter(aes(color=min_reads, shape=as.factor(min_progs_agree)), width=0.2, height=0.075) +
     theme_bw()
-
 ```
 
-
-
-
-
-
-
-
+![](Examine_PR_AUC_varied_minReads_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
