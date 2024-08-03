@@ -13,6 +13,8 @@ library(tidyverse)
 
 Analysis here was to simply evaluate whether the LR fusion finders had capabilities to detect fusions between paralogous genes.
 
+291 fusions simulated: see LR-FusionBenchmarking/simulated_data/paralog_fusion_sim/data/parafusions.fastq.gz
+
 ```{r}
 
 data = read.csv("data/analyze_allow_reverse.fusion_preds.txt.scored.ROC", header=T, sep="\t", stringsAsFactors = F)
@@ -22,7 +24,7 @@ data
 ```{r}
 
 data %>% filter(min_sum_frags == 1) %>% ggplot(aes(y=TPR, x=PPV)) + geom_point(aes(shape=prog, color=prog), size=3) +
-    theme_bw()
+    theme_bw() + ylim(0.3, 0.9)
 
 
 ```

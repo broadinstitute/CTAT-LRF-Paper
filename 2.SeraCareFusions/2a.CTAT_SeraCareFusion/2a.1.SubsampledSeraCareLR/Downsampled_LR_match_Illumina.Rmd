@@ -120,13 +120,65 @@ sera_downsampledLR_fig
 ```
 
 
+
+# include arriba results
+
+
 ```{r}
 
-ggsave(sera_downsampledLR_fig, file="sera_downsampledLR_fig.svg", width=7, height=5)
+arriba_1 = read.csv("../data/arriba/MDL_163_SeraSeqFusion_1.arriba.fusions.tsv.gz", header=T, sep="\t", com='', stringsAsFactors = F)
+arriba_1$dataset = "ISO-seq"
+
+
+arriba_2 = read.csv("../data/arriba/MDL_163_SeraSeqFusion_2.arriba.fusions.tsv.gz", header=T, sep="\t", com='', stringsAsFactors = F)
+arriba_2$dataset = "../MAS-seq-R1"
+
+
+arriba_3 = read.csv("../data/arriba/MDL_163_SeraSeqFusion_2.arriba.fusions.tsv.gz", header=T, sep="\t", com='', stringsAsFactors = F)
+arriba_3$dataset = "MAS-seq-R2"
+
+
+arriba_data = bind_rows(arriba_1, arriba_2, arriba_3)
+
+arriba_data = arriba_data %>% 
+    mutate(FusionName = paste0(X.gene1, "--", gene2) ) %>%
+    mutate(num_reads = split_reads1 + split_reads2 + discordant_mates) %>%
+    select(FusionName, num_reads, dataset)
+
+arriba_data %>% head()
+```
+
+```{r}
+
+ctatLRF_FI_control_results_w_arriba = left_join(combined_data,
+                                                arriba_data %>% filter(FusionName %in% seracare_targets$FusionName) %>% mutate(arriba_SR = num_reads),
+                                                by=c('FusionName', 'dataset') ) %>%
+    mutate(arriba_SR = ifelse(is.na(arriba_SR), 0, arriba_SR))
 
 ```
 
 
 
+```{r}
+
+sera_downsampledLR_fig  = ctatLRF_FI_control_results_w_arriba %>% gather(key=read_count_type, value=read_count, num_LR, num_SR, arriba_SR) %>%
+    mutate(read_count_type = factor(read_count_type, levels=c('num_LR', 'num_SR', 'arriba_SR'))) %>%
+    ggplot(aes(x=read_count_type, y=read_count)) +  theme_bw() +
+    geom_bar(stat='identity', position = 'dodge', aes(color=dataset, fill=read_count_type)) +
+    facet_wrap(~FusionName) +
+      theme(axis.text.x = element_text(angle = 90, hjust = 1))  +
+          geom_text(position=position_dodge(width=0.9), aes(label=read_count, group=dataset))
+
+sera_downsampledLR_fig 
+
+```
+
+
+
+```{r}
+
+ggsave(sera_downsampledLR_fig, file="sera_downsampledLR_fig.svg", width=7, height=5)
+
+```
 
 

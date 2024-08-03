@@ -158,6 +158,63 @@ ctatLRF_FI_data %>% head()
     ## 6       9.358            1               True ISO-seq     NA
 
 ``` r
+p = ctatLRF_FI_data %>% ggplot(aes(x=LR_FFPM, y=SR_FFPM)) + geom_point() +  
+    theme_bw() +
+ stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth")
+
+p
+```
+
+    ## Warning: Removed 4000 rows containing non-finite values (`stat_smooth()`).
+
+    ## Warning: Removed 4000 rows containing missing values (`geom_point()`).
+
+![](CTAT_SeraCareFusion_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+
+``` r
+lm(ctatLRF_FI_data$LR_FFPM ~ ctatLRF_FI_data$SR_FFPM  )
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = ctatLRF_FI_data$LR_FFPM ~ ctatLRF_FI_data$SR_FFPM)
+    ## 
+    ## Coefficients:
+    ##             (Intercept)  ctatLRF_FI_data$SR_FFPM  
+    ##                   6.439                    4.560
+
+``` r
+p + geom_point(data=ctatLRF_FI_data %>% filter(FusionName %in% control_fusions$FusionName), color='red')
+```
+
+    ## Warning: Removed 4000 rows containing non-finite values (`stat_smooth()`).
+
+    ## Warning: Removed 4000 rows containing missing values (`geom_point()`).
+
+    ## Warning: Removed 11 rows containing missing values (`geom_point()`).
+
+![](CTAT_SeraCareFusion_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+``` r
+# conpare FFPM values LR vs. SR
+
+ctatLRF_FI_data %>% select(FusionName, LR_FFPM, SR_FFPM) %>% 
+    filter (! is.na(SR_FFPM)) %>% filter(! is.na(LR_FFPM)) %>%
+    mutate(LR_div_SR_FFPM = LR_FFPM/SR_FFPM) %>% 
+    mutate(control_fusion = (FusionName %in% control_fusions$FusionName)) %>%
+    ggplot() + 
+    theme_bw() +
+    geom_boxplot(aes(x=control_fusion, y=LR_div_SR_FFPM))
+```
+
+![](CTAT_SeraCareFusion_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+The spike-in control fusions do appear to be better captured by
+MAS-ISO-seq than the non-control fusions.
+
+``` r
 # restrict fusion calls to the 16 control fusions
 
 ctatLRF_FI_control_results = left_join( cross_join(control_fusions, data.frame(dataset=c('ISO-seq', 'MAS-seq-R1', 'MAS-seq-R2'))),
@@ -284,7 +341,7 @@ seracare_read_count_barplot = ctatLRF_FI_control_results %>%
 seracare_read_count_barplot
 ```
 
-![](CTAT_SeraCareFusion_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](CTAT_SeraCareFusion_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 ``` r
 ggsave(seracare_read_count_barplot, file="seracare_read_count_barplot.svg", width=9, height=5)
@@ -302,10 +359,14 @@ seracare_FFPM_barplot = ctatLRF_FI_control_results %>%
 seracare_FFPM_barplot
 ```
 
-![](CTAT_SeraCareFusion_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](CTAT_SeraCareFusion_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 ``` r
 ggsave(seracare_FFPM_barplot, file="seracare_FFPM_barplot.svg", width=9, height=5)
+```
+
+``` r
+write.table(ctatLRF_FI_control_results, file="SeraCare_CTAT_LRF_FI_summary.tsv", quote=F, sep="\t", row.names=F)
 ```
 
 # examine counts of long reads (ctatLRF) vs. short reads (FI) evidence
@@ -321,7 +382,7 @@ paperfig_LR_vs_SR = ctatLRF_FI_control_results %>% gather(key=read_count_type, v
 paperfig_LR_vs_SR
 ```
 
-![](CTAT_SeraCareFusion_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](CTAT_SeraCareFusion_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 ``` r
 ggsave(paperfig_LR_vs_SR, file="seracare_LR_vs_SR_barplot.svg", width=9, height=7)
@@ -360,6 +421,219 @@ ctatLRF_FI_control_results %>% summarize(max_LR_support=max(num_LR), min_LR_supp
 ``` r
 # 20 to 139 long read support for control fusions
 ```
+
+``` r
+# compare the normalized read support FFPM values
+
+ctatLRF_FI_control_results %>% ggplot(aes(x=LR_FFPM, y=SR_FFPM)) + geom_point() +
+    theme_bw() +
+  stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth")
+```
+
+    ## Warning: Removed 11 rows containing non-finite values (`stat_smooth()`).
+
+    ## Warning: Removed 11 rows containing missing values (`geom_point()`).
+
+![](CTAT_SeraCareFusion_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+
+``` r
+lm(ctatLRF_FI_control_results$SR_FFPM ~ ctatLRF_FI_control_results$LR_FFPM)
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = ctatLRF_FI_control_results$SR_FFPM ~ ctatLRF_FI_control_results$LR_FFPM)
+    ## 
+    ## Coefficients:
+    ##                        (Intercept)  ctatLRF_FI_control_results$LR_FFPM  
+    ##                            0.05671                             0.02847
+
+``` r
+plot(ctatLRF_FI_control_results$LR_FFPM, ctatLRF_FI_control_results$SR_FFPM )
+abline(a=0.05671, b=0.02847)
+```
+
+![](CTAT_SeraCareFusion_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+
+Based on the slope of the line, would be \~35x better detection based on
+LR than SR, but obviously a lot of variance around that.
+
+``` r
+stats::fivenum(ctatLRF_FI_control_results$LR_FFPM)
+```
+
+    ## [1]  3.1660  6.9280  8.5505 11.2115 18.3370
+
+``` r
+stats::fivenum(ctatLRF_FI_control_results$SR_FFPM)
+```
+
+    ## [1] 0.0978 0.1955 0.2933 0.3094 0.9024
+
+``` r
+stats::fivenum(ctatLRF_FI_control_results$LR_FFPM) / stats::fivenum(ctatLRF_FI_control_results$SR_FFPM)
+```
+
+    ## [1] 32.37219 35.43734 29.15274 36.23626 20.32026
+
+so \~20x to \~35x more LR than SR for control fusion reads.
+
+``` r
+# what about the non-control fusions?
+
+noncontrol_fusions = ctatLRF_FI_data %>% filter(! FusionName %in% control_fusions$FusionName) %>% filter(LR_FFPM > 0 & SR_FFPM > 0)
+
+noncontrol_fusions 
+```
+
+    ##                    FusionName num_LR      LeftGene LeftLocalBreakpoint
+    ## 1 RP11-96H19.1--RP11-446N19.1      9  RP11-96H19.1                2709
+    ## 2    CTD-2215E18.1--LINC01340      1 CTD-2215E18.1                6285
+    ## 3 RP11-96H19.1--RP11-446N19.1     22  RP11-96H19.1                2709
+    ## 4                CASC4--PDIA3      1         CASC4                8731
+    ## 5              BOLA2B--SMG1P5      1        BOLA2B                1949
+    ## 6 RP11-96H19.1--RP11-446N19.1     19  RP11-96H19.1                2709
+    ##     LeftBreakpoint     RightGene RightLocalBreakpoint  RightBreakpoint
+    ## 1 chr12:46387972:+ RP11-446N19.1                12597 chr12:46652390:+
+    ## 2  chr5:97431900:+     LINC01340                13110  chr5:97668551:+
+    ## 3 chr12:46387972:+ RP11-446N19.1                12597 chr12:46652390:+
+    ## 4 chr15:44338317:+         PDIA3                30987 chr15:43761424:+
+    ## 5 chr16:30193358:-        SMG1P5                15849 chr16:30288785:-
+    ## 6 chr12:46387972:+ RP11-446N19.1                12597 chr12:46652390:+
+    ##        SpliceType
+    ## 1 ONLY_REF_SPLICE
+    ## 2 ONLY_REF_SPLICE
+    ## 3 ONLY_REF_SPLICE
+    ## 4 ONLY_REF_SPLICE
+    ## 5 ONLY_REF_SPLICE
+    ## 6 ONLY_REF_SPLICE
+    ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            LR_accessions
+    ## 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          m64020e_230609_061545/60751983/ccs,m64020e_230609_061545/116721527/ccs,m64020e_230609_061545/16319063/ccs,m64020e_230609_061545/142082144/ccs,m64020e_230609_061545/6881663/ccs,m64020e_230609_061545/116197727/ccs,m64020e_230609_061545/70847315/ccs,m64020e_230609_061545/93521323/ccs,m64020e_230609_061545/152044870/ccs
+    ## 2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     m64020e_230609_061545/21300468/ccs
+    ## 3 m64363e_230614_195212/169806442/ccs/6579_7204,m64363e_230614_195212/37945945/ccs/3152_3704,m64363e_230614_195212/128713112/ccs/3708_4245,m64363e_230614_195212/84150133/ccs/3256_5568,m64363e_230614_195212/163187394/ccs/4711_7216,m64363e_230614_195212/109643999/ccs/8211_10876,m64363e_230614_195212/20972697/ccs/8842_9380,m64363e_230614_195212/163317140/ccs/4369_6750,m64363e_230614_195212/74777510/ccs/7388_7928,m64363e_230614_195212/139067520/ccs/3481_4039,m64363e_230614_195212/1967968/ccs/5861_6414,m64363e_230614_195212/114755248/ccs/1205_1755,m64363e_230614_195212/160564435/ccs/9603_10168,m64363e_230614_195212/28770896/ccs/1015_1578,m64363e_230614_195212/14745841/ccs/6572_7292,m64363e_230614_195212/124388270/ccs/5004_5541,m64363e_230614_195212/71370486/ccs/6229_6846,m64363e_230614_195212/93849186/ccs/16_2521,m64363e_230614_195212/105841961/ccs/6539_7072,m64363e_230614_195212/124060252/ccs/4879_5438,m64363e_230614_195212/460036/ccs/6744_7645,m64363e_230614_195212/104401316/ccs/4116_4671
+    ## 4                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           m64363e_230614_195212/83822532/ccs/2078_4082
+    ## 5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          m64363e_230614_195212/125830109/ccs/3901_8141
+    ## 6                                                                                                                                                 m64363e_230614_195212/154273308/ccs/2225_2915,m64363e_230614_195212/71239922/ccs/4885_5443,m64363e_230614_195212/60491968/ccs/5507_6118,m64363e_230614_195212/34472070/ccs/604_1608,m64363e_230614_195212/114951083/ccs/766_1427,m64363e_230614_195212/120064396/ccs/1186_1755,m64363e_230614_195212/90834476/ccs/3513_4070,m64363e_230614_195212/99813855/ccs/3294_3894,m64363e_230614_195212/3801438/ccs/9072_10423,m64363e_230614_195212/165019744/ccs/3786_4358,m64363e_230614_195212/100794537/ccs/1840_2407,m64363e_230614_195212/71762618/ccs/16_707,m64363e_230614_195212/155189483/ccs/1833_2377,m64363e_230614_195212/56035799/ccs/3993_4578,m64363e_230614_195212/16450369/ccs/1050_1782,m64363e_230614_195212/93456103/ccs/4613_5272,m64363e_230614_195212/115410405/ccs/4767_5353,m64363e_230614_195212/33947829/ccs/5664_6319,m64363e_230614_195212/172492781/ccs/16_489
+    ##   LR_FFPM JunctionReadCount SpanningFragCount est_J est_S
+    ## 1   1.872                 1                 1     1  0.33
+    ## 2   0.208                 1                 0     1  0.00
+    ## 3   2.799                 6                 2     6  1.71
+    ## 4   0.127                 1                 0     1  0.00
+    ## 5   0.127                 7                 3     7  2.07
+    ## 6   2.507                 2                 0     2  0.00
+    ##                       LeftGene_SR                    RightGene_SR
+    ## 1  RP11-96H19.1^ENSG00000257261.4 RP11-446N19.1^ENSG00000272369.1
+    ## 2 CTD-2215E18.1^ENSG00000251513.2     LINC01340^ENSG00000250331.1
+    ## 3  RP11-96H19.1^ENSG00000257261.4 RP11-446N19.1^ENSG00000272369.1
+    ## 4        CASC4^ENSG00000166734.17        PDIA3^ENSG00000167004.11
+    ## 5        BOLA2B^ENSG00000169627.7       SMG1P5^ENSG00000183604.13
+    ## 6  RP11-96H19.1^ENSG00000257261.4 RP11-446N19.1^ENSG00000272369.1
+    ##   LargeAnchorSupport
+    ## 1                YES
+    ## 2                YES
+    ## 3                YES
+    ## 4                YES
+    ## 5                YES
+    ## 6                YES
+    ##                                                                                                                                                                                                                                                                                                                              JunctionReads
+    ## 1                                                                                                                                                                                                                                                                                                     HFYGCDRX3230916:2:2276:27597:34601/1
+    ## 2                                                                                                                                                                                                                                                                                                     HFYGCDRX3230916:2:2172:20537:33051/2
+    ## 3 HG5J5DRX3230915:1:2120:21260:17112/2,HFYGCDRX3230916:1:2245:1958:29528/1,HFYGCDRX3230916:1:2150:4698:32080/1,HFYGCDRX3230916:2:2103:17463:27633/1,HFYGCDRX3230916:1:2115:14145:35039/2,HFYGCDRX3230916:2:2103:17463:27633/2,HG5J5DRX3230915:1:2120:21260:17112/1,HG5J5DRX3230915:1:2135:23176:8719/1,HFYGCDRX3230916:1:2150:4698:32080/2
+    ## 4                                                                                                                                                                                                                                                                                                       HFYGCDRX3230916:2:2121:8368:1955/1
+    ## 5                                        HFYGCDRX3230916:1:2228:17065:1078/1,HFYGCDRX3230916:2:2104:31828:26115/2,HFYGCDRX3230916:2:2209:6650:23594/1,HFYGCDRX3230916:2:2116:28266:26522/2,HG5J5DRX3230915:1:2167:8648:15655/1,HFYGCDRX3230916:2:2126:1217:9862/2,HG5J5DRX3230915:1:2167:8648:15655/2,HFYGCDRX3230916:1:2157:11017:28808/2
+    ## 6                                                                                                                                                                                                                                                                   HG5J5DRX3230915:1:2268:4652:3599/2,HFYGCDRX3230916:2:2153:2772:26678/1
+    ##                                                                                             SpanningFrags
+    ## 1                                                                      HG5J5DRX3230915:1:2105:24632:22764
+    ## 2                                                                                                        
+    ## 3                                   HFYGCDRX3230916:1:2149:11198:29841,HFYGCDRX3230916:1:2259:14262:20964
+    ## 4                                                                                                        
+    ## 5 HFYGCDRX3230916:1:2167:32325:21778,HFYGCDRX3230916:1:2264:17228:5212,HFYGCDRX3230916:1:2252:21088:22921
+    ## 6                                                                                                        
+    ##   NumCounterFusionLeft
+    ## 1                    2
+    ## 2                    0
+    ## 3                    1
+    ## 4                   24
+    ## 5                   96
+    ## 6                    0
+    ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   CounterFusionLeftReads
+    ## 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    HFYGCDRX3230916:1:2225:15709:4711,HFYGCDRX3230916:1:2264:7979:28588
+    ## 2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      .
+    ## 3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     HFYGCDRX3230916:2:2169:29857:29622
+    ## 4                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               HFYGCDRX3230916:1:2158:19226:13495,HFYGCDRX3230916:2:2247:25373:28307,HFYGCDRX3230916:1:2223:16676:19319,HFYGCDRX3230916:2:2214:2239:9220,HFYGCDRX3230916:2:2205:4607:29700,HFYGCDRX3230916:2:2137:25120:29904,HFYGCDRX3230916:1:2112:31114:1204,HFYGCDRX3230916:2:2218:14787:4178,HFYGCDRX3230916:1:2129:13169:21324,HG5J5DRX3230915:1:2152:8865:8923,HFYGCDRX3230916:1:2104:15546:24721,HFYGCDRX3230916:1:2137:17065:34147,HFYGCDRX3230916:1:2121:14950:6872,HFYGCDRX3230916:2:2125:8187:17237,HFYGCDRX3230916:1:2204:14940:31375,HFYGCDRX3230916:2:2114:2401:12164,HFYGCDRX3230916:1:2260:2971:35227,HFYGCDRX3230916:2:2113:23258:18411,HFYGCDRX3230916:2:2140:5602:23437,HFYGCDRX3230916:2:2175:6605:20322,HFYGCDRX3230916:1:2205:3667:27665,HFYGCDRX3230916:1:2150:18222:25066,HFYGCDRX3230916:2:2251:3341:21402,HFYGCDRX3230916:1:2206:25201:14043
+    ## 5 HFYGCDRX3230916:1:2254:3622:3380,HFYGCDRX3230916:2:2266:25003:15358,HFYGCDRX3230916:2:2239:21820:35775,HFYGCDRX3230916:1:2164:19000:10755,HFYGCDRX3230916:1:2238:16486:32111,HG5J5DRX3230915:1:2175:3414:19648,HFYGCDRX3230916:1:2169:1624:11099,HG5J5DRX3230915:1:2176:14796:24799,HFYGCDRX3230916:2:2202:23339:11600,HFYGCDRX3230916:1:2175:21043:31485,HFYGCDRX3230916:1:2138:28366:5713,HG5J5DRX3230915:1:2222:23628:33019,HFYGCDRX3230916:2:2232:21947:22216,HFYGCDRX3230916:2:2153:30581:26271,HFYGCDRX3230916:2:2203:11478:1642,HG5J5DRX3230915:1:2165:32551:30624,HFYGCDRX3230916:1:2229:2365:31986,HFYGCDRX3230916:1:2162:6668:14293,HFYGCDRX3230916:1:2107:32669:12853,HFYGCDRX3230916:1:2270:17363:8609,HFYGCDRX3230916:1:2114:6180:11381,HFYGCDRX3230916:2:2165:27199:3756,HFYGCDRX3230916:2:2276:30282:27946,HFYGCDRX3230916:1:2144:6099:24267,HFYGCDRX3230916:1:2240:18792:33442,HFYGCDRX3230916:1:2136:19967:20917,HFYGCDRX3230916:1:2245:10077:30843,HFYGCDRX3230916:1:2266:10447:32456,HFYGCDRX3230916:2:2173:27471:27837,HFYGCDRX3230916:1:2217:23149:22200,HFYGCDRX3230916:2:2157:25464:27931,HFYGCDRX3230916:2:2177:14045:9345,HG5J5DRX3230915:1:2164:7229:32424,HFYGCDRX3230916:1:2248:3604:8202,HFYGCDRX3230916:2:2255:13078:20447,HFYGCDRX3230916:1:2117:22462:22608,HFYGCDRX3230916:2:2120:13132:6856,HFYGCDRX3230916:2:2207:30183:22044,HFYGCDRX3230916:2:2213:15745:28761,HG5J5DRX3230915:1:2253:28420:27696,HFYGCDRX3230916:1:2175:2022:4398,HFYGCDRX3230916:1:2169:3757:3583,HFYGCDRX3230916:1:2151:6940:1548,HFYGCDRX3230916:1:2108:8287:35070,HFYGCDRX3230916:1:2239:4734:9064,HFYGCDRX3230916:1:2259:23294:18380,HG5J5DRX3230915:1:2172:14181:19727,HFYGCDRX3230916:2:2227:2040:3114,HFYGCDRX3230916:2:2124:15492:3897,HFYGCDRX3230916:1:2168:17183:4288,HFYGCDRX3230916:2:2228:16116:23860,HFYGCDRX3230916:2:2242:1850:1908,HFYGCDRX3230916:2:2113:26404:30655,HFYGCDRX3230916:2:2262:28637:16172,HFYGCDRX3230916:2:2249:29333:1063,HFYGCDRX3230916:2:2207:20048:5431,HFYGCDRX3230916:1:2111:15646:17785,HFYGCDRX3230916:2:2177:17761:10332,HFYGCDRX3230916:2:2124:17978:5822,HFYGCDRX3230916:1:2105:21486:10488,HFYGCDRX3230916:1:2160:9607:23578,HG5J5DRX3230915:1:2219:20618:32095,HFYGCDRX3230916:1:2130:6985:2910,HFYGCDRX3230916:2:2159:9815:1955,HFYGCDRX3230916:2:2126:8097:9659,HFYGCDRX3230916:2:2202:31575:24392,HFYGCDRX3230916:2:2104:19678:33098,HFYGCDRX3230916:1:2157:17978:17033,HFYGCDRX3230916:1:2272:24352:17989,HFYGCDRX3230916:2:2247:32262:31438,HFYGCDRX3230916:1:2241:7301:19554,HFYGCDRX3230916:1:2165:21251:15154,HFYGCDRX3230916:2:2134:5493:24095,HFYGCDRX3230916:1:2145:17734:32612,HFYGCDRX3230916:2:2163:3296:13307,HFYGCDRX3230916:1:2104:15492:30608,HFYGCDRX3230916:1:2164:1850:20666,HFYGCDRX3230916:1:2174:2175:18349,HG5J5DRX3230915:1:2257:27651:29183,HFYGCDRX3230916:1:2107:6506:17738,HFYGCDRX3230916:1:2169:31033:27054,HFYGCDRX3230916:2:2272:15917:33692,HFYGCDRX3230916:1:2124:25265:22013,HG5J5DRX3230915:1:2213:26096:10488,HG5J5DRX3230915:1:2104:4146:9048,HFYGCDRX3230916:2:2167:2465:14497,HFYGCDRX3230916:2:2214:23999:20948,HFYGCDRX3230916:2:2177:15528:4523,HG5J5DRX3230915:1:2126:20853:20854,HFYGCDRX3230916:1:2206:4074:26146,HFYGCDRX3230916:1:2134:23448:26506,HFYGCDRX3230916:2:2134:20247:3051,HFYGCDRX3230916:2:2112:31015:6261,HFYGCDRX3230916:2:2259:6370:32941,HFYGCDRX3230916:1:2151:18656:9032,HG5J5DRX3230915:1:2120:31114:11318
+    ## 6                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      .
+    ##   NumCounterFusionRight
+    ## 1                     2
+    ## 2                     0
+    ## 3                     4
+    ## 4                   150
+    ## 5                     6
+    ## 6                     5
+    ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              CounterFusionRightReads
+    ## 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               HFYGCDRX3230916:1:2262:27914:31673,HG5J5DRX3230915:1:2223:30553:4492
+    ## 2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  .
+    ## 3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          HFYGCDRX3230916:1:2249:28203:9377,HFYGCDRX3230916:1:2121:21902:18443,HFYGCDRX3230916:1:2269:23836:5791,HFYGCDRX3230916:1:2145:14642:17143
+    ## 4 HFYGCDRX3230916:1:2176:2853:22999,HFYGCDRX3230916:1:2138:2374:34945,HFYGCDRX3230916:2:2140:20265:13698,HFYGCDRX3230916:1:2241:27534:6308,HG5J5DRX3230915:1:2169:20392:32330,HFYGCDRX3230916:2:2121:27814:2409,HFYGCDRX3230916:1:2147:26323:33990,HFYGCDRX3230916:2:2131:29695:4319,HFYGCDRX3230916:2:2271:22209:18255,HFYGCDRX3230916:1:2141:1768:6057,HFYGCDRX3230916:1:2120:7618:16939,HFYGCDRX3230916:2:2155:24505:19507,HFYGCDRX3230916:2:2269:14868:25770,HFYGCDRX3230916:2:2219:8332:14638,HFYGCDRX3230916:2:2172:16215:24001,HFYGCDRX3230916:1:2243:4643:23124,HFYGCDRX3230916:1:2211:12346:17675,HFYGCDRX3230916:2:2162:32136:6856,HFYGCDRX3230916:1:2226:5095:15953,HFYGCDRX3230916:1:2232:23665:4304,HFYGCDRX3230916:1:2218:4580:30624,HFYGCDRX3230916:1:2270:12843:7012,HFYGCDRX3230916:1:2149:7961:26804,HFYGCDRX3230916:1:2170:22724:29543,HFYGCDRX3230916:2:2131:23963:16939,HFYGCDRX3230916:1:2203:16947:28087,HFYGCDRX3230916:2:2132:23818:18881,HFYGCDRX3230916:1:2275:12735:31908,HG5J5DRX3230915:1:2260:30517:33552,HFYGCDRX3230916:2:2218:23900:13041,HFYGCDRX3230916:2:2157:15284:8328,HFYGCDRX3230916:1:2156:14832:32095,HG5J5DRX3230915:1:2103:28103:12117,HFYGCDRX3230916:1:2104:6234:27946,HFYGCDRX3230916:2:2204:23728:23202,HG5J5DRX3230915:1:2221:31521:7576,HFYGCDRX3230916:1:2269:19135:33724,HFYGCDRX3230916:2:2140:22824:36354,HFYGCDRX3230916:2:2109:13801:18443,HFYGCDRX3230916:2:2119:26422:29027,HFYGCDRX3230916:1:2128:15022:3991,HFYGCDRX3230916:1:2222:15637:6652,HFYGCDRX3230916:1:2132:26820:26021,HFYGCDRX3230916:2:2232:12400:19241,HFYGCDRX3230916:1:2137:24144:31532,HFYGCDRX3230916:1:2136:3486:5431,HFYGCDRX3230916:1:2235:9986:4038,HFYGCDRX3230916:1:2239:26594:7435,HFYGCDRX3230916:1:2109:17146:36166,HFYGCDRX3230916:1:2270:7229:12633,HFYGCDRX3230916:1:2107:20066:14888,HFYGCDRX3230916:2:2102:12020:9878,HFYGCDRX3230916:2:2141:9290:25786,HFYGCDRX3230916:1:2120:20066:6621,HFYGCDRX3230916:2:2101:1452:16376,HG5J5DRX3230915:1:2257:2248:1658,HFYGCDRX3230916:1:2229:23032:13197,HFYGCDRX3230916:1:2169:24912:20275,HFYGCDRX3230916:2:2135:13214:13322,HFYGCDRX3230916:1:2125:2338:13651,HFYGCDRX3230916:2:2104:4309:36417,HFYGCDRX3230916:1:2128:26729:3161,HFYGCDRX3230916:1:2268:10031:35524,HFYGCDRX3230916:1:2224:26404:32784,HFYGCDRX3230916:1:2159:18665:9298,HG5J5DRX3230915:1:2128:7057:7106,HFYGCDRX3230916:1:2123:15094:24596,HFYGCDRX3230916:1:2237:19081:30624,HFYGCDRX3230916:1:2257:23520:15922,HFYGCDRX3230916:2:2106:7247:18333,HFYGCDRX3230916:2:2207:22426:21574,HFYGCDRX3230916:2:2232:19687:30452,HFYGCDRX3230916:1:2176:28953:31156,HFYGCDRX3230916:1:2170:19407:30373,HFYGCDRX3230916:2:2244:14118:10692,HFYGCDRX3230916:1:2110:14416:28808,HFYGCDRX3230916:1:2122:23366:29810,HFYGCDRX3230916:1:2136:5195:34475,HFYGCDRX3230916:1:2146:7211:25723,HFYGCDRX3230916:1:2250:28492:15389,HFYGCDRX3230916:1:2161:20139:3928,HFYGCDRX3230916:2:2211:23511:18098,HFYGCDRX3230916:2:2102:20256:9392,HG5J5DRX3230915:1:2144:17490:34726,HFYGCDRX3230916:2:2208:13277:36730,HFYGCDRX3230916:1:2149:16477:33160,HFYGCDRX3230916:1:2270:20934:33301,HFYGCDRX3230916:2:2216:20582:4946,HFYGCDRX3230916:1:2157:19524:9345,HFYGCDRX3230916:1:2216:28745:15515,HFYGCDRX3230916:2:2142:20491:4413,HFYGCDRX3230916:1:2118:8477:14074,HG5J5DRX3230915:1:2271:3396:10441,HFYGCDRX3230916:2:2227:21070:22013,HFYGCDRX3230916:1:2143:30092:8641,HFYGCDRX3230916:2:2206:26639:26334,HFYGCDRX3230916:2:2114:10556:28322,HFYGCDRX3230916:2:2239:9860:12587,HG5J5DRX3230915:1:2125:17734:28291,HFYGCDRX3230916:1:2264:6117:7232,HFYGCDRX3230916:1:2120:11614:10081,HFYGCDRX3230916:2:2244:7455:34100,HFYGCDRX3230916:2:2255:27814:9455,HFYGCDRX3230916:1:2171:31033:21073,HFYGCDRX3230916:2:2144:1190:25974,HFYGCDRX3230916:1:2124:21612:13620,HFYGCDRX3230916:1:2225:1886:3035,HG5J5DRX3230915:1:2239:8106:11397,HFYGCDRX3230916:2:2251:22715:22733,HFYGCDRX3230916:2:2126:9652:24721,HFYGCDRX3230916:1:2165:31738:10833,HFYGCDRX3230916:1:2274:7961:24424,HFYGCDRX3230916:2:2202:29785:11616,HFYGCDRX3230916:2:2268:14163:28369,HFYGCDRX3230916:2:2151:25319:18129,HFYGCDRX3230916:1:2255:9778:9690,HFYGCDRX3230916:1:2215:10710:31970,HFYGCDRX3230916:1:2140:16848:18270,HFYGCDRX3230916:2:2233:22309:15170,HG5J5DRX3230915:1:2259:14027:22717,HFYGCDRX3230916:2:2135:29107:24126,HFYGCDRX3230916:1:2164:5303:2033,HFYGCDRX3230916:1:2145:26096:13213,HFYGCDRX3230916:2:2224:14507:21386,HFYGCDRX3230916:1:2108:9507:35963,HG5J5DRX3230915:1:2248:21097:26913,HG5J5DRX3230915:1:2156:1452:20760,HG5J5DRX3230915:1:2128:11089:17347,HFYGCDRX3230916:1:2217:26395:13448,HFYGCDRX3230916:1:2142:7184:10739,HFYGCDRX3230916:1:2212:6985:1846,HG5J5DRX3230915:1:2212:32108:6652,HG5J5DRX3230915:1:2241:13431:5055,HFYGCDRX3230916:1:2144:28926:17300,HFYGCDRX3230916:1:2160:9787:19413,HFYGCDRX3230916:2:2229:29432:31422,HFYGCDRX3230916:1:2168:25039:8938,HFYGCDRX3230916:2:2161:7048:20713,HFYGCDRX3230916:1:2171:21025:3615,HFYGCDRX3230916:1:2111:23384:32346,HG5J5DRX3230915:1:2230:7048:33332,HFYGCDRX3230916:2:2207:20175:1454,HFYGCDRX3230916:2:2101:14244:14638,HFYGCDRX3230916:1:2137:19940:18333,HFYGCDRX3230916:1:2249:20356:12007,HFYGCDRX3230916:1:2107:19687:32362,HFYGCDRX3230916:1:2237:26458:1282,HFYGCDRX3230916:2:2240:25346:19429,HFYGCDRX3230916:1:2160:12020:14638,HFYGCDRX3230916:1:2115:23086:21840
+    ## 5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      HFYGCDRX3230916:2:2158:3748:32440,HFYGCDRX3230916:2:2143:11912:12884,HG5J5DRX3230915:1:2227:3206:30091,HFYGCDRX3230916:2:2158:9082:11772,HFYGCDRX3230916:1:2260:10520:25535,HFYGCDRX3230916:1:2229:3830:12226
+    ## 6                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      HFYGCDRX3230916:1:2137:13756:11036,HFYGCDRX3230916:2:2227:28284:27336,HFYGCDRX3230916:1:2278:5303:34162,HFYGCDRX3230916:1:2127:13440:31563,HFYGCDRX3230916:1:2209:15609:16094
+    ##   FAR_left FAR_right LeftBreakDinuc LeftBreakEntropy RightBreakDinuc
+    ## 1     1.00      1.00             GT           1.7465              AG
+    ## 2     2.00      2.00             GT           1.7232              AG
+    ## 3     4.50      1.80             GT           1.7465              AG
+    ## 4     0.08      0.01             GT           1.8323              AG
+    ## 5     0.11      1.57             GT           1.9329              AG
+    ## 6     3.00      0.50             GT           1.7465              AG
+    ##   RightBreakEntropy SR_FFPM microh_brkpt_dist num_microh_near_brkpt
+    ## 1            1.8323  0.2058              1854                     0
+    ## 2            1.8323  0.1547              1621                     0
+    ## 3            1.8323  0.7538              1854                     0
+    ## 4            1.9899  0.0978              2545                     0
+    ## 5            1.9329  0.8868               833                     0
+    ## 6            1.8323  0.2005              1854                     0
+    ##                                                           annots max_LR_FFPM
+    ## 1                               [INTRACHROMOSOMAL[chr12:0.12Mb]]       1.872
+    ## 2               [INTRACHROMOSOMAL[chr5:0.07Mb],NEIGHBORS[67479]]       0.208
+    ## 3                               [INTRACHROMOSOMAL[chr12:0.12Mb]]       2.799
+    ## 4                   [DEEPEST2019,INTRACHROMOSOMAL[chr15:0.52Mb]]       0.127
+    ## 5 [INTRACHROMOSOMAL[chr16:0.07Mb],LOCAL_REARRANGEMENT:-:[73247]]       0.127
+    ## 6                               [INTRACHROMOSOMAL[chr12:0.12Mb]]       2.507
+    ##   frac_dom_iso above_frac_dom_iso    dataset num_SR
+    ## 1            1               True    ISO-seq   1.33
+    ## 2            1               True    ISO-seq   1.00
+    ## 3            1               True MAS-seq-R1   7.71
+    ## 4            1               True MAS-seq-R1   1.00
+    ## 5            1               True MAS-seq-R1   9.07
+    ## 6            1               True MAS-seq-R2   2.00
+
+``` r
+noncontrol_fusions$LR_FFPM
+```
+
+    ## [1] 1.872 0.208 2.799 0.127 0.127 2.507
+
+``` r
+noncontrol_fusions$SR_FFPM
+```
+
+    ## [1] 0.2058 0.1547 0.7538 0.0978 0.8868 0.2005
+
+``` r
+noncontrol_fusions$LR_FFPM / noncontrol_fusions$SR_FFPM
+```
+
+    ## [1]  9.0962099  1.3445378  3.7131865  1.2985685  0.1432115 12.5037406
+
+``` r
+stats::fivenum(noncontrol_fusions$LR_FFPM / noncontrol_fusions$SR_FFPM)
+```
+
+    ## [1]  0.1432115  1.2985685  2.5288622  9.0962099 12.5037406
+
+Don’t have many good examples, but rougly 1x to 10x LR to SR for LR
+support seems likely
 
 # compare gene expression levels between long and short reads:
 
@@ -428,7 +702,7 @@ mean_gene_expr_plot
     ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
     ## generated.
 
-![](CTAT_SeraCareFusion_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+![](CTAT_SeraCareFusion_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
 
 ``` r
 ggsave(mean_gene_expr_plot, file="SeraCare_LR_vs_SR_gene_expr_scatter_density_plot.svg", width=7, height=4)
@@ -449,3 +723,199 @@ cor.test(log10(mean_gene_expr$mean_LR_gene_expr), log10(mean_gene_expr$mean_TruS
     ## sample estimates:
     ##       cor 
     ## 0.7930898
+
+# examine Arriba short read findings:
+
+``` r
+arriba_1 = read.csv("data/arriba/MDL_163_SeraSeqFusion_1.arriba.fusions.tsv.gz", header=T, sep="\t", com='', stringsAsFactors = F)
+arriba_1$dataset = "ISO-seq"
+
+
+arriba_2 = read.csv("data/arriba/MDL_163_SeraSeqFusion_2.arriba.fusions.tsv.gz", header=T, sep="\t", com='', stringsAsFactors = F)
+arriba_2$dataset = "MAS-seq-R1"
+
+
+arriba_3 = read.csv("data/arriba/MDL_163_SeraSeqFusion_2.arriba.fusions.tsv.gz", header=T, sep="\t", com='', stringsAsFactors = F)
+arriba_3$dataset = "MAS-seq-R2"
+
+
+arriba_data = bind_rows(arriba_1, arriba_2, arriba_3)
+
+arriba_data = arriba_data %>% 
+    mutate(FusionName = paste0(X.gene1, "--", gene2) ) %>%
+    mutate(num_reads = split_reads1 + split_reads2 + discordant_mates) %>%
+    select(FusionName, num_reads, dataset)
+
+arriba_data %>% head()
+```
+
+    ##         FusionName num_reads dataset
+    ## 1   EGFR--SEPTIN14         4 ISO-seq
+    ## 2    SLC34A2--ROS1         3 ISO-seq
+    ## 3       CCDC6--RET         2 ISO-seq
+    ## 4       KIF5B--RET         2 ISO-seq
+    ## 5      LMNA--NTRK1         2 ISO-seq
+    ## 6 IGHV3-48--AHCTF1        38 ISO-seq
+
+``` r
+ctatLRF_FI_control_results_w_arriba = left_join(ctatLRF_FI_control_results  %>% filter(FusionName %in% control_fusions$FusionName),
+                                                arriba_data %>% filter(FusionName %in% control_fusions$FusionName) %>% mutate(arriba_SR = num_reads),
+                                                by=c('FusionName', 'dataset') ) %>%
+    mutate(arriba_SR = ifelse(is.na(arriba_SR), 0, arriba_SR))
+```
+
+``` r
+ctatLRF_FI_control_results_w_arriba %>% gather(key=read_count_type, value=read_count, num_LR, num_SR, arriba_SR) %>%
+    mutate(read_count_type = factor(read_count_type, levels=c('num_LR', 'num_SR', 'arriba_SR'))) %>%
+    ggplot(aes(x=read_count_type, y=read_count)) +  theme_bw() +
+    geom_bar(stat='identity', position = 'dodge', aes(color=dataset, fill=read_count_type)) +
+    facet_wrap(~FusionName) +
+      theme(axis.text.x = element_text(angle = 90, hjust = 1))  +
+          geom_text(position=position_dodge(width=0.9), aes(label=read_count, group=dataset))
+```
+
+![](CTAT_SeraCareFusion_files/figure-gfm/unnamed-chunk-31-1.png)<!-- -->
+
+# Examine reads per gene in LR vs. SR for all genes
+
+``` r
+LR_read_gene_counts = read.csv("data/expr_quant/LR.salmon.gene.counts.matrix.gz", header=T, sep="\t", stringsAsFactors = F) %>%
+    rename(gene_id = X)
+
+colnames(LR_read_gene_counts) = c('gene_id', 'LR_r1', 'LR_r2', 'LR_r3')
+
+LR_read_gene_counts %>% head()
+```
+
+    ##                     gene_id LR_r1 LR_r2 LR_r3
+    ## 1 5S_rRNA|ENSG00000201285.1     0  0.00     0
+    ## 2 5S_rRNA|ENSG00000212595.1     0  0.00     0
+    ## 3 5S_rRNA|ENSG00000252830.2     0  0.00     0
+    ## 4 5S_rRNA|ENSG00000271924.1     0 38.16     0
+    ## 5 5S_rRNA|ENSG00000272253.1     0  0.00     0
+    ## 6 5S_rRNA|ENSG00000272351.1     0  0.00     0
+
+``` r
+SR_read_gene_counts = read.csv("data/expr_quant/TruSeq.salmon.gene.counts.matrix.gz", header=T, sep="\t", stringsAsFactors = F) %>%
+    rename(gene_id = X)
+
+colnames(SR_read_gene_counts) = c('gene_id', 'SR_r1', 'SR_r2', 'SR_r3')
+
+SR_read_gene_counts %>% head()
+```
+
+    ##                     gene_id SR_r1 SR_r2 SR_r3
+    ## 1 5S_rRNA|ENSG00000201285.1     0     0     0
+    ## 2 5S_rRNA|ENSG00000212595.1     0     0     0
+    ## 3 5S_rRNA|ENSG00000252830.2     0     0     0
+    ## 4 5S_rRNA|ENSG00000271924.1     0     0     0
+    ## 5 5S_rRNA|ENSG00000272253.1     0     0     0
+    ## 6 5S_rRNA|ENSG00000272351.1     0     0     0
+
+``` r
+gene_read_counts = left_join(LR_read_gene_counts, SR_read_gene_counts, by='gene_id')
+
+gene_read_counts %>% head()
+```
+
+    ##                     gene_id LR_r1 LR_r2 LR_r3 SR_r1 SR_r2 SR_r3
+    ## 1 5S_rRNA|ENSG00000201285.1     0  0.00     0     0     0     0
+    ## 2 5S_rRNA|ENSG00000212595.1     0  0.00     0     0     0     0
+    ## 3 5S_rRNA|ENSG00000252830.2     0  0.00     0     0     0     0
+    ## 4 5S_rRNA|ENSG00000271924.1     0 38.16     0     0     0     0
+    ## 5 5S_rRNA|ENSG00000272253.1     0  0.00     0     0     0     0
+    ## 6 5S_rRNA|ENSG00000272351.1     0  0.00     0     0     0     0
+
+``` r
+gene_read_counts %>% ggplot(aes(x=LR_r1, y=SR_r1)) + geom_point() +
+    theme_bw() + 
+    scale_x_continuous(trans='log10') +
+    scale_y_continuous(trans='log10') +
+  stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth")
+```
+
+    ## Warning: Transformation introduced infinite values in continuous x-axis
+
+    ## Warning: Transformation introduced infinite values in continuous y-axis
+
+    ## Warning: Transformation introduced infinite values in continuous x-axis
+
+    ## Warning: Transformation introduced infinite values in continuous y-axis
+
+    ## Warning: Removed 44018 rows containing non-finite values (`stat_smooth()`).
+
+![](CTAT_SeraCareFusion_files/figure-gfm/unnamed-chunk-35-1.png)<!-- -->
+
+``` r
+# convert to CPM
+col_sums = gene_read_counts %>% select(-gene_id) %>% summarize(sum_LR_r1 = sum(LR_r1), 
+                                                               sum_LR_r2 = sum(LR_r2),
+                                                               sum_LR_r3 = sum(LR_r3),
+                                                               sum_SR_r1 = sum(SR_r1),
+                                                               sum_SR_r2 = sum(SR_r2),
+                                                               sum_SR_r3 = sum(SR_r3) )
+
+col_sums
+```
+
+    ##   sum_LR_r1 sum_LR_r2 sum_LR_r3 sum_SR_r1 sum_SR_r2 sum_SR_r3
+    ## 1   4630415   7569560   7316602   5509506   8695147   8586619
+
+``` r
+gene_read_CPM = gene_read_counts %>%
+    mutate(LR_r1_CPM = LR_r1 / col_sums$sum_LR_r1 * 1e6) %>%
+    mutate(LR_r2_CPM = LR_r2 / col_sums$sum_LR_r2 * 1e6) %>%
+    mutate(LR_r3_CPM = LR_r3 / col_sums$sum_LR_r3 * 1e6) %>%
+    
+    mutate(SR_r1_CPM = SR_r1 / col_sums$sum_SR_r1 * 1e6) %>%
+    mutate(SR_r2_CPM = SR_r2 / col_sums$sum_SR_r2 * 1e6) %>%
+    mutate(SR_r3_CPM = SR_r3 / col_sums$sum_SR_r3 * 1e6) %>%
+    
+    select(LR_r1_CPM, LR_r2_CPM, LR_r3_CPM,
+           SR_r1_CPM, SR_r2_CPM, SR_r3_CPM) 
+```
+
+``` r
+gene_read_CPM_means = gene_read_CPM %>% rowwise() %>%
+    mutate(mean_LR_CPM = mean(LR_r1_CPM, LR_r2_CPM, LR_r3_CPM),
+           mean_SR_CPM = mean(SR_r1_CPM, SR_r2_CPM, SR_r3_CPM) )  %>%
+    select(mean_LR_CPM, mean_SR_CPM)
+```
+
+``` r
+gene_read_CPM_means %>% 
+   ggplot(aes(x=mean_LR_CPM, y=mean_SR_CPM)) + geom_point() +
+    theme_bw() + 
+    scale_x_continuous(trans='log10') +
+    scale_y_continuous(trans='log10') +
+     stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth")
+```
+
+    ## Warning: Transformation introduced infinite values in continuous x-axis
+
+    ## Warning: Transformation introduced infinite values in continuous y-axis
+
+    ## Warning: Transformation introduced infinite values in continuous x-axis
+
+    ## Warning: Transformation introduced infinite values in continuous y-axis
+
+    ## Warning: Removed 44018 rows containing non-finite values (`stat_smooth()`).
+
+![](CTAT_SeraCareFusion_files/figure-gfm/unnamed-chunk-39-1.png)<!-- -->
+
+``` r
+gene_read_CPM_means = gene_read_CPM_means %>% filter(mean_LR_CPM > 10 & mean_SR_CPM > 10) %>% 
+    mutate(SR_div_LR = mean_SR_CPM/mean_LR_CPM) 
+```
+
+``` r
+median(gene_read_CPM_means$SR_div_LR)
+```
+
+    ## [1] 3.964715
+
+So a median of \~4x as many short reads as long reads per gene
