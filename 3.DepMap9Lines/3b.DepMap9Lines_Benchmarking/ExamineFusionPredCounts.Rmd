@@ -2,7 +2,7 @@
 title: "ExamineFusionPredCounts"
 author: "bhaas"
 date: '2024-07-21'
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
@@ -160,79 +160,86 @@ fusion_preds_min_agree %>% head()
 
 ```{r}
 
-fusion_preds = fusion_preds %>% mutate(min2_agree = lex_ordered_fusion_name %in% (fusion_preds_min_agree %>% filter(n>=2) %>% pull(lex_ordered_fusion_name)) )
+fusion_preds_min2_agree_names = fusion_preds %>% mutate(min2_agree = lex_ordered_fusion_name %in% (fusion_preds_min_agree %>% filter(n>=2) %>% pull(lex_ordered_fusion_name)) )
 
 
-fusion_preds = fusion_preds %>% mutate(min3_agree = lex_ordered_fusion_name %in% (fusion_preds_min_agree %>% filter(n>=3) %>% pull(lex_ordered_fusion_name)) )
+fusion_preds_min3_agree_names = fusion_preds %>% mutate(min3_agree = lex_ordered_fusion_name %in% (fusion_preds_min_agree %>% filter(n>=3) %>% pull(lex_ordered_fusion_name)) )
 
-fusion_preds %>% head()
+
 
 ```
 
 ```{r}
 
-fusion_counts_min2_agree_df = NULL
+fusion_counts_min_agree_df = NULL
 
 for (i in seq(1,10)) {
     
-    fusion_counts_min2_agree = fusion_preds %>% filter(num_reads >= i) %>% group_by(prog, min2_agree) %>% tally() %>% mutate(min_reads=i)
-
-    fusion_counts_min2_agree_df = bind_rows(fusion_counts_min2_agree_df, fusion_counts_min2_agree)
+    for (min_progs_agree in seq(2,4)) {
+        
+         fusions_with_min_reads = fusion_preds %>% filter(num_reads >= i) 
+            num_fusions_min_reads = fusions_with_min_reads %>% select(lex_ordered_fusion_name) %>% unique() %>% nrow()
     
+        fusion_counts_min_agree = fusion_preds %>% filter(num_reads >= i) %>% 
+             group_by(lex_ordered_fusion_name) %>% tally() %>% filter(n>=min_progs_agree) %>% nrow() 
+
+            fusion_counts_min_agree_df = bind_rows(fusion_counts_min_agree_df, 
+                                            data.frame(min_read_threshold = i,
+                                                       min_progs_agree = min_progs_agree,
+                                                       num_fusions_min_reads = num_fusions_min_reads,
+                                                       num_fusions_min_agree = fusion_counts_min_agree,
+                                                       frac_fusions_min_agree = fusion_counts_min_agree/num_fusions_min_reads
+                                                        ) 
+                                            
+         )
+   }   
 }
 
-fusion_counts_min2_agree_df %>% head()
+fusion_counts_min_agree_df 
 
 ```
 
 
 ```{r}
 
-frac_fusion_min2_agree = fusion_counts_min2_agree_df %>% spread(key=min2_agree, value=n, fill=0) %>% 
-    mutate(frac_min2_agree = `TRUE` / (`TRUE`+`FALSE`)) 
+# fraction of all predictions that are agreed upon given minimum read thresholds applied
 
-
-
-frac_fusion_min2_agree %>% head()
+fusion_counts_min_agree_df  %>%
+    mutate(min_progs_agree = factor(min_progs_agree)) %>%
+    ggplot(aes(x=factor(min_read_threshold), y=frac_fusions_min_agree)) + 
+    theme_bw() +
+    geom_point(aes(color=min_progs_agree)) + geom_line(aes(group=min_progs_agree, color=min_progs_agree))
 
 ```
+
+key observations:
+- increasing read support yields increasingly agreeing predictions across programs with the exception of min 1 read support for min-2 and min-3 progs agreeing.
+- increasing hte number of programs that must agree reduces the fraction that agree at the min-1 read evidence threshold point.
+
+
+
+# examine truth sets overall fraction
 
 
 ```{r}
 
-frac_fusion_min2_agree %>% ggplot(aes(x=min_reads, y=frac_min2_agree)) + geom_line(aes(groups=prog, color=prog)) +
-    geom_point(aes(color=prog)) +
-    theme_bw()
-
-```
-
-
-# min 3 agree
-
-```{r}
-
-fusion_counts_min3_agree_df = NULL
+fusion_counts_min_agree_vs_illum_supported = NULL
 
 for (i in seq(1,10)) {
     
-    fusion_counts_min3_agree = fusion_preds %>% filter(num_reads >= i) %>% group_by(prog, min3_agree) %>% tally() %>% mutate(min_reads=i)
-
-    fusion_counts_min3_agree_df = bind_rows(fusion_counts_min3_agree_df, fusion_counts_min3_agree)
-    
+    for (min_progs_agree in seq(2,4)) {
+        
+        num_fusion_preds = fusion_preds %>% filter(num_reads >= i) %>%
+            group_by(lex_ordered_fusion_name, illumina_supported) %>% tally() %>% filter(n > min_progs_agree) %>% ungroup() %>%
+            group_by(illumina_supported) %>% tally(name='num_fusions')
+        
+        fusion_counts_min_agree_vs_illum_supported = bind_rows(fusion_counts_min_agree_vs_illum_supported, 
+                                                           num_fusion_preds %>% mutate(min_read_support = i, min_progs_agree = min_progs_agree)
+                                                           )
+    }
 }
 
-fusion_counts_min3_agree_df %>% head()
-
-```
-
-```{r}
-
-frac_fusion_min3_agree = fusion_counts_min3_agree_df %>% spread(key=min3_agree, value=n, fill=0) %>% 
-    mutate(frac_min3_agree = `TRUE` / (`TRUE`+`FALSE`)) 
-
-
-
-frac_fusion_min3_agree %>% head()
+fusion_counts_min_agree_vs_illum_supported
 
 ```
 
@@ -240,11 +247,23 @@ frac_fusion_min3_agree %>% head()
 
 ```{r}
 
-frac_fusion_min3_agree %>% ggplot(aes(x=min_reads, y=frac_min3_agree)) + geom_line(aes(groups=prog, color=prog)) +
-    geom_point(aes(color=prog)) +
-    theme_bw()
+fusion_counts_min_agree_vs_illum_supported %>% 
+    spread(key=illumina_supported, value=num_fusions) %>% mutate(frac_illum_supported = `TRUE`/(`TRUE`+`FALSE`)) %>%
+    ggplot(aes(x=factor(min_read_support), y=frac_illum_supported)) + theme_bw() +
+    geom_point(aes(color=factor(min_progs_agree))) + 
+    geom_line(aes(group=min_progs_agree, color=factor(min_progs_agree)))
+   
+
+
 
 ```
+
+
+Increasing the minimum read support before defining proxy truth sets increases the fraction of fusions supported by orthogonal illumina read evidence.
+
+Increasing the number of programs that must agree, particularly at 3 or more reads as evidence, increases the relative illumina-support among the proxy truth set.
+
+
 
 
 

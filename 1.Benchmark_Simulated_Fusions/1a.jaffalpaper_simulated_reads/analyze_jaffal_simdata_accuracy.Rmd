@@ -115,6 +115,48 @@ ROC_data %>% filter(analysisType == "allow_reverse_AP") %>%
 
 ```{r}
 
+max_F1_data %>% 
+    filter(analysisType == "allow_reverse_AP") %>%
+    select(seqtype, divergence, prog, TP, FP) %>% filter(prog=='LongGF') %>%
+    gather(key = TP_or_FP, value=fusion_count, TP, FP) %>% arrange(seqtype, divergence)
+
+```
+
+
+```{r}
+# show counts of TP and FP
+
+max_F1_data %>% 
+    filter(analysisType == "allow_reverse_AP") %>%
+    select(seqtype, divergence, prog, TP, FP) %>% 
+    gather(key = TP_or_FP, value=fusion_count, TP, FP) %>%
+    mutate(TP_or_FP = factor(TP_or_FP, levels=c('TP', 'FP'))) %>%
+    ggplot(aes(x=divergence, y=fusion_count)) + theme_bw() +
+    geom_point(aes(color=prog)) + geom_line(aes(group=prog, color=prog)) +
+    facet_grid(vars(TP_or_FP), vars(seqtype))
+
+```
+
+```{r}
+
+max_F1_data %>% 
+    filter(analysisType == "allow_reverse_AP") %>%
+    select(seqtype, divergence, prog, TP, FP) %>% 
+    gather(key = TP_or_FP, value=fusion_count, TP, FP) %>%
+    mutate(TP_or_FP = factor(TP_or_FP, levels=c('TP', 'FP'))) %>%
+    mutate(prog_TP_or_FP = paste(prog, TP_or_FP)) %>%
+    ggplot(aes(x=divergence, y=fusion_count)) + theme_bw() +
+    geom_point(aes(color=prog, shape=TP_or_FP), size=rel(3)) + 
+    geom_line(aes(group=prog_TP_or_FP, color=prog)) +
+    facet_wrap(~seqtype)
+
+
+```
+
+
+
+```{r}
+
 ROC_data %>% filter(analysisType == "allow_reverse_AP") %>% 
          filter(divergence == 95) %>%
          #filter(TPR > 0.05) %>%
