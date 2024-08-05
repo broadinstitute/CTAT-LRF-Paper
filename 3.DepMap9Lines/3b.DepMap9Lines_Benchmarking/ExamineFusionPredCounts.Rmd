@@ -47,13 +47,25 @@ length(messy_fusions)
 
 
 ```{r}
-
+# arriba fusion preds
 arriba_fusion_preds = read.csv("3b.1.IlluminaTruSeqDepMap9Lines/all_arriba_high_preds.tsv", sep="\t", header=T, stringsAsFactors = F)
+arriba_fusion_preds %>% select(lex_ordered_fusion_name) %>% unique() %>% nrow()
 
+# 282 arriba fusions
+```
+
+
+```{r}
+# starF preds
 starF_preds = read.csv("3b.1.IlluminaTruSeqDepMap9Lines/all_STARF_preds.tsv", sep="\t", header=T, stringsAsFactors = F)
+starF_preds %>% select(lex_ordered_fusion_name) %>% unique() %>% nrow()
 
+
+# 266 StarF preds
 
 ```
+
+
 
 ```{r}
 
@@ -65,11 +77,14 @@ illumina_preds = illumina_preds %>% group_by(sample, lex_ordered_fusion_name) %>
     ungroup() %>% select(sample, lex_ordered_fusion_name, progs) %>% unique()
 
 illumina_preds %>% head()
+
 ```
 
 ```{r}
 
 table(illumina_preds$progs)
+
+# 190 +  92 +  174  = 456
 
 ```
 

@@ -2,7 +2,7 @@
 title: "SGNex_ONT_eval"
 author: "bhaas"
 date: '2024-07-24'
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
@@ -224,9 +224,106 @@ read_support_agg_scored %>%
 ```
 
 
+```{r}
+
+# examine Venn for valid fusions
+
+read_support_agg_scored  %>% filter(validated_fusion) %>% group_by(proxy_fusion_name) %>%
+    arrange(prog) %>%
+    mutate(progs = paste(collapse=",", prog)) %>%
+    ungroup() %>%
+    select(proxy_fusion_name, progs) %>% unique()
+
+
+```
+
+```{r}
+
+read_support_agg_scored  %>% filter(validated_fusion) %>% group_by(proxy_fusion_name) %>%
+    arrange(prog) %>%
+    mutate(progs = paste(collapse=",", prog)) %>%
+    ungroup() %>%
+    select(proxy_fusion_name, progs) %>% unique() %>% 
+    group_by(progs) %>% tally() %>%
+    arrange(desc(n))
+    
+
+
+```
+
+
+```{r}
+
+# just jaffal and ctat-LRF
+
+read_support_agg_scored  %>% filter(validated_fusion) %>% 
+    filter(prog %in% c('JAFFAL', 'ctat-LR-fusion')) %>%
+    group_by(proxy_fusion_name) %>%
+    arrange(prog) %>%
+    mutate(progs = paste(collapse=",", prog)) %>%
+    ungroup() %>%
+    select(proxy_fusion_name, progs) %>% unique() %>% 
+    group_by(progs) %>% tally() %>%
+    arrange(desc(n))
+    
+
+```
+
+
+
+```{r}
+
+read_support_agg_scored  %>% filter(validated_fusion) %>% 
+    filter(prog %in% c('JAFFAL', 'ctat-LR-fusion')) %>%
+    group_by(proxy_fusion_name) %>%
+    arrange(prog) %>%
+    mutate(progs = paste(collapse=",", prog)) %>%
+    arrange(desc(progs))
+
+```
 
 
 
 
+```{r}
+
+read_support_agg_scored  %>% filter(validated_fusion) %>% group_by(proxy_fusion_name) %>%
+    arrange(prog) %>%
+    mutate(progs = paste(collapse=",", prog)) %>%
+    ungroup() %>%
+    select(proxy_fusion_name, progs) %>% unique() %>% 
+    group_by(progs) %>% tally() %>%
+    ggplot(aes(x=progs, y=n)) + 
+    geom_col() +
+     theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+```
+
+
+```{r}
+# get counts of valid fusions
+
+read_support_agg_scored  %>% filter(validated_fusion) %>% 
+    select(proxy_fusion_name, prog) %>% unique() %>% group_by(prog) %>% tally() %>%
+    arrange(desc(n))
+    
+```
+
+```{r}
+
+read_support_agg %>% ungroup() %>% select(core_sample_name) %>% unique()
+
+
+```
+
+```{r}
+
+# total number of fusion preds
+
+read_support_agg %>% ungroup() %>% select(prog, proxy_fusion_name) %>% unique() %>% group_by(prog) %>% tally() %>% 
+    arrange(desc(n))
+
+
+```
 
 
