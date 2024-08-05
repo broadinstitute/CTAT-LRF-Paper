@@ -693,7 +693,8 @@ fusions_of_interest
 # Examine umaps for fusions
 
 ``` r
-baseplot = Tum_umap_data %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + geom_point(aes(color=celltype_final))
+baseplot = Tum_umap_data %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + geom_point(aes(color=celltype_final)) +
+    theme_bw() 
 
 baseplot
 ```
@@ -708,7 +709,8 @@ plots = list()
 for (fusion in  unique(fusions_of_interest$FusionName)) {
     
     p = baseplot + geom_point(data=Tum_data %>% filter(FusionName == fusion) %>% select(UMAP_1, UMAP_2) %>% unique(), 
-                              color='red') + 
+                              color='black') + 
+     
         ggtitle(paste("Patient 3 Tumor, Fusion: ", fusion) )
     
     plot(p)   
@@ -816,6 +818,18 @@ tumor_cell_counts_by_methods_by_isoform
     ## 14 SNRNP70--ZIK1 chr19:49098704:+ chr19:57590011:+    ctat-LR-fusion           8
 
 ``` r
+# counts of cells according to CBLC--CTC-232P5.1  fusion isoforms and corresponding read type / method
+
+tumor_cell_counts_by_methods_by_isoform %>% 
+    filter(grepl("CBLC", fusion)) %>%
+    ggplot(aes(x=fusion, y=cell_counts, fill=method)) + geom_bar(stat='identity', position='dodge') +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+```
+
+![](Patient3_analysis_files/figure-gfm/unnamed-chunk-33-1.png)<!-- -->
+
+``` r
 tumor_cell_counts_by_methods_by_isoform %>%
               ggplot(aes(x=fusion, y=cell_counts, fill=method)) + 
                  geom_bar(stat='identity', position='dodge') +
@@ -823,7 +837,7 @@ tumor_cell_counts_by_methods_by_isoform %>%
     ggtitle("Patient 3 Fusions of interest")
 ```
 
-![](Patient3_analysis_files/figure-gfm/unnamed-chunk-33-1.png)<!-- -->
+![](Patient3_analysis_files/figure-gfm/unnamed-chunk-34-1.png)<!-- -->
 
 ``` r
 # co-expression of CBLC--CTC-232P5.1 and SNRNP70--ZIK1 in cells

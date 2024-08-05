@@ -46,6 +46,10 @@ ROC_data = ROC_data %>% filter(prog %in% c(
                        )
 
 
+# write supplementary data file
+write.table(ROC_data, file="Table_Sx-benchmarking_JAFFAL_sim_badread_fusions.tsv", quote=F, sep="\t", row.names=F)
+
+
 # extract the maximum F1 value for each program and target data set: 
 
 max_F1_data = ROC_data %>% group_by(analysisType, prog, seqtype, divergence) %>% 
