@@ -18,5 +18,5 @@ for (file in files) {
 }
 
 message("-writing supp table")
-write.table(big_df, file="Table_S4-HGSOC_sc.fusion_preds_by_cell.tsv", sep="\t", row.names=F, quote=F)
+write.table(big_df, file="Table_Sx-HGSOC_sc.fusion_preds_by_cell.tsv", sep="\t", row.names=F, quote=F)
 
