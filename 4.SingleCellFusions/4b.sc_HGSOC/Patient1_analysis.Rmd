@@ -143,11 +143,14 @@ Tum_data %>% head()
 ```
 
 ```{r}
-# since starF and FI were run at max sensitivity, lets restrict fusions to those identified by ctat-LRF
 
-Tum_ctat_LRF_fusion_genes = Tum_data %>% filter(method == 'ctat-LR-fusion') %>% select(FusionName) %>% unique() %>% pull(FusionName)
+if (FALSE) {
+    # since starF and FI were run at max sensitivity, lets restrict fusions to those identified by ctat-LRF
 
-Tum_data = Tum_data %>% filter(FusionName %in% Tum_ctat_LRF_fusion_genes)
+    Tum_ctat_LRF_fusion_genes = Tum_data %>% filter(method == 'ctat-LR-fusion') %>% select(FusionName) %>% unique() %>% pull(FusionName)
+
+    Tum_data = Tum_data %>% filter(FusionName %in% Tum_ctat_LRF_fusion_genes)
+}
 
 nrow(Tum_data)
 
@@ -770,6 +773,14 @@ tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + theme_
 
 ```
 
+
+```{r}
+
+Tum_data_w_expr = left_join(Tum_data, gene_expr_data, by=c('barcodes'='barcode'))
+
+```
+
+
 ```{r}
 
 Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() + 
@@ -946,7 +957,36 @@ Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() +
 ```
 
 
+# any fusions found only via short read data?
+
+```{r}
+
+fusions_with_long_read = Tum_data %>% filter(method == "ctat-LR-fusion") %>% select(FusionName) %>% unique()
+
+fusions_with_long_read = fusions_with_long_read %>% filter(! FusionName %in% Om_data$FusionName)
+
+short_read_only_fusions = Tum_data %>% filter( ! FusionName %in% fusions_with_long_read$FusionName) %>% select(FusionName, method) %>% unique() %>%
+    group_by(FusionName) %>% mutate(methods = paste(collapse=",", method), num_methods = n()) %>%
+    select(FusionName, methods, num_methods) %>% unique() %>% arrange(desc(num_methods)) 
+
+short_read_only_fusions
+
+```
+
+```{r}
+
+# any short-read-only fusions relevant to cancer?
+
+left_join(short_read_only_fusions, Tum_data, by='FusionName') %>% 
+    select(FusionName, cell_barcode, celltype_final) %>% unique() %>%
+    group_by(FusionName, celltype_final) %>% tally(name='num_cells') %>% 
+    mutate(frac_fusion_cells=prop.table(num_cells)) %>%
+    filter(celltype_final == "HGSOC" & num_cells >= MIN_CELLS & frac_fusion_cells >= 0.8) %>%
+    arrange(desc(num_cells))
 
 
+# 0
+
+```
 
 

@@ -59,6 +59,35 @@ get_FI_data = function(FI_preds_file) {
     return(FI_data)
 }
 
+get_Arriba_data = function(arriba_preds_file) {
+    
+    Arriba_data = read.csv(arriba_preds_file, sep="\t", stringsAsFactors = F, header=T, com='')
+    
+    Arriba_data$strand1 = sapply(Arriba_data$strand1.gene.fusion., function(x) { str_split(x, "/")[[1]]}[1])
+    Arriba_data$strand2 = sapply(Arriba_data$strand2.gene.fusion., function(x) { str_split(x, "/")[[1]]}[1])
+    
+    Arriba_data = Arriba_data %>% 
+        rowwise() %>%
+        mutate(FusionName = paste(X.gene1, gene2, sep="--")) %>%
+        mutate(LeftBreakpoint = paste0("chr", breakpoint1, ":", strand1), 
+               RightBreakpoint = paste0("chr", breakpoint2, ":", strand2) ) %>%
+        rename(JunctionReads = read_identifiers) %>%
+        select(FusionName, LeftBreakpoint, RightBreakpoint, JunctionReads) %>%
+        mutate(JunctionReads = str_split(JunctionReads, ",")) %>%
+        unnest(JunctionReads) %>%
+        separate(JunctionReads, c('cell_barcode', 'umi', 'read_name'), "\\^") %>%
+        mutate(cell_barcode = reverseComplement(cell_barcode, case='upper')) %>%
+        mutate(method="Arriba")
+    
+    return(Arriba_data)
+}
+
+
+
+
+
+
+
 
 get_ctat_LRF_data = function(ctat_LRF_preds_file) {
     
@@ -113,7 +142,7 @@ get_cell_type_and_umap_info = function(cell_types_file, umap_coords_file) {
 ```{r}
 
 consolidate_data = function(starF_preds_file, FI_preds_file, ctat_LRF_preds_file, 
-                            ctat_LRF_FI_preds_file,
+                            ctat_LRF_FI_preds_file, arriba_preds_file,
                             cell_types_file, umap_coords_file, sample_name) {
     
     starF_data = get_StarF_data(starF_preds_file)
@@ -124,10 +153,13 @@ consolidate_data = function(starF_preds_file, FI_preds_file, ctat_LRF_preds_file
     
     ctat_LRF_FI_data = get_ctat_LRF_data(ctat_LRF_FI_preds_file)
     
+    arriba_preds = get_Arriba_data(arriba_preds_file)
+    
     all_fusions = bind_rows(starF_data,
                         FI_data,
                         ctat_LRF_data,
-                        ctat_LRF_FI_data)
+                        ctat_LRF_FI_data,
+                        arriba_preds)
 
     cell_type_and_umap_info = get_cell_type_and_umap_info(cell_types_file, umap_coords_file)
     
@@ -176,11 +208,12 @@ starF_preds_file = "data/Patient1_Om/Patient1_Om.star-fusion.fusion_predictions.
 FI_preds_file = "data/Patient1_Om/Patient1_Om.finspector.FusionInspector.fusions.tsv.gz"
 ctat_LRF_preds_file = "data/Patient1_Om/Patient1_Om.ctat-LR-fusion.fusion_predictions.tsv.gz"
 ctat_LRF_FI_preds_file = "data/Patient1_Om/Patient1_Om.ctatLRF_FI.fusion_predictions.tsv.gz"
+arriba_preds_file = "data/Patient1_Om/Patient1_Om.arriba.fusions.tsv.gz"
 cell_types_file = "data/Patient1_Om/Patient1_Om.bc_to_celltype.tsv.gz"
 umap_coords_file = "data/Patient1_Om/Patient1_Om_UMAPcoords.txt"
 
 patient1_Om_fusions = consolidate_data(starF_preds_file, FI_preds_file, ctat_LRF_preds_file,
-                                       ctat_LRF_FI_preds_file,
+                                       ctat_LRF_FI_preds_file, arriba_preds_file,
                                        cell_types_file, umap_coords_file,
                                        'Patient1_Om'
                                        )
@@ -199,11 +232,12 @@ starF_preds_file = "data/Patient1_Tum/Patient1_Tum.star-fusion.fusion_prediction
 FI_preds_file = "data/Patient1_Tum/Patient1_Tum.finspector.FusionInspector.fusions.tsv.gz"
 ctat_LRF_preds_file = "data/Patient1_Tum/Patient1_Tum.ctat-LR-fusion.fusion_predictions.tsv.gz"
 ctat_LRF_FI_preds_file = "data/Patient1_Tum/Patient1_Tum.ctatLRF_FI.fusion_predictions.tsv.gz"
+arriba_preds_file = "data/Patient1_Tum/Patient1_Tum.arriba.fusions.tsv.gz"
 cell_types_file = "data/Patient1_Tum/Patient1_Tum.bc_to_celltype.tsv.gz"
 umap_coords_file = "data/Patient1_Tum/Patient1_Tum_UMAPcoords.txt"
 
 patient1_Tum_fusions = consolidate_data(starF_preds_file, FI_preds_file, ctat_LRF_preds_file,
-                                        ctat_LRF_FI_preds_file,
+                                        ctat_LRF_FI_preds_file, arriba_preds_file,
                                         cell_types_file, umap_coords_file,
                                         'Patient1_Tum')
 
@@ -219,12 +253,13 @@ starF_preds_file = "data/Patient2_Tum/Patient2_Tum.star-fusion.fusion_prediction
 FI_preds_file = "data/Patient2_Tum/Patient2_Tum.finspector.FusionInspector.fusions.tsv.gz"
 ctat_LRF_preds_file = "data/Patient2_Tum/Patient2_Tum.ctat-LR-fusion.fusion_predictions.tsv.gz"
 ctat_LRF_FI_preds_file = "data/Patient2_Tum/Patient2_Tum.ctatLRF_FI.fusion_predictions.tsv.gz"
+arriba_preds_file = "data/Patient2_Tum/Patient2_Tum.arriba.fusions.tsv.gz"
 cell_types_file = "data/Patient2_Tum/Patient2_Tum.bc_to_celltype.tsv.gz"
 umap_coords_file = "data/Patient2_Tum/Patient2_Tum_UMAPcoords.txt"
 
 
 patient2_Tum_fusions = consolidate_data(starF_preds_file, FI_preds_file, ctat_LRF_preds_file,
-                                        ctat_LRF_FI_preds_file,
+                                        ctat_LRF_FI_preds_file, arriba_preds_file,
                                         cell_types_file, umap_coords_file,
                                         'Patient2_Tum')
 
@@ -240,11 +275,12 @@ starF_preds_file = "data/Patient3_Om/Patient3_Om.star-fusion.fusion_predictions.
 FI_preds_file = "data/Patient3_Om/Patient3_Om.finspector.FusionInspector.fusions.tsv.gz"
 ctat_LRF_preds_file = "data/Patient3_Om/Patient3_Om.ctat-LR-fusion.fusion_predictions.tsv.gz"
 ctat_LRF_FI_preds_file = "data/Patient3_Om/Patient3_Om.ctatLRF_FI.fusion_predictions.tsv.gz"
+arriba_preds_file = "data/Patient3_Om/Patient3_Om.arriba.fusions.tsv.gz"
 cell_types_file = "data/Patient3_Om/Patient3_Om.bc_to_celltype.tsv.gz"
 umap_coords_file = "data/Patient3_Om/Patient3_Om_UMAPcoords.txt"
 
 patient3_Om_fusions = consolidate_data(starF_preds_file, FI_preds_file, ctat_LRF_preds_file,
-                                       ctat_LRF_FI_preds_file,
+                                       ctat_LRF_FI_preds_file, arriba_preds_file,
                                        cell_types_file, umap_coords_file,
                                        'Patient3_Om')
 
@@ -259,12 +295,13 @@ starF_preds_file = "data/Patient3_Tum/Patient3_Tum.star-fusion.fusion_prediction
 FI_preds_file = "data/Patient3_Tum/Patient3_Tum.finspector.FusionInspector.fusions.tsv.gz"
 ctat_LRF_preds_file = "data/Patient3_Tum/Patient3_Tum.ctat-LR-fusion.fusion_predictions.tsv.gz"
 ctat_LRF_FI_preds_file = "data/Patient3_Tum/Patient3_Tum.ctatLRF_FI.fusion_predictions.tsv.gz"
+arriba_preds_file = "data/Patient3_Tum/Patient3_Tum.arriba.fusions.tsv.gz"
 cell_types_file = "data/Patient3_Tum/Patient3_Tum.bc_to_celltype.tsv.gz"
 umap_coords_file = "data/Patient3_Tum/Patient3_Tum_UMAPcoords.txt"
 
 
 patient3_Tum_fusions = consolidate_data(starF_preds_file, FI_preds_file, ctat_LRF_preds_file,
-                                        ctat_LRF_FI_preds_file,
+                                        ctat_LRF_FI_preds_file, arriba_preds_file,
                                         cell_types_file, umap_coords_file,
                                         'Patient3_Tum')
 
