@@ -68,7 +68,7 @@ get_Arriba_data = function(arriba_preds_file) {
     
     Arriba_data = Arriba_data %>% 
         rowwise() %>%
-        mutate(FusionName = paste(X.gene1, gene2, sep="--")) %>%
+        mutate(FusionName = ifelse(direction1 == "upstream", paste(X.gene1, gene2, sep="--"), paste(gene2, X.gene1, sep="--"))) %>%
         mutate(LeftBreakpoint = paste0("chr", breakpoint1, ":", strand1), 
                RightBreakpoint = paste0("chr", breakpoint2, ":", strand2) ) %>%
         rename(JunctionReads = read_identifiers) %>%
@@ -79,14 +79,12 @@ get_Arriba_data = function(arriba_preds_file) {
         mutate(cell_barcode = reverseComplement(cell_barcode, case='upper')) %>%
         mutate(method="Arriba")
     
+    
+    # use of different gene symbols
+    Arriba_data$FusionName = str_replace(Arriba_data$FusionName, "RANBP3-DT", "CTC-232P5.1") 
+    
     return(Arriba_data)
 }
-
-
-
-
-
-
 
 
 get_ctat_LRF_data = function(ctat_LRF_preds_file) {
@@ -141,6 +139,34 @@ get_cell_type_and_umap_info = function(cell_types_file, umap_coords_file) {
 
 ```{r}
 
+assign_most_agreeable_fusion_name = function(all_fusions) {
+    
+    all_fusions = all_fusions %>% rowwise() %>% mutate(orig_FusionName = FusionName) %>%
+        mutate(lex_sorted_FusionName = paste(collapse="--", sort(str_split(FusionName, "--")[[1]])))
+    
+    
+    use_FusionNames_df = all_fusions %>% select(orig_FusionName, method, lex_sorted_FusionName) %>% unique() %>%
+        group_by(lex_sorted_FusionName, orig_FusionName) %>% tally() %>%
+        ungroup() %>%
+        group_by(lex_sorted_FusionName) %>% arrange(desc(n)) %>% filter(row_number() == 1) %>%
+        ungroup() %>% 
+        select(lex_sorted_FusionName, orig_FusionName) %>% unique() %>%
+        rename(use_FusionName = orig_FusionName)
+    
+    all_fusions = left_join(all_fusions, use_FusionNames_df, by='lex_sorted_FusionName') %>%
+        select(-FusionName) %>%
+        rename(FusionName = use_FusionName)
+    
+    return(all_fusions)
+}
+
+
+```
+
+
+
+```{r}
+
 consolidate_data = function(starF_preds_file, FI_preds_file, ctat_LRF_preds_file, 
                             ctat_LRF_FI_preds_file, arriba_preds_file,
                             cell_types_file, umap_coords_file, sample_name) {
@@ -160,6 +186,11 @@ consolidate_data = function(starF_preds_file, FI_preds_file, ctat_LRF_preds_file
                         ctat_LRF_data,
                         ctat_LRF_FI_data,
                         arriba_preds)
+    
+    
+    all_fusions = assign_most_agreeable_fusion_name(all_fusions)
+    
+    print(head(all_fusions))
 
     cell_type_and_umap_info = get_cell_type_and_umap_info(cell_types_file, umap_coords_file)
     
@@ -178,15 +209,15 @@ consolidate_data = function(starF_preds_file, FI_preds_file, ctat_LRF_preds_file
     write.table(all_fusions, file=all_output_filename, row.names=F, sep="\t", quote=F)
 
     # distill umis
-    all_fusions = all_fusions %>% group_by(cell_barcode, FusionName, umi, method) %>% filter(row_number()==1) %>% ungroup()
+    all_fusions = all_fusions %>% group_by(cell_barcode, FusionName, orig_FusionName, lex_sorted_FusionName, umi, method) %>% filter(row_number()==1) %>% ungroup()
     all_output_filename = paste(c(sample_name, filename_core, "filtered_cells_and_dedup_umis.tsv"), collapse='.')        
     message('writing: ', all_output_filename)
     write.table(all_fusions, file=all_output_filename, row.names=F, sep="\t", quote=F)
     
     # fusion breakpoint cell summary support.
-    all_fusions = all_fusions %>% select(FusionName, LeftBreakpoint, RightBreakpoint, method, cell_barcode, celltype_final, dataset) %>%
+    all_fusions = all_fusions %>% select(FusionName, orig_FusionName, lex_sorted_FusionName, LeftBreakpoint, RightBreakpoint, method, cell_barcode, celltype_final, dataset) %>%
         unique() %>%
-        group_by(FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, dataset) %>% tally(name='cell_counts') %>%
+        group_by(FusionName, orig_FusionName, lex_sorted_FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, dataset) %>% tally(name='cell_counts') %>%
         arrange(desc(cell_counts))
     
     all_output_filename = paste(c(sample_name, filename_core, "filtered_cells_and_dedup_umis.cell_counts_by_method.tsv"), collapse='.')        

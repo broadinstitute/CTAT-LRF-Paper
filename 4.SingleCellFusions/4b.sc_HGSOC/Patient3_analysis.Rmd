@@ -26,8 +26,6 @@ MIN_CELLS = 5
 Om_data = read.table("data/Patient3_Om.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.tsv.gz", header=T, sep="\t", stringsAsFactors = F) %>%
     filter(! is.na(UMAP_1))
 
-Om_data$FusionName = str_replace(Om_data$FusionName, "RANBP3-DT", "CTC-232P5.1") # because of Arriba
-
 nrow(Om_data)
 Om_data %>% head()
 
@@ -93,8 +91,6 @@ Om_cell_counts %>% filter(tot_cells_w_fusion >= MIN_CELLS)
 
 Om_cell_counts_by_method = read.table("data/Patient3_Om.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.cell_counts_by_method.tsv.gz", 
                                       header=T, sep="\t", stringsAsFactors = F)
-
-Om_cell_counts_by_method$FusionName = str_replace(Om_cell_counts_by_method$FusionName, "RANBP3-DT", "CTC-232P5.1") # because of Arriba
 
 Om_cell_counts_by_method %>% head()
 
