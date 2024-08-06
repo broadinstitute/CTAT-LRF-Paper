@@ -18,7 +18,7 @@ Om_data = read.table("data/Patient1_Om.Dondi_overian_CTAT_fusions.filtered_cells
 nrow(Om_data)
 ```
 
-    ## [1] 3597
+    ## [1] 3638
 
 ``` r
 Om_data %>% head()
@@ -30,33 +30,34 @@ Om_data %>% head()
     ## 3 AAMDC--SAMD9 chr11:77842531:+  chr7:93116011:- TATGGCATGTTGTGTG GAGGTCTGAATA
     ## 4  AATF--CDC27 chr17:36953907:+ chr17:47154786:- TTACATCACCACGCCA GGAAAACACTCA
     ## 5 AATF--RNF181 chr17:37056856:+  chr2:85596857:+ CACAAAGCTTTCAGGT TAGATGGGCGAG
-    ## 6 ABCA9--TEAD3 chr17:69027091:-  chr6:35478291:- GCTTTGAGATGTGAAA CGGAGAAGAGAA
-    ##                           read_name         method         barcodes
-    ## 1  m64156_210212_094634/5494165/ccs ctat-LR-fusion TTGTTCACAACCCGCA
-    ## 2  m64156_210212_094634/2470599/ccs ctat-LR-fusion TTGTTCACAACCCGCA
-    ## 3 m64156_210218_095630/13535503/ccs ctat-LR-fusion CACACAACATGCCATA
-    ## 4  m64156_210218_095630/2164025/ccs ctat-LR-fusion TGGCGTGGTGATGTAA
-    ## 5  m64156_210218_095630/9427948/ccs ctat-LR-fusion ACCTGAAAGCTTTGTG
-    ## 6 m64156_210212_094634/13110180/ccs ctat-LR-fusion TTTCACATCTCAAAGC
+    ## 6  ABCA8--PYGL chr17:68867554:- chr14:50923968:- AGCCATCCTGTGACCC AGCTGCTCTCAA
+    ##                                    read_name         method         barcodes
+    ## 1           m64156_210212_094634/5494165/ccs ctat-LR-fusion TTGTTCACAACCCGCA
+    ## 2           m64156_210212_094634/2470599/ccs ctat-LR-fusion TTGTTCACAACCCGCA
+    ## 3          m64156_210218_095630/13535503/ccs ctat-LR-fusion CACACAACATGCCATA
+    ## 4           m64156_210218_095630/2164025/ccs ctat-LR-fusion TGGCGTGGTGATGTAA
+    ## 5           m64156_210218_095630/9427948/ccs ctat-LR-fusion ACCTGAAAGCTTTGTG
+    ## 6 NS500318:931:HGT2FBGXG:1:12209:18559:15136         Arriba GGGTCACAGGATGGCT
     ##      celltype_final    UMAP_1    UMAP_2     dataset
     ## 1 Mesothelial.cells -3.132895 -6.413856 Patient1_Om
     ## 2 Mesothelial.cells -3.132895 -6.413856 Patient1_Om
     ## 3 Mesothelial.cells -4.305784 -9.273861 Patient1_Om
     ## 4 Mesothelial.cells -2.606526 -6.884776 Patient1_Om
     ## 5 Mesothelial.cells -2.634320 -8.152050 Patient1_Om
-    ## 6       Fibroblasts -6.761996  5.146760 Patient1_Om
+    ## 6 Mesothelial.cells -3.667948 -7.628159 Patient1_Om
 
 ``` r
-# since starF and FI were run at max sensitivity, lets restrict fusions to those identified by ctat-LRF
+if (FALSE) {
+    # since starF and FI were run at max sensitivity, lets restrict fusions to those identified by ctat-LRF
 
-Om_ctat_LRF_fusion_genes = Om_data %>% filter(method == 'ctat-LR-fusion') %>% select(FusionName) %>% unique() %>% pull(FusionName)
+    Om_ctat_LRF_fusion_genes = Om_data %>% filter(method == 'ctat-LR-fusion') %>% select(FusionName) %>% unique() %>% pull(FusionName)
 
-Om_data = Om_data %>% filter(FusionName %in% Om_ctat_LRF_fusion_genes)
+    Om_data = Om_data %>% filter(FusionName %in% Om_ctat_LRF_fusion_genes)
 
-nrow(Om_data)
+    nrow(Om_data)
+    
+}    
 ```
-
-    ## [1] 3239
 
 ``` r
 fusion_annots = read.csv("data/Patient1.fusion_annots.gz", header=T, sep="\t", stringsAsFactors = F)
@@ -84,7 +85,7 @@ Om_data = Om_data %>% filter(barcodes %in% Om_umap_data$barcodes)
 nrow(Om_data)
 ```
 
-    ## [1] 3239
+    ## [1] 3638
 
 ``` r
 Om_cell_counts = Om_data %>% select(FusionName, cell_barcode) %>% unique() %>% 
@@ -96,22 +97,23 @@ Om_cell_counts = Om_data %>% select(FusionName, cell_barcode) %>% unique() %>%
 Om_cell_counts %>% filter(tot_cells_w_fusion >= MIN_CELLS)
 ```
 
-    ## # A tibble: 13 × 3
+    ## # A tibble: 14 × 3
     ##    FusionName                  tot_cells_w_fusion frac_tot_cells
     ##    <chr>                                    <int>          <dbl>
     ##  1 RP11-208G20.2--PSPHP1                      169        0.285  
     ##  2 RP11-384F7.2--LSAMP                         34        0.0572 
     ##  3 RP5-940J5.9--GAPDH                          17        0.0286 
-    ##  4 UPK3B--CH17-264B6.4                         11        0.0185 
-    ##  5 AC007563.5--IGFBP5                           9        0.0152 
-    ##  6 HOOK2--JUNB                                  9        0.0152 
-    ##  7 RP11-444D3.1--SOX5                           8        0.0135 
-    ##  8 RP11-96H19.1--RP11-446N19.1                  8        0.0135 
-    ##  9 SAMD5--RP11-307P5.1                          8        0.0135 
-    ## 10 RP1-34H18.1--NAV3                            7        0.0118 
-    ## 11 RP1-34H18.1--RP11-781A6.1                    6        0.0101 
-    ## 12 CHD2--LINC01578                              5        0.00842
-    ## 13 YWHAE--CRK                                   5        0.00842
+    ##  4 YAF2--RYBP                                  14        0.0236 
+    ##  5 UPK3B--CH17-264B6.4                         11        0.0185 
+    ##  6 AC007563.5--IGFBP5                           9        0.0152 
+    ##  7 HOOK2--JUNB                                  9        0.0152 
+    ##  8 RP11-444D3.1--SOX5                           8        0.0135 
+    ##  9 RP11-96H19.1--RP11-446N19.1                  8        0.0135 
+    ## 10 SAMD5--RP11-307P5.1                          8        0.0135 
+    ## 11 RP1-34H18.1--NAV3                            7        0.0118 
+    ## 12 RP1-34H18.1--RP11-781A6.1                    6        0.0101 
+    ## 13 CHD2--LINC01578                              5        0.00842
+    ## 14 YWHAE--CRK                                   5        0.00842
 
 ``` r
 # Om sample counts of cells with fusions according to fusion detection method.
@@ -159,18 +161,18 @@ Om_cell_counts_by_method_spread %>% filter(`ctat-LR-fusion` >= MIN_CELLS)
     ## 9           AC007563.5--IGFBP5 chr2:216695273:+ chr2:216681126:-
     ## 10           RP1-34H18.1--NAV3 chr12:77326622:+ chr12:77940319:+
     ## 11                  YWHAE--CRK  chr17:1400047:-  chr17:1437155:-
-    ##       celltype_final ctat-LR-fusion FusionInspector STAR-Fusion
-    ## 1  Mesothelial.cells            118              NA          NA
-    ## 2  Mesothelial.cells             34              NA          NA
-    ## 3  Mesothelial.cells             30              NA          NA
-    ## 4        Fibroblasts             17              NA          NA
-    ## 5         T.NK.cells              8              NA          NA
-    ## 6  Mesothelial.cells              8              NA          NA
-    ## 7        Fibroblasts              7              NA          NA
-    ## 8  Mesothelial.cells              6              NA          NA
-    ## 9        Fibroblasts              5              NA          NA
-    ## 10 Mesothelial.cells              5              NA          NA
-    ## 11 Mesothelial.cells              5              NA          NA
+    ##       celltype_final Arriba ctat-LR-fusion FusionInspector STAR-Fusion
+    ## 1  Mesothelial.cells     NA            118              NA          NA
+    ## 2  Mesothelial.cells     NA             34              NA          NA
+    ## 3  Mesothelial.cells     NA             30              NA          NA
+    ## 4        Fibroblasts     NA             17              NA          NA
+    ## 5         T.NK.cells     NA              8              NA          NA
+    ## 6  Mesothelial.cells     NA              8              NA          NA
+    ## 7        Fibroblasts     NA              7              NA          NA
+    ## 8  Mesothelial.cells     NA              6              NA          NA
+    ## 9        Fibroblasts     NA              5              NA          NA
+    ## 10 Mesothelial.cells     NA              5              NA          NA
+    ## 11 Mesothelial.cells     NA              5              NA          NA
 
 ``` r
 # determine how each fusion is distributed across different cell types.
@@ -183,8 +185,8 @@ Om_fusion_frac_cell_types = Om_data %>% select(FusionName, barcodes, celltype_fi
 Om_fusion_frac_cell_types %>% filter(tot_cells_w_fusion >= MIN_CELLS) %>% arrange(FusionName, desc(tot_cells_w_fusion))
 ```
 
-    ## # A tibble: 13 × 4
-    ## # Groups:   FusionName [11]
+    ## # A tibble: 14 × 4
+    ## # Groups:   FusionName [12]
     ##    FusionName                celltype_final tot_cells_w_fusion frac_fusion_cells
     ##    <chr>                     <chr>                       <int>             <dbl>
     ##  1 AC007563.5--IGFBP5        Fibroblasts                     6            0.667 
@@ -199,7 +201,8 @@ Om_fusion_frac_cell_types %>% filter(tot_cells_w_fusion >= MIN_CELLS) %>% arrang
     ## 10 RP5-940J5.9--GAPDH        Mesothelial.c…                 13            0.765 
     ## 11 SAMD5--RP11-307P5.1       Mesothelial.c…                  8            1     
     ## 12 UPK3B--CH17-264B6.4       Mesothelial.c…                 11            1     
-    ## 13 YWHAE--CRK                Mesothelial.c…                  5            1
+    ## 13 YAF2--RYBP                Mesothelial.c…                  9            0.643 
+    ## 14 YWHAE--CRK                Mesothelial.c…                  5            1
 
 # P1 Tumor
 
@@ -213,7 +216,7 @@ Tum_data = read.table("data/Patient1_Tum.Dondi_overian_CTAT_fusions.filtered_cel
 nrow(Tum_data)
 ```
 
-    ## [1] 2313
+    ## [1] 2345
 
 ``` r
 Tum_data %>% head()
@@ -242,16 +245,18 @@ Tum_data %>% head()
     ## 6 TGCTTGCAGTTGCTCA     Myeloid.cells -14.1281270  3.693997 Patient1_Tum
 
 ``` r
-# since starF and FI were run at max sensitivity, lets restrict fusions to those identified by ctat-LRF
+if (FALSE) {
+    # since starF and FI were run at max sensitivity, lets restrict fusions to those identified by ctat-LRF
 
-Tum_ctat_LRF_fusion_genes = Tum_data %>% filter(method == 'ctat-LR-fusion') %>% select(FusionName) %>% unique() %>% pull(FusionName)
+    Tum_ctat_LRF_fusion_genes = Tum_data %>% filter(method == 'ctat-LR-fusion') %>% select(FusionName) %>% unique() %>% pull(FusionName)
 
-Tum_data = Tum_data %>% filter(FusionName %in% Tum_ctat_LRF_fusion_genes)
+    Tum_data = Tum_data %>% filter(FusionName %in% Tum_ctat_LRF_fusion_genes)
+}
 
 nrow(Tum_data)
 ```
 
-    ## [1] 1337
+    ## [1] 2345
 
 ``` r
 Tum_umap_data = read.table("data/Patient1_Tum_UMAPcoords.txt.gz", header=T, sep=",") %>%
@@ -305,19 +310,24 @@ left_join(Tum_cell_counts %>% filter(tot_cells_w_fusion >= MIN_CELLS),
           by='FusionName')
 ```
 
-    ## # A tibble: 10 × 4
+    ## # A tibble: 15 × 4
     ##    FusionName                 tot_cells_w_fusion frac_tot_cells annots          
     ##    <chr>                                   <int>          <dbl> <chr>           
-    ##  1 SMG7--CH507-513H4.1                        26         0.0523 SMG7--CH507-513…
-    ##  2 RP11-384F7.2--LSAMP                        20         0.0402 RP11-384F7.2--L…
-    ##  3 RP11-444D3.1--SOX5                         11         0.0221 RP11-444D3.1--S…
-    ##  4 RP1-34H18.1--NAV3                           7         0.0141 RP1-34H18.1--NA…
-    ##  5 RP11-33B1.1--RP11-208G20.3                  7         0.0141 RP11-33B1.1--RP…
-    ##  6 VIM-AS1--VIM                                7         0.0141 VIM-AS1--VIM:IN…
-    ##  7 PHYKPL--HNRNPAB                             6         0.0121 PHYKPL--HNRNPAB…
-    ##  8 RAPGEF5--AGMO                               6         0.0121 RAPGEF5--AGMO:I…
-    ##  9 GS1-279B7.2--GNG4                           5         0.0101 GS1-279B7.2--GN…
-    ## 10 NTN1--CDRT15P2                              5         0.0101 NTN1--CDRT15P2:…
+    ##  1 FAU--RP1-269O5.3                          290         0.584  FAU--RP1-269O5.…
+    ##  2 SMG7--CH507-513H4.1                        26         0.0523 SMG7--CH507-513…
+    ##  3 RP11-384F7.2--LSAMP                        20         0.0402 RP11-384F7.2--L…
+    ##  4 RP5-940J5.9--GAPDH                         17         0.0342 RP5-940J5.9--GA…
+    ##  5 RP11-444D3.1--SOX5                         11         0.0221 RP11-444D3.1--S…
+    ##  6 ZFP36L1--ZNF302                             8         0.0161 ZFP36L1--ZNF302…
+    ##  7 RP1-34H18.1--NAV3                           7         0.0141 RP1-34H18.1--NA…
+    ##  8 RP11-33B1.1--RP11-208G20.3                  7         0.0141 RP11-33B1.1--RP…
+    ##  9 VIM-AS1--VIM                                7         0.0141 VIM-AS1--VIM:IN…
+    ## 10 PHYKPL--HNRNPAB                             6         0.0121 PHYKPL--HNRNPAB…
+    ## 11 RAPGEF5--AGMO                               6         0.0121 RAPGEF5--AGMO:I…
+    ## 12 GS1-279B7.2--GNG4                           5         0.0101 GS1-279B7.2--GN…
+    ## 13 NTN1--CDRT15P2                              5         0.0101 NTN1--CDRT15P2:…
+    ## 14 R3HDM2--NOL4                                5         0.0101 <NA>            
+    ## 15 SRGAP2B--PFKFB3                             5         0.0101 <NA>
 
 ``` r
 # read in cell counts by method
@@ -363,15 +373,15 @@ Tum_cell_counts_by_method_spread %>% filter(`ctat-LR-fusion` >= MIN_CELLS)
     ## 6      NTN1--CDRT15P2  chr17:9023391:+ chr17:15765108:+             HGSOC
     ## 7       RAPGEF5--AGMO  chr7:22125604:-  chr7:15201359:-             HGSOC
     ## 8   RP1-34H18.1--NAV3 chr12:77326622:+ chr12:77940319:+       Fibroblasts
-    ##   ctat-LR-fusion FusionInspector STAR-Fusion
-    ## 1             26              NA          NA
-    ## 2             10              NA          NA
-    ## 3              9              NA          NA
-    ## 4              7              NA          NA
-    ## 5              5              NA          NA
-    ## 6              5              NA          NA
-    ## 7              5               3           1
-    ## 8              5              NA          NA
+    ##   Arriba ctat-LR-fusion FusionInspector STAR-Fusion
+    ## 1     NA             26              NA          NA
+    ## 2     NA             10              NA          NA
+    ## 3     NA              9              NA          NA
+    ## 4     NA              7              NA          NA
+    ## 5     NA              5              NA          NA
+    ## 6     NA              5              NA          NA
+    ## 7     NA              5               3           1
+    ## 8     NA              5              NA          NA
 
 # compare P1 Tum and Om fusions
 
@@ -392,20 +402,20 @@ Tum_n_Om_joined_fusions %>% head()
     ## 4  RP11-444D3.1--SOX5 chr12:24276141:- chr12:23896024:-             HGSOC
     ## 5   GS1-279B7.2--GNG4 chr1:235654008:- chr1:235583848:-             HGSOC
     ## 6      NTN1--CDRT15P2  chr17:9023391:+ chr17:15765108:+             HGSOC
-    ##   ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum ctat-LR-fusion.Om
-    ## 1                 26                  NA              NA                NA
-    ## 2                 10                  NA              NA                NA
-    ## 3                  9                  NA              NA                30
-    ## 4                  7                  NA              NA                NA
-    ## 5                  5                  NA              NA                NA
-    ## 6                  5                  NA              NA                NA
-    ##   FusionInspector.Om STAR-Fusion.Om
-    ## 1                 NA             NA
-    ## 2                 NA             NA
-    ## 3                 NA             NA
-    ## 4                 NA             NA
-    ## 5                 NA             NA
-    ## 6                 NA             NA
+    ##   Arriba.Tum ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum Arriba.Om
+    ## 1         NA                 26                  NA              NA        NA
+    ## 2         NA                 10                  NA              NA        NA
+    ## 3         NA                  9                  NA              NA        NA
+    ## 4         NA                  7                  NA              NA        NA
+    ## 5         NA                  5                  NA              NA        NA
+    ## 6         NA                  5                  NA              NA        NA
+    ##   ctat-LR-fusion.Om FusionInspector.Om STAR-Fusion.Om
+    ## 1                NA                 NA             NA
+    ## 2                NA                 NA             NA
+    ## 3                30                 NA             NA
+    ## 4                NA                 NA             NA
+    ## 5                NA                 NA             NA
+    ## 6                NA                 NA             NA
 
 ``` r
 # examine those fusions with at least MIN_CELLS by long reads in the tumor sample
@@ -446,15 +456,15 @@ Tum_fusion_frac_cell_types %>% head()
 ```
 
     ## # A tibble: 6 × 4
-    ## # Groups:   FusionName [5]
+    ## # Groups:   FusionName [2]
     ##   FusionName          celltype_final    tot_cells_w_fusion frac_fusion_cells
     ##   <chr>               <chr>                          <int>             <dbl>
-    ## 1 SMG7--CH507-513H4.1 HGSOC                             26             1    
-    ## 2 RP11-384F7.2--LSAMP HGSOC                             11             0.55 
-    ## 3 RP11-384F7.2--LSAMP Mesothelial.cells                  9             0.45 
-    ## 4 RP11-444D3.1--SOX5  HGSOC                              7             0.636
-    ## 5 RAPGEF5--AGMO       HGSOC                              6             1    
-    ## 6 GS1-279B7.2--GNG4   HGSOC                              5             1
+    ## 1 FAU--RP1-269O5.3    T.NK.cells                        95            0.328 
+    ## 2 FAU--RP1-269O5.3    HGSOC                             70            0.241 
+    ## 3 FAU--RP1-269O5.3    Mesothelial.cells                 31            0.107 
+    ## 4 FAU--RP1-269O5.3    Myeloid.cells                     30            0.103 
+    ## 5 SMG7--CH507-513H4.1 HGSOC                             26            1     
+    ## 6 FAU--RP1-269O5.3    Fibroblasts                       25            0.0862
 
 ``` r
 # identify tumor-enriched fusions:
@@ -523,7 +533,7 @@ fusions_of_interest = left_join(fusions_of_interest, fusion_annots)
 fusions_of_interest
 ```
 
-    ## # A tibble: 4 × 10
+    ## # A tibble: 4 × 11
     ## # Groups:   FusionName [4]
     ##   FusionName  celltype_final tot_cells_w_fusion frac_fusion_cells LeftBreakpoint
     ##   <chr>       <chr>                       <int>             <dbl> <chr>         
@@ -531,8 +541,9 @@ fusions_of_interest
     ## 2 RAPGEF5--A… HGSOC                           6                 1 chr7:22125604…
     ## 3 GS1-279B7.… HGSOC                           5                 1 chr1:23565400…
     ## 4 NTN1--CDRT… HGSOC                           5                 1 chr17:9023391…
-    ## # ℹ 5 more variables: RightBreakpoint <chr>, `ctat-LR-fusion` <int>,
-    ## #   FusionInspector <int>, `STAR-Fusion` <int>, annots <chr>
+    ## # ℹ 6 more variables: RightBreakpoint <chr>, Arriba <int>,
+    ## #   `ctat-LR-fusion` <int>, FusionInspector <int>, `STAR-Fusion` <int>,
+    ## #   annots <chr>
 
 ``` r
 write.table(left_join(fusions_of_interest, fusion_annots), file="Patient1_Tum.fusions_of_interest.tsv", sep="\t", row.names=F, quote=F)
@@ -742,12 +753,12 @@ left_join(Tum_n_Om_joined_fusions %>% filter(`ctat-LR-fusion.Tum` >= MIN_CELLS &
     ##            FusionName   LeftBreakpoint  RightBreakpoint    celltype_final
     ## 1 RP11-384F7.2--LSAMP chr3:117997182:- chr3:116444955:- Mesothelial.cells
     ## 2   RP1-34H18.1--NAV3 chr12:77326622:+ chr12:77940319:+       Fibroblasts
-    ##   ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum ctat-LR-fusion.Om
-    ## 1                  9                  NA              NA                30
-    ## 2                  5                  NA              NA                 2
-    ##   FusionInspector.Om STAR-Fusion.Om
-    ## 1                 NA             NA
-    ## 2                 NA             NA
+    ##   Arriba.Tum ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum Arriba.Om
+    ## 1         NA                  9                  NA              NA        NA
+    ## 2         NA                  5                  NA              NA        NA
+    ##   ctat-LR-fusion.Om FusionInspector.Om STAR-Fusion.Om
+    ## 1                30                 NA             NA
+    ## 2                 2                 NA             NA
     ##                                                                                                                   annots
     ## 1            RP11-384F7.2--LSAMP:INTRACHROMOSOMAL[chr3:0.53Mb];;(recip)LSAMP--RP11-384F7.2:INTRACHROMOSOMAL[chr3:0.53Mb]
     ## 2 RP1-34H18.1--NAV3:[DepMap2023];INTRACHROMOSOMAL[chr12:0.26Mb];;(recip)NAV3--RP1-34H18.1:INTRACHROMOSOMAL[chr12:0.26Mb]
@@ -806,12 +817,12 @@ report_on_fusion = function(fusion_name) {
 report_on_fusion("GS1-279B7.2--GNG4")
 ```
 
-    ##          FusionName   LeftBreakpoint  RightBreakpoint celltype_final
-    ## 1 GS1-279B7.2--GNG4 chr1:235654008:- chr1:235583848:-          HGSOC
-    ##   ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum ctat-LR-fusion.Om
-    ## 1                  5                  NA              NA                NA
-    ##   FusionInspector.Om STAR-Fusion.Om
-    ## 1                 NA             NA
+    ##          FusionName   LeftBreakpoint  RightBreakpoint celltype_final Arriba.Tum
+    ## 1 GS1-279B7.2--GNG4 chr1:235654008:- chr1:235583848:-          HGSOC         NA
+    ##   ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum Arriba.Om
+    ## 1                  5                  NA              NA        NA
+    ##   ctat-LR-fusion.Om FusionInspector.Om STAR-Fusion.Om
+    ## 1                NA                 NA             NA
     ##                                                                                                      annots
     ## 1 GS1-279B7.2--GNG4:INTRACHROMOSOMAL[chr1:50.23Mb];;(recip)GNG4--GS1-279B7.2:INTRACHROMOSOMAL[chr1:50.23Mb]
     ## # A tibble: 0 × 4
@@ -851,26 +862,26 @@ report_on_fusion("RP11-208G20.2--PSPHP1")
     ## 7 RP11-208G20.2--PSPHP1 chr7:55761798:+ chr7:55772328:+ Endothelial.cells
     ## 8 RP11-208G20.2--PSPHP1 chr7:55761798:+ chr7:55772328:+     Myeloid.cells
     ## 9 RP11-208G20.2--PSPHP1 chr7:55761799:+ chr7:55773181:+     Myeloid.cells
-    ##   ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum ctat-LR-fusion.Om
-    ## 1                 NA                  NA              NA               118
-    ## 2                 NA                  NA              NA                34
-    ## 3                 NA                  NA              NA                17
-    ## 4                 NA                  NA              NA                 8
-    ## 5                 NA                  NA              NA                 7
-    ## 6                 NA                  NA              NA                 2
-    ## 7                 NA                  NA              NA                 1
-    ## 8                 NA                  NA              NA                 1
-    ## 9                 NA                  NA              NA                 1
-    ##   FusionInspector.Om STAR-Fusion.Om annots
-    ## 1                 NA             NA   <NA>
-    ## 2                 NA             NA   <NA>
-    ## 3                 NA             NA   <NA>
-    ## 4                 NA             NA   <NA>
-    ## 5                 NA             NA   <NA>
-    ## 6                 NA             NA   <NA>
-    ## 7                 NA             NA   <NA>
-    ## 8                 NA             NA   <NA>
-    ## 9                 NA             NA   <NA>
+    ##   Arriba.Tum ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum Arriba.Om
+    ## 1         NA                 NA                  NA              NA        NA
+    ## 2         NA                 NA                  NA              NA        NA
+    ## 3         NA                 NA                  NA              NA        NA
+    ## 4         NA                 NA                  NA              NA        NA
+    ## 5         NA                 NA                  NA              NA        NA
+    ## 6         NA                 NA                  NA              NA        NA
+    ## 7         NA                 NA                  NA              NA        NA
+    ## 8         NA                 NA                  NA              NA        NA
+    ## 9         NA                 NA                  NA              NA        NA
+    ##   ctat-LR-fusion.Om FusionInspector.Om STAR-Fusion.Om annots
+    ## 1               118                 NA             NA   <NA>
+    ## 2                34                 NA             NA   <NA>
+    ## 3                17                 NA             NA   <NA>
+    ## 4                 8                 NA             NA   <NA>
+    ## 5                 7                 NA             NA   <NA>
+    ## 6                 2                 NA             NA   <NA>
+    ## 7                 1                 NA             NA   <NA>
+    ## 8                 1                 NA             NA   <NA>
+    ## 9                 1                 NA             NA   <NA>
     ## # A tibble: 1 × 4
     ##   FusionName            tot_cells_w_fusion frac_tot_cells type 
     ##   <chr>                              <int>          <dbl> <chr>
@@ -904,18 +915,18 @@ report_on_fusion("RP11-384F7.2--LSAMP")
     ## 3 RP11-384F7.2--LSAMP chr3:117997182:- chr3:116086556:-             HGSOC
     ## 4 RP11-384F7.2--LSAMP chr3:117997182:- chr3:116445023:-             HGSOC
     ## 5 RP11-384F7.2--LSAMP chr3:117997182:- chr3:116444955:-       Fibroblasts
-    ##   ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum ctat-LR-fusion.Om
-    ## 1                 10                  NA              NA                NA
-    ## 2                  9                  NA              NA                30
-    ## 3                  2                  NA              NA                NA
-    ## 4                  1                  NA              NA                NA
-    ## 5                 NA                  NA              NA                 4
-    ##   FusionInspector.Om STAR-Fusion.Om
-    ## 1                 NA             NA
-    ## 2                 NA             NA
-    ## 3                 NA             NA
-    ## 4                 NA             NA
-    ## 5                 NA             NA
+    ##   Arriba.Tum ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum Arriba.Om
+    ## 1         NA                 10                  NA              NA        NA
+    ## 2         NA                  9                  NA              NA        NA
+    ## 3         NA                  2                  NA              NA        NA
+    ## 4         NA                  1                  NA              NA        NA
+    ## 5         NA                 NA                  NA              NA        NA
+    ##   ctat-LR-fusion.Om FusionInspector.Om STAR-Fusion.Om
+    ## 1                NA                 NA             NA
+    ## 2                30                 NA             NA
+    ## 3                NA                 NA             NA
+    ## 4                NA                 NA             NA
+    ## 5                 4                 NA             NA
     ##                                                                                                        annots
     ## 1 RP11-384F7.2--LSAMP:INTRACHROMOSOMAL[chr3:0.53Mb];;(recip)LSAMP--RP11-384F7.2:INTRACHROMOSOMAL[chr3:0.53Mb]
     ## 2 RP11-384F7.2--LSAMP:INTRACHROMOSOMAL[chr3:0.53Mb];;(recip)LSAMP--RP11-384F7.2:INTRACHROMOSOMAL[chr3:0.53Mb]
@@ -952,12 +963,12 @@ report_on_fusion("RP1-34H18.1--NAV3")
     ##          FusionName   LeftBreakpoint  RightBreakpoint    celltype_final
     ## 1 RP1-34H18.1--NAV3 chr12:77326622:+ chr12:77940319:+       Fibroblasts
     ## 2 RP1-34H18.1--NAV3 chr12:77326622:+ chr12:77940319:+ Mesothelial.cells
-    ##   ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum ctat-LR-fusion.Om
-    ## 1                  5                  NA              NA                 2
-    ## 2                  2                  NA              NA                 5
-    ##   FusionInspector.Om STAR-Fusion.Om
-    ## 1                 NA             NA
-    ## 2                 NA             NA
+    ##   Arriba.Tum ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum Arriba.Om
+    ## 1         NA                  5                  NA              NA        NA
+    ## 2         NA                  2                  NA              NA        NA
+    ##   ctat-LR-fusion.Om FusionInspector.Om STAR-Fusion.Om
+    ## 1                 2                 NA             NA
+    ## 2                 5                 NA             NA
     ##                                                                                                                   annots
     ## 1 RP1-34H18.1--NAV3:[DepMap2023];INTRACHROMOSOMAL[chr12:0.26Mb];;(recip)NAV3--RP1-34H18.1:INTRACHROMOSOMAL[chr12:0.26Mb]
     ## 2 RP1-34H18.1--NAV3:[DepMap2023];INTRACHROMOSOMAL[chr12:0.26Mb];;(recip)NAV3--RP1-34H18.1:INTRACHROMOSOMAL[chr12:0.26Mb]
@@ -993,20 +1004,21 @@ left_join(Om_fusion_frac_cell_types %>% filter(tot_cells_w_fusion >= MIN_CELLS) 
     by='FusionName')
 ```
 
-    ## # A tibble: 11 × 5
+    ## # A tibble: 12 × 5
     ##    FusionName         celltype_final tot_cells_w_fusion frac_fusion_cells annots
     ##    <chr>              <chr>                       <int>             <dbl> <chr> 
     ##  1 RP11-208G20.2--PS… Mesothelial.c…                133             0.787 <NA>  
     ##  2 RP11-384F7.2--LSA… Mesothelial.c…                 30             0.882 RP11-…
     ##  3 RP5-940J5.9--GAPDH Mesothelial.c…                 13             0.765 RP5-9…
     ##  4 UPK3B--CH17-264B6… Mesothelial.c…                 11             1     <NA>  
-    ##  5 RP11-96H19.1--RP1… Mesothelial.c…                  8             1     RP11-…
-    ##  6 SAMD5--RP11-307P5… Mesothelial.c…                  8             1     <NA>  
-    ##  7 AC007563.5--IGFBP5 Fibroblasts                     6             0.667 <NA>  
-    ##  8 RP11-444D3.1--SOX5 Fibroblasts                     6             0.75  RP11-…
-    ##  9 HOOK2--JUNB        Fibroblasts                     5             0.556 <NA>  
-    ## 10 RP1-34H18.1--NAV3  Mesothelial.c…                  5             0.714 RP1-3…
-    ## 11 YWHAE--CRK         Mesothelial.c…                  5             1     YWHAE…
+    ##  5 YAF2--RYBP         Mesothelial.c…                  9             0.643 <NA>  
+    ##  6 RP11-96H19.1--RP1… Mesothelial.c…                  8             1     RP11-…
+    ##  7 SAMD5--RP11-307P5… Mesothelial.c…                  8             1     <NA>  
+    ##  8 AC007563.5--IGFBP5 Fibroblasts                     6             0.667 <NA>  
+    ##  9 RP11-444D3.1--SOX5 Fibroblasts                     6             0.75  RP11-…
+    ## 10 HOOK2--JUNB        Fibroblasts                     5             0.556 <NA>  
+    ## 11 RP1-34H18.1--NAV3  Mesothelial.c…                  5             0.714 RP1-3…
+    ## 12 YWHAE--CRK         Mesothelial.c…                  5             1     YWHAE…
 
 YWHAE–CRK is interesting as found before among different tumor data sets
 and involves a pair of known oncogenes.
@@ -1015,15 +1027,15 @@ and involves a pair of known oncogenes.
 report_on_fusion("YWHAE--CRK")
 ```
 
-    ##   FusionName  LeftBreakpoint RightBreakpoint    celltype_final
-    ## 1 YWHAE--CRK chr17:1400047:- chr17:1437155:-             HGSOC
-    ## 2 YWHAE--CRK chr17:1400047:- chr17:1437155:- Mesothelial.cells
-    ##   ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum ctat-LR-fusion.Om
-    ## 1                  1                  NA              NA                NA
-    ## 2                 NA                  NA              NA                 5
-    ##   FusionInspector.Om STAR-Fusion.Om
-    ## 1                 NA             NA
-    ## 2                 NA             NA
+    ##   FusionName  LeftBreakpoint RightBreakpoint    celltype_final Arriba.Tum
+    ## 1 YWHAE--CRK chr17:1400047:- chr17:1437155:-             HGSOC         NA
+    ## 2 YWHAE--CRK chr17:1400047:- chr17:1437155:- Mesothelial.cells         NA
+    ##   ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum Arriba.Om
+    ## 1                  1                  NA              NA        NA
+    ## 2                 NA                  NA              NA        NA
+    ##   ctat-LR-fusion.Om FusionInspector.Om STAR-Fusion.Om
+    ## 1                NA                 NA             NA
+    ## 2                 5                 NA             NA
     ##                                                                                                                                                                                                                                                 annots
     ## 1 YWHAE--CRK:[YWHAE:Oncogene];[CRK:Oncogene];[DEEPEST2019];INTRACHROMOSOMAL[chr17:0.02Mb];LOCAL_REARRANGEMENT:-:[20311];;(recip)CRK--YWHAE:[CRK:Oncogene];[YWHAE:Oncogene];[DepMap2023,CCLE_StarF2019];INTRACHROMOSOMAL[chr17:0.02Mb];NEIGHBORS[20311]
     ## 2 YWHAE--CRK:[YWHAE:Oncogene];[CRK:Oncogene];[DEEPEST2019];INTRACHROMOSOMAL[chr17:0.02Mb];LOCAL_REARRANGEMENT:-:[20311];;(recip)CRK--YWHAE:[CRK:Oncogene];[YWHAE:Oncogene];[DepMap2023,CCLE_StarF2019];INTRACHROMOSOMAL[chr17:0.02Mb];NEIGHBORS[20311]
@@ -1064,22 +1076,22 @@ report_on_fusion("RP11-444D3.1--SOX5")
     ## 5 RP11-444D3.1--SOX5 chr12:24276141:- chr12:23896024:-         uncertain
     ## 6 RP11-444D3.1--SOX5 chr12:24277216:- chr12:23896024:-       Fibroblasts
     ## 7 RP11-444D3.1--SOX5 chr12:24368563:- chr12:23846193:-       Fibroblasts
-    ##   ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum ctat-LR-fusion.Om
-    ## 1                  7                  NA              NA                NA
-    ## 2                  2                  NA              NA                 2
-    ## 3                  1                  NA              NA                NA
-    ## 4                  1                  NA              NA                 2
-    ## 5                  1                  NA              NA                NA
-    ## 6                 NA                  NA              NA                 3
-    ## 7                 NA                  NA              NA                 1
-    ##   FusionInspector.Om STAR-Fusion.Om
-    ## 1                 NA             NA
-    ## 2                 NA             NA
-    ## 3                 NA             NA
-    ## 4                 NA             NA
-    ## 5                 NA             NA
-    ## 6                 NA             NA
-    ## 7                 NA             NA
+    ##   Arriba.Tum ctat-LR-fusion.Tum FusionInspector.Tum STAR-Fusion.Tum Arriba.Om
+    ## 1         NA                  7                  NA              NA        NA
+    ## 2         NA                  2                  NA              NA        NA
+    ## 3         NA                  1                  NA              NA        NA
+    ## 4         NA                  1                  NA              NA        NA
+    ## 5         NA                  1                  NA              NA        NA
+    ## 6         NA                 NA                  NA              NA        NA
+    ## 7         NA                 NA                  NA              NA        NA
+    ##   ctat-LR-fusion.Om FusionInspector.Om STAR-Fusion.Om
+    ## 1                NA                 NA             NA
+    ## 2                 2                 NA             NA
+    ## 3                NA                 NA             NA
+    ## 4                 2                 NA             NA
+    ## 5                NA                 NA             NA
+    ## 6                 3                 NA             NA
+    ## 7                 1                 NA             NA
     ##                                                                                                                                                     annots
     ## 1 RP11-444D3.1--SOX5:[SOX5:Oncogene];[DepMap2023];INTRACHROMOSOMAL[chr12:0.26Mb];;(recip)SOX5--RP11-444D3.1:[SOX5:Oncogene];INTRACHROMOSOMAL[chr12:0.26Mb]
     ## 2 RP11-444D3.1--SOX5:[SOX5:Oncogene];[DepMap2023];INTRACHROMOSOMAL[chr12:0.26Mb];;(recip)SOX5--RP11-444D3.1:[SOX5:Oncogene];INTRACHROMOSOMAL[chr12:0.26Mb]
@@ -1144,27 +1156,27 @@ tumor_umap %>% head()
     ## 4 AAACGCTAGGAGGTTC        -3.05818       0.2626778               1
     ## 5 AAACGCTAGGAGGTTC        -3.05818       0.2626778               1
     ## 6 AAACGCTAGGAGGTTC        -3.05818       0.2626778               1
-    ##             FusionName   LeftBreakpoint  RightBreakpoint     cell_barcode
-    ## 1                 <NA>             <NA>             <NA>             <NA>
-    ## 2       DPH1--RAP1GAP2  chr17:2030230:+  chr17:3037530:+ GAACCTCCTAGCGTTT
-    ## 3         ENO2--LRRC23  chr12:6913828:+  chr12:6909779:+ GAACCTCCTAGCGTTT
-    ## 4          JUP--SUCLG1 chr17:41784986:-  chr2:84449188:- GAACCTCCTAGCGTTT
-    ## 5 RP11-388M20.2--PRSS8 chr16:31132875:+ chr16:31132922:- GAACCTCCTAGCGTTT
-    ## 6          RPL27A--ST5  chr11:8684081:+  chr11:8697636:- GAACCTCCTAGCGTTT
-    ##            umi                          read_name         method celltype_final
-    ## 1         <NA>                               <NA>           <NA>           <NA>
-    ## 2 AAGCACGGTGCG m64141e_210226_034232/13858595/ccs ctat-LR-fusion          HGSOC
-    ## 3 TCAGGGGATTGC m64141e_210226_034232/11827153/ccs ctat-LR-fusion          HGSOC
-    ## 4 GAACTCACCGAC  m64141e_210205_142336/8312005/ccs ctat-LR-fusion          HGSOC
-    ## 5 TACGGCTGCGAA  m64141e_210226_034232/9588373/ccs ctat-LR-fusion          HGSOC
-    ## 6 GATATAGGGTTC  m64141e_210223_151117/8396373/ccs ctat-LR-fusion          HGSOC
-    ##   UMAP_1.allcells UMAP_2.allcells      dataset
-    ## 1              NA              NA         <NA>
-    ## 2        3.564836        10.72496 Patient1_Tum
-    ## 3        3.564836        10.72496 Patient1_Tum
-    ## 4        3.564836        10.72496 Patient1_Tum
-    ## 5        3.564836        10.72496 Patient1_Tum
-    ## 6        3.564836        10.72496 Patient1_Tum
+    ##         FusionName   LeftBreakpoint  RightBreakpoint     cell_barcode
+    ## 1             <NA>             <NA>             <NA>             <NA>
+    ## 2   DPH1--RAP1GAP2  chr17:2030230:+  chr17:3037530:+ GAACCTCCTAGCGTTT
+    ## 3     ENO2--LRRC23  chr12:6913828:+  chr12:6909779:+ GAACCTCCTAGCGTTT
+    ## 4 FAU--RP1-269O5.3 chr11:65121500:- chrX:111930935:+ GAACCTCCTAGCGTTT
+    ## 5 FAU--RP1-269O5.3 chr11:65121500:- chrX:111930935:+ GAACCTCCTAGCGTTT
+    ## 6      JUP--SUCLG1 chr17:41784986:-  chr2:84449188:- GAACCTCCTAGCGTTT
+    ##            umi                                  read_name          method
+    ## 1         <NA>                                       <NA>            <NA>
+    ## 2 AAGCACGGTGCG         m64141e_210226_034232/13858595/ccs  ctat-LR-fusion
+    ## 3 TCAGGGGATTGC         m64141e_210226_034232/11827153/ccs  ctat-LR-fusion
+    ## 4 GTAGTTGTTTGT NS500318:931:HGT2FBGXG:1:21105:10409:11922 FusionInspector
+    ## 5 ATTTACAAAACT  NS500318:931:HGT2FBGXG:2:23102:21681:6693 FusionInspector
+    ## 6 GAACTCACCGAC          m64141e_210205_142336/8312005/ccs  ctat-LR-fusion
+    ##   celltype_final UMAP_1.allcells UMAP_2.allcells      dataset
+    ## 1           <NA>              NA              NA         <NA>
+    ## 2          HGSOC        3.564836        10.72496 Patient1_Tum
+    ## 3          HGSOC        3.564836        10.72496 Patient1_Tum
+    ## 4          HGSOC        3.564836        10.72496 Patient1_Tum
+    ## 5          HGSOC        3.564836        10.72496 Patient1_Tum
+    ## 6          HGSOC        3.564836        10.72496 Patient1_Tum
 
 ``` r
 tumor_umap %>% select(barcodes, UMAP_1.allcells, UMAP_2.allcells) %>% unique() %>% 
@@ -1172,7 +1184,7 @@ tumor_umap %>% select(barcodes, UMAP_1.allcells, UMAP_2.allcells) %>% unique() %
     geom_point() + ggtitle("UMAP for tumor subset in all-cells umap")
 ```
 
-    ## Warning: Removed 13 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 5 rows containing missing values (`geom_point()`).
 
 ![](Patient1_analysis_files/figure-gfm/unnamed-chunk-49-1.png)<!-- -->
 
@@ -1216,4 +1228,266 @@ tumor_cells_only_fig
 
 ``` r
 ggsave(tumor_cells_only_fig, file="scHGSOC_Patient1_tumor_cells_only_fig.svg", width=7, height=5)
+```
+
+# examine expression of parent genes involved in fusions of interest
+
+``` r
+gene_expr_data = read.csv("data/P1_Tum.fusion_parent_gene_exprs.Illumina10x.matrix", header=T, row.names=1, sep="\t")
+
+gene_expr_data[gene_expr_data == 0] = NA
+
+gene_names = rownames(gene_expr_data)
+barcodes = colnames(gene_expr_data)
+
+gene_expr_data = t(gene_expr_data)
+
+gene_expr_data = tibble(data.frame(gene_expr_data))
+
+gene_expr_data$barcode = barcodes
+
+head(gene_expr_data)
+```
+
+    ## # A tibble: 6 × 8
+    ##   ENSG00000116698.SMG7 ENSG00000278996.FP671120.4 ENSG00000136237.RAPGEF5
+    ##                  <dbl>                      <dbl>                   <dbl>
+    ## 1               NA                             NA                      NA
+    ## 2                1.05                          NA                      NA
+    ## 3                0.876                         NA                      NA
+    ## 4                0.720                         NA                      NA
+    ## 5               NA                             NA                      NA
+    ## 6                1.17                          NA                      NA
+    ## # ℹ 5 more variables: ENSG00000187546.AGMO <dbl>, ENSG00000065320.NTN1 <dbl>,
+    ## #   ENSG00000273004.AL078644.2 <dbl>, ENSG00000168243.GNG4 <dbl>, barcode <chr>
+
+``` r
+tumor_umap_w_expr = left_join(tumor_umap, gene_expr_data, by=c('barcodes'='barcode'))
+```
+
+## explore fusion ‘SMG7–CH507-513H4.1’
+
+``` r
+tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.allcells, y=UMAP_2.allcells)) + theme_bw() + 
+    geom_point(aes(color=ENSG00000116698.SMG7))  +
+    
+    geom_point(data=tumor_umap_w_expr %>% 
+                   filter(FusionName == 'SMG7--CH507-513H4.1'), 
+                aes(shape=FusionName, color=ENSG00000116698.SMG7), size=rel(5)) 
+```
+
+    ## Warning: Removed 5 rows containing missing values (`geom_point()`).
+
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-56-1.png)<!-- -->
+
+``` r
+tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + theme_bw() + 
+    geom_point(aes(color=ENSG00000116698.SMG7))  +
+    
+    geom_point(data=tumor_umap_w_expr %>% 
+                   filter(FusionName == 'SMG7--CH507-513H4.1'), 
+                aes(shape=FusionName, color=ENSG00000116698.SMG7), size=rel(5)) 
+```
+
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-57-1.png)<!-- -->
+
+``` r
+Tum_data_w_expr = left_join(Tum_data, gene_expr_data, by=c('barcodes'='barcode'))
+```
+
+``` r
+Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() + 
+    
+    geom_point(aes(color=celltype_final)) #+
+```
+
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-59-1.png)<!-- -->
+
+``` r
+    #geom_point(aes(color=ENSG00000116698.SMG7))  + 
+    
+    #geom_point(data=Tum_data_w_expr %>% 
+    #               filter(FusionName == 'SMG7--CH507-513H4.1'),
+    #            aes(color=ENSG00000116698.SMG7), size=rel(5)) 
+```
+
+``` r
+Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() + 
+
+     
+    geom_point(aes(color=ENSG00000116698.SMG7))  + 
+    
+    geom_point(data=Tum_data_w_expr %>% 
+                   filter(FusionName == 'SMG7--CH507-513H4.1'),
+                aes(color=ENSG00000116698.SMG7), size=rel(5)) 
+```
+
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-60-1.png)<!-- -->
+
+``` r
+# ENSG00000278996.1 chr21   8197620 8227646 +   CH507-513H4.1   lincRNA
+
+tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + theme_bw() + 
+    geom_point(aes(color=ENSG00000278996.FP671120.4))  + #CH507-513H4.1
+    
+    geom_point(data=tumor_umap_w_expr %>% 
+                   filter(FusionName == 'SMG7--CH507-513H4.1'),
+                aes(shape=FusionName, color=ENSG00000278996.FP671120.4), size=rel(5)) 
+```
+
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-61-1.png)<!-- -->
+
+``` r
+Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() + 
+    geom_point(aes(color=ENSG00000278996.FP671120.4))  + 
+    
+    geom_point(data=Tum_data_w_expr %>% 
+                   filter(FusionName == 'SMG7--CH507-513H4.1'),
+                aes(shape=FusionName, color=ENSG00000278996.FP671120.4), size=rel(5)) 
+```
+
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-62-1.png)<!-- -->
+
+## RAPGEF5–AGMO
+
+``` r
+tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + theme_bw() + 
+    geom_point(aes(color=ENSG00000136237.RAPGEF5))  + 
+    
+    geom_point(data=tumor_umap_w_expr %>% 
+                   filter(FusionName == 'RAPGEF5--AGMO'),
+                aes(shape=FusionName, color=ENSG00000136237.RAPGEF5), size=rel(5)) 
+```
+
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-63-1.png)<!-- -->
+
+``` r
+Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() + 
+    geom_point(aes(color=ENSG00000136237.RAPGEF5))  + 
+    
+    geom_point(data=Tum_data_w_expr %>% 
+                   filter(FusionName == 'RAPGEF5--AGMO'),
+                aes(shape=FusionName, color=ENSG00000136237.RAPGEF5), size=rel(5)) 
+```
+
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-64-1.png)<!-- -->
+
+``` r
+tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + theme_bw() + 
+    geom_point(aes(color=ENSG00000187546.AGMO))  + 
+    
+    geom_point(data=tumor_umap_w_expr %>% 
+                   filter(FusionName == 'RAPGEF5--AGMO'),
+                aes(shape=FusionName, color=ENSG00000187546.AGMO), size=rel(5)) 
+```
+
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-65-1.png)<!-- -->
+
+``` r
+Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() + 
+    geom_point(aes(color=ENSG00000187546.AGMO))  + 
+    
+    geom_point(data=Tum_data_w_expr %>% 
+                   filter(FusionName == 'RAPGEF5--AGMO'),
+                aes(shape=FusionName, color=ENSG00000187546.AGMO), size=rel(5)) 
+```
+
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-66-1.png)<!-- -->
+
+## fusion GS1-279B7.2–GNG4
+
+``` r
+#ENSG00000273004.1  chr1    185317779   185318530   +   GS1-279B7.2 lincRNA
+
+tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + theme_bw() + 
+    geom_point(aes(color=ENSG00000273004.AL078644.2))  + 
+    
+    geom_point(data=tumor_umap_w_expr %>% 
+                   filter(FusionName == 'GS1-279B7.2--GNG4'),
+                aes(shape=FusionName, color=ENSG00000273004.AL078644.2), size=rel(5), alpha=0.7) 
+```
+
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-67-1.png)<!-- -->
+
+``` r
+Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() + 
+    geom_point(aes(color=ENSG00000273004.AL078644.2))  + 
+    
+    geom_point(data=Tum_data_w_expr %>% 
+                   filter(FusionName == 'GS1-279B7.2--GNG4'),
+                aes(shape=FusionName, color=ENSG00000273004.AL078644.2), size=rel(5)) 
+```
+
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-68-1.png)<!-- -->
+
+``` r
+tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + theme_bw() + 
+    geom_point(aes(color=ENSG00000168243.GNG4))  + 
+    
+    geom_point(data=tumor_umap_w_expr %>% 
+                   filter(FusionName == 'GS1-279B7.2--GNG4'),
+                aes(shape=FusionName, color=ENSG00000168243.GNG4), size=rel(5)) 
+```
+
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-69-1.png)<!-- -->
+
+``` r
+Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() + 
+    geom_point(aes(color=ENSG00000168243.GNG4))  + 
+    
+    geom_point(data=Tum_data_w_expr %>% 
+                   filter(FusionName == 'GS1-279B7.2--GNG4'),
+                aes(shape=FusionName, color=ENSG00000168243.GNG4), size=rel(5)) 
+```
+
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-70-1.png)<!-- -->
+
+# any fusions found only via short read data?
+
+``` r
+fusions_with_long_read = Tum_data %>% filter(method == "ctat-LR-fusion") %>% select(FusionName) %>% unique()
+
+fusions_with_long_read = fusions_with_long_read %>% filter(! FusionName %in% Om_data$FusionName)
+
+short_read_only_fusions = Tum_data %>% filter( ! FusionName %in% fusions_with_long_read$FusionName) %>% select(FusionName, method) %>% unique() %>%
+    group_by(FusionName) %>% mutate(methods = paste(collapse=",", method), num_methods = n()) %>%
+    select(FusionName, methods, num_methods) %>% unique() %>% arrange(desc(num_methods)) 
+
+short_read_only_fusions
+```
+
+    ## # A tibble: 197 × 3
+    ## # Groups:   FusionName [197]
+    ##    FusionName        methods                            num_methods
+    ##    <chr>             <chr>                                    <int>
+    ##  1 KMT2C--RASSF9     STAR-Fusion,FusionInspector,Arriba           3
+    ##  2 PRKCH--PRKAR1A    STAR-Fusion,FusionInspector,Arriba           3
+    ##  3 ANKH--WFDC2       STAR-Fusion,FusionInspector                  2
+    ##  4 ARMC4P1--CD38     STAR-Fusion,FusionInspector                  2
+    ##  5 BTG2--LRRC8A      STAR-Fusion,FusionInspector                  2
+    ##  6 CAMK1D--WAPAL     STAR-Fusion,FusionInspector                  2
+    ##  7 CAMTA1--LINC01191 STAR-Fusion,FusionInspector                  2
+    ##  8 CDK7--MZF1        STAR-Fusion,Arriba                           2
+    ##  9 CDK8--AP3M2       STAR-Fusion,FusionInspector                  2
+    ## 10 CHMP3--GNAI3      STAR-Fusion,FusionInspector                  2
+    ## # ℹ 187 more rows
+
+``` r
+# any short-read-only fusions relevant to cancer?
+
+left_join(short_read_only_fusions, Tum_data, by='FusionName') %>% 
+    select(FusionName, cell_barcode, celltype_final) %>% unique() %>%
+    group_by(FusionName, celltype_final) %>% tally(name='num_cells') %>% 
+    mutate(frac_fusion_cells=prop.table(num_cells)) %>%
+    filter(celltype_final == "HGSOC" & num_cells >= MIN_CELLS & frac_fusion_cells >= 0.8) %>%
+    arrange(desc(num_cells))
+```
+
+    ## # A tibble: 0 × 4
+    ## # Groups:   FusionName [0]
+    ## # ℹ 4 variables: FusionName <chr>, celltype_final <chr>, num_cells <int>,
+    ## #   frac_fusion_cells <dbl>
+
+``` r
+# 0
 ```

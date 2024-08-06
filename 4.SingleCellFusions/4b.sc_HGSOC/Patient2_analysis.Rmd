@@ -35,13 +35,17 @@ head(Tum_data)
 ```
 
 ```{r}
-# since starF and FI were run at max sensitivity, lets restrict fusions to those identified by ctat-LRF
 
-Tum_ctat_LRF_fusion_genes = Tum_data %>% filter(method == 'ctat-LR-fusion') %>% select(FusionName) %>% unique() %>% pull(FusionName)
+if (FALSE) {
+#    since starF and FI were run at max sensitivity, lets restrict fusions to those identified by ctat-LRF
 
-Tum_data = Tum_data %>% filter(FusionName %in% Tum_ctat_LRF_fusion_genes)
+    Tum_ctat_LRF_fusion_genes = Tum_data %>% filter(method == 'ctat-LR-fusion') %>% select(FusionName) %>% unique() %>% pull(FusionName)
 
-nrow(Tum_data)
+    Tum_data = Tum_data %>% filter(FusionName %in% Tum_ctat_LRF_fusion_genes)
+
+    nrow(Tum_data)
+
+}
 
 ```
 
@@ -492,6 +496,42 @@ report_on_fusion("RP11-208G20.2--PSPHP1")
 report_on_fusion("PSMB7--SCAI")
 
 ```
+
+
+
+# any fusions found only via short read data?
+
+```{r}
+
+fusions_with_long_read = Tum_data %>% filter(method == "ctat-LR-fusion") %>% select(FusionName) %>% unique()
+
+short_read_only_fusions = Tum_data %>% filter( ! FusionName %in% fusions_with_long_read$FusionName) %>% select(FusionName, method) %>% unique() %>%
+    group_by(FusionName) %>% mutate(methods = paste(collapse=",", method), num_methods = n()) %>%
+    select(FusionName, methods, num_methods) %>% unique() %>% arrange(desc(num_methods)) 
+
+short_read_only_fusions
+
+```
+
+
+```{r}
+
+# any short-read-only fusions relevant to cancer?
+
+left_join(short_read_only_fusions %>% filter(num_methods > 1), # no Om sample - restrict to multiple short read progs support
+          Tum_data, by='FusionName') %>% 
+    select(FusionName, cell_barcode, celltype_final) %>% unique() %>%
+    group_by(FusionName, celltype_final) %>% tally(name='num_cells') %>% 
+    mutate(frac_fusion_cells=prop.table(num_cells)) %>%
+    filter(celltype_final == "HGSOC" & num_cells >= MIN_CELLS & frac_fusion_cells >= 0.8) %>%
+    arrange(desc(num_cells))
+
+
+# 0
+
+```
+
+
 
 
 

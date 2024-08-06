@@ -36,13 +36,17 @@ Om_data %>% head()
 ```
 
 ```{r}
-# since starF and FI were run at max sensitivity, lets restrict fusions to those identified by ctat-LRF
 
-Om_ctat_LRF_fusion_genes = Om_data %>% filter(method == 'ctat-LR-fusion') %>% select(FusionName) %>% unique() %>% pull(FusionName)
+if (FALSE) {
+    # since starF and FI were run at max sensitivity, lets restrict fusions to those identified by ctat-LRF
 
-Om_data = Om_data %>% filter(FusionName %in% Om_ctat_LRF_fusion_genes)
+    Om_ctat_LRF_fusion_genes = Om_data %>% filter(method == 'ctat-LR-fusion') %>% select(FusionName) %>% unique() %>% pull(FusionName)
 
-nrow(Om_data)
+    Om_data = Om_data %>% filter(FusionName %in% Om_ctat_LRF_fusion_genes)
+
+    nrow(Om_data)
+    
+}    
 
 ```
 

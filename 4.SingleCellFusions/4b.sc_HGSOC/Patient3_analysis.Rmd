@@ -1,5 +1,5 @@
 ---
-title: "Patient1_analysis"
+title: "Patient3_analysis"
 author: "bhaas"
 date: '2023-09-28'
 output: github_document
@@ -21,11 +21,12 @@ MIN_CELLS = 5
 # P3 Om
 
 
-
 ```{r}
 
 Om_data = read.table("data/Patient3_Om.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.tsv.gz", header=T, sep="\t", stringsAsFactors = F) %>%
     filter(! is.na(UMAP_1))
+
+Om_data$FusionName = str_replace(Om_data$FusionName, "RANBP3-DT", "CTC-232P5.1") # because of Arriba
 
 nrow(Om_data)
 Om_data %>% head()
@@ -34,13 +35,17 @@ Om_data %>% head()
 
 
 ```{r}
-# since starF and FI were run at max sensitivity, lets restrict fusions to those identified by ctat-LRF
 
-Om_ctat_LRF_fusion_genes = Om_data %>% filter(method == 'ctat-LR-fusion') %>% select(FusionName) %>% unique() %>% pull(FusionName)
+if (FALSE) {
+    # since starF and FI were run at max sensitivity, lets restrict fusions to those identified by ctat-LRF
 
-Om_data = Om_data %>% filter(FusionName %in% Om_ctat_LRF_fusion_genes)
+    Om_ctat_LRF_fusion_genes = Om_data %>% filter(method == 'ctat-LR-fusion') %>% select(FusionName) %>% unique() %>% pull(FusionName)
 
-nrow(Om_data)
+    Om_data = Om_data %>% filter(FusionName %in% Om_ctat_LRF_fusion_genes)
+
+    nrow(Om_data)
+
+}
 
 ```
 
@@ -124,19 +129,25 @@ Om_fusion_frac_cell_types %>% filter(tot_cells_w_fusion >= MIN_CELLS)
 Tum_data = read.table("data/Patient3_Tum.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.tsv.gz", header=T, sep="\t", stringsAsFactors = F) %>%
     filter(! is.na(UMAP_1))
  
+Tum_data$FusionName = str_replace(Tum_data$FusionName, "RANBP3-DT", "CTC-232P5.1")
+
 nrow(Tum_data)
 Tum_data %>% head()
 
 ```
 
 ```{r}
-# since starF and FI were run at max sensitivity, lets restrict fusions to those identified by ctat-LRF
 
-Tum_ctat_LRF_fusion_genes = Tum_data %>% filter(method == 'ctat-LR-fusion') %>% select(FusionName) %>% unique() %>% pull(FusionName)
+if (FALSE) {
+    # since starF and FI were run at max sensitivity, lets restrict fusions to those identified by ctat-LRF
 
-Tum_data = Tum_data %>% filter(FusionName %in% Tum_ctat_LRF_fusion_genes)
+    Tum_ctat_LRF_fusion_genes = Tum_data %>% filter(method == 'ctat-LR-fusion') %>% select(FusionName) %>% unique() %>% pull(FusionName)
 
-nrow(Tum_data)
+    Tum_data = Tum_data %>% filter(FusionName %in% Tum_ctat_LRF_fusion_genes)
+
+    nrow(Tum_data)
+
+}
 
 ```
 
@@ -579,6 +590,40 @@ report_on_fusion("RP11-444D3.1--SOX5")
 
 
 ```
+
+
+# any fusions found only via short read data?
+
+```{r}
+
+fusions_with_long_read = Tum_data %>% filter(method == "ctat-LR-fusion") %>% select(FusionName) %>% unique()
+
+fusions_with_long_read = fusions_with_long_read %>% filter(! FusionName %in% Om_data$FusionName)
+
+short_read_only_fusions = Tum_data %>% filter( ! FusionName %in% fusions_with_long_read$FusionName) %>% select(FusionName, method) %>% unique() %>%
+    group_by(FusionName) %>% mutate(methods = paste(collapse=",", method), num_methods = n()) %>%
+    select(FusionName, methods, num_methods) %>% unique() %>% arrange(desc(num_methods)) 
+
+short_read_only_fusions
+
+```
+
+```{r}
+
+# any short-read-only fusions relevant to cancer?
+
+left_join(short_read_only_fusions, Tum_data, by='FusionName') %>% 
+    select(FusionName, cell_barcode, celltype_final) %>% unique() %>%
+    group_by(FusionName, celltype_final) %>% tally(name='num_cells') %>% 
+    mutate(frac_fusion_cells=prop.table(num_cells)) %>%
+    filter(celltype_final == "HGSOC" & num_cells >= MIN_CELLS & frac_fusion_cells >= 0.8) %>%
+    arrange(desc(num_cells))
+
+
+# 0
+
+```
+
 
 
 
