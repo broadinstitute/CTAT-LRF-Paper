@@ -13,8 +13,6 @@ MIN_CELLS = 5
 Om_data = read.table("data/Patient3_Om.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.tsv.gz", header=T, sep="\t", stringsAsFactors = F) %>%
     filter(! is.na(UMAP_1))
 
-Om_data$FusionName = str_replace(Om_data$FusionName, "RANBP3-DT", "CTC-232P5.1") # because of Arriba
-
 nrow(Om_data)
 ```
 
@@ -24,27 +22,34 @@ nrow(Om_data)
 Om_data %>% head()
 ```
 
-    ##             FusionName   LeftBreakpoint  RightBreakpoint     cell_barcode
-    ## 1         AAED1--SUMO1  chr9:96651390:- chr2:202214429:- AAGAGATTGCATTACG
-    ## 2         ABCA1--SCAF4 chr9:104927831:- chr21:31685468:- ATTTGCGGAGCAGCAA
-    ## 3        ABCA2--PRSS21 chr9:137016381:-  chr16:2821354:+ TGCTCAGCTTTGCTCC
-    ## 4         ABCA3--SMOC2  chr16:2324468:- chr6:168547137:+ GAGAATAACAGCGATG
-    ## 5         ABCA3--SMOC2  chr16:2324468:- chr6:168547137:+ GAGAATAACAGCGATG
-    ## 6 ABCC1--RP11-640N20.4 chr16:16016594:+ chr16:16146115:+ CACTCGTACTCCCTCA
-    ##            umi                                 read_name         method
-    ## 1 TCGCATGTTTCG NS500318:945:HNGM5BGXG:3:11401:9392:13153    STAR-Fusion
-    ## 2 GCTGCAGGGCCG          m64156_210214_222855/7345512/ccs ctat-LR-fusion
-    ## 3 TTTAGATGGTTA          m64156_210226_140858/5410520/ccs ctat-LR-fusion
-    ## 4 GACGATGAATTG         m64156_210214_222855/11810953/ccs ctat-LR-fusion
-    ## 5 AGACGATGAATG         m64156_210214_222855/12469721/ccs ctat-LR-fusion
-    ## 6 CAGTCTGCGTAG          m64156_210226_140858/1837470/ccs ctat-LR-fusion
-    ##           barcodes    celltype_final    UMAP_1    UMAP_2     dataset
-    ## 1 CGTAATGCAATCTCTT Mesothelial.cells -11.73349 -8.474167 Patient3_Om
-    ## 2 TTGCTGCTCCGCAAAT Mesothelial.cells -11.86847 -8.825021 Patient3_Om
-    ## 3 GGAGCAAAGCTGAGCA        T.NK.cells  12.45839  0.599520 Patient3_Om
-    ## 4 CATCGCTGTTATTCTC Mesothelial.cells -11.73225 -8.369301 Patient3_Om
-    ## 5 CATCGCTGTTATTCTC Mesothelial.cells -11.73225 -8.369301 Patient3_Om
-    ## 6 TGAGGGAGTACGAGTG        T.NK.cells  12.67854  2.805120 Patient3_Om
+    ##     LeftBreakpoint  RightBreakpoint     cell_barcode          umi
+    ## 1  chr9:96651390:- chr2:202214429:- AAGAGATTGCATTACG TCGCATGTTTCG
+    ## 2 chr9:104927831:- chr21:31685468:- ATTTGCGGAGCAGCAA GCTGCAGGGCCG
+    ## 3 chr9:137016381:-  chr16:2821354:+ TGCTCAGCTTTGCTCC TTTAGATGGTTA
+    ## 4  chr16:2324468:- chr6:168547137:+ GAGAATAACAGCGATG GACGATGAATTG
+    ## 5  chr16:2324468:- chr6:168547137:+ GAGAATAACAGCGATG AGACGATGAATG
+    ## 6 chr16:16016594:+ chr16:16146115:+ CACTCGTACTCCCTCA CAGTCTGCGTAG
+    ##                                   read_name         method      orig_FusionName
+    ## 1 NS500318:945:HNGM5BGXG:3:11401:9392:13153    STAR-Fusion         AAED1--SUMO1
+    ## 2          m64156_210214_222855/7345512/ccs ctat-LR-fusion         ABCA1--SCAF4
+    ## 3          m64156_210226_140858/5410520/ccs ctat-LR-fusion        ABCA2--PRSS21
+    ## 4         m64156_210214_222855/11810953/ccs ctat-LR-fusion         ABCA3--SMOC2
+    ## 5         m64156_210214_222855/12469721/ccs ctat-LR-fusion         ABCA3--SMOC2
+    ## 6          m64156_210226_140858/1837470/ccs ctat-LR-fusion ABCC1--RP11-640N20.4
+    ##   lex_sorted_FusionName           FusionName         barcodes    celltype_final
+    ## 1          AAED1--SUMO1         AAED1--SUMO1 CGTAATGCAATCTCTT Mesothelial.cells
+    ## 2          ABCA1--SCAF4         ABCA1--SCAF4 TTGCTGCTCCGCAAAT Mesothelial.cells
+    ## 3         ABCA2--PRSS21        ABCA2--PRSS21 GGAGCAAAGCTGAGCA        T.NK.cells
+    ## 4          ABCA3--SMOC2         ABCA3--SMOC2 CATCGCTGTTATTCTC Mesothelial.cells
+    ## 5          ABCA3--SMOC2         ABCA3--SMOC2 CATCGCTGTTATTCTC Mesothelial.cells
+    ## 6  ABCC1--RP11-640N20.4 ABCC1--RP11-640N20.4 TGAGGGAGTACGAGTG        T.NK.cells
+    ##      UMAP_1    UMAP_2     dataset
+    ## 1 -11.73349 -8.474167 Patient3_Om
+    ## 2 -11.86847 -8.825021 Patient3_Om
+    ## 3  12.45839  0.599520 Patient3_Om
+    ## 4 -11.73225 -8.369301 Patient3_Om
+    ## 5 -11.73225 -8.369301 Patient3_Om
+    ## 6  12.67854  2.805120 Patient3_Om
 
 ``` r
 if (FALSE) {
@@ -112,11 +117,11 @@ Om_cell_counts %>% filter(tot_cells_w_fusion >= MIN_CELLS)
     ## 10 RP11-855A2.2--BPTF                            8         0.0193
     ## 11 CTD-2008L17.1--RP11-456O19.2                  7         0.0169
     ## 12 RP11-420N3.2--RBFOX1                          6         0.0145
-    ## 13 PHYKPL--HNRNPAB                               5         0.0120
-    ## 14 ROR2--NFIL3                                   5         0.0120
-    ## 15 RP1-34H18.1--NAV3                             5         0.0120
-    ## 16 RP11-444D3.1--SOX5                            5         0.0120
-    ## 17 WDR59--ADAMTS17                               5         0.0120
+    ## 13 ADAMTS17--WDR59                               5         0.0120
+    ## 14 PHYKPL--HNRNPAB                               5         0.0120
+    ## 15 ROR2--NFIL3                                   5         0.0120
+    ## 16 RP1-34H18.1--NAV3                             5         0.0120
+    ## 17 RP11-444D3.1--SOX5                            5         0.0120
 
 ``` r
 Om_cell_counts_by_method = read.table("data/Patient3_Om.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.cell_counts_by_method.tsv.gz", 
@@ -125,20 +130,27 @@ Om_cell_counts_by_method = read.table("data/Patient3_Om.Dondi_overian_CTAT_fusio
 Om_cell_counts_by_method %>% head()
 ```
 
-    ##              FusionName    LeftBreakpoint   RightBreakpoint          method
-    ## 1         ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-  ctat-LR-fusion
-    ## 2 RP11-208G20.2--PSPHP1   chr7:55761799:+   chr7:55773181:+  ctat-LR-fusion
-    ## 3     AC003080.4--PRDX6  chr7:111971400:-  chr1:173488635:+ FusionInspector
-    ## 4         ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-  ctat-LR-fusion
-    ## 5 RP11-208G20.2--PSPHP1   chr7:55761798:+   chr7:55772328:+  ctat-LR-fusion
-    ## 6   RP11-384F7.2--LSAMP  chr3:117997182:-  chr3:116444955:-  ctat-LR-fusion
-    ##      celltype_final     dataset cell_counts
-    ## 1 Mesothelial.cells Patient3_Om          68
-    ## 2 Mesothelial.cells Patient3_Om          53
-    ## 3 Mesothelial.cells Patient3_Om          43
-    ## 4        T.NK.cells Patient3_Om          40
-    ## 5 Mesothelial.cells Patient3_Om          29
-    ## 6 Mesothelial.cells Patient3_Om          19
+    ##              FusionName       orig_FusionName lex_sorted_FusionName
+    ## 1         ZCCHC8--RSRC2         ZCCHC8--RSRC2         RSRC2--ZCCHC8
+    ## 2 RP11-208G20.2--PSPHP1 RP11-208G20.2--PSPHP1 PSPHP1--RP11-208G20.2
+    ## 3     AC003080.4--PRDX6     AC003080.4--PRDX6     AC003080.4--PRDX6
+    ## 4         ZCCHC8--RSRC2         ZCCHC8--RSRC2         RSRC2--ZCCHC8
+    ## 5 RP11-208G20.2--PSPHP1 RP11-208G20.2--PSPHP1 PSPHP1--RP11-208G20.2
+    ## 6   RP11-384F7.2--LSAMP   RP11-384F7.2--LSAMP   LSAMP--RP11-384F7.2
+    ##      LeftBreakpoint   RightBreakpoint          method    celltype_final
+    ## 1 chr12:122498827:- chr12:122505706:-  ctat-LR-fusion Mesothelial.cells
+    ## 2   chr7:55761799:+   chr7:55773181:+  ctat-LR-fusion Mesothelial.cells
+    ## 3  chr7:111971400:-  chr1:173488635:+ FusionInspector Mesothelial.cells
+    ## 4 chr12:122498827:- chr12:122505706:-  ctat-LR-fusion        T.NK.cells
+    ## 5   chr7:55761798:+   chr7:55772328:+  ctat-LR-fusion Mesothelial.cells
+    ## 6  chr3:117997182:-  chr3:116444955:-  ctat-LR-fusion Mesothelial.cells
+    ##       dataset cell_counts
+    ## 1 Patient3_Om          68
+    ## 2 Patient3_Om          53
+    ## 3 Patient3_Om          43
+    ## 4 Patient3_Om          40
+    ## 5 Patient3_Om          29
+    ## 6 Patient3_Om          19
 
 ``` r
 Om_cell_counts_by_method_spread = Om_cell_counts_by_method %>% select(FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, cell_counts) %>%
@@ -205,27 +217,34 @@ nrow(Tum_data)
 Tum_data %>% head()
 ```
 
-    ##      FusionName   LeftBreakpoint   RightBreakpoint     cell_barcode
-    ## 1   A1BG--STRBP chr19:58346887:-  chr9:123125497:- GCAACGCTGTCGGAAG
-    ## 2    AASS--MEG3 chr7:122093048:- chr14:100848570:+ TAGTTACCTTACGATC
-    ## 3    AASS--MEG3 chr7:122093048:- chr14:100848570:+ TAGTTACCTTACGATC
-    ## 4 ABCA11P--AFF4    chr4:472575:-  chr5:132934941:- TGCAAGTTGTTCTATC
-    ## 5  ABCA3--NFIL3  chr16:2340573:-   chr9:91410906:- GATGGGTGATCATGCA
-    ## 6  ABCA5--USP25 chr17:69325699:-  chr21:15864268:+ GACCAGAGATAGGAAT
-    ##            umi                                 read_name          method
-    ## 1 AGGGATCAAGGA          m64156_210219_161109/4885829/ccs  ctat-LR-fusion
-    ## 2 CTTTTCATTGCG NS500318:945:HNGM5BGXG:1:13303:7782:14704     STAR-Fusion
-    ## 3 CTTTTCATTGCG NS500318:945:HNGM5BGXG:1:13303:7782:14704 FusionInspector
-    ## 4 GCCTCAAAGAAT          m64156_210213_160114/4360485/ccs  ctat-LR-fusion
-    ## 5 TATATGATGATA          m64156_210220_223905/8151666/ccs  ctat-LR-fusion
-    ## 6 AGAGAGCTAGAT          m64156_210213_160114/3862947/ccs  ctat-LR-fusion
-    ##           barcodes celltype_final     UMAP_1    UMAP_2      dataset
-    ## 1 CTTCCGACAGCGTTGC          HGSOC  0.6810082 -4.588101 Patient3_Tum
-    ## 2 GATCGTAAGGTAACTA    Fibroblasts  2.5894298 12.493015 Patient3_Tum
-    ## 3 GATCGTAAGGTAACTA    Fibroblasts  2.5894298 12.493015 Patient3_Tum
-    ## 4 GATAGAACAACTTGCA     T.NK.cells -8.6050201  1.075450 Patient3_Tum
-    ## 5 TGCATGATCACCCATC  Myeloid.cells 11.9549626 -6.190181 Patient3_Tum
-    ## 6 ATTCCTATCTCTGGTC     T.NK.cells -6.3617230  3.178483 Patient3_Tum
+    ##     LeftBreakpoint   RightBreakpoint     cell_barcode          umi
+    ## 1 chr19:58346887:-  chr9:123125497:- GCAACGCTGTCGGAAG AGGGATCAAGGA
+    ## 2 chr7:122093048:- chr14:100848570:+ TAGTTACCTTACGATC CTTTTCATTGCG
+    ## 3 chr7:122093048:- chr14:100848570:+ TAGTTACCTTACGATC CTTTTCATTGCG
+    ## 4    chr4:472575:-  chr5:132934941:- TGCAAGTTGTTCTATC GCCTCAAAGAAT
+    ## 5  chr16:2340573:-   chr9:91410906:- GATGGGTGATCATGCA TATATGATGATA
+    ## 6 chr17:69325699:-  chr21:15864268:+ GACCAGAGATAGGAAT AGAGAGCTAGAT
+    ##                                   read_name          method orig_FusionName
+    ## 1          m64156_210219_161109/4885829/ccs  ctat-LR-fusion     A1BG--STRBP
+    ## 2 NS500318:945:HNGM5BGXG:1:13303:7782:14704     STAR-Fusion      AASS--MEG3
+    ## 3 NS500318:945:HNGM5BGXG:1:13303:7782:14704 FusionInspector      AASS--MEG3
+    ## 4          m64156_210213_160114/4360485/ccs  ctat-LR-fusion   ABCA11P--AFF4
+    ## 5          m64156_210220_223905/8151666/ccs  ctat-LR-fusion    ABCA3--NFIL3
+    ## 6          m64156_210213_160114/3862947/ccs  ctat-LR-fusion    ABCA5--USP25
+    ##   lex_sorted_FusionName    FusionName         barcodes celltype_final
+    ## 1           A1BG--STRBP   A1BG--STRBP CTTCCGACAGCGTTGC          HGSOC
+    ## 2            AASS--MEG3    AASS--MEG3 GATCGTAAGGTAACTA    Fibroblasts
+    ## 3            AASS--MEG3    AASS--MEG3 GATCGTAAGGTAACTA    Fibroblasts
+    ## 4         ABCA11P--AFF4 ABCA11P--AFF4 GATAGAACAACTTGCA     T.NK.cells
+    ## 5          ABCA3--NFIL3  ABCA3--NFIL3 TGCATGATCACCCATC  Myeloid.cells
+    ## 6          ABCA5--USP25  ABCA5--USP25 ATTCCTATCTCTGGTC     T.NK.cells
+    ##       UMAP_1    UMAP_2      dataset
+    ## 1  0.6810082 -4.588101 Patient3_Tum
+    ## 2  2.5894298 12.493015 Patient3_Tum
+    ## 3  2.5894298 12.493015 Patient3_Tum
+    ## 4 -8.6050201  1.075450 Patient3_Tum
+    ## 5 11.9549626 -6.190181 Patient3_Tum
+    ## 6 -6.3617230  3.178483 Patient3_Tum
 
 ``` r
 if (FALSE) {
@@ -312,23 +331,32 @@ Tum_cell_counts %>% filter(tot_cells_w_fusion >= MIN_CELLS)
 Tum_cell_counts_by_method = read.table("data/Patient3_Tum.Dondi_overian_CTAT_fusions.filtered_cells_and_dedup_umis.cell_counts_by_method.tsv.gz", 
                                       header=T, sep="\t", stringsAsFactors = F)
 
+Tum_cell_counts_by_method$FusionName = str_replace(Tum_cell_counts_by_method$FusionName, "RANBP3-DT", "CTC-232P5.1") # because of Arriba
+
 Tum_cell_counts_by_method %>% head()
 ```
 
-    ##              FusionName    LeftBreakpoint   RightBreakpoint          method
-    ## 1         ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-  ctat-LR-fusion
-    ## 2         ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-  ctat-LR-fusion
-    ## 3 RP11-60E8.2--MINOS1P3  chr12:50757389:+   chr3:27214837:- FusionInspector
-    ## 4 RP11-208G20.2--PSPHP1   chr7:55761799:+   chr7:55773181:+  ctat-LR-fusion
-    ## 5 RP11-60E8.2--MINOS1P3  chr12:50757389:+   chr3:27214837:- FusionInspector
-    ## 6         ZCCHC8--RSRC2 chr12:122498827:- chr12:122505706:-  ctat-LR-fusion
-    ##   celltype_final      dataset cell_counts
-    ## 1     T.NK.cells Patient3_Tum         105
-    ## 2  Myeloid.cells Patient3_Tum          99
-    ## 3  Myeloid.cells Patient3_Tum          64
-    ## 4     T.NK.cells Patient3_Tum          36
-    ## 5          HGSOC Patient3_Tum          32
-    ## 6          HGSOC Patient3_Tum          30
+    ##              FusionName       orig_FusionName lex_sorted_FusionName
+    ## 1         ZCCHC8--RSRC2         ZCCHC8--RSRC2         RSRC2--ZCCHC8
+    ## 2         ZCCHC8--RSRC2         ZCCHC8--RSRC2         RSRC2--ZCCHC8
+    ## 3 RP11-60E8.2--MINOS1P3 RP11-60E8.2--MINOS1P3 MINOS1P3--RP11-60E8.2
+    ## 4 RP11-208G20.2--PSPHP1 RP11-208G20.2--PSPHP1 PSPHP1--RP11-208G20.2
+    ## 5 RP11-60E8.2--MINOS1P3 RP11-60E8.2--MINOS1P3 MINOS1P3--RP11-60E8.2
+    ## 6         ZCCHC8--RSRC2         ZCCHC8--RSRC2         RSRC2--ZCCHC8
+    ##      LeftBreakpoint   RightBreakpoint          method celltype_final
+    ## 1 chr12:122498827:- chr12:122505706:-  ctat-LR-fusion     T.NK.cells
+    ## 2 chr12:122498827:- chr12:122505706:-  ctat-LR-fusion  Myeloid.cells
+    ## 3  chr12:50757389:+   chr3:27214837:- FusionInspector  Myeloid.cells
+    ## 4   chr7:55761799:+   chr7:55773181:+  ctat-LR-fusion     T.NK.cells
+    ## 5  chr12:50757389:+   chr3:27214837:- FusionInspector          HGSOC
+    ## 6 chr12:122498827:- chr12:122505706:-  ctat-LR-fusion          HGSOC
+    ##        dataset cell_counts
+    ## 1 Patient3_Tum         105
+    ## 2 Patient3_Tum          99
+    ## 3 Patient3_Tum          64
+    ## 4 Patient3_Tum          36
+    ## 5 Patient3_Tum          32
+    ## 6 Patient3_Tum          30
 
 ``` r
 Tum_cell_counts_by_method_spread = Tum_cell_counts_by_method %>% select(FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, cell_counts) %>%
@@ -563,10 +591,12 @@ fusions_of_interest = left_join(fusions_of_interest, Tum_cell_counts_by_method_s
                                 by=c('FusionName', 'celltype_final') )
 
 
+
+
 fusions_of_interest 
 ```
 
-    ## # A tibble: 6 × 10
+    ## # A tibble: 8 × 10
     ## # Groups:   FusionName [2]
     ##   FusionName  celltype_final tot_cells_w_fusion frac_fusion_cells LeftBreakpoint
     ##   <chr>       <chr>                       <int>             <dbl> <chr>         
@@ -575,7 +605,9 @@ fusions_of_interest
     ## 3 CBLC--CTC-… HGSOC                          14             0.875 chr19:4478105…
     ## 4 CBLC--CTC-… HGSOC                          14             0.875 chr19:4478136…
     ## 5 CBLC--CTC-… HGSOC                          14             0.875 chr19:4477828…
-    ## 6 SNRNP70--Z… HGSOC                           7             0.875 chr19:4909870…
+    ## 6 CBLC--CTC-… HGSOC                          14             0.875 chr19:6012120…
+    ## 7 CBLC--CTC-… HGSOC                          14             0.875 chr19:6012120…
+    ## 8 SNRNP70--Z… HGSOC                           7             0.875 chr19:4909870…
     ## # ℹ 5 more variables: RightBreakpoint <chr>, Arriba <int>,
     ## #   `ctat-LR-fusion` <int>, FusionInspector <int>, `STAR-Fusion` <int>
 
@@ -608,12 +640,28 @@ Tum_data %>% filter(FusionName %in% fusions_of_interest$FusionName) %>% select(F
 ```
 
 ``` r
+Tum_data %>% filter(FusionName %in% fusions_of_interest$FusionName) %>% select(FusionName, cell_barcode, celltype_final, method) %>% unique() %>%
+    group_by(FusionName, celltype_final, method) %>% tally() %>% filter(FusionName == "SNRNP70--ZIK1")
+```
+
+    ## # A tibble: 2 × 4
+    ## # Groups:   FusionName, celltype_final [2]
+    ##   FusionName    celltype_final method             n
+    ##   <chr>         <chr>          <chr>          <int>
+    ## 1 SNRNP70--ZIK1 B.cells        ctat-LR-fusion     1
+    ## 2 SNRNP70--ZIK1 HGSOC          ctat-LR-fusion     7
+
+``` r
+# SNRNP70--ZIK1 found only by long reads
+```
+
+``` r
 # see if these fusions are found in the Om sample
 
 left_join(fusions_of_interest, Om_fusion_frac_cell_types, by='FusionName', suffix=c('.Tum', '.Om'))
 ```
 
-    ## # A tibble: 6 × 13
+    ## # A tibble: 8 × 13
     ## # Groups:   FusionName [2]
     ##   FusionName     celltype_final.Tum tot_cells_w_fusion.Tum frac_fusion_cells.Tum
     ##   <chr>          <chr>                               <int>                 <dbl>
@@ -622,7 +670,9 @@ left_join(fusions_of_interest, Om_fusion_frac_cell_types, by='FusionName', suffi
     ## 3 CBLC--CTC-232… HGSOC                                  14                 0.875
     ## 4 CBLC--CTC-232… HGSOC                                  14                 0.875
     ## 5 CBLC--CTC-232… HGSOC                                  14                 0.875
-    ## 6 SNRNP70--ZIK1  HGSOC                                   7                 0.875
+    ## 6 CBLC--CTC-232… HGSOC                                  14                 0.875
+    ## 7 CBLC--CTC-232… HGSOC                                  14                 0.875
+    ## 8 SNRNP70--ZIK1  HGSOC                                   7                 0.875
     ## # ℹ 9 more variables: LeftBreakpoint <chr>, RightBreakpoint <chr>,
     ## #   Arriba <int>, `ctat-LR-fusion` <int>, FusionInspector <int>,
     ## #   `STAR-Fusion` <int>, celltype_final.Om <chr>, tot_cells_w_fusion.Om <int>,
@@ -645,7 +695,7 @@ fusions_of_interest = left_join(fusions_of_interest, Tum_cell_counts_by_method_s
 fusions_of_interest
 ```
 
-    ## # A tibble: 6 × 10
+    ## # A tibble: 8 × 10
     ## # Groups:   FusionName [2]
     ##   FusionName  celltype_final tot_cells_w_fusion frac_fusion_cells LeftBreakpoint
     ##   <chr>       <chr>                       <int>             <dbl> <chr>         
@@ -654,7 +704,9 @@ fusions_of_interest
     ## 3 CBLC--CTC-… HGSOC                          14             0.875 chr19:4478105…
     ## 4 CBLC--CTC-… HGSOC                          14             0.875 chr19:4478136…
     ## 5 CBLC--CTC-… HGSOC                          14             0.875 chr19:4477828…
-    ## 6 SNRNP70--Z… HGSOC                           7             0.875 chr19:4909870…
+    ## 6 CBLC--CTC-… HGSOC                          14             0.875 chr19:6012120…
+    ## 7 CBLC--CTC-… HGSOC                          14             0.875 chr19:6012120…
+    ## 8 SNRNP70--Z… HGSOC                           7             0.875 chr19:4909870…
     ## # ℹ 5 more variables: RightBreakpoint <chr>, Arriba <int>,
     ## #   `ctat-LR-fusion` <int>, FusionInspector <int>, `STAR-Fusion` <int>
 
@@ -668,7 +720,7 @@ fusions_of_interest = left_join(fusions_of_interest, fusion_annots)
 fusions_of_interest
 ```
 
-    ## # A tibble: 6 × 11
+    ## # A tibble: 8 × 11
     ## # Groups:   FusionName [2]
     ##   FusionName  celltype_final tot_cells_w_fusion frac_fusion_cells LeftBreakpoint
     ##   <chr>       <chr>                       <int>             <dbl> <chr>         
@@ -677,13 +729,17 @@ fusions_of_interest
     ## 3 CBLC--CTC-… HGSOC                          14             0.875 chr19:4478105…
     ## 4 CBLC--CTC-… HGSOC                          14             0.875 chr19:4478136…
     ## 5 CBLC--CTC-… HGSOC                          14             0.875 chr19:4477828…
-    ## 6 SNRNP70--Z… HGSOC                           7             0.875 chr19:4909870…
+    ## 6 CBLC--CTC-… HGSOC                          14             0.875 chr19:6012120…
+    ## 7 CBLC--CTC-… HGSOC                          14             0.875 chr19:6012120…
+    ## 8 SNRNP70--Z… HGSOC                           7             0.875 chr19:4909870…
     ## # ℹ 6 more variables: RightBreakpoint <chr>, Arriba <int>,
     ## #   `ctat-LR-fusion` <int>, FusionInspector <int>, `STAR-Fusion` <int>,
     ## #   annots <chr>
 
 ``` r
 # only long reads detect SNRNP70--ZIK1
+
+# the arriba breakpoints are flipped for CBLC fusion, deal with that in plotting below
 ```
 
 # Examine umaps for fusions
@@ -695,7 +751,7 @@ baseplot = Tum_umap_data %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + geom_point(aes(co
 baseplot
 ```
 
-![](Patient3_analysis_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
+![](Patient3_analysis_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
 
 ``` r
 x = 0
@@ -716,7 +772,7 @@ for (fusion in  unique(fusions_of_interest$FusionName)) {
 }
 ```
 
-![](Patient3_analysis_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->![](Patient3_analysis_files/figure-gfm/unnamed-chunk-27-2.png)<!-- -->
+![](Patient3_analysis_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->![](Patient3_analysis_files/figure-gfm/unnamed-chunk-28-2.png)<!-- -->
 
 ``` r
 pdf("Patient3_Tum.fusions_of_interest.pdf")
@@ -753,7 +809,7 @@ fusion_of_interest_cell_counts  %>%
     ggtitle("Patient3_Tum Fusions of Interest: Cell Counts")
 ```
 
-![](Patient3_analysis_files/figure-gfm/unnamed-chunk-30-1.png)<!-- -->
+![](Patient3_analysis_files/figure-gfm/unnamed-chunk-31-1.png)<!-- -->
 
 ``` r
 # breakdown by combinations of methods per cell
@@ -765,7 +821,7 @@ tumor_cell_counts_by_methods = Tum_data %>%
         arrange(method) %>%
         mutate(methods = paste(method, collapse=',')) %>%
         ungroup() %>%
-        select(FusionName, methods, barcodes) %>% group_by(FusionName, methods) %>% tally(name='cell_counts')
+        select(FusionName, methods, barcodes) %>% unique() %>% group_by(FusionName, methods) %>% tally(name='cell_counts')
 
 
 tumor_cell_counts_by_methods 
@@ -775,10 +831,10 @@ tumor_cell_counts_by_methods
     ## # Groups:   FusionName [2]
     ##   FusionName        methods                                          cell_counts
     ##   <chr>             <chr>                                                  <int>
-    ## 1 CBLC--CTC-232P5.1 Arriba,FusionInspector,STAR-Fusion,ctat-LR-fusi…          24
-    ## 2 CBLC--CTC-232P5.1 Arriba,FusionInspector,ctat-LR-fusion                      3
-    ## 3 CBLC--CTC-232P5.1 FusionInspector,STAR-Fusion,ctat-LR-fusion                 6
-    ## 4 CBLC--CTC-232P5.1 FusionInspector,ctat-LR-fusion                             6
+    ## 1 CBLC--CTC-232P5.1 Arriba,FusionInspector,STAR-Fusion,ctat-LR-fusi…           6
+    ## 2 CBLC--CTC-232P5.1 Arriba,FusionInspector,ctat-LR-fusion                      1
+    ## 3 CBLC--CTC-232P5.1 FusionInspector,STAR-Fusion,ctat-LR-fusion                 2
+    ## 4 CBLC--CTC-232P5.1 FusionInspector,ctat-LR-fusion                             3
     ## 5 CBLC--CTC-232P5.1 ctat-LR-fusion                                             4
     ## 6 SNRNP70--ZIK1     ctat-LR-fusion                                             8
 
@@ -797,7 +853,7 @@ tumor_cell_counts_by_methods_by_isoform
 ```
 
     ## # A tibble: 16 × 3
-    ## # Groups:   fusion [6]
+    ## # Groups:   fusion [8]
     ##    fusion                                             method         cell_counts
     ##    <chr>                                              <chr>                <int>
     ##  1 CBLC--CTC-232P5.1 chr19:44778284:+ chr19:6012120:+ ctat-LR-fusion           1
@@ -807,27 +863,37 @@ tumor_cell_counts_by_methods_by_isoform
     ##  5 CBLC--CTC-232P5.1 chr19:44781363:+ chr19:6012120:+ FusionInspect…           2
     ##  6 CBLC--CTC-232P5.1 chr19:44781363:+ chr19:6012120:+ STAR-Fusion              2
     ##  7 CBLC--CTC-232P5.1 chr19:44781363:+ chr19:6012120:+ ctat-LR-fusion           5
-    ##  8 CBLC--CTC-232P5.1 chr19:44784401:+ chr19:6012120:+ Arriba                   6
-    ##  9 CBLC--CTC-232P5.1 chr19:44784401:+ chr19:6012120:+ FusionInspect…           8
-    ## 10 CBLC--CTC-232P5.1 chr19:44784401:+ chr19:6012120:+ STAR-Fusion              5
-    ## 11 CBLC--CTC-232P5.1 chr19:44784401:+ chr19:6012120:+ ctat-LR-fusion          13
-    ## 12 CBLC--CTC-232P5.1 chr19:44784417:+ chr19:6012120:+ Arriba                   3
-    ## 13 CBLC--CTC-232P5.1 chr19:44784417:+ chr19:6012120:+ FusionInspect…           3
-    ## 14 CBLC--CTC-232P5.1 chr19:44784417:+ chr19:6012120:+ STAR-Fusion              3
-    ## 15 CBLC--CTC-232P5.1 chr19:44784417:+ chr19:6012120:+ ctat-LR-fusion          10
+    ##  8 CBLC--CTC-232P5.1 chr19:44784401:+ chr19:6012120:+ FusionInspect…           8
+    ##  9 CBLC--CTC-232P5.1 chr19:44784401:+ chr19:6012120:+ STAR-Fusion              5
+    ## 10 CBLC--CTC-232P5.1 chr19:44784401:+ chr19:6012120:+ ctat-LR-fusion          13
+    ## 11 CBLC--CTC-232P5.1 chr19:44784417:+ chr19:6012120:+ FusionInspect…           3
+    ## 12 CBLC--CTC-232P5.1 chr19:44784417:+ chr19:6012120:+ STAR-Fusion              3
+    ## 13 CBLC--CTC-232P5.1 chr19:44784417:+ chr19:6012120:+ ctat-LR-fusion          10
+    ## 14 CBLC--CTC-232P5.1 chr19:6012120:+ chr19:44784401:+ Arriba                   6
+    ## 15 CBLC--CTC-232P5.1 chr19:6012120:+ chr19:44784417:+ Arriba                   3
     ## 16 SNRNP70--ZIK1 chr19:49098704:+ chr19:57590011:+    ctat-LR-fusion           8
 
 ``` r
 # counts of cells according to CBLC--CTC-232P5.1  fusion isoforms and corresponding read type / method
 
-tumor_cell_counts_by_methods_by_isoform %>% 
+# arriba breakpoints are flipped for some reason...  fix it here for the plot
+arriba_cell_counts_by_isoform = tumor_cell_counts_by_methods_by_isoform %>% filter(method == "Arriba")
+
+arriba_cell_counts_by_isoform = arriba_cell_counts_by_isoform %>%
+    mutate(fusion = ifelse(fusion == "CBLC--CTC-232P5.1 chr19:6012120:+ chr19:44784401:+", "CBLC--CTC-232P5.1 chr19:44784401:+ chr19:6012120:+", fusion)) %>%
+    mutate(fusion = ifelse(fusion == "CBLC--CTC-232P5.1 chr19:6012120:+ chr19:44784417:+", "CBLC--CTC-232P5.1 chr19:44784417:+ chr19:6012120:+", fusion))
+
+
+tumor_cell_counts_by_methods_by_isoform = bind_rows(tumor_cell_counts_by_methods_by_isoform %>% filter(method != "Arriba"),
+                                                    arriba_cell_counts_by_isoform) 
+tumor_cell_counts_by_methods_by_isoform %>%
     filter(grepl("CBLC", fusion)) %>%
     ggplot(aes(x=fusion, y=cell_counts, fill=method)) + geom_bar(stat='identity', position='dodge') +
     theme_bw() +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
 ```
 
-![](Patient3_analysis_files/figure-gfm/unnamed-chunk-33-1.png)<!-- -->
+![](Patient3_analysis_files/figure-gfm/unnamed-chunk-34-1.png)<!-- -->
 
 ``` r
 tumor_cell_counts_by_methods_by_isoform %>%
@@ -837,7 +903,7 @@ tumor_cell_counts_by_methods_by_isoform %>%
     ggtitle("Patient 3 Fusions of interest")
 ```
 
-![](Patient3_analysis_files/figure-gfm/unnamed-chunk-34-1.png)<!-- -->
+![](Patient3_analysis_files/figure-gfm/unnamed-chunk-35-1.png)<!-- -->
 
 ``` r
 # co-expression of CBLC--CTC-232P5.1 and SNRNP70--ZIK1 in cells
@@ -1338,8 +1404,8 @@ short_read_only_fusions = Tum_data %>% filter( ! FusionName %in% fusions_with_lo
 short_read_only_fusions
 ```
 
-    ## # A tibble: 505 × 3
-    ## # Groups:   FusionName [505]
+    ## # A tibble: 501 × 3
+    ## # Groups:   FusionName [501]
     ##    FusionName           methods                                    num_methods
     ##    <chr>                <chr>                                            <int>
     ##  1 ANLN--RPS6KA5        STAR-Fusion,FusionInspector,Arriba                   3
@@ -1352,7 +1418,7 @@ short_read_only_fusions
     ##  8 AC073283.4--SPEN     STAR-Fusion,FusionInspector                          2
     ##  9 AC142528.1--RFX3-AS1 STAR-Fusion,FusionInspector                          2
     ## 10 ACOT7--BIRC6         STAR-Fusion,FusionInspector                          2
-    ## # ℹ 495 more rows
+    ## # ℹ 491 more rows
 
 ``` r
 # any short-read-only fusions relevant to cancer?
