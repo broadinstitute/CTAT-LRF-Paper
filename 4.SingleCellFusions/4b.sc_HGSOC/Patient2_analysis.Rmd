@@ -210,11 +210,12 @@ fusion_frac_cell_types %>% filter(tot_cells_w_fusion >= MIN_CELLS)
 fusions_of_interest = fusion_frac_cell_types %>% 
     filter(tot_cells_w_fusion >= MIN_CELLS) %>%
     arrange(desc(tot_cells_w_fusion)) %>%
-    filter(frac_fusion_cells >= 0.8)
+    filter(frac_fusion_cells >= 0.8) %>%
+    filter(celltype_final == "HGSOC")
 
 fusions_of_interest
 
-# 17 fusions of interest
+# 20 fusions of interest
 
 ```
 
@@ -228,8 +229,6 @@ fusions_of_interest = left_join(fusions_of_interest,
 
 fusions_of_interest
 
-
-# really 16 total cancer cell enriched fusions, because HOOK2--JUNB is mostly in T.NK.cells
 
 ```
 
@@ -380,10 +379,10 @@ tumor_cell_counts_by_methods = Tum_data %>% filter(FusionName %in%  fusions_of_i
         arrange(method) %>%
         mutate(methods = paste(method, collapse=',')) %>%
         ungroup() %>%
-        select(FusionName, methods, barcodes) %>% group_by(FusionName, methods) %>% tally()
+        select(FusionName, methods, barcodes) %>% unique() %>% group_by(FusionName, methods) %>% tally()
 
 
-tumor_cell_counts_by_methods 
+tumor_cell_counts_by_methods  
 
 ```
 
@@ -447,9 +446,27 @@ Tum_data %>% filter(FusionName %in% c('SPATS2--TRA2B', 'IGF2BP2--TESPA1')) %>%
     group_by(fusion_names) %>% tally()
     
 
+# 20 / 21 appear to be co-expressed in the same cell
+
+```
+
+# DEK fusion looks interesting
+
+```{r}
+Tum_data %>% filter(grepl("DEK--", FusionName)) %>%
+    filter(grepl("chr6:182", LeftBreakpoint) & grepl("chr17:71", RightBreakpoint)) %>%
+    select(cell_barcode, method) %>% unique() %>%
+    group_by(cell_barcode) %>% mutate(methods = paste(collapse=",", method)) %>%
+    ungroup() %>%
+    select(cell_barcode, methods) %>% unique() %>%
+    group_by(methods) %>% tally()
 
 
 ```
+
+
+hmm...  half of the Arriba DEK fusions overlap with ctat-LR-fusion found cells, so maybe it's from the same event. Curious...
+
 
 # Are there interesting fusions in non-tumor cells?
 

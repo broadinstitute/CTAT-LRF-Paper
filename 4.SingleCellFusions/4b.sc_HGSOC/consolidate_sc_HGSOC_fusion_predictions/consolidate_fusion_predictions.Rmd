@@ -68,9 +68,14 @@ get_Arriba_data = function(arriba_preds_file) {
     
     Arriba_data = Arriba_data %>% 
         rowwise() %>%
+        
+        mutate(LeftBreakpointOrig = paste0("chr", breakpoint1, ":", strand1), 
+               RightBreakpointOrig = paste0("chr", breakpoint2, ":", strand2) ) %>%
+        # deal with gene ordering issue
         mutate(FusionName = ifelse(direction1 == "upstream", paste(X.gene1, gene2, sep="--"), paste(gene2, X.gene1, sep="--"))) %>%
-        mutate(LeftBreakpoint = paste0("chr", breakpoint1, ":", strand1), 
-               RightBreakpoint = paste0("chr", breakpoint2, ":", strand2) ) %>%
+        mutate(LeftBreakpoint = ifelse(direction1 == "upstream", LeftBreakpointOrig, RightBreakpointOrig) ) %>%
+        mutate(RightBreakpoint = ifelse(direction1 == "upstream", RightBreakpointOrig, LeftBreakpointOrig) ) %>%
+        
         rename(JunctionReads = read_identifiers) %>%
         select(FusionName, LeftBreakpoint, RightBreakpoint, JunctionReads) %>%
         mutate(JunctionReads = str_split(JunctionReads, ",")) %>%

@@ -267,6 +267,8 @@ fusions_of_interest = left_join(fusions_of_interest, Tum_cell_counts_by_method_s
                                 by=c('FusionName', 'celltype_final') )
 
 
+
+
 fusions_of_interest 
 
 
@@ -291,6 +293,16 @@ Tum_data %>% filter(FusionName %in% fusions_of_interest$FusionName) %>% select(F
 # I suspect the non HGSOC labeling for those was a bit off and they're likely all HGSOC - see the UMAPs...
 
 ```
+
+
+```{r}
+Tum_data %>% filter(FusionName %in% fusions_of_interest$FusionName) %>% select(FusionName, cell_barcode, celltype_final, method) %>% unique() %>%
+    group_by(FusionName, celltype_final, method) %>% tally() %>% filter(FusionName == "SNRNP70--ZIK1")
+
+# SNRNP70--ZIK1 found only by long reads
+
+```
+
 
 
 
@@ -321,6 +333,8 @@ fusions_of_interest = left_join(fusions_of_interest, fusion_annots)
 fusions_of_interest
 
 # only long reads detect SNRNP70--ZIK1
+
+# the arriba breakpoints are flipped for CBLC fusion, deal with that in plotting below
 ```
 
 
@@ -418,7 +432,7 @@ tumor_cell_counts_by_methods = Tum_data %>%
         arrange(method) %>%
         mutate(methods = paste(method, collapse=',')) %>%
         ungroup() %>%
-        select(FusionName, methods, barcodes) %>% group_by(FusionName, methods) %>% tally(name='cell_counts')
+        select(FusionName, methods, barcodes) %>% unique() %>% group_by(FusionName, methods) %>% tally(name='cell_counts')
 
 
 tumor_cell_counts_by_methods 
@@ -448,7 +462,17 @@ tumor_cell_counts_by_methods_by_isoform
 
 # counts of cells according to CBLC--CTC-232P5.1  fusion isoforms and corresponding read type / method
 
-tumor_cell_counts_by_methods_by_isoform %>% 
+# arriba breakpoints are flipped for some reason...  fix it here for the plot
+arriba_cell_counts_by_isoform = tumor_cell_counts_by_methods_by_isoform %>% filter(method == "Arriba")
+
+arriba_cell_counts_by_isoform = arriba_cell_counts_by_isoform %>%
+    mutate(fusion = ifelse(fusion == "CBLC--CTC-232P5.1 chr19:6012120:+ chr19:44784401:+", "CBLC--CTC-232P5.1 chr19:44784401:+ chr19:6012120:+", fusion)) %>%
+    mutate(fusion = ifelse(fusion == "CBLC--CTC-232P5.1 chr19:6012120:+ chr19:44784417:+", "CBLC--CTC-232P5.1 chr19:44784417:+ chr19:6012120:+", fusion))
+
+
+tumor_cell_counts_by_methods_by_isoform = bind_rows(tumor_cell_counts_by_methods_by_isoform %>% filter(method != "Arriba"),
+                                                    arriba_cell_counts_by_isoform) 
+tumor_cell_counts_by_methods_by_isoform %>%
     filter(grepl("CBLC", fusion)) %>%
     ggplot(aes(x=fusion, y=cell_counts, fill=method)) + geom_bar(stat='identity', position='dodge') +
     theme_bw() +
