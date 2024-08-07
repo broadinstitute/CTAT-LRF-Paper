@@ -22,6 +22,8 @@ PREDS_FILE = "data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.
 ```
 
 
+Proxy fusion names
+
 ```{r}
 
 read_support = read.csv(PREDS_FILE, header=T, sep="\t")
@@ -43,11 +45,33 @@ read_support %>% head()
 
 ```{r}
 
+# use lex-sorted fusion name
+
+make_lex_sorted_fusion_name = function(fusion_name) {
+    
+    sample_name = str_split(fusion_name, "\\|")[[1]][1]
+    fusion_pair = str_split(fusion_name, "\\|")[[1]][2]
+    
+    sorted_gene_pair = sort(str_split(fusion_pair,"--")[[1]])
+    
+    lex_sorted_fusion_name = paste0(sample_name, "|", sorted_gene_pair[1], "--", sorted_gene_pair[2])
+    
+    return(lex_sorted_fusion_name)
+}
+
+read_support = read_support %>% rowwise() %>% mutate(lex_sorted_fusion_name = make_lex_sorted_fusion_name(proxy_fusion_name))
+
+```
+
+
+
+```{r}
+
 # restrict to dominant isoform in each sample
 
 nrow(read_support)
 
-read_support_sample = read_support %>% group_by(proxy_fusion_name, prog, sample) %>% arrange(desc(num_reads)) %>%
+read_support_sample = read_support %>% group_by(lex_sorted_fusion_name, prog, sample) %>% arrange(desc(num_reads)) %>%
     filter(row_number() == 1) %>%
     ungroup()
 
@@ -58,7 +82,7 @@ nrow(read_support_sample)
 ```{r}
 # aggregate across core sample names
 
-read_support_agg = read_support_sample %>% group_by(proxy_fusion_name, prog, core_sample_name) %>% 
+read_support_agg = read_support_sample %>% group_by(lex_sorted_fusion_name, prog, core_sample_name) %>% 
     summarize(sum_reads = sum(num_reads))
 
 nrow(read_support_agg)
@@ -133,29 +157,37 @@ validated_fusions = data.frame(validated_fusion = c(
 ) )
 
 
+validated_fusions = validated_fusions %>% rowwise() %>% mutate(lex_sorted_validated_fusion = make_lex_sorted_fusion_name(validated_fusion))
+
 ```
 
 
 ```{r}
 # supplement with illumina-supported.
 illumina_supported_fusions = read.csv("K562.illum_supported.tsv", header=T, sep="\t", stringsAsFactors = F) %>%
-    select(proxy_fusion_name) %>% rename(validated_fusion = proxy_fusion_name)
+    select(proxy_fusion_name) %>% rename(validated_fusion = proxy_fusion_name) %>%
+    rowwise() %>%
+    mutate(lex_sorted_validated_fusion = make_lex_sorted_fusion_name(validated_fusion))
 
 illumina_supported_fusions
 ```
 
 ```{r}
 
-illum_found_fusions = read_support_agg %>% ungroup() %>% filter(proxy_fusion_name %in% illumina_supported_fusions$validated_fusion) %>% select(proxy_fusion_name) %>% unique()
+illum_found_fusions = read_support_agg %>% ungroup() %>% filter(lex_sorted_fusion_name %in% illumina_supported_fusions$lex_sorted_validated_fusion) %>% select(lex_sorted_fusion_name) %>% unique()
 
-extra_illum_valid_fusions = illum_found_fusions %>% filter(! proxy_fusion_name %in% validated_fusions$validated_fusion)
+extra_illum_valid_fusions = illum_found_fusions %>% filter(! lex_sorted_fusion_name %in% validated_fusions$lex_sorted_validated_fusion)
 
 extra_illum_valid_fusions
 ```
 
+
 ```{r}
 
-validated_fusions = bind_rows(validated_fusions, extra_illum_valid_fusions %>% rename(validated_fusion = proxy_fusion_name))
+validated_fusions = bind_rows(validated_fusions, 
+                              extra_illum_valid_fusions %>% 
+                                  mutate(validated_fusion = lex_sorted_fusion_name) %>% rename(lex_sorted_validated_fusion = lex_sorted_fusion_name)
+                              )
 
 validated_fusions
 ```
@@ -166,7 +198,7 @@ validated_fusions
 
 # which validated fusions do we find?
 
-validated_fusions %>% filter( validated_fusion %in% read_support_agg$proxy_fusion_name) 
+validated_fusions %>% filter( lex_sorted_validated_fusion %in% read_support_agg$lex_sorted_fusion_name) 
 
 ```
 
@@ -177,7 +209,7 @@ validated_fusions %>% filter( validated_fusion %in% read_support_agg$proxy_fusio
 
 # which validated fusions are missing?
 
-validated_fusions %>% filter( ! validated_fusion %in% read_support_agg$proxy_fusion_name) 
+validated_fusions %>% filter( ! lex_sorted_validated_fusion %in% read_support_agg$lex_sorted_fusion_name) 
 
 
 ```
@@ -185,7 +217,7 @@ validated_fusions %>% filter( ! validated_fusion %in% read_support_agg$proxy_fus
 
 ```{r}
 
-read_support_agg = read_support_agg %>% mutate(validated_fusion = (proxy_fusion_name %in% validated_fusions$validated_fusion)) 
+read_support_agg = read_support_agg %>% mutate(validated_fusion = (lex_sorted_fusion_name %in% validated_fusions$lex_sorted_validated_fusion)) 
 
 ```
 
@@ -228,22 +260,22 @@ read_support_agg_scored %>%
 
 # examine Venn for valid fusions
 
-read_support_agg_scored  %>% filter(validated_fusion) %>% group_by(proxy_fusion_name) %>%
+read_support_agg_scored  %>% filter(validated_fusion) %>% group_by(lex_sorted_fusion_name) %>%
     arrange(prog) %>%
     mutate(progs = paste(collapse=",", prog)) %>%
     ungroup() %>%
-    select(proxy_fusion_name, progs) %>% unique()
+    select(lex_sorted_fusion_name, progs) %>% unique()
 
 
 ```
 
 ```{r}
 
-read_support_agg_scored  %>% filter(validated_fusion) %>% group_by(proxy_fusion_name) %>%
+read_support_agg_scored  %>% filter(validated_fusion) %>% group_by(lex_sorted_fusion_name) %>%
     arrange(prog) %>%
     mutate(progs = paste(collapse=",", prog)) %>%
     ungroup() %>%
-    select(proxy_fusion_name, progs) %>% unique() %>% 
+    select(lex_sorted_fusion_name, progs) %>% unique() %>% 
     group_by(progs) %>% tally() %>%
     arrange(desc(n))
     
@@ -258,11 +290,11 @@ read_support_agg_scored  %>% filter(validated_fusion) %>% group_by(proxy_fusion_
 
 read_support_agg_scored  %>% filter(validated_fusion) %>% 
     filter(prog %in% c('JAFFAL', 'ctat-LR-fusion')) %>%
-    group_by(proxy_fusion_name) %>%
+    group_by(lex_sorted_fusion_name) %>%
     arrange(prog) %>%
     mutate(progs = paste(collapse=",", prog)) %>%
     ungroup() %>%
-    select(proxy_fusion_name, progs) %>% unique() %>% 
+    select(lex_sorted_fusion_name, progs) %>% unique() %>% 
     group_by(progs) %>% tally() %>%
     arrange(desc(n))
     
@@ -275,7 +307,7 @@ read_support_agg_scored  %>% filter(validated_fusion) %>%
 
 read_support_agg_scored  %>% filter(validated_fusion) %>% 
     filter(prog %in% c('JAFFAL', 'ctat-LR-fusion')) %>%
-    group_by(proxy_fusion_name) %>%
+    group_by(lex_sorted_fusion_name) %>%
     arrange(prog) %>%
     mutate(progs = paste(collapse=",", prog)) %>%
     arrange(desc(progs))
@@ -287,11 +319,11 @@ read_support_agg_scored  %>% filter(validated_fusion) %>%
 
 ```{r}
 
-read_support_agg_scored  %>% filter(validated_fusion) %>% group_by(proxy_fusion_name) %>%
+read_support_agg_scored  %>% filter(validated_fusion) %>% group_by(lex_sorted_fusion_name) %>%
     arrange(prog) %>%
     mutate(progs = paste(collapse=",", prog)) %>%
     ungroup() %>%
-    select(proxy_fusion_name, progs) %>% unique() %>% 
+    select(lex_sorted_fusion_name, progs) %>% unique() %>% 
     group_by(progs) %>% tally() %>%
     ggplot(aes(x=progs, y=n)) + 
     geom_col() +
@@ -304,7 +336,7 @@ read_support_agg_scored  %>% filter(validated_fusion) %>% group_by(proxy_fusion_
 # get counts of valid fusions
 
 read_support_agg_scored  %>% filter(validated_fusion) %>% 
-    select(proxy_fusion_name, prog) %>% unique() %>% group_by(prog) %>% tally() %>%
+    select(lex_sorted_fusion_name, prog) %>% unique() %>% group_by(prog) %>% tally() %>%
     arrange(desc(n))
     
 ```
@@ -320,10 +352,23 @@ read_support_agg %>% ungroup() %>% select(core_sample_name) %>% unique()
 
 # total number of fusion preds
 
-read_support_agg %>% ungroup() %>% select(prog, proxy_fusion_name) %>% unique() %>% group_by(prog) %>% tally() %>% 
+read_support_agg %>% ungroup() %>% select(prog, lex_sorted_fusion_name) %>% unique() %>% group_by(prog) %>% tally() %>% 
     arrange(desc(n))
 
 
 ```
+
+```{r}
+
+# write supp data table
+
+write.table(read_support_agg_scored %>% arrange(prog, desc(sum_reads), num_valid, num_other), 
+            file="Table_Sx-ONT_fusions_by_method.tsv", 
+            sep="\t", quote=F, row.names=F)
+
+```
+
+
+
 
 
