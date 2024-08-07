@@ -148,7 +148,8 @@ Tum_cell_counts_by_method %>% head()
 
 # reorganizing cell counts of fusions by method for comparison
 
-Tum_cell_counts_by_method  = Tum_cell_counts_by_method %>% group_by(FusionName, method) %>% arrange(desc(cell_counts)) %>% filter(row_number() == 1) %>% ungroup() # deal with the ctat-LRF recip issue
+Tum_cell_counts_by_method  = Tum_cell_counts_by_method %>% group_by(FusionName, method, LeftBreakpoint, RightBreakpoint) %>% 
+    arrange(desc(cell_counts)) %>% filter(row_number() == 1) %>% ungroup() # deal with the ctat-LRF recip issue (CCDC180--RP11-23J9.4 CCDC180--RP11-23J9.4)
 
 Tum_cell_counts_by_method_spread  = Tum_cell_counts_by_method %>% 
     select(FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, cell_counts) %>%
