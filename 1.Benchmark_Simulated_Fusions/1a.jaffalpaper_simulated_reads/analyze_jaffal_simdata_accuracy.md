@@ -36,6 +36,10 @@ ROC_data = ROC_data %>% filter(prog %in% c(
                        )
 
 
+# write supplementary data file
+write.table(ROC_data, file="Table_Sx-benchmarking_JAFFAL_sim_badread_fusions.tsv", quote=F, sep="\t", row.names=F)
+
+
 # extract the maximum F1 value for each program and target data set: 
 
 max_F1_data = ROC_data %>% group_by(analysisType, prog, seqtype, divergence) %>% 
@@ -94,6 +98,83 @@ ROC_data %>% filter(analysisType == "allow_reverse_AP") %>%
 ![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 ``` r
+max_F1_data %>% 
+    filter(analysisType == "allow_reverse_AP") %>%
+    select(seqtype, divergence, prog, TP, FP) %>% filter(prog=='LongGF') %>%
+    gather(key = TP_or_FP, value=fusion_count, TP, FP) %>% arrange(seqtype, divergence)
+```
+
+    ## # A tibble: 20 × 5
+    ##    seqtype divergence prog   TP_or_FP fusion_count
+    ##    <fct>        <int> <fct>  <chr>           <int>
+    ##  1 PacBio          75 LongGF TP                231
+    ##  2 PacBio          75 LongGF FP                  0
+    ##  3 PacBio          80 LongGF TP                315
+    ##  4 PacBio          80 LongGF FP                  0
+    ##  5 PacBio          85 LongGF TP                374
+    ##  6 PacBio          85 LongGF FP                  0
+    ##  7 PacBio          90 LongGF TP                412
+    ##  8 PacBio          90 LongGF FP                  1
+    ##  9 PacBio          95 LongGF TP                427
+    ## 10 PacBio          95 LongGF FP                  1
+    ## 11 ONT             75 LongGF TP                232
+    ## 12 ONT             75 LongGF FP                  0
+    ## 13 ONT             80 LongGF TP                319
+    ## 14 ONT             80 LongGF FP                  1
+    ## 15 ONT             85 LongGF TP                396
+    ## 16 ONT             85 LongGF FP                  1
+    ## 17 ONT             90 LongGF TP                416
+    ## 18 ONT             90 LongGF FP                  2
+    ## 19 ONT             95 LongGF TP                431
+    ## 20 ONT             95 LongGF FP                  1
+
+``` r
+# show counts of TP and FP
+
+max_F1_data %>% 
+    filter(analysisType == "allow_reverse_AP") %>%
+    select(seqtype, divergence, prog, TP, FP) %>% 
+    gather(key = TP_or_FP, value=fusion_count, TP, FP) %>%
+    mutate(TP_or_FP = factor(TP_or_FP, levels=c('TP', 'FP'))) %>%
+    ggplot(aes(x=divergence, y=fusion_count)) + theme_bw() +
+    geom_point(aes(color=prog)) + geom_line(aes(group=prog, color=prog)) +
+    facet_grid(vars(TP_or_FP), vars(seqtype))
+```
+
+![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+``` r
+max_F1_data %>% 
+    filter(analysisType == "allow_reverse_AP") %>%
+    select(seqtype, divergence, prog, TP, FP) %>% 
+    gather(key = TP_or_FP, value=fusion_count, TP, FP) %>%
+    mutate(TP_or_FP = factor(TP_or_FP, levels=c('TP', 'FP'))) %>%
+    mutate(prog_TP_or_FP = paste(prog, TP_or_FP)) %>%
+    ggplot(aes(x=divergence, y=fusion_count)) + theme_bw() +
+    geom_point(aes(color=prog, shape=TP_or_FP), size=rel(3)) + 
+    geom_line(aes(group=prog_TP_or_FP, color=prog)) +
+    facet_wrap(~seqtype)
+```
+
+![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+``` r
+max_F1_data %>% 
+    filter(analysisType == "allow_reverse_AP") %>%
+    mutate(FPR = 1 - PPV) %>%
+    select(seqtype, divergence, prog, TPR, FPR) %>% 
+    gather(key = TPR_or_FPR, value=fusion_count, TPR, FPR) %>%
+    mutate(TPR_or_FPR = factor(TPR_or_FPR, levels=c('TPR', 'FPR'))) %>%
+    mutate(prog_TPR_or_FPR = paste(prog, TPR_or_FPR)) %>%
+    ggplot(aes(x=divergence, y=fusion_count)) + theme_bw() +
+    geom_point(aes(color=prog, shape=TPR_or_FPR), size=rel(3)) + 
+    geom_line(aes(group=prog_TPR_or_FPR, color=prog)) +
+    facet_wrap(~seqtype)
+```
+
+![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+``` r
 ROC_data %>% filter(analysisType == "allow_reverse_AP") %>% 
          filter(divergence == 95) %>%
          #filter(TPR > 0.05) %>%
@@ -108,7 +189,7 @@ ROC_data %>% filter(analysisType == "allow_reverse_AP") %>%
     ## Warning in geom_line(aes(groups = prog, color = TP_or_FP)): Ignoring unknown
     ## aesthetics: groups
 
-![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 Plot just the TPs
 
@@ -131,7 +212,7 @@ ROC_data %>% filter(analysisType == "allow_reverse_AP") %>%
     ## Warning in geom_line(aes(groups = prog), color = "#00BFC4"): Ignoring unknown
     ## aesthetics: groups
 
-![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 ``` r
 ROC_data %>% filter(analysisType == "allow_reverse_AP") %>% 
@@ -152,7 +233,7 @@ ROC_data %>% filter(analysisType == "allow_reverse_AP") %>%
     ## Warning in geom_line(aes(groups = prog), color = "#F8766D"): Ignoring unknown
     ## aesthetics: groups
 
-![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 ## Examine PR-AUC vs. divergence
 
@@ -183,8 +264,8 @@ PR_AUC_data %>% head()
 ```
 
     ##   seqtype divergence           prog  AUC analysisType
-    ## 1     ONT         95 ctat-LR-fusion 0.96    strict_AP
-    ## 2     ONT         95         JAFFAL 0.91    strict_AP
+    ## 1     ONT         95 ctat-LR-fusion 0.97    strict_AP
+    ## 2     ONT         95         JAFFAL 0.92    strict_AP
     ## 3     ONT         95   fusionseeker 0.27    strict_AP
     ## 4     ONT         95         LongGF 0.22    strict_AP
     ## 5     ONT         95       pbfusion 0.09    strict_AP
@@ -217,7 +298,7 @@ p_AUC_linepoint = PR_AUC_data %>%
 p_AUC_linepoint
 ```
 
-![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
 ``` r
 ggsave(p_AUC_linepoint, filename="jaffal_simdata_accuracy.PR_AUC.paperfig.svg", width=8, height=7)

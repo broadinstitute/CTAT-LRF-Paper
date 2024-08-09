@@ -141,6 +141,7 @@ max_F1_data %>%
 
 ```
 
+
 ```{r}
 
 max_F1_data %>% 
@@ -152,6 +153,25 @@ max_F1_data %>%
     ggplot(aes(x=divergence, y=fusion_count)) + theme_bw() +
     geom_point(aes(color=prog, shape=TP_or_FP), size=rel(3)) + 
     geom_line(aes(group=prog_TP_or_FP, color=prog)) +
+    facet_wrap(~seqtype)
+
+
+```
+
+
+
+```{r}
+
+max_F1_data %>% 
+    filter(analysisType == "allow_reverse_AP") %>%
+    mutate(FPR = 1 - PPV) %>%
+    select(seqtype, divergence, prog, TPR, FPR) %>% 
+    gather(key = TPR_or_FPR, value=fusion_count, TPR, FPR) %>%
+    mutate(TPR_or_FPR = factor(TPR_or_FPR, levels=c('TPR', 'FPR'))) %>%
+    mutate(prog_TPR_or_FPR = paste(prog, TPR_or_FPR)) %>%
+    ggplot(aes(x=divergence, y=fusion_count)) + theme_bw() +
+    geom_point(aes(color=prog, shape=TPR_or_FPR), size=rel(3)) + 
+    geom_line(aes(group=prog_TPR_or_FPR, color=prog)) +
     facet_wrap(~seqtype)
 
 
