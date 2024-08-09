@@ -1,0 +1,303 @@
+---
+title: "analyze_jaffal_simdata_accuracy"
+author: "bhaas"
+date: '2024-02-01'
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+Benchmarking analysis for the JAFFAL simulated fusion reads.
+
+Analysis was performed here:
+https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/simulated_data/sim_jaffal
+
+Results are analyzed below:
+
+
+# Examine peak F1
+
+```{r}
+
+# set filenames
+
+if (FALSE) {
+    ROC_strict_results_file = "data/ax_splice/strict_allow_paralogs.combined_results.ROC.tsv"
+    ROC_allow_reverse_results_file = "data/ax_splice/allow_rev_and_paralogs.combined_results.ROC.tsv"
+    
+    PR_AUC_strict_file = "data/ax_splice/strict_allow_paralogs.combined_results.PR_AUC.tsv"
+    PR_AUC_allow_reverse_results_file = "data/ax_splice/allow_rev_and_paralogs.combined_results.PR_AUC.tsv"
+} else {
+    ROC_strict_results_file = "data/PacBioIsoSeqUb/strict_allow_paralogs.combined_results.ROC.tsv"
+    ROC_allow_reverse_results_file = "data/PacBioIsoSeqUb/allow_rev_and_paralogs.combined_results.ROC.tsv"
+    
+    PR_AUC_strict_file = "data/PacBioIsoSeqUb/strict_allow_paralogs.combined_results.PR_AUC.tsv"
+    PR_AUC_allow_reverse_results_file = "data/PacBioIsoSeqUb/allow_rev_and_paralogs.combined_results.PR_AUC.tsv"
+}
+
+
+```
+
+
+```{r}
+
+# parse accuracy statistics from benchmarking:
+
+ROC_strict_results = read.table(ROC_strict_results_file, header=T, sep="\t", stringsAsFactors = F)
+ROC_strict_results$analysisType="strict_AP"
+
+ROC_allow_reverse_results = read.table(ROC_allow_reverse_results_file, header=T, sep="\t", stringsAsFactors = F)
+ROC_allow_reverse_results$analysisType="allow_reverse_AP"
+
+
+
+ROC_data = bind_rows(ROC_strict_results,
+                     ROC_allow_reverse_results)
+
+
+ROC_data = ROC_data %>% filter(prog %in% c(
+                                   'pbfusion',
+                                   'fusionseeker',
+                                   'LongGF',
+                                   'JAFFAL',
+                                   'ctat-LR-fusion')
+                       )
+
+
+
+
+# extract the maximum F1 value for each program and target data set: 
+
+max_F1_data = ROC_data %>% group_by(analysisType, prog, seqtype, divergence) %>% 
+    arrange(desc(F1)) %>% filter(row_number() == 1) %>% ungroup()
+
+
+# rank programs 
+
+ranked_progs = max_F1_data  %>% group_by(prog) %>% summarize(mean_F1 = mean(F1)) %>% arrange(desc(mean_F1))
+
+max_F1_data$prog = factor(max_F1_data$prog, levels=ranked_progs$prog)
+
+max_F1_data$analysisType = factor(max_F1_data$analysisType, levels=c('strict_AP', 'allow_reverse_AP'))
+
+max_F1_data = max_F1_data %>% mutate(seqtype = ifelse(seqtype == "Pac", "PacBio", seqtype))
+
+
+max_F1_data$seqtype = factor(max_F1_data$seqtype, levels=c("PacBio", "ONT"))
+
+
+```
+
+
+```{r}
+
+p_F1_linepoint = max_F1_data %>% 
+    filter(analysisType %in% c('strict_AP', 'allow_reverse_AP')) %>%
+    ggplot() + theme_bw() +
+    geom_point(aes(x=divergence, y=F1, color=prog)) +
+    geom_line(aes(x=divergence, y=F1, group=prog, color=prog)) +
+    facet_grid(vars(analysisType), vars(seqtype))
+
+
+p_F1_linepoint
+
+```
+
+
+
+
+# examine precision/recall
+
+- restrict to the 95% identity set where all perform best.
+
+```{r}
+
+ROC_data %>% filter(analysisType == "allow_reverse_AP") %>% 
+         filter(divergence == 95) %>%
+         filter(TPR > 0.05) %>%
+    ggplot(aes(x=TPR, y=PPV)) + geom_point(aes(color=prog)) + 
+    geom_line(aes(groups=prog, color=prog)) +
+    theme_bw() + 
+    facet_wrap(~seqtype)
+
+
+```
+
+
+
+```{r}
+
+max_F1_data %>% 
+    filter(analysisType == "allow_reverse_AP") %>%
+    select(seqtype, divergence, prog, TP, FP) %>% filter(prog=='LongGF') %>%
+    gather(key = TP_or_FP, value=fusion_count, TP, FP) %>% arrange(seqtype, divergence)
+
+```
+
+
+```{r}
+# show counts of TP and FP
+
+max_F1_data %>% 
+    filter(analysisType == "allow_reverse_AP") %>%
+    select(seqtype, divergence, prog, TP, FP) %>% 
+    gather(key = TP_or_FP, value=fusion_count, TP, FP) %>%
+    mutate(TP_or_FP = factor(TP_or_FP, levels=c('TP', 'FP'))) %>%
+    ggplot(aes(x=divergence, y=fusion_count)) + theme_bw() +
+    geom_point(aes(color=prog)) + geom_line(aes(group=prog, color=prog)) +
+    facet_grid(vars(TP_or_FP), vars(seqtype))
+
+```
+
+```{r}
+
+max_F1_data %>% 
+    filter(analysisType == "allow_reverse_AP") %>%
+    select(seqtype, divergence, prog, TP, FP) %>% 
+    gather(key = TP_or_FP, value=fusion_count, TP, FP) %>%
+    mutate(TP_or_FP = factor(TP_or_FP, levels=c('TP', 'FP'))) %>%
+    mutate(prog_TP_or_FP = paste(prog, TP_or_FP)) %>%
+    ggplot(aes(x=divergence, y=fusion_count)) + theme_bw() +
+    geom_point(aes(color=prog, shape=TP_or_FP), size=rel(3)) + 
+    geom_line(aes(group=prog_TP_or_FP, color=prog)) +
+    facet_wrap(~seqtype)
+
+
+```
+
+
+
+```{r}
+
+ROC_data %>% filter(analysisType == "allow_reverse_AP") %>% 
+         filter(divergence == 95) %>%
+         #filter(TPR > 0.05) %>%
+         select(seqtype, prog, min_sum_frags, TP, FP) %>% gather(key='TP_or_FP', value='count', TP, FP) %>%
+    ggplot(aes(x=min_sum_frags, y=count)) + geom_point(aes(color=TP_or_FP)) + geom_line(aes(groups=prog, color=TP_or_FP)) +
+    #geom_line(aes(groups=prog, color=prog)) +
+    theme_bw() + 
+    # facet_wrap(~seqtype)
+    facet_grid(vars(prog), vars(seqtype))
+
+
+```
+
+Plot just the TPs
+
+
+
+
+```{r}
+
+
+ROC_data %>% filter(analysisType == "allow_reverse_AP") %>% 
+         filter(divergence == 95) %>%
+         #filter(TPR > 0.05) %>%
+         select(seqtype, prog, min_sum_frags, TP, FP) %>% gather(key='TP_or_FP', value='count', TP, FP) %>%
+    filter(TP_or_FP == 'TP') %>%
+   
+    ggplot(aes(x=min_sum_frags, y=count)) + geom_point(color='#00BFC4') + geom_line(aes(groups=prog), color='#00BFC4') +
+    #geom_line(aes(groups=prog, color=prog)) +
+    theme_bw() + 
+    # facet_wrap(~seqtype)
+    facet_grid(vars(prog), vars(seqtype)) + 
+    xlab("min long read count") +
+    ggtitle("Reads at 95% identity, TPs vs. min read count")
+
+
+```
+
+
+```{r}
+
+
+ROC_data %>% filter(analysisType == "allow_reverse_AP") %>% 
+         filter(divergence == 95) %>%
+         #filter(TPR > 0.05) %>%
+         select(seqtype, prog, min_sum_frags, TP, FP) %>% gather(key='TP_or_FP', value='count', TP, FP) %>%
+    filter(TP_or_FP == 'FP') %>%
+   
+    ggplot(aes(x=min_sum_frags, y=count)) + geom_point(color='#F8766D') + geom_line(aes(groups=prog), color='#F8766D') +
+    #geom_line(aes(groups=prog, color=prog)) +
+    theme_bw() + 
+    # facet_wrap(~seqtype)
+    facet_grid(vars(prog), vars(seqtype)) + 
+    xlab("min long read count") +
+    ggtitle("Reads at 95% identity, FPs vs. min read count")
+
+
+```
+
+
+
+## Examine PR-AUC vs. divergence
+
+
+```{r}
+
+# parse accuracy statistics from benchmarking:
+
+PR_AUC_strict_results = read.table(PR_AUC_strict_file, header=T, sep="\t", stringsAsFactors = F)
+PR_AUC_strict_results$analysisType="strict_AP"
+
+PR_AUC_allow_reverse_results = read.table(PR_AUC_allow_reverse_results_file, header=T, sep="\t", stringsAsFactors = F)
+PR_AUC_allow_reverse_results$analysisType="allow_reverse_AP"
+
+
+
+PR_AUC_data = bind_rows(PR_AUC_strict_results,
+                        PR_AUC_allow_reverse_results)
+
+
+PR_AUC_data = PR_AUC_data %>% filter(prog %in% c(
+                                   'pbfusion',
+                                   'fusionseeker',
+                                   'LongGF',
+                                   'JAFFAL',
+                                   'ctat-LR-fusion')
+                       )
+
+PR_AUC_data %>% head()
+```
+
+```{r}
+
+# rank programs 
+
+ranked_progs = PR_AUC_data  %>% group_by(prog) %>% summarize(mean_AUC = mean(AUC)) %>% arrange(desc(mean_AUC))
+
+PR_AUC_data$prog = factor(PR_AUC_data$prog, levels=ranked_progs$prog)
+
+PR_AUC_data$analysisType = factor(PR_AUC_data$analysisType, levels=c('strict_AP', 'allow_reverse_AP'))
+
+PR_AUC_data = PR_AUC_data %>% mutate(seqtype = ifelse(seqtype == "Pac", "PacBio", seqtype))
+
+
+PR_AUC_data$seqtype = factor(PR_AUC_data$seqtype, levels=c("PacBio", "ONT"))
+
+
+```
+
+
+```{r}
+
+p_AUC_linepoint = PR_AUC_data %>% 
+    filter(analysisType %in% c('strict_AP', 'allow_reverse_AP')) %>%
+    ggplot() + theme_bw() +
+    geom_point(aes(x=divergence, y=AUC, color=prog)) +
+    geom_line(aes(x=divergence, y=AUC, group=prog, color=prog)) +
+    facet_grid(vars(analysisType), vars(seqtype))
+
+
+p_AUC_linepoint
+
+```
+
+
+
+
+
