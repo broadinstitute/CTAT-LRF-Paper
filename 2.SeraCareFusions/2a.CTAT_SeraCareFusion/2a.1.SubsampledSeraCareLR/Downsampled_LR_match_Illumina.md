@@ -193,7 +193,7 @@ arriba_1$dataset = "ISO-seq"
 
 
 arriba_2 = read.csv("../data/arriba/MDL_163_SeraSeqFusion_2.arriba.fusions.tsv.gz", header=T, sep="\t", com='', stringsAsFactors = F)
-arriba_2$dataset = "../MAS-seq-R1"
+arriba_2$dataset = "MAS-seq-R1"
 
 
 arriba_3 = read.csv("../data/arriba/MDL_163_SeraSeqFusion_2.arriba.fusions.tsv.gz", header=T, sep="\t", com='', stringsAsFactors = F)
@@ -207,11 +207,13 @@ arriba_data = arriba_data %>%
     mutate(num_reads = split_reads1 + split_reads2 + discordant_mates) %>%
     select(FusionName, num_reads, dataset)
 
+arriba_data$FusionName = str_replace(arriba_data$FusionName, "SEPTIN14", "SEPT14")
+
 arriba_data %>% head()
 ```
 
     ##         FusionName num_reads dataset
-    ## 1   EGFR--SEPTIN14         4 ISO-seq
+    ## 1     EGFR--SEPT14         4 ISO-seq
     ## 2    SLC34A2--ROS1         3 ISO-seq
     ## 3       CCDC6--RET         2 ISO-seq
     ## 4       KIF5B--RET         2 ISO-seq

@@ -131,7 +131,7 @@ arriba_1$dataset = "ISO-seq"
 
 
 arriba_2 = read.csv("../data/arriba/MDL_163_SeraSeqFusion_2.arriba.fusions.tsv.gz", header=T, sep="\t", com='', stringsAsFactors = F)
-arriba_2$dataset = "../MAS-seq-R1"
+arriba_2$dataset = "MAS-seq-R1"
 
 
 arriba_3 = read.csv("../data/arriba/MDL_163_SeraSeqFusion_2.arriba.fusions.tsv.gz", header=T, sep="\t", com='', stringsAsFactors = F)
@@ -144,6 +144,8 @@ arriba_data = arriba_data %>%
     mutate(FusionName = paste0(X.gene1, "--", gene2) ) %>%
     mutate(num_reads = split_reads1 + split_reads2 + discordant_mates) %>%
     select(FusionName, num_reads, dataset)
+
+arriba_data$FusionName = str_replace(arriba_data$FusionName, "SEPTIN14", "SEPT14")
 
 arriba_data %>% head()
 ```
