@@ -52,15 +52,23 @@ PR_AUC_df %>% head()
 
 ```{r}
 
-PR_AUC_df %>% ggplot(aes(x=prog, y=AUC)) + geom_col(aes(fill=prog)) + facet_wrap(~type, ncol=4) +
+illum_fusion_acc_barplot = PR_AUC_df %>% ggplot(aes(x=prog, y=AUC)) + geom_col(aes(fill=prog)) + facet_wrap(~type, ncol=4) +
     theme_bw() +
     theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank())
 
+illum_fusion_acc_barplot 
+
 ```
 
+```{r}
 
+ggsave(illum_fusion_acc_barplot, filename = "illum_fusion_accuracy_barplot.svg", width=7, height=3.5)
+
+
+
+```
 
 
 
