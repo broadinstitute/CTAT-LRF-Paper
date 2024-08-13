@@ -235,6 +235,7 @@ depmap_TP_vs_FP_scatterplot  = data %>% select(prog, min_sum_frags, TP, FP) %>%
     theme_bw() +
     geom_point(aes(color=pred_class_type)) +
     geom_line(aes(groups=pred_class_type, color=pred_class_type)) +
+    scale_y_continuous(trans='log10') +
     facet_wrap(~prog) +
     xlim(1,15)
 
@@ -246,7 +247,7 @@ depmap_TP_vs_FP_scatterplot + scale_y_continuous(trans='log10')
 
 ```{r}
 
-#ggsave(depmap_TP_vs_FP_scatterplot, file=paste0("depmap_TP_vs_FP_scatterplot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=7, height=5)
+ggsave(depmap_TP_vs_FP_scatterplot, file=paste0("depmap_TP_vs_FP_scatterplot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=7, height=5)
 
 ```
 

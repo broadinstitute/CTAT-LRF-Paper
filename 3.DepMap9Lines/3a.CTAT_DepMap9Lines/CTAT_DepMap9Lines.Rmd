@@ -185,7 +185,7 @@ TP_fusions %>% head()
 
 ```{r}
 
-data = inner_join(TP_fusions %>% select(lexsort_fusion_name),
+data_TP_only = inner_join(TP_fusions %>% select(lexsort_fusion_name),
                   data,
                  by='lexsort_fusion_name',
                  multiple='all'
@@ -193,20 +193,20 @@ data = inner_join(TP_fusions %>% select(lexsort_fusion_name),
 
 
 
-nrow(data)
+nrow(data_TP_only)
 
-data %>% select(sample, fusion) %>% unique() %>% nrow()
+data_TP_only %>% select(sample, fusion) %>% unique() %>% nrow()
 
-data %>% head()
+data_TP_only %>% head()
 
 ```
 
 ```{r}
 
 # how many TP genes and isoforms have both long and short read support:
-data %>% filter(num_LR > 0 && num_SR > 0) %>% nrow()
+data_TP_only %>% filter(num_LR > 0 && num_SR > 0) %>% nrow()
 
-data %>% filter(num_LR > 0 && num_SR > 0) %>% select(sample, fusion) %>% unique() %>% nrow()
+data_TP_only %>% filter(num_LR > 0 && num_SR > 0) %>% select(sample, fusion) %>% unique() %>% nrow()
 
 
 ```
@@ -217,7 +217,7 @@ data %>% filter(num_LR > 0 && num_SR > 0) %>% select(sample, fusion) %>% unique(
 
 # by read counts
 
-data %>% 
+data_TP_only %>% 
     select(sample, fusion_iso, num_LR, num_SR) %>% 
     gather(key=read_type, value=read_count, num_LR, num_SR) %>%
     ggplot(aes(x=fusion_iso, y=read_count)) + 
@@ -236,7 +236,7 @@ data %>%
 
 # by FFPM
 
-data %>% 
+data_TP_only %>% 
     select(sample, fusion_iso, LR_FFPM, SR_FFPM) %>% 
     gather(key=FFPM_type, value=FFPM, LR_FFPM, SR_FFPM) %>%
     
@@ -264,7 +264,7 @@ data %>%
 
 # label those fusions that have the most extreme difference with SR >> LR
 
-SR_enriched_fusion_isoforms = data %>% 
+SR_enriched_fusion_isoforms = data_TP_only %>% 
     filter(LR_FFPM > 0 & SR_FFPM > 0) %>%
     select(sample, fusion, fusion_iso, LR_FFPM, SR_FFPM, LR_FFPGB, SR_FFPGB, LR_FFPD, SR_FFPD) %>% 
     rowwise() %>%
@@ -286,7 +286,7 @@ SR_enriched_fusion_isoforms %>% filter(SR_enrichment > 1)
 
 ```{r}
 
-depmap_LR_vs_SR_fusion_FFPM_scatterplot = data %>%     
+depmap_LR_vs_SR_fusion_FFPM_scatterplot = data_TP_only %>%     
     select(sample, fusion_iso, LR_FFPM, SR_FFPM) %>% 
     ggplot(aes(x=log10(LR_FFPM), y=log10(SR_FFPM))) + 
     theme_bw() +
@@ -315,7 +315,7 @@ ggsave(depmap_LR_vs_SR_fusion_FFPM_scatterplot, file="depmap_LR_vs_SR_fusion_FFP
 ```{r}
 
 
-cor.test(x=log2(data$LR_FFPM), y=log2(data$SR_FFPM), use='complete.obs')
+cor.test(x=log2(data_TP_only$LR_FFPM), y=log2(data_TP_only$SR_FFPM), use='complete.obs')
 
 # with TP fusions:  R=0.66, p<2.2e-16
 
@@ -326,7 +326,7 @@ cor.test(x=log2(data$LR_FFPM), y=log2(data$SR_FFPM), use='complete.obs')
 
 # examine according to num sequenced bases:
 
-data %>%     
+data_TP_only %>%     
     select(sample, fusion_iso, LR_FFPGB, SR_FFPGB) %>% 
     ggplot(aes(x=log10(LR_FFPGB), y=log10(SR_FFPGB))) + 
     theme_bw() +
@@ -348,7 +348,7 @@ data %>%
 
 # examine enrichment by cost
 
-data %>%     
+data_TP_only %>%     
     select(sample, fusion_iso, LR_FFPD, SR_FFPD) %>% 
     ggplot(aes(x=log10(LR_FFPD), y=log10(SR_FFPD))) + 
     theme_bw() +
@@ -594,6 +594,16 @@ plot_fusion_expression_by_breakpoint("VCAP", "TMPRSS2--ERG")
 
 
 ```
+
+
+# 
+```{r}
+
+plot_fusion_expression_by_breakpoint("SKBR3", "SAMD12--MRPL13")
+
+```
+
+
 
 
 # Examine all fusions with multiple isoforms
