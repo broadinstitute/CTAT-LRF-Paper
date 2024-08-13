@@ -10,6 +10,10 @@ Analysis was performed here:
 
 Results are analyzed below:
 
+``` r
+ordered_progs = c('ctat-LR-fusion', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion')
+```
+
 # Examine peak F1
 
 ``` r
@@ -27,13 +31,9 @@ ROC_data = bind_rows(ROC_strict_results,
                      ROC_allow_reverse_results)
 
 
-ROC_data = ROC_data %>% filter(prog %in% c(
-                                   'pbfusion',
-                                   'fusionseeker',
-                                   'LongGF',
-                                   'JAFFAL',
-                                   'ctat-LR-fusion')
-                       )
+ROC_data = ROC_data %>% filter(prog %in% ordered_progs)
+
+ROC_data$prog = factor(ROC_data$prog, levels=ordered_progs)
 
 
 # write supplementary data file
@@ -50,7 +50,7 @@ max_F1_data = ROC_data %>% group_by(analysisType, prog, seqtype, divergence) %>%
 
 ranked_progs = max_F1_data  %>% group_by(prog) %>% summarize(mean_F1 = mean(F1)) %>% arrange(desc(mean_F1))
 
-max_F1_data$prog = factor(max_F1_data$prog, levels=ranked_progs$prog)
+#max_F1_data$prog = factor(max_F1_data$prog, levels=ranked_progs$prog)
 
 max_F1_data$analysisType = factor(max_F1_data$analysisType, levels=c('strict_AP', 'allow_reverse_AP'))
 
@@ -72,7 +72,7 @@ p_F1_linepoint = max_F1_data %>%
 p_F1_linepoint
 ```
 
-![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
 ``` r
 ggsave(p_F1_linepoint, filename="jaffal_simdata_accuracy.F1.paperfig.svg", width=8, height=7)
@@ -95,7 +95,7 @@ ROC_data %>% filter(analysisType == "allow_reverse_AP") %>%
     ## Warning in geom_line(aes(groups = prog, color = prog)): Ignoring unknown
     ## aesthetics: groups
 
-![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ``` r
 max_F1_data %>% 
@@ -141,7 +141,7 @@ max_F1_data %>%
     facet_grid(vars(TP_or_FP), vars(seqtype))
 ```
 
-![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 ``` r
 max_F1_data %>% 
@@ -156,10 +156,10 @@ max_F1_data %>%
     facet_wrap(~seqtype)
 ```
 
-![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 ``` r
-max_F1_data %>% 
+TPR_or_FPR_plot = max_F1_data %>% 
     filter(analysisType == "allow_reverse_AP") %>%
     mutate(FPR = 1 - PPV) %>%
     select(seqtype, divergence, prog, TPR, FPR) %>% 
@@ -169,10 +169,16 @@ max_F1_data %>%
     ggplot(aes(x=divergence, y=fusion_count)) + theme_bw() +
     geom_point(aes(color=prog, shape=TPR_or_FPR), size=rel(3)) + 
     geom_line(aes(group=prog_TPR_or_FPR, color=prog)) +
-    facet_wrap(~seqtype)
+    facet_wrap(~seqtype) + ylab('TPR or FPR') + xlab("Fusion Reads % Identity")
+
+TPR_or_FPR_plot
 ```
 
-![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+
+``` r
+ggsave(TPR_or_FPR_plot, filename="jaffal_simdata_accuracy.TPR_or_FPR_plot.paperfig.svg", width=8, height=4)
+```
 
 ``` r
 ROC_data %>% filter(analysisType == "allow_reverse_AP") %>% 
@@ -189,7 +195,7 @@ ROC_data %>% filter(analysisType == "allow_reverse_AP") %>%
     ## Warning in geom_line(aes(groups = prog, color = TP_or_FP)): Ignoring unknown
     ## aesthetics: groups
 
-![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 Plot just the TPs
 
@@ -212,7 +218,7 @@ ROC_data %>% filter(analysisType == "allow_reverse_AP") %>%
     ## Warning in geom_line(aes(groups = prog), color = "#00BFC4"): Ignoring unknown
     ## aesthetics: groups
 
-![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 ``` r
 ROC_data %>% filter(analysisType == "allow_reverse_AP") %>% 
@@ -233,7 +239,7 @@ ROC_data %>% filter(analysisType == "allow_reverse_AP") %>%
     ## Warning in geom_line(aes(groups = prog), color = "#F8766D"): Ignoring unknown
     ## aesthetics: groups
 
-![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 ## Examine PR-AUC vs. divergence
 
@@ -252,13 +258,10 @@ PR_AUC_data = bind_rows(PR_AUC_strict_results,
                         PR_AUC_allow_reverse_results)
 
 
-PR_AUC_data = PR_AUC_data %>% filter(prog %in% c(
-                                   'pbfusion',
-                                   'fusionseeker',
-                                   'LongGF',
-                                   'JAFFAL',
-                                   'ctat-LR-fusion')
-                       )
+PR_AUC_data = PR_AUC_data %>% filter(prog %in% ordered_progs)
+
+PR_AUC_data$prog = factor(PR_AUC_data$prog, levels=ordered_progs)
+
 
 PR_AUC_data %>% head()
 ```
@@ -276,7 +279,7 @@ PR_AUC_data %>% head()
 
 ranked_progs = PR_AUC_data  %>% group_by(prog) %>% summarize(mean_AUC = mean(AUC)) %>% arrange(desc(mean_AUC))
 
-PR_AUC_data$prog = factor(PR_AUC_data$prog, levels=ranked_progs$prog)
+#PR_AUC_data$prog = factor(PR_AUC_data$prog, levels=ranked_progs$prog)
 
 PR_AUC_data$analysisType = factor(PR_AUC_data$analysisType, levels=c('strict_AP', 'allow_reverse_AP'))
 
@@ -298,7 +301,7 @@ p_AUC_linepoint = PR_AUC_data %>%
 p_AUC_linepoint
 ```
 
-![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](analyze_jaffal_simdata_accuracy_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 ``` r
 ggsave(p_AUC_linepoint, filename="jaffal_simdata_accuracy.PR_AUC.paperfig.svg", width=8, height=7)

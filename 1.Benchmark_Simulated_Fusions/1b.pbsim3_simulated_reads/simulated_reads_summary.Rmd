@@ -19,6 +19,15 @@ See the subdirectories for the individual analyses:
     1b.2.ONT_simulations
 
 
+```{r}
+
+prog_ordering = c('ctat-LR-fusion', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion')
+
+
+```
+
+
+
 # Examine peak F1 score
 
 ```{r}
@@ -27,6 +36,7 @@ pacbio_F1_summary_data = read.table("1b.1.PacBio_simulations/PacBio_sim.mean_F1.
 
 pacbio_F1_summary_data = pacbio_F1_summary_data %>% mutate(seqTech = "PacBio")
 
+pacbio_F1_summary_data$prog = factor(pacbio_F1_summary_data$prog, levels=prog_ordering)
 
 pacbio_F1_summary_data %>% head()
 ```
@@ -151,11 +161,7 @@ combined_PR_AUC_data %>% head()
 
 ```{r}
 
-combined_PR_AUC_data$prog = factor(combined_PR_AUC_data$prog, levels = c('ctat-LR-fusion',
-                                                           'JAFFAL',
-                                                           'LongGF',
-                                                           'fusionseeker',
-                                                           'pbfusion') )
+combined_PR_AUC_data$prog = factor(combined_PR_AUC_data$prog, levels = prog_ordering )
 
 ```
 

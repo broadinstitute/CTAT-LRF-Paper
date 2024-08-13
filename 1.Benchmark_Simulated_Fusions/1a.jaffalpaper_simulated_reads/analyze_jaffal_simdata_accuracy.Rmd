@@ -19,7 +19,15 @@ https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/simulated
 Results are analyzed below:
 
 
+
+```{r}
+
+ordered_progs = c('ctat-LR-fusion', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion')
+
+```
+
 # Examine peak F1
+
 
 ```{r}
 
@@ -37,13 +45,9 @@ ROC_data = bind_rows(ROC_strict_results,
                      ROC_allow_reverse_results)
 
 
-ROC_data = ROC_data %>% filter(prog %in% c(
-                                   'pbfusion',
-                                   'fusionseeker',
-                                   'LongGF',
-                                   'JAFFAL',
-                                   'ctat-LR-fusion')
-                       )
+ROC_data = ROC_data %>% filter(prog %in% ordered_progs)
+
+ROC_data$prog = factor(ROC_data$prog, levels=ordered_progs)
 
 
 # write supplementary data file
@@ -60,7 +64,7 @@ max_F1_data = ROC_data %>% group_by(analysisType, prog, seqtype, divergence) %>%
 
 ranked_progs = max_F1_data  %>% group_by(prog) %>% summarize(mean_F1 = mean(F1)) %>% arrange(desc(mean_F1))
 
-max_F1_data$prog = factor(max_F1_data$prog, levels=ranked_progs$prog)
+#max_F1_data$prog = factor(max_F1_data$prog, levels=ranked_progs$prog)
 
 max_F1_data$analysisType = factor(max_F1_data$analysisType, levels=c('strict_AP', 'allow_reverse_AP'))
 
@@ -268,13 +272,10 @@ PR_AUC_data = bind_rows(PR_AUC_strict_results,
                         PR_AUC_allow_reverse_results)
 
 
-PR_AUC_data = PR_AUC_data %>% filter(prog %in% c(
-                                   'pbfusion',
-                                   'fusionseeker',
-                                   'LongGF',
-                                   'JAFFAL',
-                                   'ctat-LR-fusion')
-                       )
+PR_AUC_data = PR_AUC_data %>% filter(prog %in% ordered_progs)
+
+PR_AUC_data$prog = factor(PR_AUC_data$prog, levels=ordered_progs)
+
 
 PR_AUC_data %>% head()
 ```
@@ -285,7 +286,7 @@ PR_AUC_data %>% head()
 
 ranked_progs = PR_AUC_data  %>% group_by(prog) %>% summarize(mean_AUC = mean(AUC)) %>% arrange(desc(mean_AUC))
 
-PR_AUC_data$prog = factor(PR_AUC_data$prog, levels=ranked_progs$prog)
+#PR_AUC_data$prog = factor(PR_AUC_data$prog, levels=ranked_progs$prog)
 
 PR_AUC_data$analysisType = factor(PR_AUC_data$analysisType, levels=c('strict_AP', 'allow_reverse_AP'))
 

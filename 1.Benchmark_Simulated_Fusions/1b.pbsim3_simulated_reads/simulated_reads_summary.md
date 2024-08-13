@@ -9,6 +9,10 @@ chemistry simulated reads (via pbsim3).
 See the subdirectories for the individual analyses:
 1b.1.PacBio_simulations and 1b.2.ONT_simulations
 
+``` r
+prog_ordering = c('ctat-LR-fusion', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion')
+```
+
 # Examine peak F1 score
 
 ``` r
@@ -16,6 +20,7 @@ pacbio_F1_summary_data = read.table("1b.1.PacBio_simulations/PacBio_sim.mean_F1.
 
 pacbio_F1_summary_data = pacbio_F1_summary_data %>% mutate(seqTech = "PacBio")
 
+pacbio_F1_summary_data$prog = factor(pacbio_F1_summary_data$prog, levels=prog_ordering)
 
 pacbio_F1_summary_data %>% head()
 ```
@@ -92,7 +97,7 @@ combined_F1_data %>%
      theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
 ```
 
-![](simulated_reads_summary_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](simulated_reads_summary_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 ``` r
 combined_F1_paperfig = combined_F1_data %>%
@@ -109,7 +114,7 @@ combined_F1_paperfig = combined_F1_data %>%
 combined_F1_paperfig
 ```
 
-![](simulated_reads_summary_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](simulated_reads_summary_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 ``` r
 ggsave(combined_F1_paperfig, filename="pbsim3_bmark.F1.paperfig.svg", width=8, height=5)
@@ -180,11 +185,7 @@ combined_PR_AUC_data %>% head()
     ## 6  PacBio
 
 ``` r
-combined_PR_AUC_data$prog = factor(combined_PR_AUC_data$prog, levels = c('ctat-LR-fusion',
-                                                           'JAFFAL',
-                                                           'LongGF',
-                                                           'fusionseeker',
-                                                           'pbfusion') )
+combined_PR_AUC_data$prog = factor(combined_PR_AUC_data$prog, levels = prog_ordering )
 ```
 
 ``` r
@@ -198,7 +199,7 @@ combined_PR_AUC_data %>%
      theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
 ```
 
-![](simulated_reads_summary_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](simulated_reads_summary_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 ``` r
 combined_PR_AUC_paperfig = combined_PR_AUC_data %>%
@@ -215,7 +216,7 @@ combined_PR_AUC_paperfig = combined_PR_AUC_data %>%
 combined_PR_AUC_paperfig
 ```
 
-![](simulated_reads_summary_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+![](simulated_reads_summary_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
 ``` r
 ggsave(combined_PR_AUC_paperfig, filename="pbsim3_bmark.AUC.paperfig.svg", width=8, height=5)
