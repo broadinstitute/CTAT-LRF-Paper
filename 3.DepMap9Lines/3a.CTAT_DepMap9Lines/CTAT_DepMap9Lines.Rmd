@@ -388,7 +388,7 @@ depmap_SR_enrichment_rankings_plot
 
 ```{r}
 
-ggsave(depmap_SR_enrichment_rankings_plot, file="depmap_SR_enrichment_rankings_plot.svg", width=5, height=3)
+#ggsave(depmap_SR_enrichment_rankings_plot, file="depmap_SR_enrichment_rankings_plot.svg", width=5, height=3)
 
 
 ```
@@ -427,7 +427,7 @@ SR_enriched_fusion_isoforms = SR_enriched_fusion_isoforms %>%
     mutate(rn = row_number() ) 
 
 
-SR_enriched_fusion_isoforms %>%
+SR_vs_LR_FFPGB_ranking_plot = SR_enriched_fusion_isoforms %>%
     ggplot(aes(x=rn, y=SR_enrichment_GB)) + 
     theme_bw() +
     geom_point() + 
@@ -440,7 +440,18 @@ SR_enriched_fusion_isoforms %>%
     ggtitle("SR/LR enrichment by FFPGB")
 
 
+SR_vs_LR_FFPGB_ranking_plot
+
 ```
+
+```{r}
+
+ggsave(SR_vs_LR_FFPGB_ranking_plot, filename="SR_vs_LR_FFPGB_ranking_plot.svg", width=7, height=4)
+
+```
+
+
+
 
 ```{r}
 # examine by approximate cost.

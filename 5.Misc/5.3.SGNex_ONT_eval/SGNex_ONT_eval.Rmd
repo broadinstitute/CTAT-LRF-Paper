@@ -16,31 +16,71 @@ library(tidyverse)
 PREDS_FILE = "data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.gz"
 
 # or use the version with ctat-LRF restricted to spliced fusions for comparison.
-PREDS_FILE = "data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.EXCLUDE_NONSPLICED.gz"
-
+PREDS_FILE_excl_nonspliced = "data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.EXCLUDE_NONSPLICED.gz"
 
 ```
-
 
 Proxy fusion names
 
 ```{r}
 
-read_support = read.csv(PREDS_FILE, header=T, sep="\t")
+parse_preds_file = function(PREDS_FILE) {
 
-read_support$sample = str_replace(read_support$sample, "-EV_directRNA", "_EVdirectRNA")
+    read_support = read.csv(PREDS_FILE, header=T, sep="\t")
+    
+    read_support$sample = str_replace(read_support$sample, "-EV_directRNA", "_EVdirectRNA")
+    
+    read_support$core_sample_name = sapply(read_support$sample, function(x)(str_split(x, "_")[[1]][2]))
+    
+    read_support$seqtype = sapply(read_support$sample, function(x)(str_split(x, "_")[[1]][3]))
+    
+    read_support$proxy_fusion_name = str_replace(read_support$proxy_fusion_name, "^SGNex_.*\\|", "")
+    
+    read_support = read_support %>% mutate(proxy_fusion_name = paste0(core_sample_name, "|", proxy_fusion_name))
 
-read_support$core_sample_name = sapply(read_support$sample, function(x)(str_split(x, "_")[[1]][2]))
+    return(read_support)    
+}
 
-read_support$seqtype = sapply(read_support$sample, function(x)(str_split(x, "_")[[1]][3]))
-
-read_support$proxy_fusion_name = str_replace(read_support$proxy_fusion_name, "^SGNex_.*\\|", "")
-
-read_support = read_support %>% mutate(proxy_fusion_name = paste0(core_sample_name, "|", proxy_fusion_name))
-
-read_support %>% head()
 
 ```
+
+```{r}
+
+regular_run_data = parse_preds_file(PREDS_FILE)
+
+regular_run_data %>% head()
+
+
+```
+
+```{r}
+
+excl_nonspliced_run_data = parse_preds_file(PREDS_FILE_excl_nonspliced)
+
+
+excl_nonspliced_run_data %>% head()
+
+```
+
+```{r}
+
+regular_run_data$runtype = "regular"
+excl_nonspliced_run_data$runtype  = "excl_nonspliced"
+
+read_support = bind_rows(regular_run_data,
+                         excl_nonspliced_run_data %>% 
+                             filter(prog == 'ctat-LR-fusion') %>% mutate(prog = 'ctat-LR-fusion,exclude') )
+
+rm(list=c('regular_run_data',
+          'excl_nonspliced_run_data'))
+```
+
+```{r}
+
+read_support = read_support %>% select(-c(mapped_gencode_A_gene_list, mapped_gencode_B_gene_list))
+
+```
+
 
 
 ```{r}
@@ -62,7 +102,6 @@ make_lex_sorted_fusion_name = function(fusion_name) {
 read_support = read_support %>% rowwise() %>% mutate(lex_sorted_fusion_name = make_lex_sorted_fusion_name(proxy_fusion_name))
 
 ```
-
 
 
 ```{r}
@@ -239,21 +278,38 @@ read_support_agg_scored %>% filter(prog == 'JAFFAL')
 
 ```
 
+```{r}
 
+read_support_agg_scored$prog = factor(read_support_agg_scored$prog, levels=c('ctat-LR-fusion',
+                                                                             'JAFFAL',
+                                                                             'LongGF',
+                                                                             'fusionseeker',
+                                                                             'pbfusion',
+                                                                             'ctat-LR-fusion,exclude'))
+```
 
 
 ```{r}
 
 alpha_val = 0.2
 
-read_support_agg_scored %>% 
+SGNEx_fusion_plot = read_support_agg_scored %>% 
     ggplot(aes(x=num_other, y=num_valid)) + 
     geom_point(aes(color=prog), alpha=alpha_val) + 
     geom_line(aes(color=prog)) +
-    scale_x_continuous(trans='log10') + theme_bw()
+    scale_x_continuous(trans='log10') + theme_bw() 
+
+SGNEx_fusion_plot
+```
+
+```{r}
+
+ggsave(SGNEx_fusion_plot, filename="SGNEx_fusion_plot.svg", width=6, height=3.5)
 
 
 ```
+
+
 
 
 ```{r}
