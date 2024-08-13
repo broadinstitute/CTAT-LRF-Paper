@@ -768,14 +768,25 @@ tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.allcells, y=UMAP_2.allcells)) + theme_
 ```{r}
 
 
-tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + theme_bw() + 
+SMG7_expr_and_fusion_plot = tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + theme_bw() + 
     geom_point(aes(color=ENSG00000116698.SMG7))  +
     
     geom_point(data=tumor_umap_w_expr %>% 
                    filter(FusionName == 'SMG7--CH507-513H4.1'), 
                 aes(shape=FusionName, color=ENSG00000116698.SMG7), size=rel(5)) 
 
+SMG7_expr_and_fusion_plot
+
 ```
+
+
+```{r}
+
+ggsave(SMG7_expr_and_fusion_plot, file="scHGSOC_Patient1_tumor_cells_only.SMG7_expr_and_fusion.svg", width=7, height=5)
+
+
+```
+
 
 
 ```{r}

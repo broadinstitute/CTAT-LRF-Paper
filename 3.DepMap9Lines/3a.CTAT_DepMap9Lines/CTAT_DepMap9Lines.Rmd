@@ -446,7 +446,7 @@ SR_vs_LR_FFPGB_ranking_plot
 
 ```{r}
 
-ggsave(SR_vs_LR_FFPGB_ranking_plot, filename="SR_vs_LR_FFPGB_ranking_plot.svg", width=7, height=4)
+ggsave(SR_vs_LR_FFPGB_ranking_plot, filename="SR_vs_LR_FFPGB_ranking_plot.svg", width=6, height=5)
 
 ```
 

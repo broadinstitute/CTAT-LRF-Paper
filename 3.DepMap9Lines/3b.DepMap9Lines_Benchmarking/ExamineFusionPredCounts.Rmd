@@ -137,12 +137,17 @@ fusion_counts_df %>% head()
 
 ```{r}
 
-fusion_counts_df %>% ggplot(aes(x=prog, y=n)) + geom_col(aes(fill=illumina_supported)) +
+TP_vs_FP_illum_supported_barplot = fusion_counts_df %>% ggplot(aes(x=prog, y=n)) + geom_col(aes(fill=illumina_supported)) +
     facet_wrap(~min_reads, scale='free_y') +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
 
+TP_vs_FP_illum_supported_barplot
 ```
+```{r}
 
+ggsave(TP_vs_FP_illum_supported_barplot, filename="TP_vs_FP_illum_supported_barplot.svg", width=7, height=4.5)
+
+```
 
 ```{r}
 
@@ -155,9 +160,19 @@ frac_fusion_illum_supported = fusion_counts_df %>% spread(key=illumina_supported
 
 ```{r}
 
-frac_fusion_illum_supported %>% ggplot(aes(x=min_reads, y=frac_illum_supported)) + geom_line(aes(groups=prog, color=prog)) +
+frac_supported_vs_min_reads_plot = frac_fusion_illum_supported %>% ggplot(aes(x=min_reads, y=frac_illum_supported)) + geom_line(aes(groups=prog, color=prog)) +
     geom_point(aes(color=prog)) +
     theme_bw()
+
+frac_supported_vs_min_reads_plot
+```
+
+
+
+```{r}
+
+#ggsave(frac_supported_vs_min_reads_plot, filename="frac_supported_vs_min_reads_plot.svg", width=7, height=4.5)
+
 
 ```
 
@@ -219,11 +234,13 @@ fusion_counts_min_agree_df
 
 # fraction of all predictions that are agreed upon given minimum read thresholds applied
 
-fusion_counts_min_agree_df  %>%
+frac_fusions_min_progs_agree_plot = fusion_counts_min_agree_df  %>%
     mutate(min_progs_agree = factor(min_progs_agree)) %>%
     ggplot(aes(x=factor(min_read_threshold), y=frac_fusions_min_agree)) + 
     theme_bw() +
     geom_point(aes(color=min_progs_agree)) + geom_line(aes(group=min_progs_agree, color=min_progs_agree))
+
+frac_fusions_min_progs_agree_plot
 
 ```
 
@@ -232,6 +249,15 @@ key observations:
 - increasing hte number of programs that must agree reduces the fraction that agree at the min-1 read evidence threshold point.
 
 
+
+
+
+```{r}
+
+ggsave(frac_fusions_min_progs_agree_plot, filename="frac_fusions_min_progs_agree_plot.svg", width=7, height=4.5)
+
+
+```
 
 # examine truth sets overall fraction
 
@@ -262,14 +288,14 @@ fusion_counts_min_agree_vs_illum_supported
 
 ```{r}
 
-fusion_counts_min_agree_vs_illum_supported %>% 
+frac_illum_supported_by_min_progs_agree_plot = fusion_counts_min_agree_vs_illum_supported %>% 
     spread(key=illumina_supported, value=num_fusions) %>% mutate(frac_illum_supported = `TRUE`/(`TRUE`+`FALSE`)) %>%
     ggplot(aes(x=factor(min_read_support), y=frac_illum_supported)) + theme_bw() +
     geom_point(aes(color=factor(min_progs_agree))) + 
     geom_line(aes(group=min_progs_agree, color=factor(min_progs_agree)))
    
 
-
+frac_illum_supported_by_min_progs_agree_plot
 
 ```
 
@@ -279,6 +305,11 @@ Increasing the minimum read support before defining proxy truth sets increases t
 Increasing the number of programs that must agree, particularly at 3 or more reads as evidence, increases the relative illumina-support among the proxy truth set.
 
 
+```{r}
+
+ggsave(frac_illum_supported_by_min_progs_agree_plot, filename="frac_illum_supported_by_min_progs_agree_plot.svg", width=7, height=4.5)
+
+```
 
 
 

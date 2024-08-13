@@ -392,6 +392,14 @@ for (p in plots) {
 dev.off()
 
 ```
+```{r}
+#Plot just the CBLC fusion for the paper fig
+
+ggsave(plots[[1]], filename = "Patient3.CBLC_fusion.umap.svg", width=7, height=5)
+ 
+
+```
+
 
 
 ```{r}
@@ -472,14 +480,24 @@ arriba_cell_counts_by_isoform = arriba_cell_counts_by_isoform %>%
 
 tumor_cell_counts_by_methods_by_isoform = bind_rows(tumor_cell_counts_by_methods_by_isoform %>% filter(method != "Arriba"),
                                                     arriba_cell_counts_by_isoform) 
-tumor_cell_counts_by_methods_by_isoform %>%
+CBLC_fusion_isoform_read_support_barplot = tumor_cell_counts_by_methods_by_isoform %>%
     filter(grepl("CBLC", fusion)) %>%
     ggplot(aes(x=fusion, y=cell_counts, fill=method)) + geom_bar(stat='identity', position='dodge') +
     theme_bw() +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
 
+CBLC_fusion_isoform_read_support_barplot
+```
+
+```{r}
+# fig for paper
+
+ggsave(CBLC_fusion_isoform_read_support_barplot, filename = "CBLC_fusion_isoform_read_support_barplot.svg", height=8, width=8)
+
+
 
 ```
+
 
 
 
