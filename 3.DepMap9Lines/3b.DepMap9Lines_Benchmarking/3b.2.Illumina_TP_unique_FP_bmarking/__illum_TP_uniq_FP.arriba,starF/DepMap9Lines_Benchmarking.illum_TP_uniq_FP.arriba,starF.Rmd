@@ -17,7 +17,7 @@ library(tidyverse)
 PROGS = c('ctat-LR-fusion', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion'); 
 
 
-USE_PARALOG_PROXIES = FALSE
+USE_PARALOG_PROXIES = TRUE
 
 
 if (USE_PARALOG_PROXIES) {
@@ -144,7 +144,7 @@ scored_data %>% head()
 
 ```{r}
 
-scored_data %>% filter(pred_result %in% c("TP", "FP", "FN")) %>% 
+depmap_illum_bmark_TP_FP_barplot = scored_data %>% filter(pred_result %in% c("TP", "FP", "FN")) %>% 
     group_by(sample, prog, pred_result) %>% 
     tally(name='fusion_counts') %>%
     ggplot(aes(x=prog, y=fusion_counts, fill=factor(pred_result, levels=c('FP', 'TP', 'FN')))) + 
@@ -152,8 +152,16 @@ scored_data %>% filter(pred_result %in% c("TP", "FP", "FN")) %>%
     geom_col() + facet_wrap(~sample)  +
         theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(trans='log10')
     
+depmap_illum_bmark_TP_FP_barplot
+```
+
+
+```{r}
+
+ggsave(depmap_illum_bmark_TP_FP_barplot, filename="depmap_illum_bmark_TP_FP_barplot.svg", width=7, height=3.5)
 
 ```
+
 
 
 # accuracy analysis
@@ -189,7 +197,7 @@ depmap_accuracy_lineplot
 
 ```{r}
 
-#ggsave(depmap_accuracy_lineplot, file=paste0("depmap_accuracy_lineplot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=7, height=4)
+ggsave(depmap_accuracy_lineplot, file=paste0("depmap_accuracy_lineplot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=7, height=4)
 
 ```
 
@@ -259,7 +267,7 @@ depmap_precision_recall_plot
 
 ```{r}
 
-#ggsave(depmap_precision_recall_plot, file=paste0("depmap_precision_recall_plot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=5, height=3)
+ggsave(depmap_precision_recall_plot, file=paste0("depmap_precision_recall_plot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=5, height=3)
 
 ```
 
@@ -338,9 +346,9 @@ upset_plot
 
 ```{r}
 
-#pdf(file=paste0("depmap.upset_plot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".pdf"), width=20)
-#UpSetRbyFeature::upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
-#dev.off()
+pdf(file=paste0("depmap.upset_plot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".pdf"), width=20)
+UpSetRbyFeature::upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
+dev.off()
 
 ```
 
