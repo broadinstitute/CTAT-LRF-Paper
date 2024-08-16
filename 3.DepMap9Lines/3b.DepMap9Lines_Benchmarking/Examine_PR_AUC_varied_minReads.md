@@ -177,9 +177,15 @@ PR_AUC_df$prog = factor(PR_AUC_df$prog, levels = program_overall_ranking)
 ```
 
 ``` r
-PR_AUC_df %>% ggplot(aes(x=prog, y=-1 * ranking)) + geom_violin() +
+summary_PR_AUC_violin_plot = PR_AUC_df %>% ggplot(aes(x=prog, y=-1 * ranking)) + geom_violin() +
     geom_jitter(aes(color=min_reads, shape=as.factor(min_progs_agree)), width=0.2, height=0.075) +
     theme_bw()
+
+summary_PR_AUC_violin_plot
 ```
 
 ![](Examine_PR_AUC_varied_minReads_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+``` r
+ggsave(summary_PR_AUC_violin_plot, filename = "depmap_bmark.summary_PR_AUC_violin_plot.svg", width=7, height=3.5)
+```

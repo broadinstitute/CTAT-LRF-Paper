@@ -2,7 +2,7 @@
 title: "ctat-mm2-timings"
 author: "bhaas"
 date: '2024-01-26'
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}

@@ -787,6 +787,12 @@ dev.off()
     ##                 2
 
 ``` r
+#Plot just the CBLC fusion for the paper fig
+
+ggsave(plots[[1]], filename = "Patient3.CBLC_fusion.umap.svg", width=7, height=5)
+```
+
+``` r
 fusion_of_interest_cell_counts = Tum_data %>% filter(FusionName %in%  fusions_of_interest$FusionName) %>% 
         select(FusionName, method, barcodes) %>% unique() %>%
         group_by(FusionName, method) %>% tally(name='cell_counts') 
@@ -809,7 +815,7 @@ fusion_of_interest_cell_counts  %>%
     ggtitle("Patient3_Tum Fusions of Interest: Cell Counts")
 ```
 
-![](Patient3_analysis_files/figure-gfm/unnamed-chunk-31-1.png)<!-- -->
+![](Patient3_analysis_files/figure-gfm/unnamed-chunk-32-1.png)<!-- -->
 
 ``` r
 # breakdown by combinations of methods per cell
@@ -886,14 +892,22 @@ arriba_cell_counts_by_isoform = arriba_cell_counts_by_isoform %>%
 
 tumor_cell_counts_by_methods_by_isoform = bind_rows(tumor_cell_counts_by_methods_by_isoform %>% filter(method != "Arriba"),
                                                     arriba_cell_counts_by_isoform) 
-tumor_cell_counts_by_methods_by_isoform %>%
+CBLC_fusion_isoform_read_support_barplot = tumor_cell_counts_by_methods_by_isoform %>%
     filter(grepl("CBLC", fusion)) %>%
     ggplot(aes(x=fusion, y=cell_counts, fill=method)) + geom_bar(stat='identity', position='dodge') +
     theme_bw() +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+
+CBLC_fusion_isoform_read_support_barplot
 ```
 
-![](Patient3_analysis_files/figure-gfm/unnamed-chunk-34-1.png)<!-- -->
+![](Patient3_analysis_files/figure-gfm/unnamed-chunk-35-1.png)<!-- -->
+
+``` r
+# fig for paper
+
+ggsave(CBLC_fusion_isoform_read_support_barplot, filename = "CBLC_fusion_isoform_read_support_barplot.svg", height=8, width=8)
+```
 
 ``` r
 tumor_cell_counts_by_methods_by_isoform %>%
@@ -903,7 +917,7 @@ tumor_cell_counts_by_methods_by_isoform %>%
     ggtitle("Patient 3 Fusions of interest")
 ```
 
-![](Patient3_analysis_files/figure-gfm/unnamed-chunk-35-1.png)<!-- -->
+![](Patient3_analysis_files/figure-gfm/unnamed-chunk-37-1.png)<!-- -->
 
 ``` r
 # co-expression of CBLC--CTC-232P5.1 and SNRNP70--ZIK1 in cells

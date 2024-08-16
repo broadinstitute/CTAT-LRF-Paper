@@ -1316,15 +1316,21 @@ tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.allcells, y=UMAP_2.allcells)) + theme_
 ![](Patient1_analysis_files/figure-gfm/unnamed-chunk-56-1.png)<!-- -->
 
 ``` r
-tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + theme_bw() + 
+SMG7_expr_and_fusion_plot = tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + theme_bw() + 
     geom_point(aes(color=ENSG00000116698.SMG7))  +
     
     geom_point(data=tumor_umap_w_expr %>% 
                    filter(FusionName == 'SMG7--CH507-513H4.1'), 
                 aes(shape=FusionName, color=ENSG00000116698.SMG7), size=rel(5)) 
+
+SMG7_expr_and_fusion_plot
 ```
 
 ![](Patient1_analysis_files/figure-gfm/unnamed-chunk-57-1.png)<!-- -->
+
+``` r
+ggsave(SMG7_expr_and_fusion_plot, file="scHGSOC_Patient1_tumor_cells_only.SMG7_expr_and_fusion.svg", width=7, height=5)
+```
 
 ``` r
 Tum_data_w_expr = left_join(Tum_data, gene_expr_data, by=c('barcodes'='barcode'))
@@ -1336,7 +1342,7 @@ Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() +
     geom_point(aes(color=celltype_final)) #+
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-59-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-60-1.png)<!-- -->
 
 ``` r
     #geom_point(aes(color=ENSG00000116698.SMG7))  + 
@@ -1357,7 +1363,7 @@ Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() +
                 aes(color=ENSG00000116698.SMG7), size=rel(5)) 
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-60-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-61-1.png)<!-- -->
 
 ``` r
 # ENSG00000278996.1 chr21   8197620 8227646 +   CH507-513H4.1   lincRNA
@@ -1370,7 +1376,7 @@ tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + theme_
                 aes(shape=FusionName, color=ENSG00000278996.FP671120.4), size=rel(5)) 
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-61-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-62-1.png)<!-- -->
 
 ``` r
 Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() + 
@@ -1381,7 +1387,7 @@ Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() +
                 aes(shape=FusionName, color=ENSG00000278996.FP671120.4), size=rel(5)) 
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-62-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-63-1.png)<!-- -->
 
 ## RAPGEF5–AGMO
 
@@ -1394,7 +1400,7 @@ tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + theme_
                 aes(shape=FusionName, color=ENSG00000136237.RAPGEF5), size=rel(5)) 
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-63-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-64-1.png)<!-- -->
 
 ``` r
 Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() + 
@@ -1405,7 +1411,7 @@ Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() +
                 aes(shape=FusionName, color=ENSG00000136237.RAPGEF5), size=rel(5)) 
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-64-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-65-1.png)<!-- -->
 
 ``` r
 tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + theme_bw() + 
@@ -1416,7 +1422,7 @@ tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + theme_
                 aes(shape=FusionName, color=ENSG00000187546.AGMO), size=rel(5)) 
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-65-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-66-1.png)<!-- -->
 
 ``` r
 Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() + 
@@ -1427,7 +1433,7 @@ Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() +
                 aes(shape=FusionName, color=ENSG00000187546.AGMO), size=rel(5)) 
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-66-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-67-1.png)<!-- -->
 
 ## fusion GS1-279B7.2–GNG4
 
@@ -1442,7 +1448,7 @@ tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + theme_
                 aes(shape=FusionName, color=ENSG00000273004.AL078644.2), size=rel(5), alpha=0.7) 
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-67-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-68-1.png)<!-- -->
 
 ``` r
 Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() + 
@@ -1453,7 +1459,7 @@ Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() +
                 aes(shape=FusionName, color=ENSG00000273004.AL078644.2), size=rel(5)) 
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-68-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-69-1.png)<!-- -->
 
 ``` r
 tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + theme_bw() + 
@@ -1464,7 +1470,7 @@ tumor_umap_w_expr %>% ggplot(aes(x=UMAP_1.tum_only, y=UMAP_2.tum_only)) + theme_
                 aes(shape=FusionName, color=ENSG00000168243.GNG4), size=rel(5)) 
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-69-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-70-1.png)<!-- -->
 
 ``` r
 Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() + 
@@ -1475,7 +1481,7 @@ Tum_data_w_expr %>% ggplot(aes(x=UMAP_1, y=UMAP_2)) + theme_bw() +
                 aes(shape=FusionName, color=ENSG00000168243.GNG4), size=rel(5)) 
 ```
 
-![](Patient1_analysis_files/figure-gfm/unnamed-chunk-70-1.png)<!-- -->
+![](Patient1_analysis_files/figure-gfm/unnamed-chunk-71-1.png)<!-- -->
 
 # any fusions found only via short read data?
 

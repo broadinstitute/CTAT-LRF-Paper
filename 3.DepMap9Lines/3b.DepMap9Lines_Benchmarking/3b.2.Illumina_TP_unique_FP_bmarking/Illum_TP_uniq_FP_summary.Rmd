@@ -2,7 +2,7 @@
 title: "Illum_TP_uniq_FP_summary.Rmd"
 author: "bhaas"
 date: '2024-07-22'
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}

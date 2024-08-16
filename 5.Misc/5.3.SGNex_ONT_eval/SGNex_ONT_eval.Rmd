@@ -321,7 +321,7 @@ num_valid_vs_num_other_gt_10k = num_valid_vs_num_other %>% filter(num_other > 10
 ```{r}
 
 
-num_valid_vs_num_other_gt_10k  = num_valid_vs_num_other_gt_1k  %>% sample_n(1000)
+num_valid_vs_num_other_gt_10k  = num_valid_vs_num_other_gt_10k  %>% sample_n(1000)
 
 ```
 

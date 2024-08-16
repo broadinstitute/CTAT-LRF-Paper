@@ -2,7 +2,7 @@
 title: "Examine_sim_paralog_fusion_detection"
 author: "bhaas"
 date: '2024-07-23'
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}

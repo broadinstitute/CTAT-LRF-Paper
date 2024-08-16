@@ -94,8 +94,8 @@ message("num shared fusions: ", earlier_truth_set %>% select(lex_ordered_fusion_
 message("num unique fusions:", earlier_unique_set %>% select(lex_ordered_fusion_name) %>% unique() %>% nrow() )
 
 
-# num shared:  25419
-# num uniquely predicted: 32969
+# num shared:  25393
+# num uniquely predicted: 31564
 
 ```
 
@@ -118,7 +118,7 @@ all_pred_fusions_illum_support_indicated_summary = all_pred_fusions_illum_suppor
 
 all_pred_fusions_illum_support_indicated_summary
 
-# 89 shared and 23 unique have illumina support
+# 89 shared and 22 unique have illumina support
 
 ```
 

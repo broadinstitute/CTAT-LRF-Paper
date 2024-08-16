@@ -29,9 +29,27 @@ length(messy_fusions)
     ## [1] 158
 
 ``` r
+# arriba fusion preds
 arriba_fusion_preds = read.csv("3b.1.IlluminaTruSeqDepMap9Lines/all_arriba_high_preds.tsv", sep="\t", header=T, stringsAsFactors = F)
+arriba_fusion_preds %>% select(lex_ordered_fusion_name) %>% unique() %>% nrow()
+```
 
+    ## [1] 282
+
+``` r
+# 282 arriba fusions
+```
+
+``` r
+# starF preds
 starF_preds = read.csv("3b.1.IlluminaTruSeqDepMap9Lines/all_STARF_preds.tsv", sep="\t", header=T, stringsAsFactors = F)
+starF_preds %>% select(lex_ordered_fusion_name) %>% unique() %>% nrow()
+```
+
+    ## [1] 266
+
+``` r
+# 266 StarF preds
 ```
 
 ``` r
@@ -64,6 +82,10 @@ table(illumina_preds$progs)
     ##          190           92          174
 
 ``` r
+# 190 +  92 +  174  = 456
+```
+
+``` r
 illumina_preds %>% group_by(sample, progs) %>% tally() 
 ```
 
@@ -88,7 +110,7 @@ illumina_preds %>% group_by(sample, progs) %>% tally() %>%
     ggplot(aes(x=sample, y=n, fill=progs)) + geom_col()
 ```
 
-![](ExamineFusionPredCounts_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](ExamineFusionPredCounts_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 ``` r
 fusion_preds = fusion_preds %>% mutate(illumina_supported = lex_ordered_fusion_name %in% illumina_preds$lex_ordered_fusion_name)
@@ -132,12 +154,18 @@ fusion_counts_df %>% head()
     ## 6 ctat-LR-fusion TRUE                 136         1
 
 ``` r
-fusion_counts_df %>% ggplot(aes(x=prog, y=n)) + geom_col(aes(fill=illumina_supported)) +
+TP_vs_FP_illum_supported_barplot = fusion_counts_df %>% ggplot(aes(x=prog, y=n)) + geom_col(aes(fill=illumina_supported)) +
     facet_wrap(~min_reads, scale='free_y') +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+
+TP_vs_FP_illum_supported_barplot
 ```
 
-![](ExamineFusionPredCounts_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](ExamineFusionPredCounts_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+
+``` r
+ggsave(TP_vs_FP_illum_supported_barplot, filename="TP_vs_FP_illum_supported_barplot.svg", width=7, height=4.5)
+```
 
 ``` r
 frac_fusion_illum_supported = fusion_counts_df %>% spread(key=illumina_supported, value=n) %>% 
@@ -145,7 +173,7 @@ frac_fusion_illum_supported = fusion_counts_df %>% spread(key=illumina_supported
 ```
 
 ``` r
-frac_fusion_illum_supported %>% ggplot(aes(x=min_reads, y=frac_illum_supported)) + geom_line(aes(groups=prog, color=prog)) +
+frac_supported_vs_min_reads_plot = frac_fusion_illum_supported %>% ggplot(aes(x=min_reads, y=frac_illum_supported)) + geom_line(aes(groups=prog, color=prog)) +
     geom_point(aes(color=prog)) +
     theme_bw()
 ```
@@ -153,7 +181,15 @@ frac_fusion_illum_supported %>% ggplot(aes(x=min_reads, y=frac_illum_supported))
     ## Warning in geom_line(aes(groups = prog, color = prog)): Ignoring unknown
     ## aesthetics: groups
 
-![](ExamineFusionPredCounts_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+``` r
+frac_supported_vs_min_reads_plot
+```
+
+![](ExamineFusionPredCounts_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+
+``` r
+#ggsave(frac_supported_vs_min_reads_plot, filename="frac_supported_vs_min_reads_plot.svg", width=7, height=4.5)
+```
 
 # examine min 2 agree profile
 
@@ -275,20 +311,26 @@ fusion_counts_min_agree_df
 ``` r
 # fraction of all predictions that are agreed upon given minimum read thresholds applied
 
-fusion_counts_min_agree_df  %>%
+frac_fusions_min_progs_agree_plot = fusion_counts_min_agree_df  %>%
     mutate(min_progs_agree = factor(min_progs_agree)) %>%
     ggplot(aes(x=factor(min_read_threshold), y=frac_fusions_min_agree)) + 
     theme_bw() +
     geom_point(aes(color=min_progs_agree)) + geom_line(aes(group=min_progs_agree, color=min_progs_agree))
+
+frac_fusions_min_progs_agree_plot
 ```
 
-![](ExamineFusionPredCounts_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+![](ExamineFusionPredCounts_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
 key observations: - increasing read support yields increasingly agreeing
 predictions across programs with the exception of min 1 read support for
 min-2 and min-3 progs agreeing. - increasing hte number of programs that
 must agree reduces the fraction that agree at the min-1 read evidence
 threshold point.
+
+``` r
+ggsave(frac_fusions_min_progs_agree_plot, filename="frac_fusions_min_progs_agree_plot.svg", width=7, height=4.5)
+```
 
 # examine truth sets overall fraction
 
@@ -328,14 +370,17 @@ fusion_counts_min_agree_vs_illum_supported
     ## # ℹ 50 more rows
 
 ``` r
-fusion_counts_min_agree_vs_illum_supported %>% 
+frac_illum_supported_by_min_progs_agree_plot = fusion_counts_min_agree_vs_illum_supported %>% 
     spread(key=illumina_supported, value=num_fusions) %>% mutate(frac_illum_supported = `TRUE`/(`TRUE`+`FALSE`)) %>%
     ggplot(aes(x=factor(min_read_support), y=frac_illum_supported)) + theme_bw() +
     geom_point(aes(color=factor(min_progs_agree))) + 
     geom_line(aes(group=min_progs_agree, color=factor(min_progs_agree)))
+   
+
+frac_illum_supported_by_min_progs_agree_plot
 ```
 
-![](ExamineFusionPredCounts_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+![](ExamineFusionPredCounts_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
 
 Increasing the minimum read support before defining proxy truth sets
 increases the fraction of fusions supported by orthogonal illumina read
@@ -344,3 +389,7 @@ evidence.
 Increasing the number of programs that must agree, particularly at 3 or
 more reads as evidence, increases the relative illumina-support among
 the proxy truth set.
+
+``` r
+ggsave(frac_illum_supported_by_min_progs_agree_plot, filename="frac_illum_supported_by_min_progs_agree_plot.svg", width=7, height=4.5)
+```

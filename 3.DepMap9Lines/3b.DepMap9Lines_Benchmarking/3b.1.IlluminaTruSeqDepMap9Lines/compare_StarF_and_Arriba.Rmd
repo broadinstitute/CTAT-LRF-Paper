@@ -2,7 +2,7 @@
 title: "compare_starF_and_Arriba"
 author: "bhaas"
 date: '2024-07-20'
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}

@@ -60,8 +60,8 @@ message("num shared fusions: ", earlier_truth_set %>% select(lex_ordered_fusion_
 message("num unique fusions:", earlier_unique_set %>% select(lex_ordered_fusion_name) %>% unique() %>% nrow() )
 
 
-# num shared:  25419
-# num uniquely predicted: 32969
+# num shared:  25393
+# num uniquely predicted: 31564
 
 ```
 
