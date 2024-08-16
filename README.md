@@ -69,6 +69,8 @@ Summary evaluation of DepMap long read fusion prediction accuracy using Illumina
 
 Example of benchmarking using the Illumina-based Arriba-intersect-StarFusion truth set: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.Illumina_TP_unique_FP_bmarking/__illum_TP_uniq_FP.arriba%2CstarF/DepMap9Lines_Benchmarking.illum_TP_uniq_FP.arriba%2CstarF.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.Illumina_TP_unique_FP_bmarking/__illum_TP_uniq_FP.arriba%2CstarF/DepMap9Lines_Benchmarking.illum_TP_uniq_FP.arriba%2CstarF.md) (Supplementary Figure S3)
 
+Evaluating use of JAFFAL high-conf predictions only instead of all the predictions with Illumina-supported truth set: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.3.Illumina_TP_jaffal_highconfonly/Compare_JAFFAL_HighConf_ROC.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.3.Illumina_TP_jaffal_highconfonly/Compare_JAFFAL_HighConf_ROC.md) which shows better overall P-R AUC values when using the entire prediction set, and so we continued to leverage the full JAFFAL predictions in all benchmarking experiments, ranked according to fusion read support consistently with all other methods evaluated.
+
 
 ### Compare fusion support and isoform detection from short vs. long RNA-seq reads:
     
@@ -79,23 +81,33 @@ Analysis: [3.DepMap9Lines/3a.CTAT_DepMap9Lines/CTAT_DepMap9Lines.Rmd](3.DepMap9L
 Analysis: [3.DepMap9Lines/3a.CTAT_DepMap9Lines/3a.2.ThreePrimeBiasAnalysis/examine_3prime_breakpoint_readlengths.Rmd](3.DepMap9Lines/3a.CTAT_DepMap9Lines/3a.2.ThreePrimeBiasAnalysis/examine_3prime_breakpoint_readlengths.md) (Supplementary Figure S4)
 
 
+## Fusion detection using ONT direct RNA sequences
+
+ONT direct RNA sequences were obtained from the [SG-NEx project](https://registry.opendata.aws/sgnex/).
+
+Analysis of fusion detection using ONT dRNA seqs: [5.Misc/5.3.SGNex_ONT_eval/SGNex_ONT_eval.Rmd](5.Misc/5.3.SGNex_ONT_eval/SGNex_ONT_eval.md) (Figure 6)
+
+
 ## Long Read Fusion Isoform Detection from Tumor Single Cell Transcriptomes
 
 ### Melanoma single cell analysis
 
 The melanoma patient sample RNA-seq is protected and available under dbgap: [phs003200.v1.p1](https://www.ncbi.nlm.nih.gov/gap/advanced_search/?TERM=phs003200.v1.p1)
     
-Analysis: [4.SingleCellFusions/4a.sc_Melanoma/M132TS_analysis.Rmd](4.SingleCellFusions/4a.sc_Melanoma/M132TS_analysis.md) (Figure 5a)
+Analysis of fusions using long and short read alignments: [4.SingleCellFusions/4a.sc_Melanoma/M132TS_analysis.Rmd](4.SingleCellFusions/4a.sc_Melanoma/M132TS_analysis.md) (Figure 7a,b)
+
+Evaluation of NUTM2A fusion cell content by using 'grep' with [fusion breakpoint](4.SingleCellFusions/4a.sc_Melanoma/4a.1.grep_search_brkpt/data/M132TS.ctat-LR-fusion.fusion_predictions.tsv.NUTM2A-AS1--RP11-203L2.4.tsv.fusion_brkpt_seqs.10eaSide) sequences: [4.SingleCellFusions/4a.sc_Melanoma/4a.1.grep_search_brkpt/GrepMatchedFusionCells.Rmd](4.SingleCellFusions/4a.sc_Melanoma/4a.1.grep_search_brkpt/GrepMatchedFusionCells.md)
+
 
 ### High Grade Serous Ovarian Cancer (HGSOC) single cell analysis
 
 These data are available at EGA under accessions [EGAD00001009814 - PacBio and EGAD00001009815 - Illumina](https://ega-archive.org/studies/EGAS00001006807)  
     
-Analysis of HGSOC Patient-1 :  [4.SingleCellFusions/4b.sc_HGSOC/Patient1_analysis.Rmd](4.SingleCellFusions/4b.sc_HGSOC/Patient1_analysis.md) (Figure 6)
+Analysis of HGSOC Patient-1 :  [4.SingleCellFusions/4b.sc_HGSOC/Patient1_analysis.Rmd](4.SingleCellFusions/4b.sc_HGSOC/Patient1_analysis.md) (Figure 8a-c)
 
 Analysis of HGSOC Patient-2 : [4.SingleCellFusions/4b.sc_HGSOC/Patient2_analysis.Rmd](4.SingleCellFusions/4b.sc_HGSOC/Patient2_analysis.md)
 
-Analysis of HGSOC Patient-3 : [4.SingleCellFusions/4b.sc_HGSOC/Patient3_analysis.Rmd](4.SingleCellFusions/4b.sc_HGSOC/Patient3_analysis.md)
+Analysis of HGSOC Patient-3 : [4.SingleCellFusions/4b.sc_HGSOC/Patient3_analysis.Rmd](4.SingleCellFusions/4b.sc_HGSOC/Patient3_analysis.md) (Figure 8d,e))
 
 
 # Miscellaneous
@@ -106,4 +118,8 @@ Shows that ctat-minimap2 in chimeric only mode is 4x faster than regular mode.
     
 Analysis: [5.Misc/5.1.ctat-mm2-timings/ctat-mm2-timings.Rmd](5.Misc/5.1.ctat-mm2-timings/ctat-mm2-timings.md)
 
+
+## Comparison of runtime and memory usage by different long read fusion predictors:
+
+Analysis: [5.Misc/5.2.fusion_workflow_resource_usages/ExamineResourceUsage.Rmd](5.Misc/5.2.fusion_workflow_resource_usages/ExamineResourceUsage.md)
 
