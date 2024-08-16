@@ -440,6 +440,7 @@ read_support_agg_scored$prog = factor(read_support_agg_scored$prog, levels=c('ct
 alpha_val = 0.2
 
 SGNEx_fusion_plot = read_support_agg_scored %>% 
+    select(prog, num_other, num_valid) %>% 
     ggplot(aes(x=num_other, y=num_valid)) + 
     geom_point(aes(color=prog), alpha=alpha_val) + 
     geom_line(aes(color=prog)) +
@@ -452,6 +453,39 @@ SGNEx_fusion_plot
     ## Transformation introduced infinite values in continuous x-axis
 
 ![](SGNex_ONT_eval_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+
+``` r
+# simplify plot for upload into inkscape
+
+num_valid_vs_num_other = read_support_agg_scored %>% 
+    select(prog, num_other, num_valid) 
+
+
+num_valid_vs_num_other_lte_10k = num_valid_vs_num_other %>% filter(num_other <= 10000)
+num_valid_vs_num_other_gt_10k = num_valid_vs_num_other %>% filter(num_other > 10000)
+```
+
+``` r
+num_valid_vs_num_other_gt_10k  = num_valid_vs_num_other_gt_10k  %>% sample_n(1000)
+```
+
+``` r
+num_valid_vs_num_other  = bind_rows(num_valid_vs_num_other_lte_10k, num_valid_vs_num_other_gt_10k)
+
+SGNEx_fusion_plot = num_valid_vs_num_other %>% 
+    select(prog, num_other, num_valid)  %>% 
+    ggplot(aes(x=num_other, y=num_valid)) + 
+    geom_point(aes(color=prog), alpha=alpha_val) + 
+    geom_line(aes(color=prog)) +
+    scale_x_continuous(trans='log10') + theme_bw() 
+
+SGNEx_fusion_plot
+```
+
+    ## Warning: Transformation introduced infinite values in continuous x-axis
+    ## Transformation introduced infinite values in continuous x-axis
+
+![](SGNex_ONT_eval_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
 
 ``` r
 ggsave(SGNEx_fusion_plot, filename="SGNEx_fusion_plot.svg", width=6, height=3.5)
@@ -572,7 +606,7 @@ read_support_agg_scored  %>% filter(validated_fusion) %>% group_by(lex_sorted_fu
      theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
-![](SGNex_ONT_eval_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
+![](SGNex_ONT_eval_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->
 
 ``` r
 # get counts of valid fusions
