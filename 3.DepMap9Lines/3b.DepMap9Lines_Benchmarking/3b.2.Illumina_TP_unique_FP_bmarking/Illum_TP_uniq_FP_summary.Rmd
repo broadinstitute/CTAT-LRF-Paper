@@ -13,6 +13,14 @@ library(tidyverse)
 
 ```{r}
 
+ordered_progs = c('ctat-LR-fusion', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion')
+
+
+```
+
+
+```{r}
+
 files = c(
     "./__illum_TP_uniq_FP.starF/data/eval_illum_supported.ignoreUnsure.results.scored.PR.AUC",
     "./__illum_TP_uniq_FP.arriba,starF/data/eval_illum_supported.ignoreUnsure.results.scored.PR.AUC",
@@ -36,6 +44,8 @@ for (file in files) {
     PR_AUC_df = bind_rows(PR_AUC_df, df)
 }
 
+
+PR_AUC_df$prog = factor(PR_AUC_df$prog, levels=ordered_progs)
 
 PR_AUC_df %>% head()
 
@@ -65,7 +75,6 @@ illum_fusion_acc_barplot
 ```{r}
 
 ggsave(illum_fusion_acc_barplot, filename = "illum_fusion_accuracy_barplot.svg", width=7, height=3.5)
-
 
 
 ```
