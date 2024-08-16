@@ -121,5 +121,7 @@ Analysis: [5.Misc/5.1.ctat-mm2-timings/ctat-mm2-timings.Rmd](5.Misc/5.1.ctat-mm2
 
 ## Comparison of runtime and memory usage by different long read fusion predictors:
 
-Analysis: [5.Misc/5.2.fusion_workflow_resource_usages/ExamineResourceUsage.Rmd](5.Misc/5.2.fusion_workflow_resource_usages/ExamineResourceUsage.md)
+Analysis: [5.Misc/5.2.fusion_workflow_resource_usages/ExamineResourceUsage.Rmd](5.Misc/5.2.fusion_workflow_resource_usages/ExamineResourceUsage.md) (Supplementary Figure 6)
+
+    
 
