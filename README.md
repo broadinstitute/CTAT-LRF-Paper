@@ -57,8 +57,13 @@ Analysis: [2.SeraCareFusions/2b.SeraCareFusionBenchmarking/SeraCareFusionAnalysi
 
 Fusion predictions for all the methods: [https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/DepMap_Cell_Lines/prog_results](https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/DepMap_Cell_Lines/prog_results)
 
-Analysis: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/Examine_PR_AUC_varied_minReads.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/Examine_PR_AUC_varied_minReads.md)
+Example benchmarking requiring min 3 reads and min 2 methods agreeing: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/__bmark_min-3-reads/DepMap9Lines_Benchmarking.min-3-read.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/__bmark_min-3-reads/DepMap9Lines_Benchmarking.min-3-read.md)
 
+'Wisdom of the crowds' benchmarking summary across 30 different truth sets: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/Examine_PR_AUC_varied_minReads.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/Examine_PR_AUC_varied_minReads.md)
+
+Illumina-supported fusions truth set benchmarking: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.Illumina_TP_unique_FP_bmarking/Illum_TP_uniq_FP_summary.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.Illumina_TP_unique_FP_bmarking/Illum_TP_uniq_FP_summary.md)
+
+    
 ### Evaluate Illumina read support for fusion predictions as per STAR-Fusion:
 
 STAR-Fusion predictions based on the Illumina TruSeq are available [here](https://github.com/broadinstitute/CTAT-LRF-Paper/blob/main/3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.1.IlluminaTruSeqDepMap9Lines/data/DepMap.v1v2mrgd.StarF.consolidated.tsv.gz).
