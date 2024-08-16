@@ -27,7 +27,7 @@ Analysis: [1.Benchmark_Simulated_Fusions/1b.pbsim3_simulated_reads/simulated_rea
 
 ### Benchmarking using fusions simulated between paralogous genes:
 
-Simulated paralog fusions [fasta file](https://github.com/fusiontranscripts/LR-FusionBenchmarking/blob/master/simulated_data/paralog_fusion_sim/data/parafusions.fastq.gz).
+Simulated paralog fusions [fastq file](https://github.com/fusiontranscripts/LR-FusionBenchmarking/blob/master/simulated_data/paralog_fusion_sim/data/parafusions.fastq.gz).
 
 Evaluation of paralog fusion detection: [1.Benchmark_Simulated_Fusions/1c.sim_paralog_fusions/Examine_sim_paralog_fusion_detection.Rmd](1.Benchmark_Simulated_Fusions/1c.sim_paralog_fusions/Examine_sim_paralog_fusion_detection.md)
 
@@ -40,7 +40,7 @@ SeraCare Fusion Mix v4 was sequenced using [PacBio MAS-ISO-seq/Kinnex](https://d
 
 Fusion predictions for combined ctat-LR-Fusion w/ FusionInspector: [https://github.com/broadinstitute/CTAT-LRF-Paper/tree/main/2.SeraCareFusions/2a.CTAT_SeraCareFusion/data/ctatLRF_FI](https://github.com/broadinstitute/CTAT-LRF-Paper/tree/main/2.SeraCareFusions/2a.CTAT_SeraCareFusion/data/ctatLRF_FI)
 
-Analysis: [2.SeraCareFusions/2a.CTAT_SeraCareFusion/CTAT_SeraCareFusion.Rmd](2.SeraCareFusions/2a.CTAT_SeraCareFusion/CTAT_SeraCareFusion.md) (Figure 3a, Supp Figure S1)
+Analysis: [2.SeraCareFusions/2a.CTAT_SeraCareFusion/CTAT_SeraCareFusion.Rmd](2.SeraCareFusions/2a.CTAT_SeraCareFusion/CTAT_SeraCareFusion.md) (Figure 3a, Supp Figure S2)
 
 ### Comparison of control fusions found by various predictors for SeraCare fusion mix:
 
@@ -55,9 +55,8 @@ Analysis: [2.SeraCareFusions/2b.SeraCareFusionBenchmarking/SeraCareFusionAnalysi
     
 ### Comparing fusion prediction results for DepMap cell lines for various predictors:
 
+Fusion predictions for all the methods: [https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/DepMap_Cell_Lines/prog_results](https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/DepMap_Cell_Lines/prog_results)
 
-Fusion predictions for all the methods: [https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/cancer_cell_lines/prog_results](https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/cancer_cell_lines/prog_results)
-        
 Analysis: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/DepMap9Lines_Benchmarking.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/DepMap9Lines_Benchmarking.md)
 
 ### Evaluate Illumina read support for fusion predictions as per STAR-Fusion:
