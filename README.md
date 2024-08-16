@@ -1,7 +1,6 @@
 # CTAT-LRF-Paper
 
-Analyses and figures generated for the manuscript "CTAT-LR-fusion: accurate fusion transcript identification from long and short read isoform sequencing at bulk or single cell resolution" by "Qian Qin, Victoria Popic, Houlin Yu, Emily White, Akanksha Khobragade, Asa Shin, Arthur Dondi, Niko Beerenwinkel, Aziz Al’Khafaji, and Brian J. Haas"
-
+Analyses and figures generated for the manuscript "Accurate fusion transcript identification from long and short read isoform sequencing at bulk or single cell resolution" by "Qian Qin et al."
 
 This repo focuses on analyses and figure generation for the manuscript.  For computing benchmarking results that were analyzed here, please see the separate github repo: https://github.com/fusiontranscripts/LR-FusionBenchmarking
     
@@ -14,7 +13,7 @@ The JAFFAL (Badread) simulated fusion reads were obtained from: [https://ndownlo
 
 Fusion prediction results available [here](https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/simulated_data/sim_jaffal/prog_results)
         
-Analysis: [1.Benchmark_Simulated_Fusions/1a.jaffalpaper_simulated_reads/analyze_jaffal_simdata_accuracy.Rmd](1.Benchmark_Simulated_Fusions/1a.jaffalpaper_simulated_reads/analyze_jaffal_simdata_accuracy.md) (Figure 2b)
+Analysis: [1.Benchmark_Simulated_Fusions/1a.jaffalpaper_simulated_reads/analyze_jaffal_simdata_accuracy.Rmd](1.Benchmark_Simulated_Fusions/1a.jaffalpaper_simulated_reads/analyze_jaffal_simdata_accuracy.md) (Figure 2b,c)
 
 
 ### Benchmarking using pbsim3 simulated reads, focused on breakpoint detection accuracy:
@@ -23,9 +22,16 @@ PacBio and ONT R10.4.1 fusion reads were simulated using PBSIM3. Reads are avail
 
 Fusion prediction results are available for [PacBio](https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/simulated_data/pbio_pbsim3_part5/prog_results) and [ONT](https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/simulated_data/ONT_pbsim3_part5/prog_results)
         
-Analysis: [1.Benchmark_Simulated_Fusions/1b.pbsim3_simulated_reads/simulated_reads_summary.Rmd](1.Benchmark_Simulated_Fusions/1b.pbsim3_simulated_reads/simulated_reads_summary.md) (Figure 2c)
+Analysis: [1.Benchmark_Simulated_Fusions/1b.pbsim3_simulated_reads/simulated_reads_summary.Rmd](1.Benchmark_Simulated_Fusions/1b.pbsim3_simulated_reads/simulated_reads_summary.md) (Figure 2d)
 
 
+### Benchmarking using fusions simulated between paralogous genes:
+
+Simulated paralog fusions [fasta file](https://github.com/fusiontranscripts/LR-FusionBenchmarking/blob/master/simulated_data/paralog_fusion_sim/data/parafusions.fastq.gz).
+
+Evaluation of paralog fusion detection: [1.Benchmark_Simulated_Fusions/1c.sim_paralog_fusions/Examine_sim_paralog_fusion_detection.Rmd](1.Benchmark_Simulated_Fusions/1c.sim_paralog_fusions/Examine_sim_paralog_fusion_detection.md)
+
+    
 ## Long Read Fusion Isoform Detection with a Reference Fusion Control RNA Sample
 
 SeraCare Fusion Mix v4 was sequenced using [PacBio MAS-ISO-seq/Kinnex](https://data.broadinstitute.org/Trinity/CTAT-LR-Fusion_PAPER/SeraCareFusionMixV4/SeraCareFusionV4-MAS-ISO-seq/) and by [Illumina TruSeq](https://data.broadinstitute.org/Trinity/CTAT-LR-Fusion_PAPER/SeraCareFusionMixV4/SeraCareFusionV4-TruSeq/) (see links for reads in fastq format). 
