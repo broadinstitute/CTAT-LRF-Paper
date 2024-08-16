@@ -57,7 +57,7 @@ Analysis: [2.SeraCareFusions/2b.SeraCareFusionBenchmarking/SeraCareFusionAnalysi
 
 Fusion predictions for all the methods: [https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/DepMap_Cell_Lines/prog_results](https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/DepMap_Cell_Lines/prog_results)
 
-Analysis: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/DepMap9Lines_Benchmarking.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/DepMap9Lines_Benchmarking.md)
+Analysis: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/Examine_PR_AUC_varied_minReads.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/Examine_PR_AUC_varied_minReads.md)
 
 ### Evaluate Illumina read support for fusion predictions as per STAR-Fusion:
 
