@@ -57,30 +57,26 @@ Analysis: [2.SeraCareFusions/2b.SeraCareFusionBenchmarking/SeraCareFusionAnalysi
 
 Fusion predictions for all the methods: [https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/DepMap_Cell_Lines/prog_results](https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/DepMap_Cell_Lines/prog_results)
 
-Example benchmarking requiring min 3 reads and min 2 methods agreeing: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/__bmark_min-3-reads/DepMap9Lines_Benchmarking.min-3-read.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/__bmark_min-3-reads/DepMap9Lines_Benchmarking.min-3-read.md)
+Example benchmarking requiring min 3 reads and min 2 methods agreeing: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/__bmark_min-3-reads/DepMap9Lines_Benchmarking.min-3-read.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/__bmark_min-3-reads/DepMap9Lines_Benchmarking.min-3-read.md) (Figures 4a-e)
 
-'Wisdom of the crowds' benchmarking summary across 30 different truth sets: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/Examine_PR_AUC_varied_minReads.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/Examine_PR_AUC_varied_minReads.md)
+'Wisdom of the crowds' benchmarking summary across 30 different truth sets: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/Examine_PR_AUC_varied_minReads.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/Examine_PR_AUC_varied_minReads.md) (Figure 4f)
 
-Illumina-supported fusions truth set benchmarking: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.Illumina_TP_unique_FP_bmarking/Illum_TP_uniq_FP_summary.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.Illumina_TP_unique_FP_bmarking/Illum_TP_uniq_FP_summary.md)
+Illumina-supported fusions truth set benchmarking: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.Illumina_TP_unique_FP_bmarking/Illum_TP_uniq_FP_summary.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.Illumina_TP_unique_FP_bmarking/Illum_TP_uniq_FP_summary.md) (Figure 4g)
 
+#### Using Illumina-defined fusion truth sets for evaluating DepMap long read fusion predictions
     
-### Evaluate Illumina read support for fusion predictions as per STAR-Fusion:
+Summary evaluation of DepMap long read fusion prediction accuracy using Illumina-based fusion truth sets: [3b.DepMap9Lines_Benchmarking/3b.2.Illumina_TP_unique_FP_bmarking/Illum_TP_uniq_FP_summary.Rmd](3b.DepMap9Lines_Benchmarking/3b.2.Illumina_TP_unique_FP_bmarking/Illum_TP_uniq_FP_summary.md) (Figure 4h)
 
-STAR-Fusion predictions based on the Illumina TruSeq are available [here](https://github.com/broadinstitute/CTAT-LRF-Paper/blob/main/3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.1.IlluminaTruSeqDepMap9Lines/data/DepMap.v1v2mrgd.StarF.consolidated.tsv.gz).
-    
-Analysis: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.1.IlluminaTruSeqDepMap9Lines/DepMap_TruSeq_StarF.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.1.IlluminaTruSeqDepMap9Lines/DepMap_TruSeq_StarF.md)
+Example of benchmarking using the Illumina-based Arriba-intersect-StarFusion truth set: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.Illumina_TP_unique_FP_bmarking/__illum_TP_uniq_FP.arriba%2CstarF/DepMap9Lines_Benchmarking.illum_TP_uniq_FP.arriba%2CstarF.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.Illumina_TP_unique_FP_bmarking/__illum_TP_uniq_FP.arriba%2CstarF/DepMap9Lines_Benchmarking.illum_TP_uniq_FP.arriba%2CstarF.md)
 
-### Revisit benchmarking including the additional illumina-supported fusions into the truth set:
-
-Analysis: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.IncludeIlluminaSupportedFusions/DepMap9Lines_Benchmarking.incl_Illumina_supported.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.IncludeIlluminaSupportedFusions/DepMap9Lines_Benchmarking.incl_Illumina_supported.md) (Figure 4a,b,c, and Supplementary Figure S2)
 
 ### Compare fusion support and isoform detection from short vs. long RNA-seq reads:
     
-Analysis: [3.DepMap9Lines/3a.CTAT_DepMap9Lines/CTAT_DepMap9Lines.Rmd](3.DepMap9Lines/3a.CTAT_DepMap9Lines/CTAT_DepMap9Lines.md) (Figure 4d,e,f, Supplementary S4)
+Analysis: [3.DepMap9Lines/3a.CTAT_DepMap9Lines/CTAT_DepMap9Lines.Rmd](3.DepMap9Lines/3a.CTAT_DepMap9Lines/CTAT_DepMap9Lines.md) (Figure 5)
 
 ### Examine SR vs. LR support according to distance of the breakpoint from the 3' end
 
-Analysis: [3.DepMap9Lines/3a.CTAT_DepMap9Lines/3a.2.ThreePrimeBiasAnalysis/examine_3prime_breakpoint_readlengths.Rmd](3.DepMap9Lines/3a.CTAT_DepMap9Lines/3a.2.ThreePrimeBiasAnalysis/examine_3prime_breakpoint_readlengths.md) (Supplementary S3)
+Analysis: [3.DepMap9Lines/3a.CTAT_DepMap9Lines/3a.2.ThreePrimeBiasAnalysis/examine_3prime_breakpoint_readlengths.Rmd](3.DepMap9Lines/3a.CTAT_DepMap9Lines/3a.2.ThreePrimeBiasAnalysis/examine_3prime_breakpoint_readlengths.md) (Supplementary Figure S4)
 
 
 ## Long Read Fusion Isoform Detection from Tumor Single Cell Transcriptomes
