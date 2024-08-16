@@ -67,7 +67,7 @@ Illumina-supported fusions truth set benchmarking: [3.DepMap9Lines/3b.DepMap9Lin
     
 Summary evaluation of DepMap long read fusion prediction accuracy using Illumina-based fusion truth sets: [3b.DepMap9Lines_Benchmarking/3b.2.Illumina_TP_unique_FP_bmarking/Illum_TP_uniq_FP_summary.Rmd](3b.DepMap9Lines_Benchmarking/3b.2.Illumina_TP_unique_FP_bmarking/Illum_TP_uniq_FP_summary.md) (Figure 4h)
 
-Example of benchmarking using the Illumina-based Arriba-intersect-StarFusion truth set: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.Illumina_TP_unique_FP_bmarking/__illum_TP_uniq_FP.arriba%2CstarF/DepMap9Lines_Benchmarking.illum_TP_uniq_FP.arriba%2CstarF.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.Illumina_TP_unique_FP_bmarking/__illum_TP_uniq_FP.arriba%2CstarF/DepMap9Lines_Benchmarking.illum_TP_uniq_FP.arriba%2CstarF.md)
+Example of benchmarking using the Illumina-based Arriba-intersect-StarFusion truth set: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.Illumina_TP_unique_FP_bmarking/__illum_TP_uniq_FP.arriba%2CstarF/DepMap9Lines_Benchmarking.illum_TP_uniq_FP.arriba%2CstarF.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.Illumina_TP_unique_FP_bmarking/__illum_TP_uniq_FP.arriba%2CstarF/DepMap9Lines_Benchmarking.illum_TP_uniq_FP.arriba%2CstarF.md) (Supplementary Figure S3)
 
 
 ### Compare fusion support and isoform detection from short vs. long RNA-seq reads:
