@@ -79,6 +79,7 @@ write.table(StarF_data, file="all_STARF_preds.tsv", sep="\t", quote=F, row.names
 ```
 
 
+
 ```{r}
 
 # define those fusions in the truth set as illumina-supported or not.
@@ -113,8 +114,11 @@ all_pred_fusions_illum_support_indicated %>% filter(type=='unique' & Illumina_su
 StarF_overlapping_preds = inner_join(all_pred_fusions_illum_support_indicated, StarF_data, by='lex_ordered_fusion_name', multiple='all')
 
 
-StarF_overlapping_preds = StarF_overlapping_preds %>% select(lex_ordered_fusion_name, type, sample, FusionName) %>% unique()
-
+StarF_overlapping_preds = StarF_overlapping_preds %>% select(lex_ordered_fusion_name, type, sample, FusionName, est_J, est_S) %>% 
+        group_by(lex_ordered_fusion_name) %>% 
+    arrange(desc(est_J), desc(est_S)) %>%
+    filter(row_number() == 1) %>%
+    ungroup()
 
 StarF_overlapping_preds
 ```
@@ -155,9 +159,6 @@ StarF_overlapping_preds
 # combining shared and uniquely pred fusions w/ illum support
 
 ```
-
-
-
 
 
 ```{r}

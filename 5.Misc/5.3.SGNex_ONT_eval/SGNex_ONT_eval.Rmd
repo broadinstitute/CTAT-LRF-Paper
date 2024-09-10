@@ -16,7 +16,7 @@ library(tidyverse)
 PREDS_FILE = "data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.gz"
 
 # or use the version with ctat-LRF restricted to spliced fusions for comparison.
-PREDS_FILE_excl_nonspliced = "data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.EXCLUDE_NONSPLICED.gz"
+PREDS_FILE_fuzzy_restricted = "data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.FUZZY_RESTRICTED.gz"
 
 ```
 
@@ -55,24 +55,22 @@ regular_run_data %>% head()
 
 ```{r}
 
-excl_nonspliced_run_data = parse_preds_file(PREDS_FILE_excl_nonspliced)
+fuzzy_restricted_run_data = parse_preds_file(PREDS_FILE_fuzzy_restricted)
 
 
-excl_nonspliced_run_data %>% head()
+fuzzy_restricted_run_data %>% head()
 
 ```
 
 ```{r}
 
 regular_run_data$runtype = "regular"
-excl_nonspliced_run_data$runtype  = "excl_nonspliced"
+fuzzy_restricted_run_data$runtype  = "fuzzy_restricted"
 
-read_support = bind_rows(regular_run_data,
-                         excl_nonspliced_run_data %>% 
-                             filter(prog == 'ctat-LR-fusion') %>% mutate(prog = 'ctat-LR-fusion,exclude') )
+read_support = bind_rows(regular_run_data %>% mutate(runtype = "regular"),
+                         fuzzy_restricted_run_data %>% mutate(runtype = "fuzzy_brkpt_restricted") )
 
-rm(list=c('regular_run_data',
-          'excl_nonspliced_run_data'))
+
 ```
 
 ```{r}
@@ -80,6 +78,10 @@ rm(list=c('regular_run_data',
 read_support = read_support %>% select(-c(mapped_gencode_A_gene_list, mapped_gencode_B_gene_list))
 
 ```
+
+
+
+
 
 
 
@@ -110,7 +112,7 @@ read_support = read_support %>% rowwise() %>% mutate(lex_sorted_fusion_name = ma
 
 nrow(read_support)
 
-read_support_sample = read_support %>% group_by(lex_sorted_fusion_name, prog, sample) %>% arrange(desc(num_reads)) %>%
+read_support_sample = read_support %>% group_by(lex_sorted_fusion_name, prog, sample, runtype) %>% arrange(desc(num_reads)) %>%
     filter(row_number() == 1) %>%
     ungroup()
 
@@ -121,7 +123,7 @@ nrow(read_support_sample)
 ```{r}
 # aggregate across core sample names
 
-read_support_agg = read_support_sample %>% group_by(lex_sorted_fusion_name, prog, core_sample_name) %>% 
+read_support_agg = read_support_sample %>% group_by(lex_sorted_fusion_name, prog, core_sample_name, runtype) %>% 
     summarize(sum_reads = sum(num_reads))
 
 nrow(read_support_agg)
@@ -264,7 +266,7 @@ read_support_agg = read_support_agg %>% mutate(validated_fusion = (lex_sorted_fu
 
 read_support_agg_scored = read_support_agg %>% 
     #group_by(seqtype, prog, sample)  %>%
-     group_by(prog) %>%
+     group_by(prog, runtype) %>%
      arrange(desc(sum_reads), desc(validated_fusion)) %>% 
     mutate(num_valid = cumsum(validated_fusion), num_other = cumsum(! validated_fusion))
 
@@ -284,8 +286,8 @@ read_support_agg_scored$prog = factor(read_support_agg_scored$prog, levels=c('ct
                                                                              'JAFFAL',
                                                                              'LongGF',
                                                                              'fusionseeker',
-                                                                             'pbfusion',
-                                                                             'ctat-LR-fusion,exclude'))
+                                                                             'pbfusion'
+                                                                             ))
 ```
 
 
@@ -294,11 +296,12 @@ read_support_agg_scored$prog = factor(read_support_agg_scored$prog, levels=c('ct
 alpha_val = 0.2
 
 SGNEx_fusion_plot = read_support_agg_scored %>% 
-    select(prog, num_other, num_valid) %>% 
+    select(prog, num_other, num_valid, runtype) %>% 
     ggplot(aes(x=num_other, y=num_valid)) + 
     geom_point(aes(color=prog), alpha=alpha_val) + 
     geom_line(aes(color=prog)) +
-    scale_x_continuous(trans='log10') + theme_bw() 
+    scale_x_continuous(trans='log10') + theme_bw() +
+    facet_wrap(~runtype)
 
 SGNEx_fusion_plot
 ```
@@ -333,7 +336,7 @@ SGNEx_fusion_plot = num_valid_vs_num_other %>%
     ggplot(aes(x=num_other, y=num_valid)) + 
     geom_point(aes(color=prog), alpha=alpha_val) + 
     geom_line(aes(color=prog)) +
-    scale_x_continuous(trans='log10') + theme_bw() 
+    scale_x_continuous(trans='log10') + theme_bw() + facet_wrap(~runtype)
 
 SGNEx_fusion_plot
 
@@ -356,23 +359,23 @@ ggsave(SGNEx_fusion_plot, filename="SGNEx_fusion_plot.svg", width=6, height=3.5)
 
 # examine Venn for valid fusions
 
-read_support_agg_scored  %>% filter(validated_fusion) %>% group_by(lex_sorted_fusion_name) %>%
+read_support_agg_scored  %>% filter(validated_fusion) %>% group_by(lex_sorted_fusion_name, runtype) %>%
     arrange(prog) %>%
     mutate(progs = paste(collapse=",", prog)) %>%
     ungroup() %>%
-    select(lex_sorted_fusion_name, progs) %>% unique()
+    select(lex_sorted_fusion_name, runtype, progs) %>% unique()
 
 
 ```
 
 ```{r}
 
-read_support_agg_scored  %>% filter(validated_fusion) %>% group_by(lex_sorted_fusion_name) %>%
+read_support_agg_scored  %>% filter(validated_fusion) %>% group_by(lex_sorted_fusion_name, runtype) %>%
     arrange(prog) %>%
     mutate(progs = paste(collapse=",", prog)) %>%
     ungroup() %>%
-    select(lex_sorted_fusion_name, progs) %>% unique() %>% 
-    group_by(progs) %>% tally() %>%
+    select(lex_sorted_fusion_name, progs, runtype) %>% unique() %>% 
+    group_by(progs, runtype) %>% tally() %>%
     arrange(desc(n))
     
 
@@ -386,12 +389,12 @@ read_support_agg_scored  %>% filter(validated_fusion) %>% group_by(lex_sorted_fu
 
 read_support_agg_scored  %>% filter(validated_fusion) %>% 
     filter(prog %in% c('JAFFAL', 'ctat-LR-fusion')) %>%
-    group_by(lex_sorted_fusion_name) %>%
+    group_by(lex_sorted_fusion_name, runtype) %>%
     arrange(prog) %>%
     mutate(progs = paste(collapse=",", prog)) %>%
     ungroup() %>%
-    select(lex_sorted_fusion_name, progs) %>% unique() %>% 
-    group_by(progs) %>% tally() %>%
+    select(lex_sorted_fusion_name, progs, runtype) %>% unique() %>% 
+    group_by(progs, runtype) %>% tally() %>%
     arrange(desc(n))
     
 
@@ -403,7 +406,7 @@ read_support_agg_scored  %>% filter(validated_fusion) %>%
 
 read_support_agg_scored  %>% filter(validated_fusion) %>% 
     filter(prog %in% c('JAFFAL', 'ctat-LR-fusion')) %>%
-    group_by(lex_sorted_fusion_name) %>%
+    group_by(lex_sorted_fusion_name, runtype) %>%
     arrange(prog) %>%
     mutate(progs = paste(collapse=",", prog)) %>%
     arrange(desc(progs))
@@ -416,14 +419,15 @@ read_support_agg_scored  %>% filter(validated_fusion) %>%
 ```{r}
 
 read_support_agg_scored  %>% filter(validated_fusion) %>% group_by(lex_sorted_fusion_name) %>%
-    arrange(prog) %>%
+    arrange(prog, runtype) %>%
     mutate(progs = paste(collapse=",", prog)) %>%
     ungroup() %>%
-    select(lex_sorted_fusion_name, progs) %>% unique() %>% 
-    group_by(progs) %>% tally() %>%
+    select(lex_sorted_fusion_name, progs, runtype) %>% unique() %>% 
+    group_by(progs, runtype) %>% tally() %>%
     ggplot(aes(x=progs, y=n)) + 
     geom_col() +
-     theme(axis.text.x = element_text(angle = 90, hjust = 1))
+     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    facet_wrap(~runtype)
 
 ```
 
@@ -432,7 +436,7 @@ read_support_agg_scored  %>% filter(validated_fusion) %>% group_by(lex_sorted_fu
 # get counts of valid fusions
 
 read_support_agg_scored  %>% filter(validated_fusion) %>% 
-    select(lex_sorted_fusion_name, prog) %>% unique() %>% group_by(prog) %>% tally() %>%
+    select(lex_sorted_fusion_name, prog, runtype) %>% unique() %>% group_by(prog, runtype) %>% tally() %>%
     arrange(desc(n))
     
 ```
@@ -448,7 +452,7 @@ read_support_agg %>% ungroup() %>% select(core_sample_name) %>% unique()
 
 # total number of fusion preds
 
-read_support_agg %>% ungroup() %>% select(prog, lex_sorted_fusion_name) %>% unique() %>% group_by(prog) %>% tally() %>% 
+read_support_agg %>% ungroup() %>% select(prog, lex_sorted_fusion_name, runtype) %>% unique() %>% group_by(prog, runtype) %>% tally() %>% 
     arrange(desc(n))
 
 

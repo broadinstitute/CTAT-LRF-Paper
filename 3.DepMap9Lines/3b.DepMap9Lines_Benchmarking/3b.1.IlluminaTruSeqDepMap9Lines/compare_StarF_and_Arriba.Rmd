@@ -18,6 +18,7 @@ starF_preds = read.csv("StarFusion_Illumina_supported_fusions.tsv", header=T, se
 starF_preds %>% head()
 
 ```
+
 ```{r}
 
 arriba_preds = read.csv("Arriba_Illumina_supported_fusions.tsv", header=T, sep="\t")
@@ -36,6 +37,7 @@ both_preds %>% head()
 
 ```{r}
 
+# sanity check, should be zero
 both_preds %>% filter(type.arriba != type.starF)
 
 
@@ -50,24 +52,21 @@ both_preds %>% select(lex_ordered_fusion_name, type.starF, type.arriba) %>% uniq
 
 ```{r}
 
-# make a combined result file
-combined_df = bind_rows(starF_preds %>% mutate(prog='starF'),
-                        arriba_preds %>% mutate(prog='arriba'))
+# add indicator for what progs called it.
+both_preds = both_preds %>% 
+    mutate(progs = ifelse( (!is.na(`type.starF`)) & (! is.na(`type.arriba`)), 
+                                                   "starF,arriba", "NA") ) %>%
+    mutate(progs = ifelse(progs == "NA" & is.na(`type.starF`), "arriba", progs) ) %>%
+    
+    mutate(progs = ifelse(progs == "NA" & is.na(`type.arriba`), "starF", progs) )
 
-proxy_to_progs = combined_df %>% select(proxy_fusion_name, prog) %>% unique() %>% 
-    group_by(proxy_fusion_name) %>% mutate(progs = paste0(collapse=',', sort(prog))) %>%
-    ungroup() %>% select(-prog) %>% unique()
+both_preds
 
-combined_df = inner_join(combined_df %>% select(-prog) %>% unique(),
-                         proxy_to_progs,
-                         by='proxy_fusion_name')
-
-combined_df %>% head()
 ```
 
 ```{r}
 
-combined_df %>% select(proxy_fusion_name, type, progs) %>% unique() %>% group_by(progs, type) %>% tally()
+both_preds%>% select(lex_ordered_fusion_name, progs) %>% unique() %>% group_by(progs) %>% tally()
 
 
 ```
@@ -77,18 +76,18 @@ combined_df %>% select(proxy_fusion_name, type, progs) %>% unique() %>% group_by
 
 ```{r}
 
-combined_df %>% select(lex_ordered_fusion_name, type, progs) %>% unique() %>% group_by(progs, type) %>% tally()
+both_preds %>% select(lex_ordered_fusion_name, `type.arriba`, `type.starF`, progs) %>% unique() %>% group_by(progs, `type.starF`, `type.arriba`) %>% tally()
 
 
 
-# arriba: uniquely supports 21
+# arriba: uniquely supports 20
 # starF: uniquely supports 7
 
 ```
 
 ```{r}
 
-illumina_supported_fusions = combined_df %>% select(proxy_fusion_name, type, sample, FusionName, lex_ordered_fusion_name, progs) %>% unique()
+illumina_supported_fusions = combined_df %>% select(proxy_fusion_name, type, sample, FusionName, lex_ordered_fusion_name, progs, est_J,  est_S, sum_split_reads, discordant_mates) %>% unique()
 
 write.table(illumina_supported_fusions, file='Illumina_supported_fusions.tsv', quote=F, sep="\t", row.names=F)
     

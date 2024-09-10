@@ -41,7 +41,8 @@ arriba_fusions_df = arriba_fusions_df %>% rename(gene1 = X.gene1)
 
 arriba_fusions_df = arriba_fusions_df %>% rowwise() %>% mutate(lex_ordered_fusion_name = paste0(sample, "|", paste0(collapse="--", sort(c(gene1, gene2)))))
 
-arriba_fusions_df = arriba_fusions_df %>% select(lex_ordered_fusion_name, sample, gene1, gene2, confidence, split_reads1, split_reads2)
+arriba_fusions_df = arriba_fusions_df %>% select(lex_ordered_fusion_name, sample, gene1, gene2, 
+                                                 confidence, split_reads1, split_reads2, discordant_mates)
 
 arriba_fusions_df = arriba_fusions_df %>% rowwise() %>% mutate(FusionName = paste0(collapse="--", c(gene1, gene2) ) )
 
@@ -138,7 +139,13 @@ all_pred_fusions_illum_support_indicated %>% filter(type=='unique' & Illumina_su
 Arriba_overlapping_preds = inner_join(all_pred_fusions_illum_support_indicated, arriba_fusions_df, by='lex_ordered_fusion_name', multiple='all')
 
 
-Arriba_overlapping_preds = Arriba_overlapping_preds%>% select(lex_ordered_fusion_name, sample, type, FusionName) %>% unique()
+Arriba_overlapping_preds = Arriba_overlapping_preds%>% select(lex_ordered_fusion_name, sample, type, FusionName, 
+                                                              split_reads1, split_reads2, discordant_mates) %>% 
+    mutate(sum_split_reads = split_reads1 + split_reads2) %>%
+    group_by(lex_ordered_fusion_name) %>% arrange(desc(sum_split_reads), desc(discordant_mates)) %>%
+    filter(row_number() == 1) %>%
+    ungroup() 
+    
 
 
 Arriba_overlapping_preds
@@ -152,7 +159,8 @@ Arriba_overlapping_preds = inner_join(Arriba_overlapping_preds, proxy_fusion_nam
 
 
 
-Arriba_overlapping_preds = Arriba_overlapping_preds  %>% select(proxy_fusion_name, type, sample, FusionName, lex_ordered_fusion_name)
+Arriba_overlapping_preds = Arriba_overlapping_preds  %>% select(proxy_fusion_name, type, sample, FusionName,
+                                                                lex_ordered_fusion_name, sum_split_reads, discordant_mates)
 ```
 
 
@@ -183,7 +191,7 @@ Arriba_overlapping_preds %>% filter(type=="shared") %>% group_by(lex_ordered_fus
 
 Arriba_overlapping_preds %>% filter(type=="unique")
 
-# 23 of the uniquely pred fusions have illumina support (above VCAP|ANO10--SLMAP counted twice below)
+# 22 of the uniquely pred fusions have illumina support 
 
 ```
 

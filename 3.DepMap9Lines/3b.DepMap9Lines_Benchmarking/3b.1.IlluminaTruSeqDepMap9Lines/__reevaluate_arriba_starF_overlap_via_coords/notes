@@ -1,0 +1,6 @@
+./reevaluate_fusion_pairs_by_coords.py > illum_fusions_w_gene_coords.tsv
+
+
+~/GITHUB/CTAT_FUSIONS/FusionAnnotator/FusionAnnotator -C 16 --annotate illum_fusions_w_gene_coords.tsv  > illum_fusions_w_gene_coords.tsv.wAnnots
+
+
