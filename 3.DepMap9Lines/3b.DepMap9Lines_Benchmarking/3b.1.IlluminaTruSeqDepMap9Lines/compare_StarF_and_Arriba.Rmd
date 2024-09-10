@@ -87,9 +87,5 @@ both_preds %>% select(lex_ordered_fusion_name, `type.arriba`, `type.starF`, prog
 
 ```{r}
 
-illumina_supported_fusions = combined_df %>% select(proxy_fusion_name, type, sample, FusionName, lex_ordered_fusion_name, progs, est_J,  est_S, sum_split_reads, discordant_mates) %>% unique()
-
-write.table(illumina_supported_fusions, file='Illumina_supported_fusions.tsv', quote=F, sep="\t", row.names=F)
-    
-
+write.table(both_preds, file='Illumina_supported_fusions.tsv', quote=F, sep="\t", row.names=F)
 ```

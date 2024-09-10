@@ -152,7 +152,7 @@ StarF_overlapping_preds = left_join(StarF_overlapping_preds, proxy_fusion_name_m
 
 
 StarF_overlapping_preds = StarF_overlapping_preds %>%
-    select(proxy_fusion_name, type, sample, FusionName, lex_ordered_fusion_name) %>% unique()
+    select(proxy_fusion_name, type, sample, FusionName, lex_ordered_fusion_name, est_J, est_S) %>% unique()
 
 StarF_overlapping_preds
 
