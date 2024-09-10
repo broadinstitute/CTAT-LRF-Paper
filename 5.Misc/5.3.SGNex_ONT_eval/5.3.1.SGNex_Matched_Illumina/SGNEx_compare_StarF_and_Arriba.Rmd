@@ -1,0 +1,91 @@
+---
+title: "compare_starF_and_Arriba"
+author: "bhaas"
+date: '2024-07-20'
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+```{r}
+
+starF_preds = read.csv("StarFusion_Illumina_supported_fusions.tsv", header=T, sep="\t")
+
+starF_preds %>% head()
+
+```
+
+```{r}
+
+arriba_preds = read.csv("Arriba_Illumina_supported_fusions.tsv", header=T, sep="\t")
+
+arriba_preds %>% head()
+
+```
+
+```{r}
+
+both_preds = full_join(starF_preds, arriba_preds, by='lex_ordered_fusion_name', suffix=c('.starF', '.arriba'))
+
+both_preds %>% head()
+
+```
+
+```{r}
+
+# sanity check, should be zero
+both_preds %>% filter(type.arriba != type.starF)
+
+
+```
+
+
+```{r}
+
+both_preds %>% select(lex_ordered_fusion_name, type.starF, type.arriba) %>% unique() %>% group_by(type.starF, type.arriba)
+
+```
+
+```{r}
+
+# add indicator for what progs called it.
+both_preds = both_preds %>% 
+    mutate(progs = ifelse( (!is.na(`type.starF`)) & (! is.na(`type.arriba`)), 
+                                                   "starF,arriba", "NA") ) %>%
+    mutate(progs = ifelse(progs == "NA" & is.na(`type.starF`), "arriba", progs) ) %>%
+    
+    mutate(progs = ifelse(progs == "NA" & is.na(`type.arriba`), "starF", progs) )
+
+both_preds
+
+```
+
+```{r}
+
+both_preds%>% select(lex_ordered_fusion_name, progs) %>% unique() %>% group_by(progs) %>% tally()
+
+
+```
+
+
+
+
+```{r}
+
+both_preds %>% select(lex_ordered_fusion_name, `type.arriba`, `type.starF`, progs) %>% unique() %>% group_by(progs, `type.starF`, `type.arriba`) %>% tally()
+
+
+
+# arriba: uniquely supports 20
+# starF: uniquely supports 7
+
+```
+
+```{r}
+
+write.table(both_preds, file='Illumina_supported_fusions.tsv', quote=F, sep="\t", row.names=F)
+```

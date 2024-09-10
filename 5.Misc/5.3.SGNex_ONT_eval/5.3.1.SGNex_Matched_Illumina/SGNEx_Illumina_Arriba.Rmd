@@ -1,0 +1,139 @@
+---
+title: "DepMap_TruSeq_StarF"
+author: "bhaas"
+date: '2024-02-01'
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+```{r}
+
+# parse Arriba predictions based on Illumina reads
+
+arriba_dir = "data/Arriba_SG-NEx/"
+
+arriba_fusion_files = list.files(arriba_dir, pattern="*.Arriba.fusions.tsv.gz")
+
+arriba_fusions_df = NULL
+
+for (arriba_file in arriba_fusion_files) {
+    
+    arriba_file_path = paste0(arriba_dir, "/", arriba_file)
+    message("parsing ", arriba_file_path)
+    arriba_fusions = read.csv(arriba_file_path, header=T, sep="\t", com='')
+    
+    arriba_fusions$sample = arriba_file
+    
+    arriba_fusions_df = bind_rows(arriba_fusions_df, arriba_fusions)
+
+}
+
+
+```
+
+
+
+```{r}
+
+
+arriba_fusions_df$sample = str_replace(arriba_fusions_df$sample, "SGNex_", "")
+arriba_fusions_df$sample = str_replace(arriba_fusions_df$sample, ".Arriba.fusions.tsv.gz", "")
+
+arriba_fusions_df = arriba_fusions_df %>% rename(gene1 = X.gene1)
+
+arriba_fusions_df = arriba_fusions_df %>% rowwise() %>% mutate(lex_ordered_fusion_name = paste0(sample, "|", paste0(collapse="--", sort(c(gene1, gene2)))))
+
+arriba_fusions_df = arriba_fusions_df %>% select(lex_ordered_fusion_name, sample, gene1, gene2, 
+                                                 confidence, split_reads1, split_reads2, discordant_mates)
+
+arriba_fusions_df = arriba_fusions_df %>% rowwise() %>% mutate(FusionName = paste0(collapse="--", c(gene1, gene2) ) )
+
+arriba_fusions_df = arriba_fusions_df %>% filter(confidence == 'high')
+
+
+write.table(arriba_fusions_df, file="all_arriba_high_preds.tsv", quote=F, sep="\t", row.names=F)
+
+arriba_fusions_df %>% head()
+
+```
+
+```{r}
+
+arriba_fusions_df$core_sample = sapply(arriba_fusions_df $sample, function(x) { str_split(x, "_")[[1]]}[1])
+arriba_fusions_df = arriba_fusions_df %>% rowwise() %>% mutate(lex_ordered_fusion_name = paste0(core_sample, "|", paste0(collapse="--", sort(c(gene1, gene2)))))
+
+```
+
+
+
+```{r}
+
+# limit to the top number of reads fusion isoform.
+arriba_fusions_df = arriba_fusions_df %>% mutate(sum_split_reads = split_reads1 + split_reads2) %>%
+    group_by(lex_ordered_fusion_name) %>% arrange(desc(sum_split_reads), desc(discordant_mates)) %>%
+    filter(row_number() == 1) %>% ungroup()
+
+```
+
+```{r}
+
+all_pred_fusions = read.csv("../data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.FUZZY_RESTRICTED.gz", header=T, sep="\t")
+
+
+all_pred_fusions$core_sample = sapply(all_pred_fusions$sample, function(x) { str_split(x, "_")[[1]]}[2])
+
+all_pred_fusions = all_pred_fusions %>% rowwise() %>% 
+    mutate(lex_ordered_fusion_name = paste0(core_sample, "|", paste0(collapse="--", sort(str_split(fusion, "--")[[1]]))))
+
+```
+
+```{r}
+
+# which fusions found in short reads were also found in long reads?
+
+all_pred_fusions_lex_ordered_fusion_names = all_pred_fusions %>% select(lex_ordered_fusion_name) %>% unique() %>% pull(lex_ordered_fusion_name) 
+
+
+```
+
+
+
+```{r}
+
+arriba_fusions_df = arriba_fusions_df %>% mutate(has_long_read_support = lex_ordered_fusion_name %in% all_pred_fusions_lex_ordered_fusion_names)
+
+
+arriba_fusions_df
+
+```
+
+
+
+```{r}
+
+table(arriba_fusions_df$has_long_read_support)
+
+```
+
+
+
+
+
+```{r}
+
+write.table(arriba_fusions_df %>% 
+                filter(has_long_read_support) %>% 
+                select(core_sample, FusionName, sum_split_reads, discordant_mates, lex_ordered_fusion_name) %>%
+                arrange(core_sample, desc(sum_split_reads), desc(discordant_mates)),
+            file="Arriba_SGNEx_Illumina.tsv",
+            sep="\t", quote=F, row.names=F)
+
+
+```
+
+

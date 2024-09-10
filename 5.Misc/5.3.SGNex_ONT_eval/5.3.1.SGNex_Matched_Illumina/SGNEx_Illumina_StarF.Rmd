@@ -1,0 +1,107 @@
+---
+title: "SGNEx_Illumina_StarF"
+author: "bhaas"
+date: '2024-02-01'
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+```{r}
+# parse starF predictions based on Illumina reads
+
+starF_dir = "data/STAR-Fusion_SG-NEx/"
+
+starF_fusion_files = list.files(starF_dir, pattern="*.abridged.tsv")
+
+StarF_data = NULL
+
+for (starF_file in starF_fusion_files) {
+    
+    starF_file_path = paste0(starF_dir, "/", starF_file)
+    message("parsing ", starF_file_path)
+    starF_fusions = read.csv(starF_file_path, header=T, sep="\t", com='') %>%
+        rename(FusionName = X.FusionName)
+    
+    starF_fusions$sample = starF_file
+    
+    StarF_data = bind_rows(StarF_data, starF_fusions)
+    
+    
+}
+
+
+StarF_data$sample = str_replace(StarF_data$sample, ".star-fusion.fusion_predictions.abridged.tsv", "")
+StarF_data$sample = str_replace(StarF_data$sample, "SGNex_", "")
+
+StarF_data$gene1 = sapply(StarF_data$FusionName, function(x) { str_split(x, "--")[[1]][1]})
+StarF_data$gene2 = sapply(StarF_data$FusionName, function(x) { str_split(x, "--")[[1]][2]})
+
+StarF_data$core_sample = sapply(StarF_data$sample, function(x) { str_split(x, "_")[[1]]}[1])
+StarF_data = StarF_data %>% rowwise() %>% mutate(lex_ordered_fusion_name = paste0(core_sample, "|", paste0(collapse="--", sort(c(gene1, gene2)))))
+
+```
+
+```{r}
+
+# limit to the top number of reads fusion isoform.
+StarF_data = StarF_data %>% group_by(lex_ordered_fusion_name) %>% arrange(desc(est_J), desc(est_S)) %>% filter(row_number() == 1) %>% ungroup()
+
+```
+
+
+```{r}
+
+all_pred_fusions = read.csv("../data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.FUZZY_RESTRICTED.gz", header=T, sep="\t")
+
+
+all_pred_fusions$core_sample = sapply(all_pred_fusions$sample, function(x) { str_split(x, "_")[[1]]}[2])
+
+all_pred_fusions = all_pred_fusions %>% rowwise() %>% 
+    mutate(lex_ordered_fusion_name = paste0(core_sample, "|", paste0(collapse="--", sort(str_split(fusion, "--")[[1]]))))
+
+```
+
+```{r}
+
+# which fusions found in short reads were also found in long reads?
+
+all_pred_fusions_lex_ordered_fusion_names = all_pred_fusions %>% select(lex_ordered_fusion_name) %>% unique() %>% pull(lex_ordered_fusion_name) 
+
+
+```
+
+```{r}
+
+StarF_data = StarF_data %>% mutate(has_long_read_support = lex_ordered_fusion_name %in% all_pred_fusions_lex_ordered_fusion_names)
+
+
+StarF_data 
+```
+
+
+```{r}
+
+table(StarF_data$has_long_read_support)
+
+```
+
+
+```{r}
+
+write.table(StarF_data %>% 
+                filter(has_long_read_support) %>% 
+                select(core_sample, FusionName, est_J, est_S, SpliceType, lex_ordered_fusion_name) %>%
+                arrange(core_sample, desc(est_J), desc(est_S)),
+            file="StarFusion_SGNEx_Illumina.tsv",
+            sep="\t", quote=F, row.names=F)
+
+
+```
+
+
+
