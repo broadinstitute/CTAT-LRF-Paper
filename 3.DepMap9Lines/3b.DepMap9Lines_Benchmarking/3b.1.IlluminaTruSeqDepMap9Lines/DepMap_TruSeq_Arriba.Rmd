@@ -61,7 +61,7 @@ arriba_fusions_df %>% head()
 # process earlier long-read defined proxy truth set info:
 
 earlier_truth_set_file = "../__bmark_min-1-read/data/preds.collected.gencode_mapped.wAnnot.filt.pass.proxy_assignments.byProgAgree.min_2.truth_set"
-earlier_truth_set = read.table(earlier_truth_set_file, header=T, sep="\t") %>% mutate(type='shared')
+earlier_truth_set = read.table(earlier_truth_set_file, header=T, sep="\t") %>% mutate(type='shared_LR_pred')
 
 earlier_truth_set = earlier_truth_set  %>% rowwise() %>% mutate(sample = str_split(proxy_fusion_name, "\\|")[[1]][1])
 earlier_truth_set = earlier_truth_set %>% rowwise() %>% mutate(FusionName = str_split(proxy_fusion_name, "\\|")[[1]][2])
@@ -71,16 +71,14 @@ earlier_truth_set = earlier_truth_set %>% rowwise() %>% mutate(lex_ordered_fusio
 
 # unique set
 earlier_unique_set_file = "../__bmark_min-1-read/data/preds.collected.gencode_mapped.wAnnot.filt.pass.proxy_assignments.byProgAgree.min_2.unique_set"
-earlier_unique_set = read.table(earlier_unique_set_file, header=T, sep="\t") %>% mutate(type='unique')
+earlier_unique_set = read.table(earlier_unique_set_file, header=T, sep="\t") %>% mutate(type='unique_LR_pred')
 
 earlier_unique_set = earlier_unique_set  %>% rowwise() %>% mutate(sample = str_split(proxy_fusion_name, "\\|")[[1]][1])
 earlier_unique_set = earlier_unique_set %>% rowwise() %>% mutate(FusionName = str_split(proxy_fusion_name, "\\|")[[1]][2])
 
 earlier_unique_set = earlier_unique_set %>% rowwise() %>% mutate(lex_ordered_fusion_name = paste0(sample, "|", paste0(collapse="--", sort(str_split(FusionName, "--")[[1]])))) 
 
-all_pred_fusions = bind_rows(earlier_truth_set, earlier_unique_set) 
-
-proxy_fusion_name_mapping = all_pred_fusions %>% select(proxy_fusion_name, lex_ordered_fusion_name) %>% unique()
+all_LR_pred_fusions = bind_rows(earlier_truth_set, earlier_unique_set) 
 
 
 ```
@@ -89,7 +87,6 @@ proxy_fusion_name_mapping = all_pred_fusions %>% select(proxy_fusion_name, lex_o
 ```{r}
 
 
-all_pred_fusions = all_pred_fusions %>% select(lex_ordered_fusion_name, type) %>% unique()
 
 message("num shared fusions: ", earlier_truth_set %>% select(lex_ordered_fusion_name) %>% unique() %>% nrow() )
 message("num unique fusions:", earlier_unique_set %>% select(lex_ordered_fusion_name) %>% unique() %>% nrow() )
@@ -101,107 +98,45 @@ message("num unique fusions:", earlier_unique_set %>% select(lex_ordered_fusion_
 ```
 
 
+```{r}
 
+arriba_fusions_df = left_join(arriba_fusions_df, all_LR_pred_fusions,
+                              by=c('lex_ordered_fusion_name','sample'),
+                              suffix=c('.arriba', '.LR') )  %>% 
+    mutate(type = ifelse(is.na(type), "no_LR_pred", type))
+
+
+```
 
 
 
 ```{r}
 
-# define those fusions in the truth set as illumina-supported or not.
-
-all_pred_fusions_illum_support_indicated = all_pred_fusions %>% 
-    mutate(Illumina_support = (lex_ordered_fusion_name %in% arriba_fusions_df$lex_ordered_fusion_name))
-
-
-all_pred_fusions_illum_support_indicated_summary = all_pred_fusions_illum_support_indicated %>% 
-    select(lex_ordered_fusion_name, type, Illumina_support) %>% unique() %>% 
-    group_by(type, Illumina_support) %>% tally()
-
-all_pred_fusions_illum_support_indicated_summary
+arriba_fusions_df %>% select(lex_ordered_fusion_name, type) %>% unique() %>% group_by(type) %>% tally()
 
 # 89 shared and 22 unique have illumina support
 
+
 ```
+
+
+
 
 ```{r}
 
 # the uniquely predicted fusions supported by Illumina
 
-all_pred_fusions_illum_support_indicated %>% filter(type=='unique' & Illumina_support) %>% arrange(lex_ordered_fusion_name)
-
-
-```
-
-
-
-```{r}
-
-Arriba_overlapping_preds = inner_join(all_pred_fusions_illum_support_indicated, arriba_fusions_df, by='lex_ordered_fusion_name', multiple='all')
-
-
-Arriba_overlapping_preds = Arriba_overlapping_preds%>% select(lex_ordered_fusion_name, sample, type, FusionName, 
-                                                              split_reads1, split_reads2, discordant_mates) %>% 
-    mutate(sum_split_reads = split_reads1 + split_reads2) %>%
-    group_by(lex_ordered_fusion_name) %>% arrange(desc(sum_split_reads), desc(discordant_mates)) %>%
-    filter(row_number() == 1) %>%
-    ungroup() 
-    
-
-
-Arriba_overlapping_preds
-```
-
-
-```{r}
-# add proxy fusion name
-
-Arriba_overlapping_preds = inner_join(Arriba_overlapping_preds, proxy_fusion_name_mapping, by='lex_ordered_fusion_name')
-
-
-
-Arriba_overlapping_preds = Arriba_overlapping_preds  %>% select(proxy_fusion_name, type, sample, FusionName,
-                                                                lex_ordered_fusion_name, sum_split_reads, discordant_mates)
-```
-
-
-
-
-```{r}
-
-# all Illumina supported ones
-
-full_join(Arriba_overlapping_preds,
-          all_pred_fusions_illum_support_indicated %>% filter(Illumina_support),
-          by=c('lex_ordered_fusion_name',
-               'type')
-          ) %>% filter(type=='shared')
-
-```
-
-
-
-```{r}
-
-Arriba_overlapping_preds %>% filter(type=="shared") %>% group_by(lex_ordered_fusion_name) %>% tally() %>% filter(n>1)
+arriba_fusions_df %>% filter(type=='unique_LR_pred') %>% 
+    select(sample, FusionName.arriba, lex_ordered_fusion_name) %>% unique() %>%
+    arrange(lex_ordered_fusion_name)
 
 ```
 
 
 ```{r}
 
-Arriba_overlapping_preds %>% filter(type=="unique")
-
-# 22 of the uniquely pred fusions have illumina support 
-
-```
-
-
-
-```{r}
-
-write.table(Arriba_overlapping_preds, 
+write.table(arriba_fusions_df, 
             file="Arriba_Illumina_supported_fusions.tsv", sep="\t", row.names=F, quote=F)
-
 
 ```
 

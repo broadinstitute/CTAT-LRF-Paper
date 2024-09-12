@@ -29,36 +29,26 @@ arriba_preds %>% head()
 
 ```{r}
 
-both_preds = full_join(starF_preds, arriba_preds, by='lex_ordered_fusion_name', suffix=c('.starF', '.arriba'))
+both_preds = full_join(starF_preds, arriba_preds, 
+                       by=c('lex_ordered_fusion_name', 'prog_names', 'num_progs', 'type', 'FusionName.LR'),
+                       suffix=c('.starF', '.arriba')) %>%
+    rename(LR_progs = prog_names, num_LR_progs = num_progs) %>%
+    mutate(has_long_read_support = (! is.na(LR_progs)))
 
 both_preds %>% head()
 
 ```
 
-```{r}
-
-# sanity check, should be zero
-both_preds %>% filter(type.arriba != type.starF)
-
-
-```
-
-
-```{r}
-
-both_preds %>% select(lex_ordered_fusion_name, type.starF, type.arriba) %>% unique() %>% group_by(type.starF, type.arriba)
-
-```
 
 ```{r}
 
 # add indicator for what progs called it.
 both_preds = both_preds %>% 
-    mutate(progs = ifelse( (!is.na(`type.starF`)) & (! is.na(`type.arriba`)), 
+    mutate(progs = ifelse( (!is.na(`FusionName.StarF`)) & (! is.na(`FusionName.arriba`)), 
                                                    "starF,arriba", "NA") ) %>%
-    mutate(progs = ifelse(progs == "NA" & is.na(`type.starF`), "arriba", progs) ) %>%
+    mutate(progs = ifelse(progs == "NA" & is.na(`FusionName.StarF`), "arriba", progs) ) %>%
     
-    mutate(progs = ifelse(progs == "NA" & is.na(`type.arriba`), "starF", progs) )
+    mutate(progs = ifelse(progs == "NA" & is.na(`FusionName.arriba`), "starF", progs) )
 
 both_preds
 
@@ -76,7 +66,7 @@ both_preds%>% select(lex_ordered_fusion_name, progs) %>% unique() %>% group_by(p
 
 ```{r}
 
-both_preds %>% select(lex_ordered_fusion_name, `type.arriba`, `type.starF`, progs) %>% unique() %>% group_by(progs, `type.starF`, `type.arriba`) %>% tally()
+both_preds %>% select(lex_ordered_fusion_name, type, progs) %>% unique() %>% group_by(progs, type) %>% tally()
 
 
 
@@ -85,7 +75,44 @@ both_preds %>% select(lex_ordered_fusion_name, `type.arriba`, `type.starF`, prog
 
 ```
 
+
+```{r}
+# compare arriba and starF regardless of LR support
+
+
+both_preds %>% select(lex_ordered_fusion_name, progs) %>% unique() %>% 
+    group_by(progs) %>% tally() %>% mutate(pct=prop.table(n)*100)
+
+```
+
 ```{r}
 
+
+# just those with long read support
+
+both_preds %>% select(lex_ordered_fusion_name, progs, has_long_read_support) %>% unique() %>% 
+    filter(has_long_read_support) %>%
+    group_by(progs, has_long_read_support) %>% tally()  %>% ungroup() %>% mutate(pct=prop.table(n)*100)
+
+```
+
+```{r}
+
+# just those WITHOUT long read support
+
+both_preds %>% select(lex_ordered_fusion_name, progs, has_long_read_support) %>% unique() %>% 
+    filter(! has_long_read_support) %>%
+    group_by(progs, has_long_read_support) %>% tally() %>% ungroup() %>% mutate(pct=prop.table(n)*100)
+
+```
+
+
+```{r}
 write.table(both_preds, file='Illumina_supported_fusions.tsv', quote=F, sep="\t", row.names=F)
 ```
+
+
+
+
+
+
