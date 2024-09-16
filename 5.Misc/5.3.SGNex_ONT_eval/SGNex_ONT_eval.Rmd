@@ -13,7 +13,7 @@ library(tidyverse)
 
 ```{r}
 
-PREDS_FILE = "data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.gz"
+PREDS_FILE_ALL = "data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.gz"
 
 # or use the version with ctat-LRF restricted to spliced fusions for comparison.
 PREDS_FILE_fuzzy_restricted = "data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.FUZZY_RESTRICTED.gz"
@@ -46,7 +46,7 @@ parse_preds_file = function(PREDS_FILE) {
 
 ```{r}
 
-regular_run_data = parse_preds_file(PREDS_FILE)
+regular_run_data = parse_preds_file(PREDS_FILE_ALL)
 
 regular_run_data %>% head()
 
@@ -123,8 +123,10 @@ nrow(read_support_sample)
 ```{r}
 # aggregate across core sample names
 
-read_support_agg = read_support_sample %>% group_by(lex_sorted_fusion_name, prog, core_sample_name, runtype) %>% 
-    summarize(sum_reads = sum(num_reads))
+read_support_agg = read_support_sample %>% 
+    group_by(lex_sorted_fusion_name, prog, core_sample_name, runtype) %>% 
+    summarize(sum_reads = sum(num_reads)) %>% 
+    ungroup()
 
 nrow(read_support_agg)
 ```
@@ -187,14 +189,20 @@ validated_fusions = data.frame(validated_fusion = c(
 "MCF7|VAV3--AP4B1-AS1",
 "MCF7|ZMYND8--USP32",
 "MCF7|MYH9--EIF3D",
+
 "K562|NUP214--XKR3",
 "K562|PRIM1--NACA",
 "K562|BRK1--VHL",
 "K562|ACCS--EXT2",
 "K562|SLC29A1--HSP90AB1",
 "K562|BCR--ABL1",
+
 "A549|SCAMP2--WDR72",
-"A549|RICTOR--FYB"
+"A549|RICTOR--FYB",
+
+"Hct116|COMMD10--AP3S1",
+"Hct116|SPAG9--MBTD1",
+"Hct116|TCF7L2--RP11-57H14.3"
 ) )
 
 
@@ -204,34 +212,101 @@ validated_fusions = validated_fusions %>% rowwise() %>% mutate(lex_sorted_valida
 
 
 ```{r}
-# supplement with illumina-supported.
-illumina_supported_fusions = read.csv("K562.illum_supported.tsv", header=T, sep="\t", stringsAsFactors = F) %>%
-    select(proxy_fusion_name) %>% rename(validated_fusion = proxy_fusion_name) %>%
-    rowwise() %>%
-    mutate(lex_sorted_validated_fusion = make_lex_sorted_fusion_name(validated_fusion))
 
-illumina_supported_fusions
-```
+lex_sorted_validated_fusions = validated_fusions %>% select(lex_sorted_validated_fusion) %>% unique() %>% pull(lex_sorted_validated_fusion)
 
-```{r}
 
-illum_found_fusions = read_support_agg %>% ungroup() %>% filter(lex_sorted_fusion_name %in% illumina_supported_fusions$lex_sorted_validated_fusion) %>% select(lex_sorted_fusion_name) %>% unique()
-
-extra_illum_valid_fusions = illum_found_fusions %>% filter(! lex_sorted_fusion_name %in% validated_fusions$lex_sorted_validated_fusion)
-
-extra_illum_valid_fusions
 ```
 
 
 ```{r}
 
-validated_fusions = bind_rows(validated_fusions, 
-                              extra_illum_valid_fusions %>% 
-                                  mutate(validated_fusion = lex_sorted_fusion_name) %>% rename(lex_sorted_validated_fusion = lex_sorted_fusion_name)
-                              )
+# incorporate the validated info
+read_support_agg = read_support_agg %>% rowwise() %>% 
+    mutate(validated_fusion = (lex_sorted_fusion_name %in% lex_sorted_validated_fusions) )
 
-validated_fusions
+
 ```
+
+
+```{r}
+
+read_support_agg %>% filter(validated_fusion) %>% 
+    select(core_sample_name, lex_sorted_fusion_name, prog) %>% unique() %>%
+    group_by(lex_sorted_fusion_name) %>% 
+    arrange(prog) %>% 
+    mutate(progs = paste(prog, collapse=","), num_progs = n()) %>% 
+    select(core_sample_name, lex_sorted_fusion_name, progs, num_progs) %>%
+    unique() %>%
+    arrange(core_sample_name, desc(num_progs))
+
+```
+
+
+
+# incorporate illumina support info
+
+```{r}
+
+illumina_support_info = read.csv("5.3.1.SGNex_Matched_Illumina/SGNEx_Illumina_supported_fusions.tsv", header=T, sep="\t")
+
+illumina_support_info %>% head()
+
+```
+
+```{r}
+
+read_support_agg = left_join(read_support_agg,
+                             illumina_support_info %>% select(lex_ordered_fusion_name, progs) %>% 
+                                 unique() %>%
+                                 rename(matched_illumina = progs),
+                             by=c('lex_sorted_fusion_name'='lex_ordered_fusion_name') )
+
+```
+
+```{r}
+
+read_support_agg %>% filter(validated_fusion | !is.na(matched_illumina)) %>% 
+    select(core_sample_name, lex_sorted_fusion_name, validated_fusion, matched_illumina, prog) %>% unique() %>%
+    group_by(lex_sorted_fusion_name) %>% 
+    arrange(prog) %>% 
+    mutate(progs = paste(prog, collapse=","), num_progs = n()) %>% 
+    select(core_sample_name, lex_sorted_fusion_name, validated_fusion, matched_illumina, progs, num_progs) %>%
+    unique() %>%
+    arrange(core_sample_name, desc(num_progs))
+
+```
+
+
+# incorporate our separate Illumina supported fusions
+
+```{r}
+
+our_illumina_reads = read.csv("../../3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.1.IlluminaTruSeqDepMap9Lines/Illumina_supported_fusions.tsv", header=T, sep="\t")
+
+
+read_support_agg = left_join(read_support_agg, 
+                             our_illumina_reads %>% select(lex_ordered_fusion_name, progs) %>% 
+                                 unique() %>%
+                                 rename(other_illumina = progs),
+                             by=c('lex_sorted_fusion_name'='lex_ordered_fusion_name') )
+```
+
+
+```{r}
+
+read_support_agg %>% filter(validated_fusion | !is.na(matched_illumina) | !is.na(other_illumina) ) %>% 
+    select(core_sample_name, lex_sorted_fusion_name, validated_fusion, matched_illumina, other_illumina, prog) %>% unique() %>%
+    group_by(lex_sorted_fusion_name) %>% 
+    arrange(prog) %>% 
+    mutate(progs = paste(prog, collapse=","), num_progs = n()) %>% 
+    select(core_sample_name, lex_sorted_fusion_name, validated_fusion, matched_illumina, other_illumina, progs, num_progs) %>%
+    unique() %>%
+    arrange(core_sample_name, desc(num_progs))
+
+```
+
+
 
 
 
@@ -239,7 +314,7 @@ validated_fusions
 
 # which validated fusions do we find?
 
-validated_fusions %>% filter( lex_sorted_validated_fusion %in% read_support_agg$lex_sorted_fusion_name) 
+read_support_agg %>% filter(validated_fusion) %>% select(lex_sorted_fusion_name) %>% unique()
 
 ```
 
@@ -250,7 +325,8 @@ validated_fusions %>% filter( lex_sorted_validated_fusion %in% read_support_agg$
 
 # which validated fusions are missing?
 
-validated_fusions %>% filter( ! lex_sorted_validated_fusion %in% read_support_agg$lex_sorted_fusion_name) 
+
+setdiff(lex_sorted_validated_fusions, read_support_agg %>% select(lex_sorted_fusion_name) %>% unique() %>% pull(lex_sorted_fusion_name))
 
 
 ```
@@ -258,24 +334,41 @@ validated_fusions %>% filter( ! lex_sorted_validated_fusion %in% read_support_ag
 
 ```{r}
 
-read_support_agg = read_support_agg %>% mutate(validated_fusion = (lex_sorted_fusion_name %in% validated_fusions$lex_sorted_validated_fusion)) 
+read_support_agg = read_support_agg %>% mutate(as_truth = (validated_fusion | !is.na(matched_illumina) | !is.na(other_illumina)) )
 
 ```
 
+
 ```{r}
+read_support_agg %>% filter(as_truth) %>% 
+    select(lex_sorted_fusion_name, validated_fusion, matched_illumina, other_illumina) %>% 
+    unique()
+
+
+# 109 'truth' fusions
+```
+
+# score fusions
+
+```{r}
+
+# score fusions
 
 read_support_agg_scored = read_support_agg %>% 
-    #group_by(seqtype, prog, sample)  %>%
      group_by(prog, runtype) %>%
-     arrange(desc(sum_reads), desc(validated_fusion)) %>% 
-    mutate(num_valid = cumsum(validated_fusion), num_other = cumsum(! validated_fusion))
+     arrange(desc(sum_reads), desc(as_truth)) %>% 
+    mutate(num_valid = cumsum(as_truth), num_other = cumsum(! as_truth)) %>%
+    ungroup()
 
-read_support_agg_scored %>% filter(prog == 'ctat-LR-fusion') 
+```
+
+```{r}
+read_support_agg_scored %>% filter(prog == 'ctat-LR-fusion')  %>% head(50)
 ```
 
 ```{r}
 
-read_support_agg_scored %>% filter(prog == 'JAFFAL')
+read_support_agg_scored %>% filter(prog == 'JAFFAL') %>% head(50)
 
 
 ```
@@ -311,11 +404,11 @@ SGNEx_fusion_plot
 # simplify plot for upload into inkscape
 
 num_valid_vs_num_other = read_support_agg_scored %>% 
-    select(prog, num_other, num_valid) 
+    select(prog, num_other, num_valid, runtype) 
 
 
-num_valid_vs_num_other_lte_10k = num_valid_vs_num_other %>% filter(num_other <= 10000)
-num_valid_vs_num_other_gt_10k = num_valid_vs_num_other %>% filter(num_other > 10000)
+num_valid_vs_num_other_lte_10k = num_valid_vs_num_other %>% group_by(runtype) %>% filter(num_other <= 10000) %>% ungroup()
+num_valid_vs_num_other_gt_10k = num_valid_vs_num_other %>% group_by(runtype) %>% filter(num_other > 10000) %>% ungroup()
 
 
 
@@ -324,7 +417,7 @@ num_valid_vs_num_other_gt_10k = num_valid_vs_num_other %>% filter(num_other > 10
 ```{r}
 
 
-num_valid_vs_num_other_gt_10k  = num_valid_vs_num_other_gt_10k  %>% sample_n(1000)
+num_valid_vs_num_other_gt_10k  = num_valid_vs_num_other_gt_10k  %>% group_by(runtype) %>% sample_n(1000) %>% ungroup()
 
 ```
 
@@ -332,7 +425,7 @@ num_valid_vs_num_other_gt_10k  = num_valid_vs_num_other_gt_10k  %>% sample_n(100
 num_valid_vs_num_other  = bind_rows(num_valid_vs_num_other_lte_10k, num_valid_vs_num_other_gt_10k)
 
 SGNEx_fusion_plot = num_valid_vs_num_other %>% 
-    select(prog, num_other, num_valid)  %>% 
+    select(prog, num_other, num_valid, runtype)  %>% 
     ggplot(aes(x=num_other, y=num_valid)) + 
     geom_point(aes(color=prog), alpha=alpha_val) + 
     geom_line(aes(color=prog)) +
@@ -359,7 +452,7 @@ ggsave(SGNEx_fusion_plot, filename="SGNEx_fusion_plot.svg", width=6, height=3.5)
 
 # examine Venn for valid fusions
 
-read_support_agg_scored  %>% filter(validated_fusion) %>% group_by(lex_sorted_fusion_name, runtype) %>%
+read_support_agg_scored  %>% filter(as_truth) %>% group_by(lex_sorted_fusion_name, runtype) %>%
     arrange(prog) %>%
     mutate(progs = paste(collapse=",", prog)) %>%
     ungroup() %>%
@@ -370,7 +463,7 @@ read_support_agg_scored  %>% filter(validated_fusion) %>% group_by(lex_sorted_fu
 
 ```{r}
 
-read_support_agg_scored  %>% filter(validated_fusion) %>% group_by(lex_sorted_fusion_name, runtype) %>%
+read_support_agg_scored  %>% filter(as_truth) %>% group_by(lex_sorted_fusion_name, runtype) %>%
     arrange(prog) %>%
     mutate(progs = paste(collapse=",", prog)) %>%
     ungroup() %>%
@@ -418,7 +511,7 @@ read_support_agg_scored  %>% filter(validated_fusion) %>%
 
 ```{r}
 
-read_support_agg_scored  %>% filter(validated_fusion) %>% group_by(lex_sorted_fusion_name) %>%
+read_support_agg_scored  %>% filter(as_truth) %>% group_by(lex_sorted_fusion_name) %>%
     arrange(prog, runtype) %>%
     mutate(progs = paste(collapse=",", prog)) %>%
     ungroup() %>%
@@ -427,7 +520,8 @@ read_support_agg_scored  %>% filter(validated_fusion) %>% group_by(lex_sorted_fu
     ggplot(aes(x=progs, y=n)) + 
     geom_col() +
      theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-    facet_wrap(~runtype)
+    facet_wrap(~runtype) +
+    ylab("# as-truth fusions")
 
 ```
 
@@ -452,7 +546,8 @@ read_support_agg %>% ungroup() %>% select(core_sample_name) %>% unique()
 
 # total number of fusion preds
 
-read_support_agg %>% ungroup() %>% select(prog, lex_sorted_fusion_name, runtype) %>% unique() %>% group_by(prog, runtype) %>% tally() %>% 
+read_support_agg %>% ungroup() %>% select(prog, lex_sorted_fusion_name, runtype) %>% 
+    unique() %>% group_by(prog, runtype) %>% tally() %>% 
     arrange(desc(n))
 
 
@@ -462,11 +557,25 @@ read_support_agg %>% ungroup() %>% select(prog, lex_sorted_fusion_name, runtype)
 
 # write supp data table
 
-write.table(read_support_agg_scored %>% arrange(prog, desc(sum_reads), num_valid, num_other), 
+write.table(read_support_agg_scored %>% arrange(runtype, prog, desc(sum_reads), num_valid, num_other), 
             file="Table_Sx-ONT_fusions_by_method.tsv", 
             sep="\t", quote=F, row.names=F)
 
 ```
+
+
+
+```{r}
+
+lex_sorted_validated_fusions = read_support_agg_scored  %>% filter(as_truth) %>% select(lex_sorted_fusion_name) %>% unique() %>% pull(lex_sorted_fusion_name)
+
+write.table(lex_sorted_validated_fusions, file='SGNEx-as_truth_fusions.lex_ordered.tsv', quote=F, row.names=F, col.names=F)
+
+
+```
+
+
+
 
 
 
