@@ -64,7 +64,10 @@ Example benchmarking requiring min 3 reads and min 2 methods agreeing: [3.DepMap
 Illumina-supported fusions truth set benchmarking: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.Illumina_TP_unique_FP_bmarking/Illum_TP_uniq_FP_summary.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.Illumina_TP_unique_FP_bmarking/Illum_TP_uniq_FP_summary.md) (Figure 4g)
 
 #### Using Illumina-defined fusion truth sets for evaluating DepMap long read fusion predictions
-    
+
+Comparison of fusion breakpoint read counts for STAR-Fusion and Arriba common predictions and those fusions that are uniquely reported by each method: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.1.IlluminaTruSeqDepMap9Lines/__reevaluate_arriba_starF_overlap_via_coords/Examine_nonoverlapping_STARF_arriba.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.1.IlluminaTruSeqDepMap9Lines/__reevaluate_arriba_starF_overlap_via_coords/Examine_nonoverlapping_STARF_arriba.md) 
+
+        
 Summary evaluation of DepMap long read fusion prediction accuracy using Illumina-based fusion truth sets: [3b.DepMap9Lines_Benchmarking/3b.2.Illumina_TP_unique_FP_bmarking/Illum_TP_uniq_FP_summary.Rmd](3b.DepMap9Lines_Benchmarking/3b.2.Illumina_TP_unique_FP_bmarking/Illum_TP_uniq_FP_summary.md) (Figure 4h)
 
 Example of benchmarking using the Illumina-based Arriba-intersect-StarFusion truth set: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.Illumina_TP_unique_FP_bmarking/__illum_TP_uniq_FP.arriba%2CstarF/DepMap9Lines_Benchmarking.illum_TP_uniq_FP.arriba%2CstarF.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.2.Illumina_TP_unique_FP_bmarking/__illum_TP_uniq_FP.arriba%2CstarF/DepMap9Lines_Benchmarking.illum_TP_uniq_FP.arriba%2CstarF.md) (Supplementary Figure S3)
