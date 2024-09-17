@@ -40,8 +40,11 @@ SeraCare Fusion Mix v4 was sequenced using [PacBio MAS-ISO-seq/Kinnex](https://d
 
 Fusion predictions for combined ctat-LR-Fusion w/ FusionInspector: [https://github.com/broadinstitute/CTAT-LRF-Paper/tree/main/2.SeraCareFusions/2a.CTAT_SeraCareFusion/data/ctatLRF_FI](https://github.com/broadinstitute/CTAT-LRF-Paper/tree/main/2.SeraCareFusions/2a.CTAT_SeraCareFusion/data/ctatLRF_FI)
 
-Analysis: [2.SeraCareFusions/2a.CTAT_SeraCareFusion/CTAT_SeraCareFusion.Rmd](2.SeraCareFusions/2a.CTAT_SeraCareFusion/CTAT_SeraCareFusion.md) (Figure 3a, Supp Figure S2)
+Analysis with no downsampling of long reads: [2.SeraCareFusions/2a.CTAT_SeraCareFusion/CTAT_SeraCareFusion.Rmd](2.SeraCareFusions/2a.CTAT_SeraCareFusion/CTAT_SeraCareFusion.md) (Supp Figure S2)
 
+Analysis with downsampling of long reads to match Illumina read sequenced numbers of bases: [2.SeraCareFusions/2a.CTAT_SeraCareFusion/2a.1.SubsampledSeraCareLR/Downsampled_LR_match_Illumina.Rmd](2.SeraCareFusions/2a.CTAT_SeraCareFusion/2a.1.SubsampledSeraCareLR/Downsampled_LR_match_Illumina.md) (Figure 3a)
+
+    
 ### Comparison of control fusions found by various predictors for SeraCare fusion mix:
 
 Fusion prediction results for all methods: [https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/SeraCareFusions/prog_results](https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/SeraCareFusions/prog_results) 
