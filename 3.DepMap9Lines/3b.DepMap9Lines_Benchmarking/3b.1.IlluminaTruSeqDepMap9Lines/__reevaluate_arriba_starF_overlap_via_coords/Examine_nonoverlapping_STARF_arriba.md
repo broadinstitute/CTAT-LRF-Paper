@@ -46,25 +46,6 @@ data %>% head()
     ## 6                                                                                                                                                                                                                                                                          [CTNND1:Oncogene];[CCLE_StarF2019];INTRACHROMOSOMAL[chr11:0.20Mb]
 
 ``` r
-data %>% ggplot() +
-    geom_jitter(aes(x=progs, y=sum_split_reads, color=progs)) +
-    geom_jitter(aes(x=progs, y=est_J, color=progs)) +
-    theme_bw() +
-    ylim(0,100)
-```
-
-    ## Warning: Removed 60 rows containing missing values (`geom_point()`).
-
-    ## Warning: Removed 53 rows containing missing values (`geom_point()`).
-
-![](Examine_nonoverlapping_STARF_arriba_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
-
-``` r
-#+
-     #scale_y_continuous(trans='log10') 
-```
-
-``` r
 # compare counts of split reads for agreed upon fusions
 
 data %>% filter(progs == "starF,arriba") %>% ggplot(aes(x=sum_split_reads, y=est_J)) + geom_point() + xlim(0,250) + ylim(0,250) +
@@ -76,7 +57,7 @@ data %>% filter(progs == "starF,arriba") %>% ggplot(aes(x=sum_split_reads, y=est
 
     ## Warning: Removed 4 rows containing missing values (`geom_point()`).
 
-![](Examine_nonoverlapping_STARF_arriba_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](Examine_nonoverlapping_STARF_arriba_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
 ``` r
 cor(data$sum_split_reads, data$est_J, use='complete.obs')
@@ -115,7 +96,7 @@ junction_read_counts %>% ggplot(aes(x = progs, y=junction_read_count, color=prog
 
     ## Warning: Removed 3 rows containing missing values (`geom_point()`).
 
-![](Examine_nonoverlapping_STARF_arriba_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](Examine_nonoverlapping_STARF_arriba_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ``` r
 # test starF,arriba vs. starF-only

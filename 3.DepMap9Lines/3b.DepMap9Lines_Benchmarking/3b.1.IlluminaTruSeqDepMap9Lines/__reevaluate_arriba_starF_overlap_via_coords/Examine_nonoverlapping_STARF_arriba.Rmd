@@ -24,21 +24,6 @@ data %>% head()
 
 ```{r}
 
-data %>% ggplot() +
-    geom_jitter(aes(x=progs, y=sum_split_reads, color=progs)) +
-    geom_jitter(aes(x=progs, y=est_J, color=progs)) +
-    theme_bw() +
-    ylim(0,100)
-
-#+
-     #scale_y_continuous(trans='log10') 
-
-
-```
-
-
-```{r}
-
 
 # compare counts of split reads for agreed upon fusions
 
