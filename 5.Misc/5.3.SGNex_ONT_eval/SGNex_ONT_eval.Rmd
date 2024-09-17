@@ -422,7 +422,7 @@ SGNEx_fusion_plot
 
 ```{r}
 
-ggsave(SGNEx_fusion_plot, filename="SGNEx_fusion_plot.svg", width=6, height=3.5)
+ggsave(SGNEx_fusion_plot, filename="SGNEx_fusion_plot.svg", width=7, height=3.5)
 
 
 ```
