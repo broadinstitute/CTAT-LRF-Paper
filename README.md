@@ -95,8 +95,8 @@ Analysis of trusted fusions vs. others detected  using ONT dRNA seqs: [5.Misc/5.
 
 Benchmarking ONT fusion detection using the trusted sequences and flagging uniquely predicted fusions as false positives:
 
-    - default mode: [5.Misc/5.3.SGNex_ONT_eval/5.3.3.SGNex_Illumina_benchmarking/default_mode/SGNEx_DefaultModes.Rmd](5.Misc/5.3.SGNex_ONT_eval/5.3.3.SGNex_Illumina_benchmarking/default_mode/SGNEx_DefaultModes.md)
-    - first filtering fusions with breakpoints proximal to exon boundaries: [5.Misc/5.3.SGNex_ONT_eval/5.3.3.SGNex_Illumina_benchmarking/fuzzy_brkpt_restricted/SGNEx_FuzzyRestricted.Rmd](5.Misc/5.3.SGNex_ONT_eval/5.3.3.SGNex_Illumina_benchmarking/fuzzy_brkpt_restricted/SGNEx_FuzzyRestricted.md)
+- default mode: [5.Misc/5.3.SGNex_ONT_eval/5.3.3.SGNex_Illumina_benchmarking/default_mode/SGNEx_DefaultModes.Rmd](5.Misc/5.3.SGNex_ONT_eval/5.3.3.SGNex_Illumina_benchmarking/default_mode/SGNEx_DefaultModes.md)
+- first filtering fusions with breakpoints proximal to exon boundaries: [5.Misc/5.3.SGNex_ONT_eval/5.3.3.SGNex_Illumina_benchmarking/fuzzy_brkpt_restricted/SGNEx_FuzzyRestricted.Rmd](5.Misc/5.3.SGNex_ONT_eval/5.3.3.SGNex_Illumina_benchmarking/fuzzy_brkpt_restricted/SGNEx_FuzzyRestricted.md)
 
 ## Long Read Fusion Isoform Detection from Tumor Single Cell Transcriptomes
 
