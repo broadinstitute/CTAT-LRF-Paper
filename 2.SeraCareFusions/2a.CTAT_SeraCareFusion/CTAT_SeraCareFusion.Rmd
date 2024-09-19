@@ -463,6 +463,9 @@ gene_read_counts %>% ggplot(aes(x=LR_r1, y=SR_r1)) + geom_point() +
 
 
 # convert to CPM
+
+gene_ids = gene_read_counts %>% pull(gene_id)
+
 col_sums = gene_read_counts %>% select(-gene_id) %>% summarize(sum_LR_r1 = sum(LR_r1), 
                                                                sum_LR_r2 = sum(LR_r2),
                                                                sum_LR_r3 = sum(LR_r3),
@@ -490,6 +493,8 @@ gene_read_CPM = gene_read_counts %>%
     select(LR_r1_CPM, LR_r2_CPM, LR_r3_CPM,
            SR_r1_CPM, SR_r2_CPM, SR_r3_CPM) 
 
+rownames(gene_read_CPM) = gene_ids
+
 ```
 
 ```{r}
@@ -500,6 +505,9 @@ gene_read_CPM_means = gene_read_CPM %>% rowwise() %>%
     select(mean_LR_CPM, mean_SR_CPM)
 
 
+gene_read_CPM_means = data.frame(gene_read_CPM_means) 
+
+rownames(gene_read_CPM_means) = gene_ids
 ```
 
 
@@ -519,7 +527,7 @@ gene_read_CPM_means %>%
 
 
 ```{r}
-gene_read_CPM_means = gene_read_CPM_means %>% filter(mean_LR_CPM > 10 & mean_SR_CPM > 10) %>% 
+gene_read_CPM_means_filt = gene_read_CPM_means %>% filter(mean_LR_CPM > 10 & mean_SR_CPM > 10) %>% 
     mutate(SR_div_LR = mean_SR_CPM/mean_LR_CPM) 
 ```
 
@@ -528,12 +536,86 @@ gene_read_CPM_means = gene_read_CPM_means %>% filter(mean_LR_CPM > 10 & mean_SR_
 
 ```{r}
 
-median(gene_read_CPM_means$SR_div_LR)
+median(gene_read_CPM_means_filt$SR_div_LR)
 
 ```
 
 So a median of ~4x as many short reads as long reads per gene
 
 
+# Examine just the genes involved in the control fusions
+
+```{r}
+
+gene_read_CPM_means_tibble = tibble(gene_read_CPM_means)
+gene_read_CPM_means_tibble$gene_id = gene_ids
+
+gene_read_CPM_means_tibble$gene_symbol = sapply(gene_read_CPM_means_tibble$gene_id, function(x) { str_split(x, "\\|")[[1]][1] })
+
+```
+
+
+```{r}
+
+fusion_gene_cpm_means = NULL
+
+control_fusions = ctatLRF_FI_control_results %>% select(FusionName)  %>% unique() %>% pull(FusionName)
+
+for (control_fusion in control_fusions) {
+    
+    geneA = str_split(control_fusion, "--")[[1]][1]
+    geneB = str_split(control_fusion, "--")[[1]][2]
+    
+    fusion_gene_cpm_means = bind_rows(fusion_gene_cpm_means,
+                                      bind_rows(
+                                        gene_read_CPM_means_tibble %>% filter(gene_symbol == geneA),
+                                        gene_read_CPM_means_tibble %>% filter(gene_symbol == geneB))  %>% mutate(fusion = control_fusion)  )
+}
+
+fusion_gene_cpm_means
+
+
+```
+
+
+```{r}
+
+library(ggrepel)
+
+control_fusion_SR_vs_LR_CPM_plot = fusion_gene_cpm_means %>% 
+    select(-fusion) %>% unique() %>%
+    ggplot(aes(x=mean_LR_CPM, y=mean_SR_CPM)) + geom_point() +
+    theme_bw() +
+    scale_x_continuous(trans='log10') +
+    scale_y_continuous(trans='log10')  +                                      
+  stat_smooth(method = "lm", 
+              formula = y ~ x, 
+              geom = "smooth") +
+
+  geom_abline(slope=1, intercept=0, color='red') +
+   geom_text_repel(aes(label=gene_symbol))
+
+control_fusion_SR_vs_LR_CPM_plot
+
+```
+
+```{r}
+
+ggsave(control_fusion_SR_vs_LR_CPM_plot, file="control_fusion_SR_vs_LR_CPM_plot.svg", width=9, height=5)
+
+```
+
+
+```{r}
+
+fusion_gene_cpm_means %>% select(-fusion) %>% unique() %>%
+    mutate(SR_div_LR = mean_SR_CPM/mean_LR_CPM) %>%
+    summarize(median(SR_div_LR))
+
+```
+
+So even with just the control fusions, we're finding >4x as many short reads as long reads mapping to the corresponding genes.
+
+Note that with short reads we can't determine which non-fusion reads derive from the spiked-in control fusions vs. the normal cell line background.
 
 

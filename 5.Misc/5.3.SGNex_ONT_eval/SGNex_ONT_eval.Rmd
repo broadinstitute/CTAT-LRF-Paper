@@ -30,14 +30,6 @@ parse_preds_file = function(PREDS_FILE) {
     
     read_support$sample = str_replace(read_support$sample, "-EV_directRNA", "_EVdirectRNA")
     
-    #read_support$core_sample_name = sapply(read_support$sample, function(x)(str_split(x, "_")[[1]][2]))
-    
-    #read_support$seqtype = sapply(read_support$sample, function(x)(str_split(x, "_")[[1]][3]))
-    
-    #read_support$proxy_fusion_name = str_replace(read_support$proxy_fusion_name, "^SGNex_.*\\|", "")
-    
-    #read_support = read_support %>% mutate(proxy_fusion_name = paste0(core_sample_name, "|", proxy_fusion_name))
-
     return(read_support)    
 }
 
@@ -529,7 +521,8 @@ lex_sorted_validated_fusions = read_support_sample_scored  %>% filter(as_truth) 
     unique() %>%
     arrange(lex_sorted_fusion_name)
 
-write.table(lex_sorted_validated_fusions, file='SGNEx-as_truth_fusions.lex_ordered.tsv', quote=F, row.names=F, col.names=F)
+write.table(lex_sorted_validated_fusions, 
+            file='SGNEx-as_truth_fusions.lex_ordered.tsv', quote=F, row.names=F, col.names=T, sep="\t")
 
 lex_sorted_validated_fusions
 

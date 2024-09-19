@@ -55,8 +55,8 @@ arriba_fusions_df = arriba_fusions_df %>% rowwise() %>% mutate(FusionName = past
 
 arriba_fusions_df = arriba_fusions_df %>% filter(confidence == 'high')
 
-arriba_fusions_df$core_sample = sapply(arriba_fusions_df $sample, function(x) { str_split(x, "_")[[1]]}[1])
-arriba_fusions_df = arriba_fusions_df %>% rowwise() %>% mutate(lex_ordered_fusion_name = paste0(core_sample, "|", paste0(collapse="--", sort(c(gene1, gene2)))))
+arriba_fusions_df$sample = sapply(arriba_fusions_df $sample, function(x) { str_split(x, "_")[[1]]}[1])
+arriba_fusions_df = arriba_fusions_df %>% rowwise() %>% mutate(lex_ordered_fusion_name = paste0(sample, "|", paste0(collapse="--", sort(c(gene1, gene2)))))
 
 write.table(arriba_fusions_df, file="all_arriba_high_preds.tsv", quote=F, sep="\t", row.names=F)
 
@@ -78,24 +78,22 @@ arriba_fusions_df = arriba_fusions_df %>% mutate(sum_split_reads = split_reads1 
 
 ```{r}
 
-all_LR_pred_fusions = read.csv("../data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.FUZZY_RESTRICTED.gz", header=T, sep="\t")
+all_LR_pred_fusions = read.csv("../data/preds.collected.gencode_mapped.wAnnot.filt.pass.proxy_assignments.gz", header=T, sep="\t")
 
-
-all_LR_pred_fusions$core_sample = sapply(all_LR_pred_fusions$sample, function(x) { str_split(x, "_")[[1]]}[2])
 
 all_LR_pred_fusions = all_LR_pred_fusions %>% rowwise() %>% 
-    mutate(lex_ordered_fusion_name = paste0(core_sample, "|", paste0(collapse="--", sort(str_split(fusion, "--")[[1]]))))
+    mutate(lex_ordered_fusion_name = paste0(sample, "|", paste0(collapse="--", sort(str_split(fusion, "--")[[1]]))))
 
 ```
 
 
 ```{r}
 
-all_LR_pred_fusions_progs_agree = all_LR_pred_fusions %>% select(core_sample, lex_ordered_fusion_name, prog) %>% unique() %>%
-    group_by(core_sample, lex_ordered_fusion_name) %>% arrange(prog) %>%
+all_LR_pred_fusions_progs_agree = all_LR_pred_fusions %>% select(sample, lex_ordered_fusion_name, prog) %>% unique() %>%
+    group_by(sample, lex_ordered_fusion_name) %>% arrange(prog) %>%
     mutate(num_progs = n(), progs = paste(prog, collapse=',')) %>%
     ungroup() %>%
-    select(core_sample, lex_ordered_fusion_name, num_progs, progs) %>% unique()
+    select(sample, lex_ordered_fusion_name, num_progs, progs) %>% unique()
 
 all_LR_pred_fusions_progs_agree %>% head()
 
@@ -107,7 +105,7 @@ all_LR_pred_fusions_progs_agree %>% head()
 ```{r}
 
 
-arriba_fusions_df = left_join(arriba_fusions_df, all_LR_pred_fusions_progs_agree, by=c('core_sample', 'lex_ordered_fusion_name') )
+arriba_fusions_df = left_join(arriba_fusions_df, all_LR_pred_fusions_progs_agree, by=c('sample', 'lex_ordered_fusion_name') )
 
 arriba_fusions_df %>% head()
 
@@ -132,9 +130,9 @@ table(arriba_fusions_df$has_long_read_support)
 ```{r}
 
 write.table(arriba_fusions_df %>% 
-                select(core_sample, FusionName, sum_split_reads, discordant_mates, lex_ordered_fusion_name,
+                select(sample, FusionName, sum_split_reads, discordant_mates, lex_ordered_fusion_name,
                         has_long_read_support, num_progs, progs) %>%
-                arrange(core_sample, desc(sum_split_reads), desc(discordant_mates)),
+                arrange(sample, desc(sum_split_reads), desc(discordant_mates)),
             file="Arriba_SGNEx_Illumina.tsv",
             sep="\t", quote=F, row.names=F)
 

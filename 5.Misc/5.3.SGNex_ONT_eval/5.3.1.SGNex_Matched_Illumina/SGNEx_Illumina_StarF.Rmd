@@ -41,8 +41,8 @@ StarF_data$sample = str_replace(StarF_data$sample, "SGNex_", "")
 StarF_data$gene1 = sapply(StarF_data$FusionName, function(x) { str_split(x, "--")[[1]][1]})
 StarF_data$gene2 = sapply(StarF_data$FusionName, function(x) { str_split(x, "--")[[1]][2]})
 
-StarF_data$core_sample = sapply(StarF_data$sample, function(x) { str_split(x, "_")[[1]]}[1])
-StarF_data = StarF_data %>% rowwise() %>% mutate(lex_ordered_fusion_name = paste0(core_sample, "|", paste0(collapse="--", sort(c(gene1, gene2)))))
+StarF_data$sample = sapply(StarF_data$sample, function(x) { str_split(x, "_")[[1]]}[1])
+StarF_data = StarF_data %>% rowwise() %>% mutate(lex_ordered_fusion_name = paste0(sample, "|", paste0(collapse="--", sort(c(gene1, gene2)))))
 
 ```
 
@@ -58,24 +58,22 @@ nrow(StarF_data)
 
 ```{r}
 
-all_LR_pred_fusions = read.csv("../data/preds.collected.gencode_mapped.wAnnot.filt.proxy_assignments.FUZZY_RESTRICTED.gz", header=T, sep="\t")
+all_LR_pred_fusions = read.csv("../data/preds.collected.gencode_mapped.wAnnot.filt.pass.proxy_assignments.gz", header=T, sep="\t")
 
-
-all_LR_pred_fusions$core_sample = sapply(all_LR_pred_fusions$sample, function(x) { str_split(x, "_")[[1]]}[2])
 
 all_LR_pred_fusions = all_LR_pred_fusions %>% rowwise() %>% 
-    mutate(lex_ordered_fusion_name = paste0(core_sample, "|", paste0(collapse="--", sort(str_split(fusion, "--")[[1]]))))
+    mutate(lex_ordered_fusion_name = paste0(sample, "|", paste0(collapse="--", sort(str_split(fusion, "--")[[1]]))))
 
 ```
 
 
 ```{r}
 
-all_LR_pred_fusions_progs_agree = all_LR_pred_fusions %>% select(core_sample, lex_ordered_fusion_name, prog) %>% unique() %>%
-    group_by(core_sample, lex_ordered_fusion_name) %>% arrange(prog) %>%
+all_LR_pred_fusions_progs_agree = all_LR_pred_fusions %>% select(sample, lex_ordered_fusion_name, prog) %>% unique() %>%
+    group_by(sample, lex_ordered_fusion_name) %>% arrange(prog) %>%
     mutate(num_progs = n(), progs = paste(prog, collapse=',')) %>%
     ungroup() %>%
-    select(core_sample, lex_ordered_fusion_name, num_progs, progs) %>% unique()
+    select(sample, lex_ordered_fusion_name, num_progs, progs) %>% unique()
 
 all_LR_pred_fusions_progs_agree %>% head()
 
@@ -84,7 +82,7 @@ all_LR_pred_fusions_progs_agree %>% head()
 ```{r}
 
 
-StarF_data = left_join(StarF_data, all_LR_pred_fusions_progs_agree, by=c('core_sample', 'lex_ordered_fusion_name') )
+StarF_data = left_join(StarF_data, all_LR_pred_fusions_progs_agree, by=c('sample', 'lex_ordered_fusion_name') )
 
 StarF_data %>% head()
 
@@ -111,10 +109,10 @@ table(StarF_data$has_long_read_support)
 ```{r}
 
 write.table(StarF_data %>% 
-                select(core_sample, FusionName, est_J, est_S, SpliceType, lex_ordered_fusion_name,
+                select(sample, FusionName, est_J, est_S, SpliceType, lex_ordered_fusion_name,
                        has_long_read_support, num_progs, progs
                        ) %>%
-                arrange(core_sample, desc(est_J), desc(est_S)),
+                arrange(sample, desc(est_J), desc(est_S)),
             file="StarFusion_SGNEx_Illumina.tsv",
             sep="\t", quote=F, row.names=F)
 

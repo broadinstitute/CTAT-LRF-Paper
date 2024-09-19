@@ -30,7 +30,7 @@ arriba_preds %>% head()
 ```{r}
 
 both_preds = full_join(starF_preds, arriba_preds, 
-                       by=c('lex_ordered_fusion_name', 'core_sample', 'has_long_read_support', 'num_progs', 'progs'),
+                       by=c('lex_ordered_fusion_name', 'sample', 'has_long_read_support', 'num_progs', 'progs'),
                        suffix=c('.starF', '.arriba')) %>%
     rename(LR_progs = progs, num_LR_progs = num_progs)
 
