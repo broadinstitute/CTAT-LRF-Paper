@@ -117,7 +117,7 @@ fusion_preds = fusion_preds %>% mutate(illumina_supported = lex_ordered_fusion_n
 nrow(fusion_preds)
 ```
 
-    ## [1] 118915
+    ## [1] 119042
 
 ``` r
 # take top supported fusion call per prog in case mult isoforms
@@ -126,7 +126,7 @@ fusion_preds = fusion_preds %>% group_by(prog, lex_ordered_fusion_name) %>% arra
 nrow(fusion_preds)
 ```
 
-    ## [1] 117669
+    ## [1] 117795
 
 ``` r
 fusion_counts_df = NULL
@@ -146,11 +146,11 @@ fusion_counts_df %>% head()
     ## # Groups:   prog [3]
     ##   prog           illumina_supported     n min_reads
     ##   <chr>          <lgl>              <int>     <int>
-    ## 1 JAFFAL         FALSE               8045         1
+    ## 1 JAFFAL         FALSE               8051         1
     ## 2 JAFFAL         TRUE                 124         1
-    ## 3 LongGF         FALSE              14444         1
+    ## 3 LongGF         FALSE              14448         1
     ## 4 LongGF         TRUE                  98         1
-    ## 5 ctat-LR-fusion FALSE               9427         1
+    ## 5 ctat-LR-fusion FALSE               9430         1
     ## 6 ctat-LR-fusion TRUE                 136         1
 
 ``` r
@@ -246,24 +246,24 @@ fusion_counts_min_agree_df
 ```
 
     ##    min_read_threshold min_progs_agree num_fusions_min_reads
-    ## 1                   1               2                 65551
-    ## 2                   1               3                 65551
-    ## 3                   1               4                 65551
-    ## 4                   2               2                  3038
-    ## 5                   2               3                  3038
-    ## 6                   2               4                  3038
-    ## 7                   3               2                   568
-    ## 8                   3               3                   568
-    ## 9                   3               4                   568
-    ## 10                  4               2                   338
-    ## 11                  4               3                   338
-    ## 12                  4               4                   338
-    ## 13                  5               2                   221
-    ## 14                  5               3                   221
-    ## 15                  5               4                   221
-    ## 16                  6               2                   191
-    ## 17                  6               3                   191
-    ## 18                  6               4                   191
+    ## 1                   1               2                 65656
+    ## 2                   1               3                 65656
+    ## 3                   1               4                 65656
+    ## 4                   2               2                  3053
+    ## 5                   2               3                  3053
+    ## 6                   2               4                  3053
+    ## 7                   3               2                   571
+    ## 8                   3               3                   571
+    ## 9                   3               4                   571
+    ## 10                  4               2                   340
+    ## 11                  4               3                   340
+    ## 12                  4               4                   340
+    ## 13                  5               2                   223
+    ## 14                  5               3                   223
+    ## 15                  5               4                   223
+    ## 16                  6               2                   193
+    ## 17                  6               3                   193
+    ## 18                  6               4                   193
     ## 19                  7               2                   161
     ## 20                  7               3                   161
     ## 21                  7               4                   161
@@ -277,24 +277,24 @@ fusion_counts_min_agree_df
     ## 29                 10               3                   122
     ## 30                 10               4                   122
     ##    num_fusions_min_agree frac_fusions_min_agree
-    ## 1                  26457              0.4036094
-    ## 2                  15335              0.2339400
-    ## 3                   6752              0.1030038
-    ## 4                    664              0.2185648
-    ## 5                    480              0.1579987
-    ## 6                    347              0.1142199
-    ## 7                    166              0.2922535
-    ## 8                    123              0.2165493
-    ## 9                     89              0.1566901
-    ## 10                   128              0.3786982
-    ## 11                   100              0.2958580
-    ## 12                    78              0.2307692
-    ## 13                   108              0.4886878
-    ## 14                    88              0.3981900
-    ## 15                    74              0.3348416
-    ## 16                    99              0.5183246
-    ## 17                    81              0.4240838
-    ## 18                    68              0.3560209
+    ## 1                  26466              0.4031010
+    ## 2                  15340              0.2336420
+    ## 3                   6757              0.1029152
+    ## 4                    664              0.2174910
+    ## 5                    480              0.1572224
+    ## 6                    347              0.1136587
+    ## 7                    166              0.2907180
+    ## 8                    123              0.2154116
+    ## 9                     89              0.1558669
+    ## 10                   128              0.3764706
+    ## 11                   100              0.2941176
+    ## 12                    78              0.2294118
+    ## 13                   108              0.4843049
+    ## 14                    88              0.3946188
+    ## 15                    74              0.3318386
+    ## 16                    99              0.5129534
+    ## 17                    81              0.4196891
+    ## 18                    68              0.3523316
     ## 19                    87              0.5403727
     ## 20                    75              0.4658385
     ## 21                    63              0.3913043
@@ -357,11 +357,11 @@ fusion_counts_min_agree_vs_illum_supported
     ## # A tibble: 60 × 4
     ##    illumina_supported num_fusions min_read_support min_progs_agree
     ##    <lgl>                    <int>            <int>           <int>
-    ##  1 FALSE                    15201                1               2
+    ##  1 FALSE                    15206                1               2
     ##  2 TRUE                       134                1               2
-    ##  3 FALSE                     6641                1               3
+    ##  3 FALSE                     6646                1               3
     ##  4 TRUE                       111                1               3
-    ##  5 FALSE                     3502                1               4
+    ##  5 FALSE                     3504                1               4
     ##  6 TRUE                        72                1               4
     ##  7 FALSE                      368                2               2
     ##  8 TRUE                       112                2               2

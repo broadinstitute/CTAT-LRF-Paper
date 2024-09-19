@@ -40,7 +40,7 @@ files = c(
 ```
 
 ``` r
-OK_PARA = FALSE
+OK_PARA = TRUE
 
 if (OK_PARA) {
     files = c(
@@ -97,19 +97,19 @@ PR_AUC_df %>% head()
 ```
 
     ##             prog  AUC
-    ## 1       pbfusion 0.76
+    ## 1       pbfusion 0.78
     ## 2         LongGF 0.54
-    ## 3   fusionseeker 0.48
+    ## 3   fusionseeker 0.49
     ## 4 ctat-LR-fusion 0.35
-    ## 5         JAFFAL 0.29
-    ## 6         LongGF 0.76
-    ##                                                              fname
-    ## 1 __bmark_min-1-read/data/min_2.ignoreUnsure.results.scored.PR.AUC
-    ## 2 __bmark_min-1-read/data/min_2.ignoreUnsure.results.scored.PR.AUC
-    ## 3 __bmark_min-1-read/data/min_2.ignoreUnsure.results.scored.PR.AUC
-    ## 4 __bmark_min-1-read/data/min_2.ignoreUnsure.results.scored.PR.AUC
-    ## 5 __bmark_min-1-read/data/min_2.ignoreUnsure.results.scored.PR.AUC
-    ## 6 __bmark_min-1-read/data/min_3.ignoreUnsure.results.scored.PR.AUC
+    ## 5         JAFFAL 0.30
+    ## 6         LongGF 0.78
+    ##                                                                     fname
+    ## 1 __bmark_min-1-read/data/min_2.okPara_ignoreUnsure.results.scored.PR.AUC
+    ## 2 __bmark_min-1-read/data/min_2.okPara_ignoreUnsure.results.scored.PR.AUC
+    ## 3 __bmark_min-1-read/data/min_2.okPara_ignoreUnsure.results.scored.PR.AUC
+    ## 4 __bmark_min-1-read/data/min_2.okPara_ignoreUnsure.results.scored.PR.AUC
+    ## 5 __bmark_min-1-read/data/min_2.okPara_ignoreUnsure.results.scored.PR.AUC
+    ## 6 __bmark_min-1-read/data/min_3.okPara_ignoreUnsure.results.scored.PR.AUC
 
 ``` r
 PR_AUC_df = PR_AUC_df %>% rowwise() %>% mutate(min_reads = as.numeric(str_match(fname, "min-(\\d+)-read")[[2]]) )
@@ -121,12 +121,12 @@ PR_AUC_df %>% head()
     ## # Rowwise: 
     ##   prog             AUC fname                                           min_reads
     ##   <chr>          <dbl> <chr>                                               <dbl>
-    ## 1 pbfusion        0.76 __bmark_min-1-read/data/min_2.ignoreUnsure.res…         1
-    ## 2 LongGF          0.54 __bmark_min-1-read/data/min_2.ignoreUnsure.res…         1
-    ## 3 fusionseeker    0.48 __bmark_min-1-read/data/min_2.ignoreUnsure.res…         1
-    ## 4 ctat-LR-fusion  0.35 __bmark_min-1-read/data/min_2.ignoreUnsure.res…         1
-    ## 5 JAFFAL          0.29 __bmark_min-1-read/data/min_2.ignoreUnsure.res…         1
-    ## 6 LongGF          0.76 __bmark_min-1-read/data/min_3.ignoreUnsure.res…         1
+    ## 1 pbfusion        0.78 __bmark_min-1-read/data/min_2.okPara_ignoreUns…         1
+    ## 2 LongGF          0.54 __bmark_min-1-read/data/min_2.okPara_ignoreUns…         1
+    ## 3 fusionseeker    0.49 __bmark_min-1-read/data/min_2.okPara_ignoreUns…         1
+    ## 4 ctat-LR-fusion  0.35 __bmark_min-1-read/data/min_2.okPara_ignoreUns…         1
+    ## 5 JAFFAL          0.3  __bmark_min-1-read/data/min_2.okPara_ignoreUns…         1
+    ## 6 LongGF          0.78 __bmark_min-1-read/data/min_3.okPara_ignoreUns…         1
 
 ``` r
 PR_AUC_df = PR_AUC_df %>% rowwise() %>% mutate(min_progs_agree = as.numeric(str_match(fname, "min_(\\d+)\\.")[[2]]) )
@@ -138,12 +138,12 @@ PR_AUC_df %>% head()
     ## # Rowwise: 
     ##   prog             AUC fname                           min_reads min_progs_agree
     ##   <chr>          <dbl> <chr>                               <dbl>           <dbl>
-    ## 1 pbfusion        0.76 __bmark_min-1-read/data/min_2.…         1               2
+    ## 1 pbfusion        0.78 __bmark_min-1-read/data/min_2.…         1               2
     ## 2 LongGF          0.54 __bmark_min-1-read/data/min_2.…         1               2
-    ## 3 fusionseeker    0.48 __bmark_min-1-read/data/min_2.…         1               2
+    ## 3 fusionseeker    0.49 __bmark_min-1-read/data/min_2.…         1               2
     ## 4 ctat-LR-fusion  0.35 __bmark_min-1-read/data/min_2.…         1               2
-    ## 5 JAFFAL          0.29 __bmark_min-1-read/data/min_2.…         1               2
-    ## 6 LongGF          0.76 __bmark_min-1-read/data/min_3.…         1               3
+    ## 5 JAFFAL          0.3  __bmark_min-1-read/data/min_2.…         1               2
+    ## 6 LongGF          0.78 __bmark_min-1-read/data/min_3.…         1               3
 
 ``` r
 PR_AUC_df %>% ggplot(aes(x=prog, y=AUC)) + 

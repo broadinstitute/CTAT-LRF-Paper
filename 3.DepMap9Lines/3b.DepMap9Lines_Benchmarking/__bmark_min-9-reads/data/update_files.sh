@@ -2,13 +2,6 @@
 
 set -ex
 
-cp  ~/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/DepMap_Cell_Lines/preds.collected.gencode_mapped.wAnnot .
-
-gzip -f preds.collected.gencode_mapped.wAnnot
-
-cp  ~/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/DepMap_Cell_Lines/preds.collected.gencode_mapped.wAnnot.filt.pass .
-
-
 ## min X agree analysis
 
 

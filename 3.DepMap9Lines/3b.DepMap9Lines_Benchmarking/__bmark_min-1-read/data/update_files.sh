@@ -2,6 +2,8 @@
 
 set -ex
 
+rm -f *.gz
+
 cp  ~/GITHUB/CTAT_FUSIONS/LR-FusionBenchmarking/DepMap_Cell_Lines/preds.collected.gencode_mapped.wAnnot .
 
 gzip -f preds.collected.gencode_mapped.wAnnot

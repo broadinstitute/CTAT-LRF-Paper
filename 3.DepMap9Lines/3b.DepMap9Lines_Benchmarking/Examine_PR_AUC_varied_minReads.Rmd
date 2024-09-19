@@ -52,7 +52,7 @@ files = c(
 
 ```{r}
 
-OK_PARA = FALSE
+OK_PARA = TRUE
 
 if (OK_PARA) {
     files = c(
