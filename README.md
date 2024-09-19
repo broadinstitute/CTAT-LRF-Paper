@@ -87,12 +87,16 @@ Analysis: [3.DepMap9Lines/3a.CTAT_DepMap9Lines/CTAT_DepMap9Lines.Rmd](3.DepMap9L
 Analysis: [3.DepMap9Lines/3a.CTAT_DepMap9Lines/3a.2.ThreePrimeBiasAnalysis/examine_3prime_breakpoint_readlengths.Rmd](3.DepMap9Lines/3a.CTAT_DepMap9Lines/3a.2.ThreePrimeBiasAnalysis/examine_3prime_breakpoint_readlengths.md) (Supplementary Figure S4)
 
 
-## Fusion detection using ONT direct RNA sequences
+## Fusion detection using ONT direct RNA and cDNA sequences
 
-ONT direct RNA sequences were obtained from the [SG-NEx project](https://registry.opendata.aws/sgnex/).
+ONT transcriptome sequences were obtained from the [SG-NEx project](https://registry.opendata.aws/sgnex/).
 
-Analysis of fusion detection using ONT dRNA seqs: [5.Misc/5.3.SGNex_ONT_eval/SGNex_ONT_eval.Rmd](5.Misc/5.3.SGNex_ONT_eval/SGNex_ONT_eval.md) (Figure 6)
+Analysis of trusted fusions vs. others detected  using ONT dRNA seqs: [5.Misc/5.3.SGNex_ONT_eval/SGNex_ONT_eval.Rmd](5.Misc/5.3.SGNex_ONT_eval/SGNex_ONT_eval.md) (Figure 6)
 
+Benchmarking ONT fusion detection using the trusted sequences and flagging uniquely predicted fusions as false positives:
+
+    - default mode: [5.Misc/5.3.SGNex_ONT_eval/5.3.3.SGNex_Illumina_benchmarking/default_mode/SGNEx_DefaultModes.Rmd](5.Misc/5.3.SGNex_ONT_eval/5.3.3.SGNex_Illumina_benchmarking/default_mode/SGNEx_DefaultModes.md)
+    - first filtering fusions with breakpoints proximal to exon boundaries: [5.Misc/5.3.SGNex_ONT_eval/5.3.3.SGNex_Illumina_benchmarking/fuzzy_brkpt_restricted/SGNEx_FuzzyRestricted.Rmd](5.Misc/5.3.SGNex_ONT_eval/5.3.3.SGNex_Illumina_benchmarking/fuzzy_brkpt_restricted/SGNEx_FuzzyRestricted.md)
 
 ## Long Read Fusion Isoform Detection from Tumor Single Cell Transcriptomes
 
