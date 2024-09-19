@@ -19,14 +19,6 @@ parse_preds_file = function(PREDS_FILE) {
     
     read_support$sample = str_replace(read_support$sample, "-EV_directRNA", "_EVdirectRNA")
     
-    #read_support$core_sample_name = sapply(read_support$sample, function(x)(str_split(x, "_")[[1]][2]))
-    
-    #read_support$seqtype = sapply(read_support$sample, function(x)(str_split(x, "_")[[1]][3]))
-    
-    #read_support$proxy_fusion_name = str_replace(read_support$proxy_fusion_name, "^SGNex_.*\\|", "")
-    
-    #read_support = read_support %>% mutate(proxy_fusion_name = paste0(core_sample_name, "|", proxy_fusion_name))
-
     return(read_support)    
 }
 ```
@@ -37,13 +29,13 @@ regular_run_data = parse_preds_file(PREDS_FILE_ALL)
 regular_run_data %>% head()
 ```
 
-    ##           proxy_fusion_name proxy_fusion_type sample   prog
-    ## 1        A549|SCAMP2--WDR72   dominant_choice   A549 JAFFAL
-    ## 2        A549|ACACA--PLXDC1   dominant_choice   A549 JAFFAL
-    ## 3  A549|ZNF43--RP11-69H14.6   dominant_choice   A549 JAFFAL
-    ## 4        A549|ACACA--PLXDC1   dominant_choice   A549 JAFFAL
-    ## 5 A549|RP11-983G14.1--ZNF43            tie_lt   A549 JAFFAL
-    ## 6        A549|ACACA--PLXDC1   dominant_choice   A549 JAFFAL
+    ##           proxy_fusion_name     proxy_fusion_type sample   prog
+    ## 1        A549|SCAMP2--WDR72       known_validated   A549 JAFFAL
+    ## 2        A549|ACACA--PLXDC1       known_validated   A549 JAFFAL
+    ## 3  A549|RP11-69H14.6--ZNF43 recip_known_validated   A549 JAFFAL
+    ## 4        A549|ACACA--PLXDC1       known_validated   A549 JAFFAL
+    ## 5 A549|RP11-983G14.1--ZNF43                tie_lt   A549 JAFFAL
+    ## 6        A549|ACACA--PLXDC1       known_validated   A549 JAFFAL
     ##                 fusion                     breakpoint num_reads
     ## 1        SCAMP2--WDR72 chr15:74845473--chr15:53706074        25
     ## 2        ACACA--PLXDC1 chr17:37330173--chr17:39109391        20
@@ -80,13 +72,13 @@ fuzzy_restricted_run_data = parse_preds_file(PREDS_FILE_fuzzy_restricted)
 fuzzy_restricted_run_data %>% head()
 ```
 
-    ##           proxy_fusion_name proxy_fusion_type sample   prog
-    ## 1        A549|SCAMP2--WDR72   dominant_choice   A549 JAFFAL
-    ## 2        A549|ACACA--PLXDC1   dominant_choice   A549 JAFFAL
-    ## 3  A549|ZNF43--RP11-69H14.6   dominant_choice   A549 JAFFAL
-    ## 4        A549|ACACA--PLXDC1   dominant_choice   A549 JAFFAL
-    ## 5 A549|RP11-983G14.1--ZNF43            tie_lt   A549 JAFFAL
-    ## 6        A549|ACACA--PLXDC1   dominant_choice   A549 JAFFAL
+    ##           proxy_fusion_name     proxy_fusion_type sample   prog
+    ## 1        A549|SCAMP2--WDR72       known_validated   A549 JAFFAL
+    ## 2        A549|ACACA--PLXDC1       known_validated   A549 JAFFAL
+    ## 3  A549|RP11-69H14.6--ZNF43 recip_known_validated   A549 JAFFAL
+    ## 4        A549|ACACA--PLXDC1       known_validated   A549 JAFFAL
+    ## 5 A549|RP11-983G14.1--ZNF43                tie_lt   A549 JAFFAL
+    ## 6        A549|ACACA--PLXDC1       known_validated   A549 JAFFAL
     ##                 fusion                     breakpoint num_reads
     ## 1        SCAMP2--WDR72 chr15:74845473--chr15:53706074        25
     ## 2        ACACA--PLXDC1 chr17:37330173--chr17:39109391        20
@@ -162,7 +154,7 @@ read_support_sample = read_support %>% group_by(lex_sorted_fusion_name, prog, sa
 nrow(read_support_sample)
 ```
 
-    ## [1] 30078
+    ## [1] 31387
 
 ``` r
 validated_fusions = data.frame(validated_fusion = c(
@@ -264,13 +256,13 @@ read_support_sample %>% filter(validated_fusion) %>%
     ##  1 A549   A549|SCAMP2--WDR72     JAFFAL,LongGF,ctat-LR-fusion,fusions…         5
     ##  2 K562   K562|NUP214--XKR3      JAFFAL,LongGF,ctat-LR-fusion,fusions…         5
     ##  3 K562   K562|ABL1--BCR         JAFFAL,LongGF,ctat-LR-fusion,fusions…         4
-    ##  4 MCF7   MCF7|ARFGEF2--SULF2    JAFFAL,LongGF,ctat-LR-fusion,fusions…         5
-    ##  5 MCF7   MCF7|NBPF6--SLC25A24   JAFFAL,LongGF,ctat-LR-fusion,fusions…         5
-    ##  6 MCF7   MCF7|PICALM--SYTL2     JAFFAL,LongGF,ctat-LR-fusion,fusions…         5
-    ##  7 MCF7   MCF7|AHCYL1--RAD51C    JAFFAL,LongGF,ctat-LR-fusion,fusions…         5
-    ##  8 MCF7   MCF7|ATP1A1--ZFP64     JAFFAL,LongGF,ctat-LR-fusion,fusions…         5
-    ##  9 MCF7   MCF7|BCAS4--ZMYND8     JAFFAL,LongGF,ctat-LR-fusion,fusions…         5
-    ## 10 MCF7   MCF7|RGS17--TBL1XR1    JAFFAL,LongGF,ctat-LR-fusion,fusions…         5
+    ##  4 MCF7   MCF7|BCAS3--BCAS4      JAFFAL,LongGF,ctat-LR-fusion,fusions…         5
+    ##  5 MCF7   MCF7|ARFGEF2--SULF2    JAFFAL,LongGF,ctat-LR-fusion,fusions…         5
+    ##  6 MCF7   MCF7|NBPF6--SLC25A24   JAFFAL,LongGF,ctat-LR-fusion,fusions…         5
+    ##  7 MCF7   MCF7|PICALM--SYTL2     JAFFAL,LongGF,ctat-LR-fusion,fusions…         5
+    ##  8 MCF7   MCF7|AHCYL1--RAD51C    JAFFAL,LongGF,ctat-LR-fusion,fusions…         5
+    ##  9 MCF7   MCF7|ATP1A1--ZFP64     JAFFAL,LongGF,ctat-LR-fusion,fusions…         5
+    ## 10 MCF7   MCF7|BCAS4--ZMYND8     JAFFAL,LongGF,ctat-LR-fusion,fusions…         5
     ## # ℹ 19 more rows
 
 # incorporate illumina support info
@@ -281,27 +273,27 @@ illumina_support_info = read.csv("5.3.1.SGNex_Matched_Illumina/SGNEx_Illumina_su
 illumina_support_info %>% head()
 ```
 
-    ##   core_sample       FusionName.starF est_J est_S          SpliceType
-    ## 1        A549            RICTOR--FYB    77  0.00     ONLY_REF_SPLICE
-    ## 2        A549          SCAMP2--WDR72    39  3.00     ONLY_REF_SPLICE
-    ## 3        A549          ACACA--PLXDC1    29  0.78     ONLY_REF_SPLICE
-    ## 4        A549         KANSL1--ARL17A    13  1.00     ONLY_REF_SPLICE
-    ## 5        A549           LEPROT--LEPR    10  0.00     ONLY_REF_SPLICE
-    ## 6        A549 RP11-603B24.1--HERC2P3     8  0.00 INCL_NON_REF_SPLICE
+    ##   sample       FusionName.starF est_J est_S          SpliceType
+    ## 1   A549            RICTOR--FYB    77  0.00     ONLY_REF_SPLICE
+    ## 2   A549          SCAMP2--WDR72    39  3.00     ONLY_REF_SPLICE
+    ## 3   A549          ACACA--PLXDC1    29  0.78     ONLY_REF_SPLICE
+    ## 4   A549         KANSL1--ARL17A    13  1.00     ONLY_REF_SPLICE
+    ## 5   A549           LEPROT--LEPR    10  0.00     ONLY_REF_SPLICE
+    ## 6   A549 RP11-603B24.1--HERC2P3     8  0.00 INCL_NON_REF_SPLICE
     ##       lex_ordered_fusion_name has_long_read_support num_LR_progs
     ## 1            A549|FYB--RICTOR                 FALSE           NA
     ## 2          A549|SCAMP2--WDR72                  TRUE            5
-    ## 3          A549|ACACA--PLXDC1                  TRUE            4
+    ## 3          A549|ACACA--PLXDC1                  TRUE            5
     ## 4         A549|ARL17A--KANSL1                 FALSE           NA
     ## 5           A549|LEPR--LEPROT                 FALSE           NA
-    ## 6 A549|HERC2P3--RP11-603B24.1                  TRUE            2
+    ## 6 A549|HERC2P3--RP11-603B24.1                  TRUE            1
     ##                                             LR_progs FusionName.arriba
     ## 1                                               <NA>              <NA>
     ## 2 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion     SCAMP2--WDR72
-    ## 3              JAFFAL,LongGF,ctat-LR-fusion,pbfusion     ACACA--PLXDC1
+    ## 3 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion     ACACA--PLXDC1
     ## 4                                               <NA>              <NA>
     ## 5                                               <NA>              <NA>
-    ## 6                              fusionseeker,pbfusion              <NA>
+    ## 6                                       fusionseeker              <NA>
     ##   sum_split_reads discordant_mates        progs    primary_fusion_name
     ## 1              NA               NA        starF            RICTOR--FYB
     ## 2              35                2 starF,arriba          SCAMP2--WDR72
@@ -477,16 +469,16 @@ read_support_sample_scored %>% filter(prog == 'ctat-LR-fusion')  %>% head(50)
     ## # A tibble: 50 × 16
     ##    proxy_fusion_name  proxy_fusion_type sample prog  fusion breakpoint num_reads
     ##    <chr>              <chr>             <chr>  <chr> <chr>  <chr>          <int>
-    ##  1 MCF7|BCAS4--BCAS3  dominant_choice   MCF7   ctat… BCAS4… chr20:507…      3672
-    ##  2 MCF7|AC099850.1--… dominant_choice   MCF7   ctat… AC099… chr17:591…       756
-    ##  3 MCF7|AC099850.1--… dominant_choice   MCF7   ctat… AC099… chr17:591…       756
-    ##  4 MCF7|ARFGEF2--SUL… dominant_choice   MCF7   ctat… ARFGE… chr20:489…       433
-    ##  5 MCF7|ARFGEF2--SUL… dominant_choice   MCF7   ctat… ARFGE… chr20:489…       433
-    ##  6 MCF7|SLC25A24--NB… dominant_choice   MCF7   ctat… SLC25… chr1:1081…       179
-    ##  7 MCF7|SLC25A24--NB… dominant_choice   MCF7   ctat… SLC25… chr1:1081…       179
-    ##  8 K562|BAG6--SLC44A4 dominant_choice   K562   ctat… BAG6-… chr6:3165…       176
-    ##  9 K562|BAG6--SLC44A4 dominant_choice   K562   ctat… BAG6-… chr6:3165…       176
-    ## 10 MCF7|SYTL2--PICALM dominant_choice   MCF7   ctat… SYTL2… chr11:857…        63
+    ##  1 MCF7|BCAS3--BCAS4  recip_known_vali… MCF7   ctat… BCAS4… chr20:507…      3672
+    ##  2 MCF7|AC099850.1--… known_validated   MCF7   ctat… AC099… chr17:591…       756
+    ##  3 MCF7|AC099850.1--… known_validated   MCF7   ctat… AC099… chr17:591…       756
+    ##  4 MCF7|ARFGEF2--SUL… known_validated   MCF7   ctat… ARFGE… chr20:489…       433
+    ##  5 MCF7|ARFGEF2--SUL… known_validated   MCF7   ctat… ARFGE… chr20:489…       433
+    ##  6 MCF7|NBPF6--SLC25… recip_known_vali… MCF7   ctat… SLC25… chr1:1081…       179
+    ##  7 MCF7|NBPF6--SLC25… recip_known_vali… MCF7   ctat… SLC25… chr1:1081…       179
+    ##  8 K562|BAG6--SLC44A4 known_validated   K562   ctat… BAG6-… chr6:3165…       176
+    ##  9 K562|BAG6--SLC44A4 known_validated   K562   ctat… BAG6-… chr6:3165…       176
+    ## 10 MCF7|PICALM--SYTL2 recip_known_vali… MCF7   ctat… SYTL2… chr11:857…        63
     ## # ℹ 40 more rows
     ## # ℹ 9 more variables: annots <chr>, runtype <chr>,
     ## #   lex_sorted_fusion_name <chr>, validated_fusion <lgl>,
@@ -575,7 +567,7 @@ read_support_sample_scored  %>% filter(as_truth) %>% group_by(lex_sorted_fusion_
     arrange(runtype, lex_sorted_fusion_name, progs)
 ```
 
-    ## # A tibble: 125 × 3
+    ## # A tibble: 127 × 3
     ##    runtype                lex_sorted_fusion_name           progs                
     ##    <chr>                  <chr>                            <chr>                
     ##  1 fuzzy_brkpt_restricted A549|ACACA--PLXDC1               ctat-LR-fusion,JAFFA…
@@ -588,7 +580,7 @@ read_support_sample_scored  %>% filter(as_truth) %>% group_by(lex_sorted_fusion_
     ##  8 fuzzy_brkpt_restricted K562|CCDC26--LINC00977           pbfusion             
     ##  9 fuzzy_brkpt_restricted K562|CEP70--FAIM                 ctat-LR-fusion,JAFFA…
     ## 10 fuzzy_brkpt_restricted K562|CTC-786C10.1--RP11-680G10.1 pbfusion             
-    ## # ℹ 115 more rows
+    ## # ℹ 117 more rows
 
 ``` r
 read_support_sample_scored  %>% filter(as_truth) %>% group_by(lex_sorted_fusion_name, runtype) %>%
@@ -600,21 +592,21 @@ read_support_sample_scored  %>% filter(as_truth) %>% group_by(lex_sorted_fusion_
     arrange(desc(n))
 ```
 
-    ## # A tibble: 30 × 3
-    ## # Groups:   progs [16]
+    ## # A tibble: 26 × 3
+    ## # Groups:   progs [13]
     ##    progs                                              runtype                  n
     ##    <chr>                                              <chr>                <int>
-    ##  1 ctat-LR-fusion,JAFFAL,LongGF,fusionseeker,pbfusion fuzzy_brkpt_restric…    17
-    ##  2 ctat-LR-fusion,JAFFAL,LongGF,fusionseeker,pbfusion regular                 17
-    ##  3 fusionseeker                                       regular                 16
-    ##  4 LongGF,fusionseeker                                regular                 10
-    ##  5 ctat-LR-fusion,JAFFAL,LongGF,fusionseeker          fuzzy_brkpt_restric…     8
-    ##  6 ctat-LR-fusion,JAFFAL,LongGF,fusionseeker          regular                  8
+    ##  1 ctat-LR-fusion,JAFFAL,LongGF,fusionseeker,pbfusion fuzzy_brkpt_restric…    19
+    ##  2 ctat-LR-fusion,JAFFAL,LongGF,fusionseeker,pbfusion regular                 18
+    ##  3 fusionseeker                                       regular                 17
+    ##  4 ctat-LR-fusion,JAFFAL,LongGF,fusionseeker          regular                 11
+    ##  5 LongGF,fusionseeker                                regular                 10
+    ##  6 ctat-LR-fusion,JAFFAL,LongGF,fusionseeker          fuzzy_brkpt_restric…    10
     ##  7 ctat-LR-fusion,JAFFAL,fusionseeker,pbfusion        fuzzy_brkpt_restric…     6
     ##  8 ctat-LR-fusion,JAFFAL,fusionseeker,pbfusion        regular                  6
     ##  9 ctat-LR-fusion,fusionseeker                        fuzzy_brkpt_restric…     4
     ## 10 ctat-LR-fusion,fusionseeker                        regular                  4
-    ## # ℹ 20 more rows
+    ## # ℹ 16 more rows
 
 ``` r
 read_support_sample_scored  %>% filter(as_truth) %>% group_by(lex_sorted_fusion_name) %>%
@@ -644,12 +636,12 @@ read_support_sample_scored  %>% filter(validated_fusion) %>%
     ## # Groups:   prog [5]
     ##    prog           runtype                    n
     ##    <fct>          <chr>                  <int>
-    ##  1 ctat-LR-fusion fuzzy_brkpt_restricted    26
-    ##  2 ctat-LR-fusion regular                   25
-    ##  3 JAFFAL         fuzzy_brkpt_restricted    25
-    ##  4 JAFFAL         regular                   24
-    ##  5 fusionseeker   regular                   24
-    ##  6 fusionseeker   fuzzy_brkpt_restricted    23
+    ##  1 fusionseeker   regular                   28
+    ##  2 fusionseeker   fuzzy_brkpt_restricted    27
+    ##  3 ctat-LR-fusion fuzzy_brkpt_restricted    26
+    ##  4 ctat-LR-fusion regular                   25
+    ##  5 JAFFAL         fuzzy_brkpt_restricted    25
+    ##  6 JAFFAL         regular                   24
     ##  7 LongGF         fuzzy_brkpt_restricted    21
     ##  8 LongGF         regular                   20
     ##  9 pbfusion       fuzzy_brkpt_restricted    14
@@ -678,16 +670,16 @@ read_support_sample %>% ungroup() %>% select(prog, lex_sorted_fusion_name, runty
     ## # Groups:   prog [5]
     ##    prog           runtype                    n
     ##    <chr>          <chr>                  <int>
-    ##  1 fusionseeker   regular                21113
-    ##  2 fusionseeker   fuzzy_brkpt_restricted  8301
-    ##  3 pbfusion       regular                  150
+    ##  1 fusionseeker   regular                22177
+    ##  2 fusionseeker   fuzzy_brkpt_restricted  8549
+    ##  3 pbfusion       regular                  148
     ##  4 LongGF         regular                  114
     ##  5 ctat-LR-fusion regular                   84
     ##  6 pbfusion       fuzzy_brkpt_restricted    83
     ##  7 ctat-LR-fusion fuzzy_brkpt_restricted    69
-    ##  8 JAFFAL         regular                   55
-    ##  9 LongGF         fuzzy_brkpt_restricted    55
-    ## 10 JAFFAL         fuzzy_brkpt_restricted    54
+    ##  8 LongGF         fuzzy_brkpt_restricted    55
+    ##  9 JAFFAL         fuzzy_brkpt_restricted    54
+    ## 10 JAFFAL         regular                   54
 
 ``` r
 # write supp data table
@@ -705,7 +697,8 @@ lex_sorted_validated_fusions = read_support_sample_scored  %>% filter(as_truth) 
     unique() %>%
     arrange(lex_sorted_fusion_name)
 
-write.table(lex_sorted_validated_fusions, file='SGNEx-as_truth_fusions.lex_ordered.tsv', quote=F, row.names=F, col.names=F)
+write.table(lex_sorted_validated_fusions, 
+            file='SGNEx-as_truth_fusions.lex_ordered.tsv', quote=F, row.names=F, col.names=T, sep="\t")
 
 lex_sorted_validated_fusions
 ```

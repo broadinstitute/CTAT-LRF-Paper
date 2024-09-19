@@ -80,9 +80,10 @@ arriba_fusions_df = arriba_fusions_df %>% mutate(sum_split_reads = split_reads1 
 
 all_LR_pred_fusions = read.csv("../data/preds.collected.gencode_mapped.wAnnot.filt.pass.proxy_assignments.gz", header=T, sep="\t")
 
+all_LR_pred_fusions$fusion_name_use = sapply(all_LR_pred_fusions$proxy_fusion_name, function(x) { str_split(x, "\\|")[[1]][2]  } )
 
 all_LR_pred_fusions = all_LR_pred_fusions %>% rowwise() %>% 
-    mutate(lex_ordered_fusion_name = paste0(sample, "|", paste0(collapse="--", sort(str_split(fusion, "--")[[1]]))))
+    mutate(lex_ordered_fusion_name = paste0(sample, "|", paste0(collapse="--", sort(str_split(fusion_name_use, "--")[[1]]))))
 
 ```
 

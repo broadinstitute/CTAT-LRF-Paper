@@ -83,6 +83,18 @@ both_preds %>% select(lex_ordered_fusion_name, progs, has_long_read_support) %>%
 
 ```
 
+
+```{r}
+# how many with long read support in total?
+
+
+both_preds %>% select(lex_ordered_fusion_name, progs, has_long_read_support) %>% unique() %>% 
+    filter(has_long_read_support) %>% 
+    select(lex_ordered_fusion_name) %>% unique() %>% nrow()
+
+```
+
+
 ```{r}
 
 # just those WITHOUT long read support
