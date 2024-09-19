@@ -21,12 +21,28 @@ ordered_progs = c('ctat-LR-fusion', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusio
 
 ```{r}
 
-files = c(
+ALLOW_PARALOG_PROXIES = TRUE
+
+if (ALLOW_PARALOG_PROXIES) {
+    
+     files = c(
+    "./__illum_TP_uniq_FP.starF/data/eval_illum_supported.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "./__illum_TP_uniq_FP.arriba,starF/data/eval_illum_supported.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "./__illum_TP_uniq_FP.either/data/eval_illum_supported.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "./__illum_TP_uniq_FP.arriba/data/eval_illum_supported.okPara_ignoreUnsure.results.scored.PR.AUC"
+    )
+    
+    
+} else {
+
+ files = c(
     "./__illum_TP_uniq_FP.starF/data/eval_illum_supported.ignoreUnsure.results.scored.PR.AUC",
     "./__illum_TP_uniq_FP.arriba,starF/data/eval_illum_supported.ignoreUnsure.results.scored.PR.AUC",
     "./__illum_TP_uniq_FP.either/data/eval_illum_supported.ignoreUnsure.results.scored.PR.AUC",
     "./__illum_TP_uniq_FP.arriba/data/eval_illum_supported.ignoreUnsure.results.scored.PR.AUC"
     )
+ 
+}
 
 ```
 

@@ -17,7 +17,7 @@ library(tidyverse)
 PROGS = c('ctat-LR-fusion', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion'); 
 
 
-USE_PARALOG_PROXIES = FALSE
+USE_PARALOG_PROXIES = TRUE
 
 
 if (USE_PARALOG_PROXIES) {

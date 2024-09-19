@@ -8,12 +8,28 @@ ordered_progs = c('ctat-LR-fusion', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusio
 ```
 
 ``` r
-files = c(
+ALLOW_PARALOG_PROXIES = TRUE
+
+if (ALLOW_PARALOG_PROXIES) {
+    
+     files = c(
+    "./__illum_TP_uniq_FP.starF/data/eval_illum_supported.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "./__illum_TP_uniq_FP.arriba,starF/data/eval_illum_supported.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "./__illum_TP_uniq_FP.either/data/eval_illum_supported.okPara_ignoreUnsure.results.scored.PR.AUC",
+    "./__illum_TP_uniq_FP.arriba/data/eval_illum_supported.okPara_ignoreUnsure.results.scored.PR.AUC"
+    )
+    
+    
+} else {
+
+ files = c(
     "./__illum_TP_uniq_FP.starF/data/eval_illum_supported.ignoreUnsure.results.scored.PR.AUC",
     "./__illum_TP_uniq_FP.arriba,starF/data/eval_illum_supported.ignoreUnsure.results.scored.PR.AUC",
     "./__illum_TP_uniq_FP.either/data/eval_illum_supported.ignoreUnsure.results.scored.PR.AUC",
     "./__illum_TP_uniq_FP.arriba/data/eval_illum_supported.ignoreUnsure.results.scored.PR.AUC"
     )
+ 
+}
 ```
 
 ``` r
@@ -35,19 +51,19 @@ PR_AUC_df %>% head()
 ```
 
     ##             prog  AUC
-    ## 1 ctat-LR-fusion 0.85
-    ## 2         JAFFAL 0.67
-    ## 3       pbfusion 0.60
-    ## 4         LongGF 0.59
-    ## 5   fusionseeker 0.55
-    ## 6 ctat-LR-fusion 0.88
-    ##                                                                                            fname
-    ## 1        ./__illum_TP_uniq_FP.starF/data/eval_illum_supported.ignoreUnsure.results.scored.PR.AUC
-    ## 2        ./__illum_TP_uniq_FP.starF/data/eval_illum_supported.ignoreUnsure.results.scored.PR.AUC
-    ## 3        ./__illum_TP_uniq_FP.starF/data/eval_illum_supported.ignoreUnsure.results.scored.PR.AUC
-    ## 4        ./__illum_TP_uniq_FP.starF/data/eval_illum_supported.ignoreUnsure.results.scored.PR.AUC
-    ## 5        ./__illum_TP_uniq_FP.starF/data/eval_illum_supported.ignoreUnsure.results.scored.PR.AUC
-    ## 6 ./__illum_TP_uniq_FP.arriba,starF/data/eval_illum_supported.ignoreUnsure.results.scored.PR.AUC
+    ## 1 ctat-LR-fusion 0.84
+    ## 2         JAFFAL 0.70
+    ## 3       pbfusion 0.64
+    ## 4         LongGF 0.61
+    ## 5   fusionseeker 0.59
+    ## 6 ctat-LR-fusion 0.86
+    ##                                                                                                   fname
+    ## 1        ./__illum_TP_uniq_FP.starF/data/eval_illum_supported.okPara_ignoreUnsure.results.scored.PR.AUC
+    ## 2        ./__illum_TP_uniq_FP.starF/data/eval_illum_supported.okPara_ignoreUnsure.results.scored.PR.AUC
+    ## 3        ./__illum_TP_uniq_FP.starF/data/eval_illum_supported.okPara_ignoreUnsure.results.scored.PR.AUC
+    ## 4        ./__illum_TP_uniq_FP.starF/data/eval_illum_supported.okPara_ignoreUnsure.results.scored.PR.AUC
+    ## 5        ./__illum_TP_uniq_FP.starF/data/eval_illum_supported.okPara_ignoreUnsure.results.scored.PR.AUC
+    ## 6 ./__illum_TP_uniq_FP.arriba,starF/data/eval_illum_supported.okPara_ignoreUnsure.results.scored.PR.AUC
 
 ``` r
 PR_AUC_df$type = str_replace(PR_AUC_df$fname, "./__illum_TP_uniq_FP.", "")
@@ -57,19 +73,19 @@ PR_AUC_df %>% head()
 ```
 
     ##             prog  AUC
-    ## 1 ctat-LR-fusion 0.85
-    ## 2         JAFFAL 0.67
-    ## 3       pbfusion 0.60
-    ## 4         LongGF 0.59
-    ## 5   fusionseeker 0.55
-    ## 6 ctat-LR-fusion 0.88
-    ##                                                                                            fname
-    ## 1        ./__illum_TP_uniq_FP.starF/data/eval_illum_supported.ignoreUnsure.results.scored.PR.AUC
-    ## 2        ./__illum_TP_uniq_FP.starF/data/eval_illum_supported.ignoreUnsure.results.scored.PR.AUC
-    ## 3        ./__illum_TP_uniq_FP.starF/data/eval_illum_supported.ignoreUnsure.results.scored.PR.AUC
-    ## 4        ./__illum_TP_uniq_FP.starF/data/eval_illum_supported.ignoreUnsure.results.scored.PR.AUC
-    ## 5        ./__illum_TP_uniq_FP.starF/data/eval_illum_supported.ignoreUnsure.results.scored.PR.AUC
-    ## 6 ./__illum_TP_uniq_FP.arriba,starF/data/eval_illum_supported.ignoreUnsure.results.scored.PR.AUC
+    ## 1 ctat-LR-fusion 0.84
+    ## 2         JAFFAL 0.70
+    ## 3       pbfusion 0.64
+    ## 4         LongGF 0.61
+    ## 5   fusionseeker 0.59
+    ## 6 ctat-LR-fusion 0.86
+    ##                                                                                                   fname
+    ## 1        ./__illum_TP_uniq_FP.starF/data/eval_illum_supported.okPara_ignoreUnsure.results.scored.PR.AUC
+    ## 2        ./__illum_TP_uniq_FP.starF/data/eval_illum_supported.okPara_ignoreUnsure.results.scored.PR.AUC
+    ## 3        ./__illum_TP_uniq_FP.starF/data/eval_illum_supported.okPara_ignoreUnsure.results.scored.PR.AUC
+    ## 4        ./__illum_TP_uniq_FP.starF/data/eval_illum_supported.okPara_ignoreUnsure.results.scored.PR.AUC
+    ## 5        ./__illum_TP_uniq_FP.starF/data/eval_illum_supported.okPara_ignoreUnsure.results.scored.PR.AUC
+    ## 6 ./__illum_TP_uniq_FP.arriba,starF/data/eval_illum_supported.okPara_ignoreUnsure.results.scored.PR.AUC
     ##           type
     ## 1        starF
     ## 2        starF
