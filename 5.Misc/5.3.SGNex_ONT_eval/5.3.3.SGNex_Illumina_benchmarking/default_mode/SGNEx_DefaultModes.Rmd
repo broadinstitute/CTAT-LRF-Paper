@@ -83,7 +83,8 @@ PR_AUC
 PR_AUC_barplot = PR_AUC %>% ggplot(aes(x=prog, y=AUC)) + 
     geom_col(aes(fill=prog)) + 
     theme_bw() +
-    geom_text(aes(label=AUC))
+    geom_text(aes(label=AUC)) + 
+    ylim(0,0.9)
 
 PR_AUC_barplot 
 

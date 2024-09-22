@@ -759,3 +759,113 @@ lex_sorted_validated_fusions %>% filter(! is.na(matched_illumina)) %>% nrow()
 ```
 
     ## [1] 66
+
+``` r
+lex_sorted_validated_fusions %>%  filter(! is.na(matched_illumina)) %>% group_by(matched_illumina) %>% tally()
+```
+
+    ## # A tibble: 3 × 2
+    ##   matched_illumina     n
+    ##   <chr>            <int>
+    ## 1 arriba              23
+    ## 2 starF               11
+    ## 3 starF,arriba        32
+
+``` r
+lex_sorted_validated_fusions %>%  filter(! (is.na(matched_illumina) & is.na(other_illumina))) %>% nrow()
+```
+
+    ## [1] 69
+
+``` r
+lex_sorted_validated_fusions %>%  filter(! (is.na(matched_illumina) & is.na(other_illumina))) %>% group_by(matched_illumina, other_illumina) %>% tally()
+```
+
+    ## # A tibble: 8 × 3
+    ## # Groups:   matched_illumina [4]
+    ##   matched_illumina other_illumina     n
+    ##   <chr>            <chr>          <int>
+    ## 1 arriba           arriba             1
+    ## 2 arriba           <NA>              22
+    ## 3 starF            starF              2
+    ## 4 starF            <NA>               9
+    ## 5 starF,arriba     starF,arriba       4
+    ## 6 starF,arriba     <NA>              28
+    ## 7 <NA>             starF              2
+    ## 8 <NA>             starF,arriba       1
+
+# counting trusted fusions by method
+
+``` r
+read_support_sample %>% group_by(prog, runtype) %>% filter(as_truth) %>% tally() %>% arrange(runtype, desc(n))
+```
+
+    ## # A tibble: 10 × 3
+    ## # Groups:   prog [5]
+    ##    prog           runtype                    n
+    ##    <chr>          <chr>                  <int>
+    ##  1 fusionseeker   fuzzy_brkpt_restricted    47
+    ##  2 ctat-LR-fusion fuzzy_brkpt_restricted    44
+    ##  3 JAFFAL         fuzzy_brkpt_restricted    40
+    ##  4 LongGF         fuzzy_brkpt_restricted    32
+    ##  5 pbfusion       fuzzy_brkpt_restricted    27
+    ##  6 fusionseeker   regular                   70
+    ##  7 ctat-LR-fusion regular                   43
+    ##  8 LongGF         regular                   42
+    ##  9 JAFFAL         regular                   40
+    ## 10 pbfusion       regular                   26
+
+# count the validated ones
+
+``` r
+read_support_sample %>% group_by(prog, runtype) %>% filter(validated_fusion) %>% tally() %>% arrange(runtype, desc(n))
+```
+
+    ## # A tibble: 10 × 3
+    ## # Groups:   prog [5]
+    ##    prog           runtype                    n
+    ##    <chr>          <chr>                  <int>
+    ##  1 fusionseeker   fuzzy_brkpt_restricted    27
+    ##  2 ctat-LR-fusion fuzzy_brkpt_restricted    26
+    ##  3 JAFFAL         fuzzy_brkpt_restricted    25
+    ##  4 LongGF         fuzzy_brkpt_restricted    21
+    ##  5 pbfusion       fuzzy_brkpt_restricted    14
+    ##  6 fusionseeker   regular                   28
+    ##  7 ctat-LR-fusion regular                   25
+    ##  8 JAFFAL         regular                   24
+    ##  9 LongGF         regular                   20
+    ## 10 pbfusion       regular                   13
+
+``` r
+trusted_fusions_found = read_support_sample %>%
+    filter(as_truth) %>%
+    select(prog, proxy_fusion_name, validated_fusion, matched_illumina, other_illumina)  %>%
+    unique() %>%
+    group_by(proxy_fusion_name, validated_fusion, matched_illumina, other_illumina) %>%
+    arrange(prog) %>%
+    mutate(progs = paste(collapse=",", prog)) %>%
+    select(proxy_fusion_name, validated_fusion, matched_illumina, other_illumina, progs) %>% unique() 
+    
+trusted_fusions_found
+```
+
+    ## # A tibble: 75 × 5
+    ## # Groups:   proxy_fusion_name, validated_fusion, matched_illumina,
+    ## #   other_illumina [75]
+    ##    proxy_fusion_name     validated_fusion matched_illumina other_illumina progs 
+    ##    <chr>                 <lgl>            <chr>            <chr>          <chr> 
+    ##  1 MCF7|BCAS3--BCAS4     TRUE             starF,arriba     <NA>           JAFFA…
+    ##  2 MCF7|AC099850.1--VMP1 TRUE             starF,arriba     <NA>           JAFFA…
+    ##  3 MCF7|ARFGEF2--SULF2   TRUE             starF,arriba     <NA>           JAFFA…
+    ##  4 MCF7|NBPF6--SLC25A24  TRUE             starF,arriba     <NA>           JAFFA…
+    ##  5 MCF7|PICALM--SYTL2    TRUE             starF,arriba     <NA>           JAFFA…
+    ##  6 MCF7|AHCYL1--RAD51C   TRUE             starF,arriba     <NA>           JAFFA…
+    ##  7 MCF7|CA4--TANC2       FALSE            starF,arriba     <NA>           JAFFA…
+    ##  8 MCF7|DIAPH3--RPS6KB1  TRUE             <NA>             <NA>           JAFFA…
+    ##  9 MCF7|ATP1A1--ZFP64    TRUE             starF            <NA>           JAFFA…
+    ## 10 MCF7|AP4B1-AS1--RSBN1 TRUE             starF,arriba     <NA>           JAFFA…
+    ## # ℹ 65 more rows
+
+``` r
+write.table(trusted_fusions_found, file='trusted_fusions_found.tsv', quote=F, sep="\t", row.names=F)
+```

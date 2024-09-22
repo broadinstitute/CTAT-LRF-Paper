@@ -88,7 +88,7 @@ t.test( junction_read_counts %>% filter(progs == "starF,arriba") %>% pull('junct
 ```{r}
 
 wilcox.test(junction_read_counts %>% filter(progs == "starF,arriba") %>% pull('junction_read_count'),
-        junction_read_counts %>% filter(progs == "starF") %>% pull('junction_read_count'))
+        junction_read_counts %>% filter(progs == "starF") %>% pull('junction_read_count'), alternative = 'greater')
 
 
 ```
@@ -111,7 +111,7 @@ t.test( junction_read_counts %>% filter(progs == "starF,arriba") %>% pull('junct
 ```{r}
 
 wilcox.test(junction_read_counts %>% filter(progs == "starF,arriba") %>% pull('junction_read_count'),
-        junction_read_counts %>% filter(progs == "arriba") %>% pull('junction_read_count'))
+        junction_read_counts %>% filter(progs == "arriba") %>% pull('junction_read_count'), alternative = 'greater')
 
 
 ```

@@ -73,10 +73,6 @@ read_support = read_support %>% select(-c(mapped_gencode_A_gene_list, mapped_gen
 
 
 
-
-
-
-
 ```{r}
 
 # use lex-sorted fusion name
@@ -561,3 +557,78 @@ lex_sorted_validated_fusions %>% filter(! is.na(matched_illumina)) %>% nrow()
 
 
 ```
+
+
+```{r}
+
+lex_sorted_validated_fusions %>%  filter(! is.na(matched_illumina)) %>% group_by(matched_illumina) %>% tally()
+
+
+```
+
+
+```{r}
+
+lex_sorted_validated_fusions %>%  filter(! (is.na(matched_illumina) & is.na(other_illumina))) %>% nrow()
+
+```
+
+
+```{r}
+
+lex_sorted_validated_fusions %>%  filter(! (is.na(matched_illumina) & is.na(other_illumina))) %>% group_by(matched_illumina, other_illumina) %>% tally()
+
+```
+
+# counting trusted fusions by method
+
+```{r}
+
+read_support_sample %>% group_by(prog, runtype) %>% filter(as_truth) %>% tally() %>% arrange(runtype, desc(n))
+
+
+```
+
+# count the validated ones
+
+```{r}
+
+read_support_sample %>% group_by(prog, runtype) %>% filter(validated_fusion) %>% tally() %>% arrange(runtype, desc(n))
+
+
+```
+
+
+```{r}
+
+trusted_fusions_found = read_support_sample %>%
+    filter(as_truth) %>%
+    select(prog, proxy_fusion_name, validated_fusion, matched_illumina, other_illumina)  %>%
+    unique() %>%
+    group_by(proxy_fusion_name, validated_fusion, matched_illumina, other_illumina) %>%
+    arrange(prog) %>%
+    mutate(progs = paste(collapse=",", prog)) %>%
+    select(proxy_fusion_name, validated_fusion, matched_illumina, other_illumina, progs) %>% unique() 
+    
+trusted_fusions_found
+
+```
+
+```{r}
+
+write.table(trusted_fusions_found, file='trusted_fusions_found.tsv', quote=F, sep="\t", row.names=F)
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+

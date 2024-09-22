@@ -119,15 +119,15 @@ t.test( junction_read_counts %>% filter(progs == "starF,arriba") %>% pull('junct
 
 ``` r
 wilcox.test(junction_read_counts %>% filter(progs == "starF,arriba") %>% pull('junction_read_count'),
-        junction_read_counts %>% filter(progs == "starF") %>% pull('junction_read_count'))
+        junction_read_counts %>% filter(progs == "starF") %>% pull('junction_read_count'), alternative = 'greater')
 ```
 
     ## 
     ##  Wilcoxon rank sum test with continuity correction
     ## 
     ## data:  junction_read_counts %>% filter(progs == "starF,arriba") %>% pull("junction_read_count") and junction_read_counts %>% filter(progs == "starF") %>% pull("junction_read_count")
-    ## W = 2220, p-value = 0.001695
-    ## alternative hypothesis: true location shift is not equal to 0
+    ## W = 2220, p-value = 0.0008473
+    ## alternative hypothesis: true location shift is greater than 0
 
 ``` r
 # test starF,arriba vs. arriba-only
@@ -154,12 +154,12 @@ t.test( junction_read_counts %>% filter(progs == "starF,arriba") %>% pull('junct
 
 ``` r
 wilcox.test(junction_read_counts %>% filter(progs == "starF,arriba") %>% pull('junction_read_count'),
-        junction_read_counts %>% filter(progs == "arriba") %>% pull('junction_read_count'))
+        junction_read_counts %>% filter(progs == "arriba") %>% pull('junction_read_count'), alternative = 'greater')
 ```
 
     ## 
     ##  Wilcoxon rank sum test with continuity correction
     ## 
     ## data:  junction_read_counts %>% filter(progs == "starF,arriba") %>% pull("junction_read_count") and junction_read_counts %>% filter(progs == "arriba") %>% pull("junction_read_count")
-    ## W = 1995.5, p-value = 4.796e-05
-    ## alternative hypothesis: true location shift is not equal to 0
+    ## W = 1995.5, p-value = 2.398e-05
+    ## alternative hypothesis: true location shift is greater than 0
