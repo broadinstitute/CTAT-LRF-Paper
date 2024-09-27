@@ -1,0 +1,5 @@
+Illumina data pulled from AWS via:
+    aws s3 sync --no-sign-request s3://sg-nex-data/data/sequencing_data_illumina/fastq/ .
+
+
+    
