@@ -624,7 +624,16 @@ write.table(trusted_fusions_found, file='trusted_fusions_found.tsv', quote=F, se
 
 
 
+```{r}
 
+read_support_sample_scored %>% filter(prog == "ctat-LR-fusion") %>%
+    filter(runtype == "regular") %>%
+    filter(! as_truth) %>% 
+    select(proxy_fusion_name, fusion, num_reads)
+
+
+
+```
 
 
 

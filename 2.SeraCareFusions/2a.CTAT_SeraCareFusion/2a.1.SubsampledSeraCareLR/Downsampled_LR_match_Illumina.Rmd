@@ -37,11 +37,11 @@ library(tidyverse)
 ```{r}
 # read the downsampled LR results for ctat-LRF:
 
-rep1_data = read.table("data/SeraCareFusions_Isoseq.DOWNSAMPLED.ctat-LR-fusion.fusion_predictions.tsv", header=T, sep="\t", stringsAsFactors = F, com='') %>% mutate(dataset = "ISO-seq")
+rep1_data = read.table("data/Sera.IsoSeq.subsampled_refinedOct2023.ctat-LR-fusion.fusion_predictions.tsv.gz", header=T, sep="\t", stringsAsFactors = F, com='') %>% mutate(dataset = "ISO-seq")
 
-rep2_data = read.table("data/SeraCareFusions_MASseq-bc08.DOWNSAMPLED.ctat-LR-fusion.fusion_predictions.tsv", header=T, sep="\t", stringsAsFactors = F, com='') %>% mutate(dataset = "MAS-seq-R1")
+rep2_data = read.table("data/Sera.bc_08.subsampled_refinedOct2023.ctat-LR-fusion.fusion_predictions.tsv.gz", header=T, sep="\t", stringsAsFactors = F, com='') %>% mutate(dataset = "MAS-seq-R1")
 
-rep3_data = read.table("data/SeraCareFusions_MASseq-bc09.DOWNSAMPLED.ctat-LR-fusion.fusion_predictions.tsv", header=T, sep="\t", stringsAsFactors = F, com='') %>% mutate(dataset = "MAS-seq-R2")
+rep3_data = read.table("data/Sera.bc09.subsampled_refinedOct2023.ctat-LR-fusion.fusion_predictions.tsv.gz", header=T, sep="\t", stringsAsFactors = F, com='') %>% mutate(dataset = "MAS-seq-R2")
 
 LR_downsampled_results = bind_rows(rep1_data, rep2_data, rep3_data) %>%
     rename(FusionName = X.FusionName)

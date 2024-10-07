@@ -34,13 +34,13 @@ control_fusions
 
 # read in the ctat-LRF fusion predictions for each of the three samples
 
-rep1_data = read.table("data/ctatLRF_FI/SeraCareFusions_Isoseq.ctat-LR-fusion.fusion_predictions.tsv.gz", header=T, com='', sep="\t") %>%
+rep1_data = read.table("data/ctatLRF_FI/SeraCarev4Fusion.IsoSeq.m64020e_230609_061545.refined.Oct32023.ctat-LR-fusion.fusion_predictions.tsv.gz", header=T, com='', sep="\t") %>%
     mutate(dataset= 'ISO-seq')
 
-rep2_data = read.table("data/ctatLRF_FI/SeraCareFusions_MASseq-bc08.ctat-LR-fusion.fusion_predictions.tsv.gz", header=T, com='', sep="\t") %>%
+rep2_data = read.table("data/ctatLRF_FI/SeraCarev4Fusion.m64363e_230614_195212.refine.bc08.MASseq.ctat-LR-fusion.fusion_predictions.tsv.gz", header=T, com='', sep="\t") %>%
     mutate(dataset = 'MAS-seq-R1')
 
-rep3_data = read.table("data/ctatLRF_FI/SeraCareFusions_MASseq-bc09.ctat-LR-fusion.fusion_predictions.tsv.gz", header=T, com='', sep="\t") %>%
+rep3_data = read.table("data/ctatLRF_FI/SeraCarev4Fusion.m64363e_230614_195212.refine.bc09.MASseq.ctat-LR-fusion.fusion_predictions.tsv.gz", header=T, com='', sep="\t") %>%
     mutate(dataset = 'MAS-seq-R2')
 
 

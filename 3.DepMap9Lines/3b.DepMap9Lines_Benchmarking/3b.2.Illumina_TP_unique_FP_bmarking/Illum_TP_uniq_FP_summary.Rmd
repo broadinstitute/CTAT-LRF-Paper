@@ -96,7 +96,12 @@ ggsave(illum_fusion_acc_barplot, filename = "illum_fusion_accuracy_barplot.svg",
 ```
 
 
+```{r}
 
+write.table(PR_AUC_df, file="PR_AUC_df.summary.tsv", quote=F, sep="\t", row.names=F)
+
+
+```
 
 
 

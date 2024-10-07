@@ -199,7 +199,7 @@
 <polyline points='216.17,281.76 216.17,210.35 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
 <polyline points='238.92,281.76 238.92,210.35 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
 <polyline points='261.67,281.76 261.67,210.35 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
-<rect x='160.44' y='264.00' width='20.47' height='14.51' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #F8766D;' />
+<rect x='160.44' y='264.77' width='20.47' height='13.75' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #F8766D;' />
 <rect x='183.19' y='267.06' width='20.47' height='11.46' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #A3A500;' />
 <rect x='205.94' y='267.06' width='20.47' height='11.46' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #00BF7D;' />
 <rect x='228.68' y='245.67' width='20.47' height='32.84' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #00B0F6;' />
@@ -230,7 +230,7 @@
 <polyline points='339.94,93.92 339.94,22.50 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
 <polyline points='362.68,93.92 362.68,22.50 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
 <polyline points='385.43,93.92 385.43,22.50 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
-<rect x='284.21' y='76.16' width='20.47' height='14.51' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #F8766D;' />
+<rect x='284.21' y='76.93' width='20.47' height='13.75' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #F8766D;' />
 <rect x='306.95' y='79.22' width='20.47' height='11.46' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #A3A500;' />
 <rect x='329.70' y='80.74' width='20.47' height='9.93' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #00BF7D;' />
 <rect x='352.45' y='47.14' width='20.47' height='43.54' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #00B0F6;' />
@@ -292,12 +292,12 @@
 <polyline points='339.94,281.76 339.94,210.35 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
 <polyline points='362.68,281.76 362.68,210.35 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
 <polyline points='385.43,281.76 385.43,210.35 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
-<rect x='284.21' y='251.02' width='20.47' height='27.50' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #F8766D;' />
+<rect x='284.21' y='251.78' width='20.47' height='26.73' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #F8766D;' />
 <rect x='306.95' y='257.13' width='20.47' height='21.39' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #A3A500;' />
 <rect x='329.70' y='261.71' width='20.47' height='16.80' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #00BF7D;' />
 <rect x='352.45' y='213.59' width='20.47' height='64.92' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #00B0F6;' />
 <rect x='375.20' y='260.95' width='20.47' height='17.57' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #E76BF3;' />
-<line x1='280.80' y1='254.84' x2='399.08' y2='254.84' style='stroke-width: 1.07; stroke-linecap: butt;' />
+<line x1='280.80' y1='255.60' x2='399.08' y2='255.60' style='stroke-width: 1.07; stroke-linecap: butt;' />
 <rect x='280.80' y='210.35' width='118.28' height='71.42' style='stroke-width: 1.07; stroke: #333333;' />
 </g>
 <g clip-path='url(#cpMC4wMHw1MDQuMDB8MC4wMHwzNjAuMDA=)'>
