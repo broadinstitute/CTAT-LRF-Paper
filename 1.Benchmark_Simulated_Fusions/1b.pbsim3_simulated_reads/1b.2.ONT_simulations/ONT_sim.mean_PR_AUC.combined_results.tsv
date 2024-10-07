@@ -1,41 +1,41 @@
 analysisType	prog	coverage_level	mean_AUC
-strict	pbfusion	cov5	0.9
-strict	ctat-LR-fusion	cov5	0.884
-strict	JAFFAL	cov5	0.848
+strict	pbfusion	cov5	0.904
+strict	ctat-LR-fusion	cov5	0.886
+strict	JAFFAL	cov5	0.85
 strict	fusionseeker	cov5	0.236
 strict	LongGF	cov5	0.23
 strict	pbfusion	cov50	0.908
 strict	JAFFAL	cov50	0.892
-strict	ctat-LR-fusion	cov50	0.886
+strict	ctat-LR-fusion	cov50	0.882
 strict	LongGF	cov50	0.244
 strict	fusionseeker	cov50	0.24
 allow_reverse	fusionseeker	cov5	0.906
-allow_reverse	pbfusion	cov5	0.9
-allow_reverse	ctat-LR-fusion	cov5	0.884
+allow_reverse	pbfusion	cov5	0.904
+allow_reverse	ctat-LR-fusion	cov5	0.886
 allow_reverse	LongGF	cov5	0.88
-allow_reverse	JAFFAL	cov5	0.848
-allow_reverse	fusionseeker	cov50	0.93
+allow_reverse	JAFFAL	cov5	0.85
+allow_reverse	fusionseeker	cov50	0.932
+allow_reverse	LongGF	cov50	0.91
 allow_reverse	pbfusion	cov50	0.908
-allow_reverse	LongGF	cov50	0.906
 allow_reverse	JAFFAL	cov50	0.892
-allow_reverse	ctat-LR-fusion	cov50	0.886
-Exact Brkpt	ctat-LR-fusion	cov5	0.92
+allow_reverse	ctat-LR-fusion	cov50	0.882
+Exact Brkpt	ctat-LR-fusion	cov5	0.934
 Exact Brkpt	JAFFAL	cov5	0.838
 Exact Brkpt	pbfusion	cov5	0.004
 Exact Brkpt	LongGF	cov5	0
 Exact Brkpt	fusionseeker	cov5	0
-Exact Brkpt	ctat-LR-fusion	cov50	0.928
+Exact Brkpt	ctat-LR-fusion	cov50	0.94
 Exact Brkpt	JAFFAL	cov50	0.91
 Exact Brkpt	pbfusion	cov50	0.004
 Exact Brkpt	LongGF	cov50	0
 Exact Brkpt	fusionseeker	cov50	0
-Fuzzy Brkpt	ctat-LR-fusion	cov5	0.92
-Fuzzy Brkpt	fusionseeker	cov5	0.894
-Fuzzy Brkpt	JAFFAL	cov5	0.88
-Fuzzy Brkpt	pbfusion	cov5	0.864
-Fuzzy Brkpt	LongGF	cov5	0.814
+Fuzzy Brkpt	ctat-LR-fusion	cov5	0.934
+Fuzzy Brkpt	fusionseeker	cov5	0.896
+Fuzzy Brkpt	JAFFAL	cov5	0.884
+Fuzzy Brkpt	pbfusion	cov5	0.866
+Fuzzy Brkpt	LongGF	cov5	0.816
+Fuzzy Brkpt	ctat-LR-fusion	cov50	0.94
 Fuzzy Brkpt	JAFFAL	cov50	0.936
-Fuzzy Brkpt	ctat-LR-fusion	cov50	0.928
-Fuzzy Brkpt	fusionseeker	cov50	0.928
+Fuzzy Brkpt	fusionseeker	cov50	0.926
 Fuzzy Brkpt	pbfusion	cov50	0.89
-Fuzzy Brkpt	LongGF	cov50	0.868
+Fuzzy Brkpt	LongGF	cov50	0.87
