@@ -66,8 +66,8 @@ get_ctat_LRF_data = function(ctat_LRF_preds_file) {
     ctat_LRF_data = read.table(ctat_LRF_preds_file, sep="\t", stringsAsFactors = F, header=T, com='')
     
     ctat_LRF_data = ctat_LRF_data %>% 
+        select(X.FusionName, LeftBreakpoint, RightBreakpoint, LR_accessions) %>%
         rename(FusionName=X.FusionName, JunctionReads=LR_accessions) %>%
-        select(FusionName, LeftBreakpoint, RightBreakpoint, JunctionReads) %>%
         mutate(JunctionReads = str_split(JunctionReads, ",")) %>%
         unnest(JunctionReads) %>%
         separate(JunctionReads, c('cell_barcode', 'umi', 'read_name'), "\\^") %>%
