@@ -221,7 +221,7 @@ read_support_sample %>% filter(validated_fusion) %>%
 
 ```{r}
 
-illumina_support_info = read.csv("5.3.1.SGNex_Matched_Illumina/SGNEx_Illumina_supported_fusions.tsv", header=T, sep="\t")
+illumina_support_info = read.csv("6.1.SGNex_Matched_Illumina/SGNEx_Illumina_supported_fusions.tsv", header=T, sep="\t")
 
 illumina_support_info %>% head()
 
@@ -255,7 +255,7 @@ read_support_sample %>% filter(validated_fusion | !is.na(matched_illumina)) %>%
 
 ```{r}
 
-our_illumina_reads = read.csv("../../3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.1.IlluminaTruSeqDepMap9Lines/Illumina_supported_fusions.tsv", header=T, sep="\t")
+our_illumina_reads = read.csv("../3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/3b.1.IlluminaTruSeqDepMap9Lines/Illumina_supported_fusions.tsv", header=T, sep="\t")
 
 
 read_support_sample = left_join(read_support_sample, 
@@ -501,8 +501,9 @@ read_support_sample %>% ungroup() %>% select(prog, lex_sorted_fusion_name, runty
 # write supp data table
 
 write.table(read_support_sample_scored %>% 
-                arrange(runtype, prog, desc(num_reads), num_valid, num_other) %>%
-                select(proxy_fusion_name, sample, prog, num_reads, runtype, as_truth, validated_fusion, matched_illumina, other_illumina), 
+                filter(runtype == "regular") %>%
+                arrange(prog, desc(num_reads), num_valid, num_other) %>%
+                select(proxy_fusion_name, sample, prog, num_reads, validated_fusion, matched_illumina, other_illumina), 
             file="Table_Sx-ONT_fusions_by_method.tsv", 
             sep="\t", quote=F, row.names=F)
 
