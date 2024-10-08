@@ -183,7 +183,9 @@ PR_AUC_df$prog = factor(PR_AUC_df$prog, levels = program_overall_ranking)
 
 ```{r}
 
-summary_PR_AUC_violin_plot = PR_AUC_df %>% ggplot(aes(x=prog, y=-1 * ranking)) + geom_violin() +
+summary_PR_AUC_violin_plot = PR_AUC_df %>% 
+    #filter(min_reads >= 1) %>%
+    ggplot(aes(x=prog, y=-1 * ranking)) + geom_violin() +
     geom_jitter(aes(color=min_reads, shape=as.factor(min_progs_agree)), width=0.2, height=0.075) +
     theme_bw()
 

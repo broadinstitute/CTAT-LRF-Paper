@@ -1,9 +1,8 @@
 proxy_fusion_name	prog_names	num_progs
+HCC1187|RHOA--DAG1	LongGF,fusionseeker	2
+SKBR3|ABCB9--ACOT13	JAFFAL,fusionseeker	2
+HCC1395|ST3GAL4--RP11-115C10.1	ctat-LR-fusion,pbfusion	2
 DMS53|CECR7--bP-2189O9.3	JAFFAL,ctat-LR-fusion	2
 VCAP|DSCR3--TTC3	ctat-LR-fusion,pbfusion	2
-VCAP|USP10--ZDHHC7	JAFFAL,fusionseeker	2
 HCC1395|CH507-528H12.1--PDIA5	fusionseeker,pbfusion	2
-SKBR3|ABCB9--ACOT13	JAFFAL,fusionseeker	2
-HCC1187|RHOA--DAG1	LongGF,fusionseeker	2
-HCC1395|ST3GAL4--RP11-115C10.1	ctat-LR-fusion,pbfusion	2
-VCAP|ABCB9--USP10	ctat-LR-fusion,fusionseeker	2
+VCAP|USP10--ZDHHC7	JAFFAL,fusionseeker	2
