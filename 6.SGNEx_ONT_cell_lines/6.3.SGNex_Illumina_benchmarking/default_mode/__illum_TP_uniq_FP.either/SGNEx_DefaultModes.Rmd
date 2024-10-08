@@ -1,0 +1,101 @@
+---
+title: "SGNEx_DefaultMode"
+author: "bhaas"
+date: '2024-09-19'
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+```{r}
+
+ALLOW_PARALOG_PROXIES = TRUE
+
+```
+
+
+```{r}
+
+if (ALLOW_PARALOG_PROXIES) { 
+
+    ROC_data = read.csv("data/eval_supported.okPara_ignoreUnsure.results.scored.ROC", header=T, sep="\t")
+
+} else {
+    
+    ROC_data = read.csv("data/eval_supported.ignoreUnsure.results.scored.ROC", header=T, sep="\t")
+}
+
+ROC_data %>% head()
+
+
+```
+
+```{r}
+
+PROGS = c('ctat-LR-fusion', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion')
+
+ROC_data$prog = factor(ROC_data$prog, levels=PROGS)
+
+```
+
+
+```{r}
+
+PR_plot = ROC_data %>% ggplot(aes(x=TPR, y=PPV)) + 
+    theme_bw() +
+    geom_point(aes(color=prog)) + geom_line(aes(color=prog))
+
+PR_plot
+
+```
+
+```{r}
+
+ggsave(PR_plot, filename = paste0("SGNEx_DefaultMode.PR_plot.PARA-OK=", ALLOW_PARALOG_PROXIES, ".svg"), height = 4, width=6 )
+
+```
+
+
+```{r}
+
+if (ALLOW_PARALOG_PROXIES) {
+    
+    PR_AUC = read.csv("data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC", header=F, sep="\t")
+
+} else {
+    
+    PR_AUC = read.csv("data/eval_supported.ignoreUnsure.results.scored.PR.AUC", header=F, sep="\t")
+}
+    
+colnames(PR_AUC) = c('prog', 'AUC')
+
+PR_AUC$prog = factor(PR_AUC$prog, levels=PROGS)
+
+PR_AUC
+
+```
+
+```{r}
+
+PR_AUC_barplot = PR_AUC %>% ggplot(aes(x=prog, y=AUC)) + 
+    geom_col(aes(fill=prog)) + 
+    theme_bw() +
+    geom_text(aes(label=AUC)) #+ 
+    #ylim(0,0.9)
+
+PR_AUC_barplot 
+
+```
+
+
+```{r}
+
+ggsave(PR_AUC_barplot, filename = paste0("SGNEx_DefaultMode.PR_AUC.barplot.PARA-OK=", ALLOW_PARALOG_PROXIES, ".svg"), height=4, width=6 )
+
+
+```
+
+
