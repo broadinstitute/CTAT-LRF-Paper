@@ -307,7 +307,7 @@ setdiff(lex_sorted_validated_fusions, read_support_sample %>% select(lex_sorted_
 
 ```{r}
 
-read_support_sample = read_support_sample%>% mutate(as_truth = (validated_fusion | !is.na(matched_illumina) | !is.na(other_illumina)) )
+read_support_sample = read_support_sample %>% mutate(as_truth = (validated_fusion | !is.na(matched_illumina) | !is.na(other_illumina)) )
 
 ```
 
@@ -632,6 +632,55 @@ read_support_sample_scored %>% filter(prog == "ctat-LR-fusion") %>%
     filter(! as_truth) %>% 
     select(proxy_fusion_name, fusion, num_reads)
 
+
+
+```
+
+
+
+
+```{r}
+# Examine Venn for valid and illumina support for trusted fusions
+
+trusted_fusions_found %>% mutate(matched_illumina = ifelse(is.na(matched_illumina), other_illumina, matched_illumina)) %>%
+    group_by(validated_fusion, matched_illumina) %>% tally()
+
+
+```
+
+```{r}
+
+# include lex sorted fusion name
+trusted_fusions_found_adj = trusted_fusions_found %>% mutate(matched_illumina = ifelse(is.na(matched_illumina), other_illumina, matched_illumina)) %>%
+    rowwise() %>% mutate(lex_ordered_fusion_name = make_lex_sorted_fusion_name(proxy_fusion_name))
+
+
+trusted_fusions_found_adj  = left_join(trusted_fusions_found_adj,
+                                       illumina_support_info %>% select(lex_ordered_fusion_name, FFPM) %>% 
+                                           group_by(lex_ordered_fusion_name) %>% arrange(desc(FFPM)) %>% filter(row_number() == 1) %>% ungroup(),
+                                       by='lex_ordered_fusion_name')
+
+
+```
+
+
+```{r}
+
+trusted_fusions_found_adj %>% ggplot(aes(x=matched_illumina, y=FFPM)) + geom_jitter(aes(color=matched_illumina)) +
+    theme_bw() +
+    scale_y_continuous(trans='log10')
+
+
+```
+
+
+
+```{r}
+
+
+wilcox.test(trusted_fusions_found_adj %>% filter(matched_illumina == "starF,arriba") %>% pull(FFPM),
+            trusted_fusions_found_adj %>% filter(matched_illumina == "starF") %>% pull(FFPM),
+            alternative = 'greater')
 
 
 ```

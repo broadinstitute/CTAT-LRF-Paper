@@ -110,7 +110,7 @@ table(StarF_data$has_long_read_support)
 ```{r}
 
 write.table(StarF_data %>% 
-                select(sample, FusionName, est_J, est_S, SpliceType, lex_ordered_fusion_name,
+                select(sample, FusionName, est_J, est_S, FFPM, SpliceType, lex_ordered_fusion_name,
                        has_long_read_support, num_progs, progs
                        ) %>%
                 arrange(sample, desc(est_J), desc(est_S)),
