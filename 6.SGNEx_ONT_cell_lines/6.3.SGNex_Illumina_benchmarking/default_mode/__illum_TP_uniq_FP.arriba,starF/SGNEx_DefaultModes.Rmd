@@ -181,6 +181,9 @@ truth_fusions_by_progs %>% filter(! grepl("ctat", progs))
 
 ```
 
+MCF7|TANC2--TLK2 was found in phase-1 but disregarded because not within max exon delta (50 bases).
+
+
 ```{r}
 
 # which did JAFFAL miss?
