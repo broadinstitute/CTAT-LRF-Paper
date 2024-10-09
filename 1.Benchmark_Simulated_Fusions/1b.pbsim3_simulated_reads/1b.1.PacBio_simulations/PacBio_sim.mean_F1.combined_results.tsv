@@ -1,24 +1,24 @@
 rep_num	coverage_level	pass_count	prog	analysisType	mean_F1
-rep1	cov5	20	JAFFAL	allow_reverse	0.893
-rep1	cov5	20	JAFFAL	strict	0.893
-rep1	cov5	20	LongGF	allow_reverse	0.9156
-rep1	cov5	20	LongGF	strict	0.4716
-rep1	cov5	20	ctat-LR-fusion	allow_reverse	0.93
-rep1	cov5	20	ctat-LR-fusion	strict	0.93
-rep1	cov5	20	fusionseeker	allow_reverse	0.9248
-rep1	cov5	20	fusionseeker	strict	0.472
-rep1	cov5	20	pbfusion	allow_reverse	0.9348
-rep1	cov5	20	pbfusion	strict	0.9348
-rep1	cov50	20	JAFFAL	allow_reverse	0.909
-rep1	cov50	20	JAFFAL	strict	0.909
-rep1	cov50	20	LongGF	allow_reverse	0.9276
-rep1	cov50	20	LongGF	strict	0.4778
-rep1	cov50	20	ctat-LR-fusion	allow_reverse	0.937
-rep1	cov50	20	ctat-LR-fusion	strict	0.937
-rep1	cov50	20	fusionseeker	allow_reverse	0.935
-rep1	cov50	20	fusionseeker	strict	0.4808
-rep1	cov50	20	pbfusion	allow_reverse	0.936
-rep1	cov50	20	pbfusion	strict	0.936
+rep1	cov5	20	JAFFAL	allow_reverse	0.9168
+rep1	cov5	20	JAFFAL	strict	0.9168
+rep1	cov5	20	LongGF	allow_reverse	0.9354
+rep1	cov5	20	LongGF	strict	0.4812
+rep1	cov5	20	ctat-LR-fusion	allow_reverse	0.959
+rep1	cov5	20	ctat-LR-fusion	strict	0.959
+rep1	cov5	20	fusionseeker	allow_reverse	0.9518
+rep1	cov5	20	fusionseeker	strict	0.485
+rep1	cov5	20	pbfusion	allow_reverse	0.9628
+rep1	cov5	20	pbfusion	strict	0.9628
+rep1	cov50	20	JAFFAL	allow_reverse	0.9348
+rep1	cov50	20	JAFFAL	strict	0.9348
+rep1	cov50	20	LongGF	allow_reverse	0.9476
+rep1	cov50	20	LongGF	strict	0.4888
+rep1	cov50	20	ctat-LR-fusion	allow_reverse	0.966
+rep1	cov50	20	ctat-LR-fusion	strict	0.966
+rep1	cov50	20	fusionseeker	allow_reverse	0.959
+rep1	cov50	20	fusionseeker	strict	0.492
+rep1	cov50	20	pbfusion	allow_reverse	0.9646
+rep1	cov50	20	pbfusion	strict	0.9646
 NA	cov5	20	JAFFAL	Exact Brkpt	0.8846
 NA	cov5	20	LongGF	Exact Brkpt	0.0188
 NA	cov5	20	ctat-LR-fusion	Exact Brkpt	0.958
@@ -28,7 +28,7 @@ NA	cov5	20	JAFFAL	Fuzzy Brkpt	0.9096
 NA	cov5	20	LongGF	Fuzzy Brkpt	0.9248
 NA	cov5	20	ctat-LR-fusion	Fuzzy Brkpt	0.958
 NA	cov5	20	fusionseeker	Fuzzy Brkpt	0.9324
-NA	cov5	20	pbfusion	Fuzzy Brkpt	0.9178
+NA	cov5	20	pbfusion	Fuzzy Brkpt	0.9186
 NA	cov50	20	JAFFAL	Exact Brkpt	0.899
 NA	cov50	20	LongGF	Exact Brkpt	0.0242
 NA	cov50	20	ctat-LR-fusion	Exact Brkpt	0.962
@@ -38,4 +38,4 @@ NA	cov50	20	JAFFAL	Fuzzy Brkpt	0.925
 NA	cov50	20	LongGF	Fuzzy Brkpt	0.9328
 NA	cov50	20	ctat-LR-fusion	Fuzzy Brkpt	0.962
 NA	cov50	20	fusionseeker	Fuzzy Brkpt	0.9076
-NA	cov50	20	pbfusion	Fuzzy Brkpt	0.9204
+NA	cov50	20	pbfusion	Fuzzy Brkpt	0.9206

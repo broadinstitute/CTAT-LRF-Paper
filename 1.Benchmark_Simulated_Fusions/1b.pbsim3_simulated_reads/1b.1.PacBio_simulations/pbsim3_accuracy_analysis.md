@@ -110,11 +110,11 @@ combined_results %>% head()
     ##   rep_num coverage_level pass_count prog   analysisType        mean_F1
     ##   <chr>   <chr>               <dbl> <chr>  <chr>                 <dbl>
     ## 1 rep1    cov5                    5 JAFFAL allow_revNparalogs    0.971
-    ## 2 rep1    cov5                    5 JAFFAL allow_reverse         0.915
-    ## 3 rep1    cov5                    5 JAFFAL strict                0.915
+    ## 2 rep1    cov5                    5 JAFFAL allow_reverse         0.940
+    ## 3 rep1    cov5                    5 JAFFAL strict                0.940
     ## 4 rep1    cov5                    5 JAFFAL strict_and_paralogs   0.971
-    ## 5 rep1    cov5                    5 LongGF allow_revNparalogs    0.972
-    ## 6 rep1    cov5                    5 LongGF allow_reverse         0.931
+    ## 5 rep1    cov5                    5 LongGF allow_revNparalogs    0.973
+    ## 6 rep1    cov5                    5 LongGF allow_reverse         0.952
 
 ``` r
 combined_results %>%
@@ -240,12 +240,12 @@ combined_AUC_results %>% head()
 ```
 
     ##   analysisType           prog rep_num coverage_level pass_count mean_AUC
-    ## 1       strict       pbfusion    rep1           cov5          5    0.904
-    ## 2       strict ctat-LR-fusion    rep1           cov5          5    0.888
-    ## 3       strict         JAFFAL    rep1           cov5          5    0.858
-    ## 4       strict         LongGF    rep1           cov5          5    0.240
-    ## 5       strict   fusionseeker    rep1           cov5          5    0.236
-    ## 6       strict       pbfusion    rep1           cov5         10    0.898
+    ## 1       strict       pbfusion    rep1           cov5          5    0.956
+    ## 2       strict ctat-LR-fusion    rep1           cov5          5    0.940
+    ## 3       strict         JAFFAL    rep1           cov5          5    0.908
+    ## 4       strict   fusionseeker    rep1           cov5          5    0.252
+    ## 5       strict         LongGF    rep1           cov5          5    0.248
+    ## 6       strict       pbfusion    rep1           cov5         10    0.954
 
 ``` r
 combined_AUC_results %>%

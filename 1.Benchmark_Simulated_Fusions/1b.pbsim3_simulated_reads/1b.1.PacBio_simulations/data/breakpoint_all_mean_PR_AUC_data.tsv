@@ -39,9 +39,9 @@ LongGF	rep1	pass5	cov5	0.894	Fuzzy Brkpt
 fusionseeker	rep1	pass5	cov5	0.892	Fuzzy Brkpt
 LongGF	rep1	pass10	cov5	0.89	Fuzzy Brkpt
 LongGF	rep1	pass20	cov5	0.88	Fuzzy Brkpt
-pbfusion	rep1	pass5	cov5	0.874	Fuzzy Brkpt
-pbfusion	rep1	pass10	cov5	0.864	Fuzzy Brkpt
-pbfusion	rep1	pass20	cov5	0.862	Fuzzy Brkpt
+pbfusion	rep1	pass5	cov5	0.876	Fuzzy Brkpt
+pbfusion	rep1	pass10	cov5	0.868	Fuzzy Brkpt
+pbfusion	rep1	pass20	cov5	0.864	Fuzzy Brkpt
 JAFFAL	rep1	pass10	cov5	0.856	Fuzzy Brkpt
 JAFFAL	rep1	pass20	cov5	0.848	Fuzzy Brkpt
 JAFFAL	rep1	pass5	cov50	0.942	Fuzzy Brkpt
@@ -55,7 +55,7 @@ LongGF	rep1	pass10	cov50	0.92	Fuzzy Brkpt
 LongGF	rep1	pass20	cov50	0.906	Fuzzy Brkpt
 JAFFAL	rep1	pass20	cov50	0.892	Fuzzy Brkpt
 fusionseeker	rep1	pass10	cov50	0.888	Fuzzy Brkpt
+pbfusion	rep1	pass5	cov50	0.884	Fuzzy Brkpt
 pbfusion	rep1	pass10	cov50	0.882	Fuzzy Brkpt
-pbfusion	rep1	pass5	cov50	0.88	Fuzzy Brkpt
-pbfusion	rep1	pass20	cov50	0.874	Fuzzy Brkpt
+pbfusion	rep1	pass20	cov50	0.878	Fuzzy Brkpt
 fusionseeker	rep1	pass20	cov50	0.858	Fuzzy Brkpt
