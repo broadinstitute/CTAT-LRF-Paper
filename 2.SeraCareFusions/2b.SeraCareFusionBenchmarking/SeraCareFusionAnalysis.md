@@ -10,13 +10,13 @@ data = read.table("data/seracarefusion.allow_rev.combined_results.ROC.tsv", head
 head(data)
 ```
 
-    ##      seqtype         prog min_sum_frags TP    FP FN  TPR  PPV    F1
-    ## 1 MAS-seq-L2 fusionseeker             1 15 18149  1 0.94 0.00 0.000
-    ## 2 MAS-seq-L2 fusionseeker             2 15   978  1 0.94 0.02 0.039
-    ## 3 MAS-seq-L2 fusionseeker             3 15    87  1 0.94 0.15 0.259
-    ## 4 MAS-seq-L2 fusionseeker             4 15    38  1 0.94 0.28 0.431
-    ## 5 MAS-seq-L2 fusionseeker             5 15    18  1 0.94 0.45 0.609
-    ## 6 MAS-seq-L2 fusionseeker             6 15    17  1 0.94 0.47 0.627
+    ##      seqtype   prog min_sum_frags TP   FP FN  TPR  PPV    F1
+    ## 1 MAS-seq-L2 JAFFAL             1 15 1258  1 0.94 0.01 0.020
+    ## 2 MAS-seq-L2 JAFFAL             2 15  103  1 0.94 0.13 0.228
+    ## 3 MAS-seq-L2 JAFFAL             3 15    8  1 0.94 0.65 0.769
+    ## 4 MAS-seq-L2 JAFFAL             4 15    6  1 0.94 0.71 0.809
+    ## 5 MAS-seq-L2 JAFFAL             5 15    4  1 0.94 0.79 0.858
+    ## 6 MAS-seq-L2 JAFFAL            19 15    3  1 0.94 0.83 0.882
 
 ``` r
 TP_plot = data %>% 
@@ -46,55 +46,55 @@ fusion_preds = bind_rows(Isoseq_fusions, Masseq_L1_fusions, Masseq_L2_fusions)
 fusion_preds %>% head()
 ```
 
-    ##   pred_class  sample         prog            fusion
-    ## 1         TP ISO-seq fusionseeker        KIF5B--RET
-    ## 2         TP ISO-seq fusionseeker     SLC34A2--ROS1
-    ## 3         TP ISO-seq fusionseeker      TACC3--FGFR3
-    ## 4         FP ISO-seq fusionseeker AC096579.13--IGKC
-    ## 5         TP ISO-seq fusionseeker       LMNA--NTRK1
-    ## 6         TP ISO-seq fusionseeker        CD74--ROS1
-    ##                       breakpoint num_reads
-    ## 1 chr10:32017142--chr10:43114478        65
-    ## 2  chr4:25664329--chr6:117324416        59
-    ## 3     chr4:1739701--chr4:1806935        58
-    ## 4   chr2:88861257--chr2:88897782        57
-    ## 5 chr1:156130774--chr1:156874903        51
-    ## 6 chr5:150404679--chr6:117324416        50
-    ##                                                              mapped_gencode_A_gene_list
-    ## 1                                                                      CCDC7,KIF5B,ZEB1
-    ## 2                                                                 RP11-302F12.1,SLC34A2
-    ## 3                                                              AC016773.1,TACC3,TMEM129
-    ## 4 AC096579.13,AC096579.7,IGKC,IGKJ2,IGKJ3,IGKJ4,IGKJ5,IGKV1-8,IGKV3-11,MIR4436A,RNY4P15
-    ## 5                    AL355388.1,LAMTOR2,LMNA,MEX3A,RAB25,SEMA4A,SLC25A44,SNORA26,UBQLN4
-    ## 6                                                ABLIM3,CD74,CTB-113P19.4,RP11-331K21.1
-    ##                                                                                                                                                                                                                                                                                                                                                                                                                                                 mapped_gencode_B_gene_list
-    ## 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                      RET
-    ## 2                                                                                                                                                                                                                                                                                                                                                                                                 FAM162B,GOPC,KPNA5,RN7SKP18,RN7SKP51,ROS1,RP11-632C17__A.1,SLC35F1,ZUFSP
-    ## 3                                                                                                                                                                                                                                                                                                                                                                                                                                                              FGFR3,LETM1
-    ## 4 AC012671.1,AC012671.2,AC012671.3,AC012671.4,AC062029.1,AC096579.13,AC104134.2,EIF2AK3,FOXI3,IGKC,IGKJ1,IGKJ2,IGKJ3,IGKJ4,IGKJ5,IGKV1-12,IGKV1-13,IGKV1-16,IGKV1-17,IGKV1-22,IGKV1-27,IGKV1-5,IGKV1-6,IGKV1-8,IGKV1-9,IGKV2-10,IGKV2-14,IGKV2-18,IGKV2-19,IGKV2-23,IGKV2-24,IGKV2-26,IGKV2-28,IGKV2-29,IGKV2-30,IGKV2-4,IGKV3-11,IGKV3-15,IGKV3-20,IGKV3-25,IGKV3-7,IGKV4-1,IGKV5-2,IGKV6-21,IGKV7-3,MRPL45P1,PGBD4P5,RNU6-1007P,RNU6-1168P,RNU6-568P,RP11-421K23.1,TEX37
-    ## 5                                                                                                                                                                                                                                                                                                                                                                                                                ARHGEF11,HDGF,INSRR,LRRC71,MIR765,NTRK1,PEAR1,PRCC,SH2D2A
-    ## 6                                                                                                                                                                                                                                                                                                                                                                                                 FAM162B,GOPC,KPNA5,RN7SKP18,RN7SKP51,ROS1,RP11-632C17__A.1,SLC35F1,ZUFSP
-    ##                                                                                                                                                                                                                              annots
-    ## 1                                                         [RET:OncomapV4_panel,RET:ArcherDX_panel,RET:Oncogene,RET:FoundationOne_panel,RET:OncocartaV1_panel];[ChimerKB,ChimerPub,Cosmic,ChimerSeq];INTRACHROMOSOMAL[chr10:11.02Mb]
-    ## 2   [SLC34A2:Oncogene];[ROS1:Oncogene,ROS1:FoundationOne_panel,ROS1:ArcherDX_panel];[Cosmic,ChimerPub,ChimerKB,ChimerSeq,chimerdb_pubmed,CCLE_StarF2019,TCGA_StarF2019,GUO2018CR_TCGA,Klijn_CellLines];INTERCHROMOSOMAL[chr4--chr6]
-    ## 3                                         [TACC3:Oncogene];[FGFR3:OncocartaV1_panel,FGFR3:ArcherDX_panel,FGFR3:Oncogene,FGFR3:FoundationOne_panel,FGFR3:OncomapV4_panel];[ChimerPub];INTRACHROMOSOMAL[chr4:0.05Mb];NEIGHBORS[48131]
-    ## 4                                                                                                                                                                                                                                 .
-    ## 5                                                                                          [NTRK1:FoundationOne_panel,NTRK1:Oncogene,NTRK1:ArcherDX_panel];[ChimerKB,Cosmic,TCGA_StarF2019,ChimerPub];INTRACHROMOSOMAL[chr1:0.68Mb]
-    ## 6 [CD74:Oncogene];[ROS1:Oncogene,ROS1:FoundationOne_panel,ROS1:ArcherDX_panel];[ChimerPub,Cosmic,TumorFusionsNAR2018,ChimerKB,ChimerSeq,chimerdb_pubmed,TCGA_StarF2019,GUO2018CR_TCGA,Klijn_CellLines];INTERCHROMOSOMAL[chr5--chr6]
-    ##   selected_fusion
-    ## 1      KIF5B--RET
-    ## 2   SLC34A2--ROS1
-    ## 3    FGFR3--TACC3
-    ## 4               .
-    ## 5     LMNA--NTRK1
-    ## 6      CD74--ROS1
-    ##                                                      explanation dataset
-    ## 1                  first encounter of TP fusionseeker,KIF5B--RET  ISOseq
-    ## 2               first encounter of TP fusionseeker,SLC34A2--ROS1  ISOseq
-    ## 3 first encounter of TP fusionseeker,FGFR3--TACC3 (TACC3--FGFR3)  ISOseq
-    ## 4    first encounter of FP fusion fusionseeker,AC096579.13--IGKC  ISOseq
-    ## 5                 first encounter of TP fusionseeker,LMNA--NTRK1  ISOseq
-    ## 6                  first encounter of TP fusionseeker,CD74--ROS1  ISOseq
+    ##   pred_class  sample   prog        fusion                     breakpoint
+    ## 1         TP ISO-seq LongGF    RET--KIF5B chr10:43114478--chr10:32017142
+    ## 2         TP ISO-seq LongGF ROS1--SLC34A2  chr6:117324415--chr4:25664329
+    ## 3         TP ISO-seq LongGF  TACC3--FGFR3     chr4:1739701--chr4:1806935
+    ## 4         TP ISO-seq LongGF   LMNA--NTRK1 chr1:156130773--chr1:156874903
+    ## 5         TP ISO-seq LongGF    CD74--ROS1 chr5:150404679--chr6:117324415
+    ## 6         TP ISO-seq LongGF    RET--NCOA4 chr10:43116581--chr10:46012881
+    ##   num_reads
+    ## 1        64
+    ## 2        59
+    ## 3        57
+    ## 4        51
+    ## 5        50
+    ## 6        41
+    ##                                                 mapped_gencode_A_gene_list
+    ## 1                                                                      RET
+    ## 2 FAM162B,GOPC,KPNA5,RN7SKP18,RN7SKP51,ROS1,RP11-632C17__A.1,SLC35F1,ZUFSP
+    ## 3                                                 AC016773.1,TACC3,TMEM129
+    ## 4       AL355388.1,LAMTOR2,LMNA,MEX3A,RAB25,SEMA4A,SLC25A44,SNORA26,UBQLN4
+    ## 5                                   ABLIM3,CD74,CTB-113P19.4,RP11-331K21.1
+    ## 6                                                                      RET
+    ##                                                 mapped_gencode_B_gene_list
+    ## 1                                                         CCDC7,KIF5B,ZEB1
+    ## 2                                                    RP11-302F12.1,SLC34A2
+    ## 3                                                              FGFR3,LETM1
+    ## 4                ARHGEF11,HDGF,INSRR,LRRC71,MIR765,NTRK1,PEAR1,PRCC,SH2D2A
+    ## 5 FAM162B,GOPC,KPNA5,RN7SKP18,RN7SKP51,ROS1,RP11-632C17__A.1,SLC35F1,ZUFSP
+    ## 6                                                           CEP164P1,NCOA4
+    ##                                                                                                                                                                                                                                  annots
+    ## 1                                                                                       [RET:OncomapV4_panel,RET:ArcherDX_panel,RET:Oncogene,RET:FoundationOne_panel,RET:OncocartaV1_panel];[ChimerPub];INTRACHROMOSOMAL[chr10:11.02Mb]
+    ## 2                                                                                                                          [ROS1:Oncogene,ROS1:FoundationOne_panel,ROS1:ArcherDX_panel];[SLC34A2:Oncogene];INTERCHROMOSOMAL[chr6--chr4]
+    ## 3                                             [TACC3:Oncogene];[FGFR3:OncocartaV1_panel,FGFR3:ArcherDX_panel,FGFR3:Oncogene,FGFR3:FoundationOne_panel,FGFR3:OncomapV4_panel];[ChimerPub];INTRACHROMOSOMAL[chr4:0.05Mb];NEIGHBORS[48131]
+    ## 4                                                                                              [NTRK1:FoundationOne_panel,NTRK1:Oncogene,NTRK1:ArcherDX_panel];[ChimerKB,Cosmic,TCGA_StarF2019,ChimerPub];INTRACHROMOSOMAL[chr1:0.68Mb]
+    ## 5     [CD74:Oncogene];[ROS1:Oncogene,ROS1:FoundationOne_panel,ROS1:ArcherDX_panel];[ChimerPub,Cosmic,TumorFusionsNAR2018,ChimerKB,ChimerSeq,chimerdb_pubmed,TCGA_StarF2019,GUO2018CR_TCGA,Klijn_CellLines];INTERCHROMOSOMAL[chr5--chr6]
+    ## 6 [RET:OncomapV4_panel,RET:ArcherDX_panel,RET:Oncogene,RET:FoundationOne_panel,RET:OncocartaV1_panel];[NCOA4:Oncogene];[chimerdb_pubmed,ChimerKB,ChimerPub,TCGA_StarF2019,TumorFusionsNAR2018,ChimerSeq];INTRACHROMOSOMAL[chr10:2.87Mb]
+    ##   selected_fusion                                                explanation
+    ## 1      KIF5B--RET       first encounter of TP LongGF,KIF5B--RET (RET--KIF5B)
+    ## 2   SLC34A2--ROS1 first encounter of TP LongGF,SLC34A2--ROS1 (ROS1--SLC34A2)
+    ## 3    FGFR3--TACC3   first encounter of TP LongGF,FGFR3--TACC3 (TACC3--FGFR3)
+    ## 4     LMNA--NTRK1                   first encounter of TP LongGF,LMNA--NTRK1
+    ## 5      CD74--ROS1                    first encounter of TP LongGF,CD74--ROS1
+    ## 6      NCOA4--RET       first encounter of TP LongGF,NCOA4--RET (RET--NCOA4)
+    ##   dataset
+    ## 1  ISOseq
+    ## 2  ISOseq
+    ## 3  ISOseq
+    ## 4  ISOseq
+    ## 5  ISOseq
+    ## 6  ISOseq
 
 ``` r
 control_fusions = read.table("data/SeraCare_fusion_targets.tsv", header=T, sep="\t") %>% select(FusionName)
@@ -137,11 +137,11 @@ control_fusions_found %>% head()
 ```
 
     ##   FusionName           prog   dataset found
-    ## 1 KIF5B--RET   fusionseeker    ISOseq  TRUE
-    ## 2 KIF5B--RET         JAFFAL    ISOseq  TRUE
-    ## 3 KIF5B--RET       pbfusion    ISOseq  TRUE
-    ## 4 KIF5B--RET         LongGF    ISOseq  TRUE
-    ## 5 KIF5B--RET ctat-LR-fusion    ISOseq  TRUE
+    ## 1 KIF5B--RET         LongGF    ISOseq  TRUE
+    ## 2 KIF5B--RET       pbfusion    ISOseq  TRUE
+    ## 3 KIF5B--RET         JAFFAL    ISOseq  TRUE
+    ## 4 KIF5B--RET ctat-LR-fusion    ISOseq  TRUE
+    ## 5 KIF5B--RET   fusionseeker    ISOseq  TRUE
     ## 6 KIF5B--RET       pbfusion MASseq_L1  TRUE
 
 ``` r
