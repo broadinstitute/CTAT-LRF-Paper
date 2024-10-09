@@ -26,12 +26,12 @@ pacbio_F1_summary_data %>% head()
 ```
 
     ##   rep_num coverage_level pass_count           prog  analysisType mean_F1
-    ## 1    rep1           cov5         20         JAFFAL allow_reverse  0.8918
-    ## 2    rep1           cov5         20         JAFFAL        strict  0.8918
-    ## 3    rep1           cov5         20         LongGF allow_reverse  0.9156
-    ## 4    rep1           cov5         20         LongGF        strict  0.4716
-    ## 5    rep1           cov5         20 ctat-LR-fusion allow_reverse  0.9310
-    ## 6    rep1           cov5         20 ctat-LR-fusion        strict  0.9310
+    ## 1    rep1           cov5         20         JAFFAL allow_reverse  0.9168
+    ## 2    rep1           cov5         20         JAFFAL        strict  0.9168
+    ## 3    rep1           cov5         20         LongGF allow_reverse  0.9354
+    ## 4    rep1           cov5         20         LongGF        strict  0.4812
+    ## 5    rep1           cov5         20 ctat-LR-fusion allow_reverse  0.9590
+    ## 6    rep1           cov5         20 ctat-LR-fusion        strict  0.9590
     ##   seqTech
     ## 1  PacBio
     ## 2  PacBio
@@ -49,12 +49,12 @@ ONT_F1_summary_data %>% head()
 ```
 
     ##   coverage_level           prog  analysisType mean_F1 seqTech
-    ## 1           cov5         JAFFAL allow_reverse  0.9054     ONT
-    ## 2           cov5         JAFFAL        strict  0.9054     ONT
-    ## 3           cov5         LongGF allow_reverse  0.9226     ONT
-    ## 4           cov5         LongGF        strict  0.4748     ONT
-    ## 5           cov5 ctat-LR-fusion allow_reverse  0.9360     ONT
-    ## 6           cov5 ctat-LR-fusion        strict  0.9360     ONT
+    ## 1           cov5         JAFFAL allow_reverse  0.9332     ONT
+    ## 2           cov5         JAFFAL        strict  0.9332     ONT
+    ## 3           cov5         LongGF allow_reverse  0.9436     ONT
+    ## 4           cov5         LongGF        strict  0.4836     ONT
+    ## 5           cov5 ctat-LR-fusion allow_reverse  0.9660     ONT
+    ## 6           cov5 ctat-LR-fusion        strict  0.9660     ONT
 
 ``` r
 combined_F1_data = bind_rows(pacbio_F1_summary_data, ONT_F1_summary_data)
@@ -64,12 +64,12 @@ combined_F1_data %>% head()
 ```
 
     ##   rep_num coverage_level pass_count           prog  analysisType mean_F1
-    ## 1    rep1           cov5         20         JAFFAL allow_reverse  0.8918
-    ## 2    rep1           cov5         20         JAFFAL        strict  0.8918
-    ## 3    rep1           cov5         20         LongGF allow_reverse  0.9156
-    ## 4    rep1           cov5         20         LongGF        strict  0.4716
-    ## 5    rep1           cov5         20 ctat-LR-fusion allow_reverse  0.9310
-    ## 6    rep1           cov5         20 ctat-LR-fusion        strict  0.9310
+    ## 1    rep1           cov5         20         JAFFAL allow_reverse  0.9168
+    ## 2    rep1           cov5         20         JAFFAL        strict  0.9168
+    ## 3    rep1           cov5         20         LongGF allow_reverse  0.9354
+    ## 4    rep1           cov5         20         LongGF        strict  0.4812
+    ## 5    rep1           cov5         20 ctat-LR-fusion allow_reverse  0.9590
+    ## 6    rep1           cov5         20 ctat-LR-fusion        strict  0.9590
     ##   seqTech
     ## 1  PacBio
     ## 2  PacBio
@@ -132,12 +132,12 @@ pacbio_PR_AUC_summary_data %>% head()
 ```
 
     ##   analysisType           prog rep_num coverage_level pass_count mean_AUC
-    ## 1       strict       pbfusion    rep1           cov5         20    0.892
-    ## 2       strict ctat-LR-fusion    rep1           cov5         20    0.870
-    ## 3       strict         JAFFAL    rep1           cov5         20    0.812
-    ## 4       strict   fusionseeker    rep1           cov5         20    0.232
-    ## 5       strict         LongGF    rep1           cov5         20    0.230
-    ## 6       strict       pbfusion    rep1          cov50         20    0.904
+    ## 1       strict       pbfusion    rep1           cov5         20    0.946
+    ## 2       strict ctat-LR-fusion    rep1           cov5         20    0.920
+    ## 3       strict         JAFFAL    rep1           cov5         20    0.862
+    ## 4       strict   fusionseeker    rep1           cov5         20    0.242
+    ## 5       strict         LongGF    rep1           cov5         20    0.238
+    ## 6       strict       pbfusion    rep1          cov50         20    0.958
     ##   seqTech
     ## 1  PacBio
     ## 2  PacBio
@@ -155,12 +155,12 @@ ONT_PR_AUC_summary_data %>% head()
 ```
 
     ##   analysisType           prog coverage_level mean_AUC seqTech
-    ## 1       strict       pbfusion           cov5    0.900     ONT
-    ## 2       strict ctat-LR-fusion           cov5    0.884     ONT
-    ## 3       strict         JAFFAL           cov5    0.848     ONT
-    ## 4       strict   fusionseeker           cov5    0.236     ONT
-    ## 5       strict         LongGF           cov5    0.230     ONT
-    ## 6       strict       pbfusion          cov50    0.908     ONT
+    ## 1       strict       pbfusion           cov5    0.952     ONT
+    ## 2       strict ctat-LR-fusion           cov5    0.940     ONT
+    ## 3       strict         JAFFAL           cov5    0.898     ONT
+    ## 4       strict   fusionseeker           cov5    0.246     ONT
+    ## 5       strict         LongGF           cov5    0.240     ONT
+    ## 6       strict       pbfusion          cov50    0.966     ONT
 
 ``` r
 combined_PR_AUC_data = bind_rows(pacbio_PR_AUC_summary_data, ONT_PR_AUC_summary_data)
@@ -170,12 +170,12 @@ combined_PR_AUC_data %>% head()
 ```
 
     ##   analysisType           prog rep_num coverage_level pass_count mean_AUC
-    ## 1       strict       pbfusion    rep1           cov5         20    0.892
-    ## 2       strict ctat-LR-fusion    rep1           cov5         20    0.870
-    ## 3       strict         JAFFAL    rep1           cov5         20    0.812
-    ## 4       strict   fusionseeker    rep1           cov5         20    0.232
-    ## 5       strict         LongGF    rep1           cov5         20    0.230
-    ## 6       strict       pbfusion    rep1          cov50         20    0.904
+    ## 1       strict       pbfusion    rep1           cov5         20    0.946
+    ## 2       strict ctat-LR-fusion    rep1           cov5         20    0.920
+    ## 3       strict         JAFFAL    rep1           cov5         20    0.862
+    ## 4       strict   fusionseeker    rep1           cov5         20    0.242
+    ## 5       strict         LongGF    rep1           cov5         20    0.238
+    ## 6       strict       pbfusion    rep1          cov50         20    0.958
     ##   seqTech
     ## 1  PacBio
     ## 2  PacBio
