@@ -15,6 +15,7 @@ library(tidyverse)
 
 alpha_val = 0.5
 
+PROGS = c('ctat-LR-fusion', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion')
 
 ```
 
@@ -22,6 +23,8 @@ alpha_val = 0.5
 ```{r}
 
 data = read.csv("../Table_Sx-ONT_fusions_by_method.tsv", header=T, sep="\t", stringsAsFactors = F)
+
+data$prog = factor(data$prog, levels=PROGS)
 
 data %>% head()
 
