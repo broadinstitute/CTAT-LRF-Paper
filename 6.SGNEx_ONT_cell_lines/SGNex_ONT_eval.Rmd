@@ -666,7 +666,9 @@ trusted_fusions_found_adj  = left_join(trusted_fusions_found_adj,
 
 ```{r}
 
-trusted_fusions_found_adj %>% ggplot(aes(x=matched_illumina, y=FFPM)) + geom_jitter(aes(color=matched_illumina)) +
+trusted_fusions_found_adj %>% 
+    filter(grepl("starF", matched_illumina)) %>%
+    ggplot(aes(x=matched_illumina, y=FFPM)) + geom_jitter(aes(color=matched_illumina)) +
     theme_bw() +
     scale_y_continuous(trans='log10')
 
