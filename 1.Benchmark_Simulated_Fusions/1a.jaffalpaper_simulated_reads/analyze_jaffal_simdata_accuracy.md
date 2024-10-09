@@ -267,9 +267,9 @@ PR_AUC_data %>% head()
 ```
 
     ##   seqtype divergence           prog  AUC analysisType
-    ## 1     ONT         95 ctat-LR-fusion 0.97    strict_AP
+    ## 1     ONT         95 ctat-LR-fusion 0.96    strict_AP
     ## 2     ONT         95         JAFFAL 0.92    strict_AP
-    ## 3     ONT         95   fusionseeker 0.27    strict_AP
+    ## 3     ONT         95   fusionseeker 0.28    strict_AP
     ## 4     ONT         95         LongGF 0.22    strict_AP
     ## 5     ONT         95       pbfusion 0.09    strict_AP
     ## 6     Pac         85 ctat-LR-fusion 0.83    strict_AP
