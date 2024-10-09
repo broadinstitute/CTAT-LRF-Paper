@@ -52,10 +52,10 @@ PR_AUC_df %>% head()
 
     ##             prog  AUC
     ## 1 ctat-LR-fusion 0.84
-    ## 2         JAFFAL 0.70
+    ## 2         JAFFAL 0.69
     ## 3       pbfusion 0.64
-    ## 4         LongGF 0.61
-    ## 5   fusionseeker 0.59
+    ## 4         LongGF 0.60
+    ## 5   fusionseeker 0.55
     ## 6 ctat-LR-fusion 0.86
     ##                                                                                                   fname
     ## 1        ./__illum_TP_uniq_FP.starF/data/eval_illum_supported.okPara_ignoreUnsure.results.scored.PR.AUC
@@ -74,10 +74,10 @@ PR_AUC_df %>% head()
 
     ##             prog  AUC
     ## 1 ctat-LR-fusion 0.84
-    ## 2         JAFFAL 0.70
+    ## 2         JAFFAL 0.69
     ## 3       pbfusion 0.64
-    ## 4         LongGF 0.61
-    ## 5   fusionseeker 0.59
+    ## 4         LongGF 0.60
+    ## 5   fusionseeker 0.55
     ## 6 ctat-LR-fusion 0.86
     ##                                                                                                   fname
     ## 1        ./__illum_TP_uniq_FP.starF/data/eval_illum_supported.okPara_ignoreUnsure.results.scored.PR.AUC
@@ -108,4 +108,8 @@ illum_fusion_acc_barplot
 
 ``` r
 ggsave(illum_fusion_acc_barplot, filename = "illum_fusion_accuracy_barplot.svg", width=7, height=3.5)
+```
+
+``` r
+write.table(PR_AUC_df, file="PR_AUC_df.summary.tsv", quote=F, sep="\t", row.names=F)
 ```
