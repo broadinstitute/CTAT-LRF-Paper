@@ -1,26 +1,13 @@
----
-title: "ONT_valid_plus_Illum_TP_uniq_FP_summary.Rmd"
-author: "bhaas"
-date: '2024-07-22'
-output: github_document
----
+ONT_valid_plus_Illum_TP_uniq_FP_summary.Rmd
+================
+bhaas
+2024-07-22
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-library(tidyverse)
-```
-
-
-```{r}
-
+``` r
 ordered_progs = c('ctat-LR-fusion', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion')
-
-
 ```
 
-
-```{r}
-
+``` r
 ALLOW_PARALOG_PROXIES = TRUE
 
 if (ALLOW_PARALOG_PROXIES) {
@@ -43,12 +30,9 @@ if (ALLOW_PARALOG_PROXIES) {
     )
  
 }
-
 ```
 
-
-```{r}
-
+``` r
 PR_AUC_df = NULL
 
 for (file in files) {
@@ -64,21 +48,43 @@ for (file in files) {
 PR_AUC_df$prog = factor(PR_AUC_df$prog, levels=ordered_progs)
 
 PR_AUC_df %>% head()
-
 ```
 
-```{r}
+    ##             prog  AUC
+    ## 1 ctat-LR-fusion 0.80
+    ## 2         JAFFAL 0.69
+    ## 3         LongGF 0.54
+    ## 4       pbfusion 0.21
+    ## 5   fusionseeker 0.05
+    ## 6 ctat-LR-fusion 0.86
+    ##                                                                                             fname
+    ## 1        ./__illum_TP_uniq_FP.starF/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC
+    ## 2        ./__illum_TP_uniq_FP.starF/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC
+    ## 3        ./__illum_TP_uniq_FP.starF/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC
+    ## 4        ./__illum_TP_uniq_FP.starF/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC
+    ## 5        ./__illum_TP_uniq_FP.starF/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC
+    ## 6 ./__illum_TP_uniq_FP.arriba,starF/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC
 
+``` r
 PR_AUC_df$type = str_replace(PR_AUC_df$fname, "./__illum_TP_uniq_FP.", "")
 PR_AUC_df$type = str_replace(PR_AUC_df$type, "/.*$", "")
 
 PR_AUC_df = PR_AUC_df %>% rowwise() %>% mutate(type = paste0("valid + ", type))
 PR_AUC_df %>% head()
-
 ```
 
-```{r}
+    ## # A tibble: 6 × 4
+    ## # Rowwise: 
+    ##   prog             AUC fname                                               type 
+    ##   <fct>          <dbl> <chr>                                               <chr>
+    ## 1 ctat-LR-fusion  0.8  ./__illum_TP_uniq_FP.starF/data/eval_supported.okP… vali…
+    ## 2 JAFFAL          0.69 ./__illum_TP_uniq_FP.starF/data/eval_supported.okP… vali…
+    ## 3 LongGF          0.54 ./__illum_TP_uniq_FP.starF/data/eval_supported.okP… vali…
+    ## 4 pbfusion        0.21 ./__illum_TP_uniq_FP.starF/data/eval_supported.okP… vali…
+    ## 5 fusionseeker    0.05 ./__illum_TP_uniq_FP.starF/data/eval_supported.okP… vali…
+    ## 6 ctat-LR-fusion  0.86 ./__illum_TP_uniq_FP.arriba,starF/data/eval_suppor… vali…
 
+``` r
 illum_fusion_acc_barplot = PR_AUC_df %>% 
     ggplot(aes(x=prog, y=AUC)) + geom_col(aes(fill=prog)) + facet_wrap(~type, ncol=4) +
     theme_bw() +
@@ -87,24 +93,14 @@ illum_fusion_acc_barplot = PR_AUC_df %>%
         axis.ticks.x=element_blank())
 
 illum_fusion_acc_barplot 
-
 ```
 
-```{r}
+![](valid_plus_Illum_TP_uniq_FP_summary_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
+``` r
 ggsave(illum_fusion_acc_barplot, filename = "ONT_valid_plus_illum_fusion_accuracy_barplot.svg", width=7, height=3.5)
-
-
 ```
 
-
-```{r}
-
+``` r
 write.table(PR_AUC_df, file="PR_AUC_df.summary.tsv", quote=F, sep="\t", row.names=F)
-
-
 ```
-
-
-
-

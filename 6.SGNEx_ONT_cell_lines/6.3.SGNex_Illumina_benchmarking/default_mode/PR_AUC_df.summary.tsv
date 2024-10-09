@@ -1,0 +1,21 @@
+prog	AUC	fname	type
+ctat-LR-fusion	0.8	./__illum_TP_uniq_FP.starF/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC	valid + starF
+JAFFAL	0.69	./__illum_TP_uniq_FP.starF/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC	valid + starF
+LongGF	0.54	./__illum_TP_uniq_FP.starF/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC	valid + starF
+pbfusion	0.21	./__illum_TP_uniq_FP.starF/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC	valid + starF
+fusionseeker	0.05	./__illum_TP_uniq_FP.starF/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC	valid + starF
+ctat-LR-fusion	0.86	./__illum_TP_uniq_FP.arriba,starF/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC	valid + arriba,starF
+JAFFAL	0.81	./__illum_TP_uniq_FP.arriba,starF/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC	valid + arriba,starF
+LongGF	0.64	./__illum_TP_uniq_FP.arriba,starF/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC	valid + arriba,starF
+pbfusion	0.24	./__illum_TP_uniq_FP.arriba,starF/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC	valid + arriba,starF
+fusionseeker	0.06	./__illum_TP_uniq_FP.arriba,starF/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC	valid + arriba,starF
+ctat-LR-fusion	0.61	./__illum_TP_uniq_FP.either/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC	valid + either
+JAFFAL	0.52	./__illum_TP_uniq_FP.either/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC	valid + either
+LongGF	0.52	./__illum_TP_uniq_FP.either/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC	valid + either
+pbfusion	0.16	./__illum_TP_uniq_FP.either/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC	valid + either
+fusionseeker	0.06	./__illum_TP_uniq_FP.either/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC	valid + either
+ctat-LR-fusion	0.62	./__illum_TP_uniq_FP.arriba/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC	valid + arriba
+JAFFAL	0.58	./__illum_TP_uniq_FP.arriba/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC	valid + arriba
+LongGF	0.57	./__illum_TP_uniq_FP.arriba/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC	valid + arriba
+pbfusion	0.17	./__illum_TP_uniq_FP.arriba/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC	valid + arriba
+fusionseeker	0.07	./__illum_TP_uniq_FP.arriba/data/eval_supported.okPara_ignoreUnsure.results.scored.PR.AUC	valid + arriba
