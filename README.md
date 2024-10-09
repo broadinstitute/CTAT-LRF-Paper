@@ -86,18 +86,20 @@ Analysis: [3.DepMap9Lines/3a.CTAT_DepMap9Lines/CTAT_DepMap9Lines.Rmd](3.DepMap9L
 
 Analysis: [3.DepMap9Lines/3a.CTAT_DepMap9Lines/3a.2.ThreePrimeBiasAnalysis/examine_3prime_breakpoint_readlengths.Rmd](3.DepMap9Lines/3a.CTAT_DepMap9Lines/3a.2.ThreePrimeBiasAnalysis/examine_3prime_breakpoint_readlengths.md) (Supplementary Figure S4)
 
-
+    
 ## Fusion detection using ONT direct RNA and cDNA sequences
 
 ONT transcriptome sequences were obtained from the [SG-NEx project](https://registry.opendata.aws/sgnex/).
 
-Analysis of trusted fusions vs. others detected  using ONT dRNA seqs: [5.Misc/5.3.SGNex_ONT_eval/SGNex_ONT_eval.Rmd](5.Misc/5.3.SGNex_ONT_eval/SGNex_ONT_eval.md) (Figure 6)
+Venn for validated fusions and Illumina-supported fusions used to define trusted sets for benchmarking: [6.SGNEx_ONT_cell_lines/SGNex_ONT_eval.Rmd](6.SGNEx_ONT_cell_lines/SGNex_ONT_eval.md) (Figure 6a)
 
-Benchmarking ONT fusion detection using the trusted sequences and flagging uniquely predicted fusions as false positives:
+Accuracy summary for benchmarking using different validation and Illumina-supported truth sets: [6.SGNEx_ONT_cell_lines/6.3.SGNex_Illumina_benchmarking/default_mode/valid_plus_Illum_TP_uniq_FP_summary.Rmd](6.SGNEx_ONT_cell_lines/6.3.SGNex_Illumina_benchmarking/default_mode/valid_plus_Illum_TP_uniq_FP_summary.md) (Figure 6b)
 
-- default mode: [5.Misc/5.3.SGNex_ONT_eval/5.3.3.SGNex_Illumina_benchmarking/default_mode/SGNEx_DefaultModes.Rmd](5.Misc/5.3.SGNex_ONT_eval/5.3.3.SGNex_Illumina_benchmarking/default_mode/SGNEx_DefaultModes.md)
-- first filtering fusions with breakpoints proximal to exon boundaries: [5.Misc/5.3.SGNex_ONT_eval/5.3.3.SGNex_Illumina_benchmarking/fuzzy_brkpt_restricted/SGNEx_FuzzyRestricted.Rmd](5.Misc/5.3.SGNex_ONT_eval/5.3.3.SGNex_Illumina_benchmarking/fuzzy_brkpt_restricted/SGNEx_FuzzyRestricted.md)
+Counts of trusted fusions identified vs. others: [6.SGNEx_ONT_cell_lines/6.4.SGNEx_trusted_vs_other/Trusted_vs_Others.Rmd](6.SGNEx_ONT_cell_lines/6.4.SGNEx_trusted_vs_other/Trusted_vs_Others.md) (Figure 6c)
 
+Example benchmarking using validated + intersected(STAR-Fusion, Arriba) Illumina-supported fusions with precision-recall plot and UpSet plot: [6.SGNEx_ONT_cell_lines/6.3.SGNex_Illumina_benchmarking/default_mode/__illum_TP_uniq_FP.arriba,starF/SGNEx_DefaultModes.Rmd](6.SGNEx_ONT_cell_lines/6.3.SGNex_Illumina_benchmarking/default_mode/__illum_TP_uniq_FP.arriba,starF/SGNEx_DefaultModes.md) (Figure 6d,e)
+
+    
 ## Long Read Fusion Isoform Detection from Tumor Single Cell Transcriptomes
 
 ### Melanoma single cell analysis

@@ -55,7 +55,7 @@ PR_plot
 
 ```{r}
 
-ggsave(PR_plot, filename = paste0("SGNEx_DefaultMode.PR_plot.PARA-OK=", ALLOW_PARALOG_PROXIES, ".svg"), height = 4, width=6 )
+ggsave(PR_plot, filename = paste0("SGNEx_ONT_valid_plus_StarF_intersect_Arriba.DefaultMode.PR_plot.PARA-OK=", ALLOW_PARALOG_PROXIES, ".svg"), height = 4, width=6 )
 
 ```
 
@@ -94,9 +94,104 @@ PR_AUC_barplot
 
 ```{r}
 
-ggsave(PR_AUC_barplot, filename = paste0("SGNEx_DefaultMode.PR_AUC.barplot.PARA-OK=", ALLOW_PARALOG_PROXIES, ".svg"), height=4, width=6 )
+ggsave(PR_AUC_barplot, filename = paste0("SGNEx_ONT_valid_plus_StarF_intersect_Arriba.DefaultMode.PR_AUC.barplot.PARA-OK=", ALLOW_PARALOG_PROXIES, ".svg"), height=4, width=6 )
 
 
 ```
+
+
+
+# Examine truth set fusion sensitivity by method
+
+```{r}
+library(UpSetRbyFeature)
+
+if (ALLOW_PARALOG_PROXIES) {
+    scored_predictions_file = "data/eval_supported.okPara_ignoreUnsure.results.scored"
+} else {
+    scored_predictions_file = "data/eval_supported.ignoreUnsure.results.scored"
+}
+
+truth_fusions_found = read.table(scored_predictions_file, sep="\t", header=T) %>% 
+    filter(pred_result == "TP") %>% 
+    select(prog, selected_fusion) %>% unique()
+
+truth_fusions_found %>% select(selected_fusion) %>% unique() %>% nrow()
+
+
+```
+
+```{r}
+
+truth_fusions_found %>% group_by(prog) %>% tally() %>% arrange(desc(n))
+
+
+```
+
+
+
+
+```{r}
+
+truth_fusions_found_matrix = truth_fusions_found %>% mutate(found = 1) %>% spread(key=prog, value=found, fill=0)
+
+
+truth_fusion_names = truth_fusions_found_matrix%>% pull(selected_fusion)
+
+truth_fusions_found_matrix =  truth_fusions_found_matrix %>% select(-selected_fusion)
+
+truth_fusions_found_matrix = data.frame(truth_fusions_found_matrix)
+rownames(truth_fusions_found_matrix) = truth_fusion_names
+
+
+
+upset_plot = UpSetRbyFeature::upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
+
+upset_plot
+
+```
+
+
+```{r}
+
+pdf(file=paste0("SGNEx_ONT_valid_plus_StarF_intersect_Arriba.upset_plot.use_paralog_proxies=", ALLOW_PARALOG_PROXIES, ".pdf"), width=20)
+UpSetRbyFeature::upset(truth_fusions_found_matrix, number.angles=90, nsets=1000, nintersects=1000)
+dev.off()
+
+```
+
+
+```{r}
+
+truth_fusions_by_progs = truth_fusions_found %>% group_by(selected_fusion) %>% arrange(prog) %>%
+    mutate(progs = paste(prog, collapse=','), num_progs = n()) %>%
+    select(selected_fusion, num_progs, progs) %>% unique() %>%
+    arrange(num_progs)
+    
+truth_fusions_by_progs
+
+```
+
+
+```{r}
+
+# which did ctat-LR-fusion miss?
+
+truth_fusions_by_progs %>% filter(! grepl("ctat", progs))
+
+```
+
+```{r}
+
+# which did JAFFAL miss?
+
+truth_fusions_by_progs %>% filter(! grepl("JAFFAL", progs))
+
+
+```
+
+
+JAFFAL missing  MCF7|ATXN7--RAD51C  but found MCF7|AHCYL1--RAD51C 
+
 
 
