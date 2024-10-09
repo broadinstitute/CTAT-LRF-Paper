@@ -99,7 +99,7 @@ PR_AUC_df %>% head()
     ##             prog  AUC
     ## 1       pbfusion 0.78
     ## 2         LongGF 0.54
-    ## 3   fusionseeker 0.49
+    ## 3   fusionseeker 0.48
     ## 4 ctat-LR-fusion 0.35
     ## 5         JAFFAL 0.30
     ## 6         LongGF 0.78
@@ -123,7 +123,7 @@ PR_AUC_df %>% head()
     ##   <chr>          <dbl> <chr>                                               <dbl>
     ## 1 pbfusion        0.78 __bmark_min-1-read/data/min_2.okPara_ignoreUns…         1
     ## 2 LongGF          0.54 __bmark_min-1-read/data/min_2.okPara_ignoreUns…         1
-    ## 3 fusionseeker    0.49 __bmark_min-1-read/data/min_2.okPara_ignoreUns…         1
+    ## 3 fusionseeker    0.48 __bmark_min-1-read/data/min_2.okPara_ignoreUns…         1
     ## 4 ctat-LR-fusion  0.35 __bmark_min-1-read/data/min_2.okPara_ignoreUns…         1
     ## 5 JAFFAL          0.3  __bmark_min-1-read/data/min_2.okPara_ignoreUns…         1
     ## 6 LongGF          0.78 __bmark_min-1-read/data/min_3.okPara_ignoreUns…         1
@@ -140,7 +140,7 @@ PR_AUC_df %>% head()
     ##   <chr>          <dbl> <chr>                               <dbl>           <dbl>
     ## 1 pbfusion        0.78 __bmark_min-1-read/data/min_2.…         1               2
     ## 2 LongGF          0.54 __bmark_min-1-read/data/min_2.…         1               2
-    ## 3 fusionseeker    0.49 __bmark_min-1-read/data/min_2.…         1               2
+    ## 3 fusionseeker    0.48 __bmark_min-1-read/data/min_2.…         1               2
     ## 4 ctat-LR-fusion  0.35 __bmark_min-1-read/data/min_2.…         1               2
     ## 5 JAFFAL          0.3  __bmark_min-1-read/data/min_2.…         1               2
     ## 6 LongGF          0.78 __bmark_min-1-read/data/min_3.…         1               3
@@ -177,7 +177,9 @@ PR_AUC_df$prog = factor(PR_AUC_df$prog, levels = program_overall_ranking)
 ```
 
 ``` r
-summary_PR_AUC_violin_plot = PR_AUC_df %>% ggplot(aes(x=prog, y=-1 * ranking)) + geom_violin() +
+summary_PR_AUC_violin_plot = PR_AUC_df %>% 
+    #filter(min_reads >= 1) %>%
+    ggplot(aes(x=prog, y=-1 * ranking)) + geom_violin() +
     geom_jitter(aes(color=min_reads, shape=as.factor(min_progs_agree)), width=0.2, height=0.075) +
     theme_bw()
 
