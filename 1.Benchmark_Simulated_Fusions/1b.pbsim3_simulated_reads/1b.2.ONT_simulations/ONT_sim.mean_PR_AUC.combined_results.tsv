@@ -1,24 +1,24 @@
 analysisType	prog	coverage_level	mean_AUC
-strict	pbfusion	cov5	0.904
-strict	ctat-LR-fusion	cov5	0.886
-strict	JAFFAL	cov5	0.85
-strict	fusionseeker	cov5	0.236
-strict	LongGF	cov5	0.23
-strict	pbfusion	cov50	0.908
-strict	JAFFAL	cov50	0.892
-strict	ctat-LR-fusion	cov50	0.882
-strict	LongGF	cov50	0.244
-strict	fusionseeker	cov50	0.24
-allow_reverse	fusionseeker	cov5	0.906
-allow_reverse	pbfusion	cov5	0.904
-allow_reverse	ctat-LR-fusion	cov5	0.886
-allow_reverse	LongGF	cov5	0.88
-allow_reverse	JAFFAL	cov5	0.85
-allow_reverse	fusionseeker	cov50	0.932
-allow_reverse	LongGF	cov50	0.91
-allow_reverse	pbfusion	cov50	0.908
-allow_reverse	JAFFAL	cov50	0.892
-allow_reverse	ctat-LR-fusion	cov50	0.882
+strict	pbfusion	cov5	0.952
+strict	ctat-LR-fusion	cov5	0.94
+strict	JAFFAL	cov5	0.898
+strict	fusionseeker	cov5	0.246
+strict	LongGF	cov5	0.24
+strict	pbfusion	cov50	0.966
+strict	JAFFAL	cov50	0.944
+strict	ctat-LR-fusion	cov50	0.936
+strict	LongGF	cov50	0.252
+strict	fusionseeker	cov50	0.252
+allow_reverse	fusionseeker	cov5	0.954
+allow_reverse	pbfusion	cov5	0.952
+allow_reverse	ctat-LR-fusion	cov5	0.94
+allow_reverse	LongGF	cov5	0.916
+allow_reverse	JAFFAL	cov5	0.898
+allow_reverse	fusionseeker	cov50	0.98
+allow_reverse	pbfusion	cov50	0.966
+allow_reverse	JAFFAL	cov50	0.944
+allow_reverse	LongGF	cov50	0.944
+allow_reverse	ctat-LR-fusion	cov50	0.936
 Exact Brkpt	ctat-LR-fusion	cov5	0.934
 Exact Brkpt	JAFFAL	cov5	0.838
 Exact Brkpt	pbfusion	cov5	0.004
@@ -37,5 +37,5 @@ Fuzzy Brkpt	LongGF	cov5	0.816
 Fuzzy Brkpt	ctat-LR-fusion	cov50	0.94
 Fuzzy Brkpt	JAFFAL	cov50	0.936
 Fuzzy Brkpt	fusionseeker	cov50	0.926
-Fuzzy Brkpt	pbfusion	cov50	0.89
+Fuzzy Brkpt	pbfusion	cov50	0.892
 Fuzzy Brkpt	LongGF	cov50	0.87

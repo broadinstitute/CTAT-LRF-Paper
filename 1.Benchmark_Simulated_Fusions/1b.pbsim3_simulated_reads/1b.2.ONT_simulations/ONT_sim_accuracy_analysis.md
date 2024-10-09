@@ -20,13 +20,13 @@ max_F1_data = read.table("data/max_F1_summary.tsv", header=T, sep="\t")
 max_F1_data %>% head()
 ```
 
-    ##   coverage_level sample_count           prog min_sum_frags  TP FP FN  TPR PPV
-    ## 1          cov50      sample4 ctat-LR-fusion             6 495  0  5 0.99   1
-    ## 2          cov50      sample4 ctat-LR-fusion             6 495  0  5 0.99   1
-    ## 3          cov50      sample4   fusionseeker             2 495  2  5 0.99   1
-    ## 4          cov50      sample2   fusionseeker             3 494  2  6 0.99   1
-    ## 5          cov50      sample1 ctat-LR-fusion             2 492  0  8 0.98   1
-    ## 6          cov50      sample1       pbfusion             2 489  2 11 0.98   1
+    ##   coverage_level sample_count           prog min_sum_frags  TP FP FN  TPR  PPV
+    ## 1          cov50      sample4 ctat-LR-fusion             6 495  0  5 0.99 1.00
+    ## 2          cov50      sample4 ctat-LR-fusion             6 495  0  5 0.99 1.00
+    ## 3          cov50      sample4   fusionseeker             2 495  2  5 0.99 1.00
+    ## 4          cov50      sample2   fusionseeker             1 498  7  2 1.00 0.99
+    ## 5          cov50      sample1 ctat-LR-fusion             2 491  0  9 0.98 1.00
+    ## 6          cov50      sample1       pbfusion             2 489  2 11 0.98 1.00
     ##      F1        analysisType
     ## 1 0.995 strict_and_paralogs
     ## 2 0.995  allow_revNparalogs
@@ -124,11 +124,11 @@ combined_results %>% head()
     ##   coverage_level prog   analysisType        mean_F1
     ##   <chr>          <chr>  <chr>                 <dbl>
     ## 1 cov5           JAFFAL allow_revNparalogs    0.966
-    ## 2 cov5           JAFFAL allow_reverse         0.905
-    ## 3 cov5           JAFFAL strict                0.905
+    ## 2 cov5           JAFFAL allow_reverse         0.933
+    ## 3 cov5           JAFFAL strict                0.933
     ## 4 cov5           JAFFAL strict_and_paralogs   0.966
     ## 5 cov5           LongGF allow_revNparalogs    0.967
-    ## 6 cov5           LongGF allow_reverse         0.923
+    ## 6 cov5           LongGF allow_reverse         0.944
 
 \`
 
@@ -182,12 +182,12 @@ mean_AUC_data %>% head()
 ```
 
     ##   analysisType           prog coverage_level mean_AUC
-    ## 1       strict       pbfusion           cov5    0.900
-    ## 2       strict ctat-LR-fusion           cov5    0.884
-    ## 3       strict         JAFFAL           cov5    0.848
-    ## 4       strict   fusionseeker           cov5    0.236
-    ## 5       strict         LongGF           cov5    0.230
-    ## 6       strict       pbfusion          cov50    0.908
+    ## 1       strict       pbfusion           cov5    0.952
+    ## 2       strict ctat-LR-fusion           cov5    0.940
+    ## 3       strict         JAFFAL           cov5    0.898
+    ## 4       strict   fusionseeker           cov5    0.246
+    ## 5       strict         LongGF           cov5    0.240
+    ## 6       strict       pbfusion          cov50    0.966
 
 ``` r
 # barplot
@@ -235,12 +235,12 @@ combined_AUC_results %>% head()
 ```
 
     ##   analysisType           prog coverage_level mean_AUC
-    ## 1       strict       pbfusion           cov5    0.900
-    ## 2       strict ctat-LR-fusion           cov5    0.884
-    ## 3       strict         JAFFAL           cov5    0.848
-    ## 4       strict   fusionseeker           cov5    0.236
-    ## 5       strict         LongGF           cov5    0.230
-    ## 6       strict       pbfusion          cov50    0.908
+    ## 1       strict       pbfusion           cov5    0.952
+    ## 2       strict ctat-LR-fusion           cov5    0.940
+    ## 3       strict         JAFFAL           cov5    0.898
+    ## 4       strict   fusionseeker           cov5    0.246
+    ## 5       strict         LongGF           cov5    0.240
+    ## 6       strict       pbfusion          cov50    0.966
 
 ``` r
 combined_AUC_results %>%

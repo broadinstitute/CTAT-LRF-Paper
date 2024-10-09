@@ -94,8 +94,8 @@ cov50	sample2	fusionseeker	0.93	fusionseeker sample2	Fuzzy Brkpt
 cov50	sample5	fusionseeker	0.93	fusionseeker sample5	Fuzzy Brkpt
 cov50	sample3	fusionseeker	0.92	fusionseeker sample3	Fuzzy Brkpt
 cov50	sample1	fusionseeker	0.9	fusionseeker sample1	Fuzzy Brkpt
+cov50	sample4	pbfusion	0.9	pbfusion sample4	Fuzzy Brkpt
 cov50	sample2	pbfusion	0.9	pbfusion sample2	Fuzzy Brkpt
 cov50	sample1	pbfusion	0.89	pbfusion sample1	Fuzzy Brkpt
-cov50	sample4	pbfusion	0.89	pbfusion sample4	Fuzzy Brkpt
 cov50	sample5	pbfusion	0.89	pbfusion sample5	Fuzzy Brkpt
 cov50	sample3	pbfusion	0.88	pbfusion sample3	Fuzzy Brkpt
