@@ -10,7 +10,7 @@ resource_usage_df %>% head()
 ```
 
     ##    sample             prog exec_time_min max_memory_GiB
-    ## 1   DMS53        ctat_task         119.2          16.44
+    ## 1   DMS53        ctat_task          92.5          16.87
     ## 2 HCC1395     pbfusionTask           0.7           5.07
     ## 3   DMS53     pbfusionTask           0.5           4.87
     ## 4    KIJK FusionSeekerTask           7.3          20.58
