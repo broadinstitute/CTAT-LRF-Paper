@@ -13,8 +13,16 @@ library(tidyverse)
 
 ```{r}
 
+PROGS = c('ctat-LR-fusion', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion')
+
+```
+
+```{r}
+
 fusion_preds = read.csv("__bmark_min-1-read/data/preds.collected.gencode_mapped.wAnnot.gz", header=T, sep="\t") %>% 
     select(sample, prog, num_reads, fusion)
+
+fusion_preds$prog = factor(fusion_preds$prog, levels=PROGS)
 
 fusion_preds =  fusion_preds %>% rowwise() %>% mutate(lex_ordered_fusion_name = paste0(sample, "|", paste0(collapse="--", sort(str_split(fusion, "--")[[1]])))) 
 
@@ -138,6 +146,7 @@ fusion_counts_df %>% head()
 ```{r}
 
 TP_vs_FP_illum_supported_barplot = fusion_counts_df %>% ggplot(aes(x=prog, y=n)) + geom_col(aes(fill=illumina_supported)) +
+    theme_bw() +
     facet_wrap(~min_reads, scale='free_y') +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
 

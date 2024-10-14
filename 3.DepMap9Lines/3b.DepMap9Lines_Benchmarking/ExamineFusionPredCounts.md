@@ -4,8 +4,14 @@ bhaas
 2024-07-21
 
 ``` r
+PROGS = c('ctat-LR-fusion', 'JAFFAL', 'LongGF', 'fusionseeker', 'pbfusion')
+```
+
+``` r
 fusion_preds = read.csv("__bmark_min-1-read/data/preds.collected.gencode_mapped.wAnnot.gz", header=T, sep="\t") %>% 
     select(sample, prog, num_reads, fusion)
+
+fusion_preds$prog = factor(fusion_preds$prog, levels=PROGS)
 
 fusion_preds =  fusion_preds %>% rowwise() %>% mutate(lex_ordered_fusion_name = paste0(sample, "|", paste0(collapse="--", sort(str_split(fusion, "--")[[1]])))) 
 ```
@@ -110,7 +116,7 @@ illumina_preds %>% group_by(sample, progs) %>% tally() %>%
     ggplot(aes(x=sample, y=n, fill=progs)) + geom_col()
 ```
 
-![](ExamineFusionPredCounts_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](ExamineFusionPredCounts_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 ``` r
 fusion_preds = fusion_preds %>% mutate(illumina_supported = lex_ordered_fusion_name %in% illumina_preds$lex_ordered_fusion_name)
@@ -145,23 +151,24 @@ fusion_counts_df %>% head()
     ## # A tibble: 6 × 4
     ## # Groups:   prog [3]
     ##   prog           illumina_supported     n min_reads
-    ##   <chr>          <lgl>              <int>     <int>
-    ## 1 JAFFAL         FALSE               8051         1
-    ## 2 JAFFAL         TRUE                 124         1
-    ## 3 LongGF         FALSE              14448         1
-    ## 4 LongGF         TRUE                  98         1
-    ## 5 ctat-LR-fusion FALSE               9260         1
-    ## 6 ctat-LR-fusion TRUE                 136         1
+    ##   <fct>          <lgl>              <int>     <int>
+    ## 1 ctat-LR-fusion FALSE               9260         1
+    ## 2 ctat-LR-fusion TRUE                 136         1
+    ## 3 JAFFAL         FALSE               8051         1
+    ## 4 JAFFAL         TRUE                 124         1
+    ## 5 LongGF         FALSE              14448         1
+    ## 6 LongGF         TRUE                  98         1
 
 ``` r
 TP_vs_FP_illum_supported_barplot = fusion_counts_df %>% ggplot(aes(x=prog, y=n)) + geom_col(aes(fill=illumina_supported)) +
+    theme_bw() +
     facet_wrap(~min_reads, scale='free_y') +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
 
 TP_vs_FP_illum_supported_barplot
 ```
 
-![](ExamineFusionPredCounts_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](ExamineFusionPredCounts_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 ``` r
 ggsave(TP_vs_FP_illum_supported_barplot, filename="TP_vs_FP_illum_supported_barplot.svg", width=7, height=4.5)
@@ -185,7 +192,7 @@ frac_supported_vs_min_reads_plot = frac_fusion_illum_supported %>% ggplot(aes(x=
 frac_supported_vs_min_reads_plot
 ```
 
-![](ExamineFusionPredCounts_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+![](ExamineFusionPredCounts_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 ``` r
 #ggsave(frac_supported_vs_min_reads_plot, filename="frac_supported_vs_min_reads_plot.svg", width=7, height=4.5)
@@ -320,7 +327,7 @@ frac_fusions_min_progs_agree_plot = fusion_counts_min_agree_df  %>%
 frac_fusions_min_progs_agree_plot
 ```
 
-![](ExamineFusionPredCounts_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+![](ExamineFusionPredCounts_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
 
 key observations: - increasing read support yields increasingly agreeing
 predictions across programs with the exception of min 1 read support for
@@ -380,7 +387,7 @@ frac_illum_supported_by_min_progs_agree_plot = fusion_counts_min_agree_vs_illum_
 frac_illum_supported_by_min_progs_agree_plot
 ```
 
-![](ExamineFusionPredCounts_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
+![](ExamineFusionPredCounts_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
 
 Increasing the minimum read support before defining proxy truth sets
 increases the fraction of fusions supported by orthogonal illumina read
