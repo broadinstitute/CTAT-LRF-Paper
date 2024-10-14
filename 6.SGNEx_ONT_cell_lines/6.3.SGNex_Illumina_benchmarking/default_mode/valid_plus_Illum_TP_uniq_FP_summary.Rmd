@@ -84,7 +84,8 @@ illum_fusion_acc_barplot = PR_AUC_df %>%
     theme_bw() +
     theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
-        axis.ticks.x=element_blank())
+        axis.ticks.x=element_blank()) +
+     geom_text(position=position_dodge(width=0.75), aes(label=AUC), angle=45, size=rel(3.5))
 
 illum_fusion_acc_barplot 
 
