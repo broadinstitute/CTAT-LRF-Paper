@@ -43,21 +43,21 @@ fusion_preds %>% head()
     ## 3        PRRC2B--FUBP3 chr9:131394263--chr9:130609954        46
     ## 4        PLA2R1--RBMS1 chr2:159976068--chr2:160303487        40
     ## 5         RAB7A--LRCH3 chr3:128726359--chr3:197865423        26
-    ## 6        HELZ--HMGB1P7 chr17:67239356--chr17:67067610        18
-    ##                                                                                                                                                                                  mapped_gencode_A_gene_list
-    ## 1                                                                                                                  DTX3L,EIF4BP8,KPNA1,MIR7110,MYLK,MYLK-AS1,MYLK-AS2,PARP15,PARP9,PDIA5,RP11-9N20.3,SEC22A
-    ## 2                                                                                                                                                                                       EIF3K,LGALS13,ZFP30
-    ## 3 AL358781.1,ANAPC2,C9orf173,C9orf173-AS1,CYSRT1,FAM166A,GRIN1,LRRC26,MIR3621,NDOR1,NELFB,PBX3,PRRC2B,RNF208,RNF224,RP11-334J6.7,RP11-350O14.18,SLC34A3,SNORD62A,SNORD62B,SSNA1,TMEM203,TMEM210,TPRN,TUBB4B
-    ## 4                                                                                                                                                                        CCDC148,CCDC148-AS1,PLA2R1,SLC4A10
-    ## 5                                                                                                    EEFSEC,FTH1P4,H1FX,H1FX-AS1,HMCES,MARK2P8,NUP210P3,RAB7A,RN7SL698P,RP13-685P2.7,RP13-685P2.8,RPS15AP16
-    ## 6                                                                                                   AC037445.1,CASC17,HELZ,RP11-401F2.3,RP11-401F2.4,RP11-556O9.2,RP11-556O9.3,RP11-556O9.4,RPL36AP48,TANC2
-    ##                                                                                                                     mapped_gencode_B_gene_list
-    ## 1                                        CH507-513H4.1,CH507-513H4.6,FP671120.2,FP671120.3,FP671120.4,FP671120.7,MIR3648-2,MIR3687-2,MIR6724-3
-    ## 2                                                                               CYP39A1,PLA2G7,RCAN2,RP11-446F17.3,RP11-795J1.1,SLC25A27,TDRD6
-    ## 3                                                                                      CARD9,DKFZP434A062,DNLZ,FUBP3,GPSM1,MIR6856,SCAI,SNAPC4
-    ## 4 AC005042.3,AC005042.4,AC005042.5,AC007750.1,AC007750.5,AC008063.2,AC008063.3,DPP4,EIF3EP2,FAP,GCG,MIR4785,PKP4,RBMS1,RMRPP3,SLC4A10,TIMM8AP1
-    ## 5                                                                                            AC055764.1,AC144530.1,DLG1,DLG1-AS1,LRCH3,MIR4797
-    ## 6                                                                                                                  ARHGAP12,CCDC7,HMGB1P7,ZEB1
+    ## 6        HELZ--HMGB1P7 chr17:67239356--chr10:31912970        18
+    ##                         mapped_gencode_A_gene_list
+    ## 1                             MIR7110,PDIA5,SEC22A
+    ## 2                                            EIF3K
+    ## 3 AL358781.1,PRRC2B,RP11-334J6.7,SNORD62A,SNORD62B
+    ## 4                                           PLA2R1
+    ## 5         FTH1P4,MARK2P8,RAB7A,RN7SL698P,RPS15AP16
+    ## 6         HELZ,RP11-401F2.3,RP11-401F2.4,RPL36AP48
+    ##                                                                              mapped_gencode_B_gene_list
+    ## 1 CH507-513H4.1,CH507-513H4.6,FP671120.2,FP671120.3,FP671120.4,FP671120.7,MIR3648-2,MIR3687-2,MIR6724-3
+    ## 2                                                                                               CYP39A1
+    ## 3                                                                                         FUBP3,MIR6856
+    ## 4                                                                                  MIR4785,RBMS1,RMRPP3
+    ## 5                                                                           AC055764.1,AC144530.1,LRCH3
+    ## 6                                                                                      ARHGAP12,HMGB1P7
     ##                                                                                                                                               annots
     ## 1                                      PDIA5--CH507-513H4.1:INTERCHROMOSOMAL[chr3--chr21];;(recip)CH507-513H4.1--PDIA5:INTERCHROMOSOMAL[chr21--chr3]
     ## 2 EIF3K--CYP39A1:[Klijn_CellLines,Cosmic,ChimerKB,CCLE_StarF2019];INTERCHROMOSOMAL[chr19--chr6];;(recip)CYP39A1--EIF3K:INTERCHROMOSOMAL[chr6--chr19]
@@ -73,14 +73,14 @@ unsure_preds = read.table("data/preds.collected.gencode_mapped.wAnnot.filt.pass.
 nrow(fusion_preds)
 ```
 
-    ## [1] 108760
+    ## [1] 108809
 
 ``` r
 fusion_preds = fusion_preds %>% filter(! proxy_fusion_name %in% unsure_preds$proxy_fusion_name)
 nrow(fusion_preds)
 ```
 
-    ## [1] 30647
+    ## [1] 30722
 
 ``` r
 p = fusion_preds %>% 
@@ -104,13 +104,13 @@ truth_data = read.table("data/preds.collected.gencode_mapped.wAnnot.filt.pass.pr
 truth_data %>% head()
 ```
 
-    ##       proxy_fusion_name                                         prog_names
-    ## 1  HCC1395|RAB7A--LRCH3 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
-    ## 2   DMS53|GALNT8--PRMT8 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
-    ## 3 HCC1395|KPNA1--EEFSEC JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
-    ## 4   DMS53|POC1B--MGAT4C JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
-    ## 5   VCAP|NDUFAF2--MAST4 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
-    ## 6  HCC1395|MFSD3--MROH1 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ##        proxy_fusion_name                                         prog_names
+    ## 1  HCC1187|PLXND1--TMCC1 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 2     KIJK|YTHDF2--TAF12 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 3 HCC1395|EIF3K--CYP39A1 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 4     DMS53|USP43--CNTLN JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 5  HCC1395|KPNA1--EEFSEC JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 6        VCAP|PSMG1--UNK JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
     ##   num_progs
     ## 1         5
     ## 2         5
@@ -125,20 +125,20 @@ truth_data$sample_name = sapply(truth_data$proxy_fusion_name, function(x) { str_
 head(truth_data)
 ```
 
-    ##       proxy_fusion_name                                         prog_names
-    ## 1  HCC1395|RAB7A--LRCH3 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
-    ## 2   DMS53|GALNT8--PRMT8 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
-    ## 3 HCC1395|KPNA1--EEFSEC JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
-    ## 4   DMS53|POC1B--MGAT4C JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
-    ## 5   VCAP|NDUFAF2--MAST4 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
-    ## 6  HCC1395|MFSD3--MROH1 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ##        proxy_fusion_name                                         prog_names
+    ## 1  HCC1187|PLXND1--TMCC1 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 2     KIJK|YTHDF2--TAF12 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 3 HCC1395|EIF3K--CYP39A1 JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 4     DMS53|USP43--CNTLN JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 5  HCC1395|KPNA1--EEFSEC JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
+    ## 6        VCAP|PSMG1--UNK JAFFAL,LongGF,ctat-LR-fusion,fusionseeker,pbfusion
     ##   num_progs sample_name
-    ## 1         5     HCC1395
-    ## 2         5       DMS53
+    ## 1         5     HCC1187
+    ## 2         5        KIJK
     ## 3         5     HCC1395
     ## 4         5       DMS53
-    ## 5         5        VCAP
-    ## 6         5     HCC1395
+    ## 5         5     HCC1395
+    ## 6         5        VCAP
 
 ``` r
 truth_data_counts = truth_data %>% rename(sample=sample_name) %>% group_by(sample) %>% tally(name='num_truth_fusions')
@@ -194,14 +194,14 @@ truth_data %>% head()
 ```
 
     ## # A tibble: 6 × 4
-    ##   proxy_fusion_name    prog_names     num_progs sample_name
-    ##   <chr>                <chr>              <int> <chr>      
-    ## 1 HCC1395|RAB7A--LRCH3 JAFFAL                 5 HCC1395    
-    ## 2 HCC1395|RAB7A--LRCH3 LongGF                 5 HCC1395    
-    ## 3 HCC1395|RAB7A--LRCH3 ctat-LR-fusion         5 HCC1395    
-    ## 4 HCC1395|RAB7A--LRCH3 fusionseeker           5 HCC1395    
-    ## 5 HCC1395|RAB7A--LRCH3 pbfusion               5 HCC1395    
-    ## 6 DMS53|GALNT8--PRMT8  JAFFAL                 5 DMS53
+    ##   proxy_fusion_name     prog_names     num_progs sample_name
+    ##   <chr>                 <chr>              <int> <chr>      
+    ## 1 HCC1187|PLXND1--TMCC1 JAFFAL                 5 HCC1187    
+    ## 2 HCC1187|PLXND1--TMCC1 LongGF                 5 HCC1187    
+    ## 3 HCC1187|PLXND1--TMCC1 ctat-LR-fusion         5 HCC1187    
+    ## 4 HCC1187|PLXND1--TMCC1 fusionseeker           5 HCC1187    
+    ## 5 HCC1187|PLXND1--TMCC1 pbfusion               5 HCC1187    
+    ## 6 KIJK|YTHDF2--TAF12    JAFFAL                 5 KIJK
 
 ``` r
 #Organize according to pred class
@@ -227,21 +227,21 @@ scored_data %>% head()
     ## 3 ctat-LR-fusion        PRRC2B--FUBP3 chr9:131394263--chr9:130609954        46
     ## 4 ctat-LR-fusion        PLA2R1--RBMS1 chr2:159976068--chr2:160303487        40
     ## 5 ctat-LR-fusion         RAB7A--LRCH3 chr3:128726359--chr3:197865423        26
-    ## 6 ctat-LR-fusion        HELZ--HMGB1P7 chr17:67239356--chr17:67067610        18
-    ##                                                                                                                                                                                  mapped_gencode_A_gene_list
-    ## 1                                                                                                                  DTX3L,EIF4BP8,KPNA1,MIR7110,MYLK,MYLK-AS1,MYLK-AS2,PARP15,PARP9,PDIA5,RP11-9N20.3,SEC22A
-    ## 2                                                                                                                                                                                       EIF3K,LGALS13,ZFP30
-    ## 3 AL358781.1,ANAPC2,C9orf173,C9orf173-AS1,CYSRT1,FAM166A,GRIN1,LRRC26,MIR3621,NDOR1,NELFB,PBX3,PRRC2B,RNF208,RNF224,RP11-334J6.7,RP11-350O14.18,SLC34A3,SNORD62A,SNORD62B,SSNA1,TMEM203,TMEM210,TPRN,TUBB4B
-    ## 4                                                                                                                                                                        CCDC148,CCDC148-AS1,PLA2R1,SLC4A10
-    ## 5                                                                                                    EEFSEC,FTH1P4,H1FX,H1FX-AS1,HMCES,MARK2P8,NUP210P3,RAB7A,RN7SL698P,RP13-685P2.7,RP13-685P2.8,RPS15AP16
-    ## 6                                                                                                   AC037445.1,CASC17,HELZ,RP11-401F2.3,RP11-401F2.4,RP11-556O9.2,RP11-556O9.3,RP11-556O9.4,RPL36AP48,TANC2
-    ##                                                                                                                     mapped_gencode_B_gene_list
-    ## 1                                        CH507-513H4.1,CH507-513H4.6,FP671120.2,FP671120.3,FP671120.4,FP671120.7,MIR3648-2,MIR3687-2,MIR6724-3
-    ## 2                                                                               CYP39A1,PLA2G7,RCAN2,RP11-446F17.3,RP11-795J1.1,SLC25A27,TDRD6
-    ## 3                                                                                      CARD9,DKFZP434A062,DNLZ,FUBP3,GPSM1,MIR6856,SCAI,SNAPC4
-    ## 4 AC005042.3,AC005042.4,AC005042.5,AC007750.1,AC007750.5,AC008063.2,AC008063.3,DPP4,EIF3EP2,FAP,GCG,MIR4785,PKP4,RBMS1,RMRPP3,SLC4A10,TIMM8AP1
-    ## 5                                                                                            AC055764.1,AC144530.1,DLG1,DLG1-AS1,LRCH3,MIR4797
-    ## 6                                                                                                                  ARHGAP12,CCDC7,HMGB1P7,ZEB1
+    ## 6 ctat-LR-fusion        HELZ--HMGB1P7 chr17:67239356--chr10:31912970        18
+    ##                         mapped_gencode_A_gene_list
+    ## 1                             MIR7110,PDIA5,SEC22A
+    ## 2                                            EIF3K
+    ## 3 AL358781.1,PRRC2B,RP11-334J6.7,SNORD62A,SNORD62B
+    ## 4                                           PLA2R1
+    ## 5         FTH1P4,MARK2P8,RAB7A,RN7SL698P,RPS15AP16
+    ## 6         HELZ,RP11-401F2.3,RP11-401F2.4,RPL36AP48
+    ##                                                                              mapped_gencode_B_gene_list
+    ## 1 CH507-513H4.1,CH507-513H4.6,FP671120.2,FP671120.3,FP671120.4,FP671120.7,MIR3648-2,MIR3687-2,MIR6724-3
+    ## 2                                                                                               CYP39A1
+    ## 3                                                                                         FUBP3,MIR6856
+    ## 4                                                                                  MIR4785,RBMS1,RMRPP3
+    ## 5                                                                           AC055764.1,AC144530.1,LRCH3
+    ## 6                                                                                      ARHGAP12,HMGB1P7
     ##                                                                                                                                               annots
     ## 1                                      PDIA5--CH507-513H4.1:INTERCHROMOSOMAL[chr3--chr21];;(recip)CH507-513H4.1--PDIA5:INTERCHROMOSOMAL[chr21--chr3]
     ## 2 EIF3K--CYP39A1:[Klijn_CellLines,Cosmic,ChimerKB,CCLE_StarF2019];INTERCHROMOSOMAL[chr19--chr6];;(recip)CYP39A1--EIF3K:INTERCHROMOSOMAL[chr6--chr19]
@@ -294,13 +294,13 @@ data$prog = factor(data$prog, levels=PROGS)
 data %>% head()
 ```
 
-    ##     prog min_sum_frags TP  FP FN  TPR  PPV    F1
-    ## 1 LongGF             1 58 188 17 0.77 0.24 0.366
-    ## 2 LongGF             2 52   0 23 0.69 1.00 0.817
-    ## 3 LongGF             3 45   0 30 0.60 1.00 0.750
-    ## 4 LongGF             4 42   0 33 0.56 1.00 0.718
-    ## 5 LongGF             5 41   0 34 0.55 1.00 0.710
-    ## 6 LongGF             6 39   0 36 0.52 1.00 0.684
+    ##       prog min_sum_frags TP   FP FN  TPR  PPV    F1
+    ## 1 pbfusion             1 68 5630  7 0.91 0.01 0.020
+    ## 2 pbfusion             2 54   63 21 0.72 0.46 0.561
+    ## 3 pbfusion             3 43   13 32 0.57 0.77 0.655
+    ## 4 pbfusion             4 41    9 34 0.55 0.82 0.658
+    ## 5 pbfusion             5 40    7 35 0.53 0.85 0.653
+    ## 6 pbfusion             6 39    5 36 0.52 0.89 0.656
 
 ``` r
 # F1 vs. min reads
@@ -317,9 +317,9 @@ depmap_accuracy_lineplot = data %>%
 depmap_accuracy_lineplot
 ```
 
-    ## Warning: Removed 172 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 173 rows containing missing values (`geom_point()`).
 
-    ## Warning: Removed 172 rows containing missing values (`geom_line()`).
+    ## Warning: Removed 173 rows containing missing values (`geom_line()`).
 
 ![](DepMap9Lines_Benchmarking.illum_TP_uniq_FP.arriba,starF_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
@@ -327,9 +327,9 @@ depmap_accuracy_lineplot
 ggsave(depmap_accuracy_lineplot, file=paste0("depmap_accuracy_lineplot.use_paralog_proxies=", USE_PARALOG_PROXIES, ".svg"), width=7, height=4)
 ```
 
-    ## Warning: Removed 172 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 173 rows containing missing values (`geom_point()`).
 
-    ## Warning: Removed 172 rows containing missing values (`geom_line()`).
+    ## Warning: Removed 173 rows containing missing values (`geom_line()`).
 
 ``` r
 PR_data = read.csv(paste0(scored_predictions_file, ".PR"), header=T, sep="\t", stringsAsFactors = F)
@@ -381,7 +381,7 @@ depmap_TP_vs_FP_scatterplot + scale_y_continuous(trans='log10')
 
     ## Warning: Transformation introduced infinite values in continuous y-axis
 
-    ## Warning: Removed 298 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 300 rows containing missing values (`geom_point()`).
 
     ## Warning: Removed 60 rows containing missing values (`geom_line()`).
 
@@ -394,7 +394,7 @@ ggsave(depmap_TP_vs_FP_scatterplot, file=paste0("depmap_TP_vs_FP_scatterplot.use
     ## Warning: Transformation introduced infinite values in continuous y-axis
     ## Transformation introduced infinite values in continuous y-axis
 
-    ## Warning: Removed 298 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 300 rows containing missing values (`geom_point()`).
 
     ## Warning: Removed 60 rows containing missing values (`geom_line()`).
 
@@ -429,83 +429,83 @@ FN_preds
 ```
 
     ##    pred_result              proxy_fusion_name proxy_fusion_type  sample
-    ## 1           FN            DMS53|KRT7--OR7E47P                 .   DMS53
+    ## 1           FN         HCC1395|MLLT10--AMD1P1                 . HCC1395
     ## 2           FN       K562|RP11-307P5.1--SASH1                 .    K562
-    ## 3           FN         HCC1395|MLLT10--AMD1P1                 . HCC1395
-    ## 4           FN  HCC1395|CH507-528H12.1--PDIA5                 . HCC1395
-    ## 5           FN        HCC1395|MDH1--LINC01278                 . HCC1395
-    ## 6           FN    HCC1395|UNC5C--RP11-681L8.1                 . HCC1395
-    ## 7           FN       HCC1187|B3GNTL1P2--CD2AP                 . HCC1187
-    ## 8           FN             SKBR3|CYTH1--EIF3H                 .   SKBR3
-    ## 9           FN    HCC1395|TBC1D16--AC012354.6                 . HCC1395
-    ## 10          FN            DMS53|NLRP1--STAT5A                 .   DMS53
-    ## 11          FN DMS53|KIAA0232--CH507-528H12.1                 .   DMS53
+    ## 3           FN    HCC1395|UNC5C--RP11-681L8.1                 . HCC1395
+    ## 4           FN             VCAP|ABCB9--ZDHHC7                 .    VCAP
+    ## 5           FN             SKBR3|CPNE1--PREX1                 .   SKBR3
+    ## 6           FN             VCAP|USP10--ZDHHC7                 .    VCAP
+    ## 7           FN            VCAP|PDE4D--C5ORF47                 .    VCAP
+    ## 8           FN              SKBR3|DHX35--ITCH                 .   SKBR3
+    ## 9           FN               DMS53|ABR--CDK14                 .   DMS53
+    ## 10          FN              SKBR3|TRIO--FBXL7                 .   SKBR3
+    ## 11          FN         HCC1395|MLLT10--AMD1P1                 . HCC1395
     ## 12          FN             SKBR3|CPNE1--PREX1                 .   SKBR3
-    ## 13          FN    SKBR3|EIF2B5--RP11-132N15.1                 .   SKBR3
-    ## 14          FN     HCC1187|LINC01535--EXOSC10                 . HCC1187
-    ## 15          FN               SKBR3|RARA--PKIA                 .   SKBR3
-    ## 16          FN         SKBR3|MECOM--LMCD1-AS1                 .   SKBR3
-    ## 17          FN              SKBR3|TRIO--FBXL7                 .   SKBR3
-    ## 18          FN         HCC1395|MLLT10--AMD1P1                 . HCC1395
+    ## 13          FN    HCC1395|TBC1D16--AC012354.6                 . HCC1395
+    ## 14          FN       K562|RP11-307P5.1--SASH1                 .    K562
+    ## 15          FN    HCC1395|UNC5C--RP11-681L8.1                 . HCC1395
+    ## 16          FN            DMS53|NLRP1--STAT5A                 .   DMS53
+    ## 17          FN            DMS53|KRT7--OR7E47P                 .   DMS53
+    ## 18          FN               SKBR3|RARA--PKIA                 .   SKBR3
     ## 19          FN  HCC1395|CH507-528H12.1--PDIA5                 . HCC1395
-    ## 20          FN       HCC1187|B3GNTL1P2--CD2AP                 . HCC1187
-    ## 21          FN DMS53|KIAA0232--CH507-528H12.1                 .   DMS53
-    ## 22          FN             SKBR3|CPNE1--PREX1                 .   SKBR3
-    ## 23          FN            DMS53|KRT7--OR7E47P                 .   DMS53
-    ## 24          FN       K562|RP11-307P5.1--SASH1                 .    K562
-    ## 25          FN         HCC1395|MLLT10--AMD1P1                 . HCC1395
-    ## 26          FN  HCC1395|CH507-528H12.1--PDIA5                 . HCC1395
-    ## 27          FN       HCC1187|B3GNTL1P2--CD2AP                 . HCC1187
-    ## 28          FN             SKBR3|CPNE1--PREX1                 .   SKBR3
-    ## 29          FN       K562|RP11-307P5.1--SASH1                 .    K562
-    ## 30          FN         HCC1395|MLLT10--AMD1P1                 . HCC1395
-    ## 31          FN    HCC1395|UNC5C--RP11-681L8.1                 . HCC1395
-    ## 32          FN               DMS53|ABR--CDK14                 .   DMS53
-    ## 33          FN              SKBR3|DHX35--ITCH                 .   SKBR3
-    ## 34          FN             VCAP|USP10--ZDHHC7                 .    VCAP
-    ## 35          FN             VCAP|ABCB9--ZDHHC7                 .    VCAP
-    ## 36          FN            VCAP|PDE4D--C5ORF47                 .    VCAP
-    ## 37          FN             SKBR3|CPNE1--PREX1                 .   SKBR3
-    ## 38          FN              SKBR3|TRIO--FBXL7                 .   SKBR3
+    ## 20          FN     HCC1187|LINC01535--EXOSC10                 . HCC1187
+    ## 21          FN         SKBR3|MECOM--LMCD1-AS1                 .   SKBR3
+    ## 22          FN DMS53|KIAA0232--CH507-528H12.1                 .   DMS53
+    ## 23          FN    SKBR3|EIF2B5--RP11-132N15.1                 .   SKBR3
+    ## 24          FN       HCC1187|B3GNTL1P2--CD2AP                 . HCC1187
+    ## 25          FN              SKBR3|TRIO--FBXL7                 .   SKBR3
+    ## 26          FN             SKBR3|CYTH1--EIF3H                 .   SKBR3
+    ## 27          FN        HCC1395|MDH1--LINC01278                 . HCC1395
+    ## 28          FN         HCC1395|MLLT10--AMD1P1                 . HCC1395
+    ## 29          FN             SKBR3|CPNE1--PREX1                 .   SKBR3
+    ## 30          FN       K562|RP11-307P5.1--SASH1                 .    K562
+    ## 31          FN            DMS53|KRT7--OR7E47P                 .   DMS53
+    ## 32          FN  HCC1395|CH507-528H12.1--PDIA5                 . HCC1395
+    ## 33          FN       HCC1187|B3GNTL1P2--CD2AP                 . HCC1187
+    ## 34          FN         HCC1395|MLLT10--AMD1P1                 . HCC1395
+    ## 35          FN             SKBR3|CPNE1--PREX1                 .   SKBR3
+    ## 36          FN  HCC1395|CH507-528H12.1--PDIA5                 . HCC1395
+    ## 37          FN DMS53|KIAA0232--CH507-528H12.1                 .   DMS53
+    ## 38          FN       HCC1187|B3GNTL1P2--CD2AP                 . HCC1187
     ##              prog                   fusion breakpoint num_reads
-    ## 1          LongGF            KRT7--OR7E47P          .         0
-    ## 2          LongGF      RP11-307P5.1--SASH1          .         0
-    ## 3          LongGF           MLLT10--AMD1P1          .         0
-    ## 4          LongGF    CH507-528H12.1--PDIA5          .         0
-    ## 5          LongGF          MDH1--LINC01278          .         0
-    ## 6          LongGF      UNC5C--RP11-681L8.1          .         0
-    ## 7          LongGF         B3GNTL1P2--CD2AP          .         0
-    ## 8          LongGF             CYTH1--EIF3H          .         0
-    ## 9          LongGF      TBC1D16--AC012354.6          .         0
-    ## 10         LongGF            NLRP1--STAT5A          .         0
-    ## 11         LongGF KIAA0232--CH507-528H12.1          .         0
+    ## 1    fusionseeker           MLLT10--AMD1P1          .         0
+    ## 2    fusionseeker      RP11-307P5.1--SASH1          .         0
+    ## 3    fusionseeker      UNC5C--RP11-681L8.1          .         0
+    ## 4        pbfusion            ABCB9--ZDHHC7          .         0
+    ## 5        pbfusion             CPNE1--PREX1          .         0
+    ## 6        pbfusion            USP10--ZDHHC7          .         0
+    ## 7        pbfusion           PDE4D--C5ORF47          .         0
+    ## 8        pbfusion              DHX35--ITCH          .         0
+    ## 9        pbfusion               ABR--CDK14          .         0
+    ## 10       pbfusion              TRIO--FBXL7          .         0
+    ## 11         LongGF           MLLT10--AMD1P1          .         0
     ## 12         LongGF             CPNE1--PREX1          .         0
-    ## 13         LongGF    EIF2B5--RP11-132N15.1          .         0
-    ## 14         LongGF       LINC01535--EXOSC10          .         0
-    ## 15         LongGF               RARA--PKIA          .         0
-    ## 16         LongGF         MECOM--LMCD1-AS1          .         0
-    ## 17         LongGF              TRIO--FBXL7          .         0
-    ## 18 ctat-LR-fusion           MLLT10--AMD1P1          .         0
-    ## 19 ctat-LR-fusion    CH507-528H12.1--PDIA5          .         0
-    ## 20 ctat-LR-fusion         B3GNTL1P2--CD2AP          .         0
-    ## 21 ctat-LR-fusion KIAA0232--CH507-528H12.1          .         0
-    ## 22 ctat-LR-fusion             CPNE1--PREX1          .         0
-    ## 23         JAFFAL            KRT7--OR7E47P          .         0
-    ## 24         JAFFAL      RP11-307P5.1--SASH1          .         0
-    ## 25         JAFFAL           MLLT10--AMD1P1          .         0
-    ## 26         JAFFAL    CH507-528H12.1--PDIA5          .         0
-    ## 27         JAFFAL         B3GNTL1P2--CD2AP          .         0
-    ## 28         JAFFAL             CPNE1--PREX1          .         0
-    ## 29   fusionseeker      RP11-307P5.1--SASH1          .         0
-    ## 30   fusionseeker           MLLT10--AMD1P1          .         0
-    ## 31   fusionseeker      UNC5C--RP11-681L8.1          .         0
-    ## 32       pbfusion               ABR--CDK14          .         0
-    ## 33       pbfusion              DHX35--ITCH          .         0
-    ## 34       pbfusion            USP10--ZDHHC7          .         0
-    ## 35       pbfusion            ABCB9--ZDHHC7          .         0
-    ## 36       pbfusion           PDE4D--C5ORF47          .         0
-    ## 37       pbfusion             CPNE1--PREX1          .         0
-    ## 38       pbfusion              TRIO--FBXL7          .         0
+    ## 13         LongGF      TBC1D16--AC012354.6          .         0
+    ## 14         LongGF      RP11-307P5.1--SASH1          .         0
+    ## 15         LongGF      UNC5C--RP11-681L8.1          .         0
+    ## 16         LongGF            NLRP1--STAT5A          .         0
+    ## 17         LongGF            KRT7--OR7E47P          .         0
+    ## 18         LongGF               RARA--PKIA          .         0
+    ## 19         LongGF    CH507-528H12.1--PDIA5          .         0
+    ## 20         LongGF       LINC01535--EXOSC10          .         0
+    ## 21         LongGF         MECOM--LMCD1-AS1          .         0
+    ## 22         LongGF KIAA0232--CH507-528H12.1          .         0
+    ## 23         LongGF    EIF2B5--RP11-132N15.1          .         0
+    ## 24         LongGF         B3GNTL1P2--CD2AP          .         0
+    ## 25         LongGF              TRIO--FBXL7          .         0
+    ## 26         LongGF             CYTH1--EIF3H          .         0
+    ## 27         LongGF          MDH1--LINC01278          .         0
+    ## 28         JAFFAL           MLLT10--AMD1P1          .         0
+    ## 29         JAFFAL             CPNE1--PREX1          .         0
+    ## 30         JAFFAL      RP11-307P5.1--SASH1          .         0
+    ## 31         JAFFAL            KRT7--OR7E47P          .         0
+    ## 32         JAFFAL    CH507-528H12.1--PDIA5          .         0
+    ## 33         JAFFAL         B3GNTL1P2--CD2AP          .         0
+    ## 34 ctat-LR-fusion           MLLT10--AMD1P1          .         0
+    ## 35 ctat-LR-fusion             CPNE1--PREX1          .         0
+    ## 36 ctat-LR-fusion    CH507-528H12.1--PDIA5          .         0
+    ## 37 ctat-LR-fusion KIAA0232--CH507-528H12.1          .         0
+    ## 38 ctat-LR-fusion         B3GNTL1P2--CD2AP          .         0
     ##    mapped_gencode_A_gene_list mapped_gencode_B_gene_list annots
     ## 1                           .                          .      .
     ## 2                           .                          .      .
@@ -597,16 +597,16 @@ FN_preds %>% select(proxy_fusion_name, prog) %>%
     ## # Groups:   proxy_fusion_name [22]
     ##    proxy_fusion_name              progs                                num_progs
     ##    <chr>                          <chr>                                    <int>
-    ##  1 HCC1395|MLLT10--AMD1P1         LongGF,ctat-LR-fusion,JAFFAL,fusion…         4
-    ##  2 SKBR3|CPNE1--PREX1             LongGF,ctat-LR-fusion,JAFFAL,pbfusi…         4
-    ##  3 K562|RP11-307P5.1--SASH1       LongGF,JAFFAL,fusionseeker                   3
-    ##  4 HCC1395|CH507-528H12.1--PDIA5  LongGF,ctat-LR-fusion,JAFFAL                 3
-    ##  5 HCC1187|B3GNTL1P2--CD2AP       LongGF,ctat-LR-fusion,JAFFAL                 3
-    ##  6 DMS53|KRT7--OR7E47P            LongGF,JAFFAL                                2
-    ##  7 HCC1395|UNC5C--RP11-681L8.1    LongGF,fusionseeker                          2
-    ##  8 DMS53|KIAA0232--CH507-528H12.1 LongGF,ctat-LR-fusion                        2
-    ##  9 SKBR3|TRIO--FBXL7              LongGF,pbfusion                              2
-    ## 10 HCC1395|MDH1--LINC01278        LongGF                                       1
+    ##  1 HCC1395|MLLT10--AMD1P1         fusionseeker,LongGF,JAFFAL,ctat-LR-…         4
+    ##  2 SKBR3|CPNE1--PREX1             pbfusion,LongGF,JAFFAL,ctat-LR-fusi…         4
+    ##  3 K562|RP11-307P5.1--SASH1       fusionseeker,LongGF,JAFFAL                   3
+    ##  4 HCC1395|CH507-528H12.1--PDIA5  LongGF,JAFFAL,ctat-LR-fusion                 3
+    ##  5 HCC1187|B3GNTL1P2--CD2AP       LongGF,JAFFAL,ctat-LR-fusion                 3
+    ##  6 HCC1395|UNC5C--RP11-681L8.1    fusionseeker,LongGF                          2
+    ##  7 SKBR3|TRIO--FBXL7              pbfusion,LongGF                              2
+    ##  8 DMS53|KRT7--OR7E47P            LongGF,JAFFAL                                2
+    ##  9 DMS53|KIAA0232--CH507-528H12.1 LongGF,ctat-LR-fusion                        2
+    ## 10 VCAP|ABCB9--ZDHHC7             pbfusion                                     1
     ## # ℹ 12 more rows
 
 No example of a STARF,Arriba-supported fusion missed by all 5 LR fusion
