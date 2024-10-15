@@ -92,19 +92,47 @@ resource_usage_df  = bind_rows(resource_usage_df %>% filter(prog %in% c('ctat_ta
 ```
 
 ``` r
-resource_usage_df %>% ggplot(aes(x=sample, y=exec_time_min)) + geom_col(aes(fill=prog)) + facet_wrap(~prog) +
+resource_usage_df = resource_usage_df %>% 
+    mutate(prog = ifelse(prog == 'ctat_task', 'CTAT-LR-Fusion', prog)) %>%
+    mutate(prog = ifelse(prog == "JAFFALTask", "JAFFAL", prog)) %>%
+    mutate(prog = ifelse(prog == "FusionSeekerTask", "FusionSeeker", prog)) %>%
+    mutate(prog = ifelse(prog == "LongGFTask", "LongGF", prog)) %>%
+    mutate(prog = ifelse(prog == "pbfusionTask", "pbfusion", prog))
+
+
+PROGS = c('CTAT-LR-Fusion', 'JAFFAL', 'LongGF', 'FusionSeeker', 'pbfusion')
+
+resource_usage_df$prog = factor(resource_usage_df$prog, levels=PROGS)
+```
+
+``` r
+exec_time_plot = resource_usage_df %>% ggplot(aes(x=sample, y=exec_time_min)) + geom_col(aes(fill=prog)) + facet_wrap(~prog) +
    theme_bw() +
    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     ggtitle("Execution time (minutes)")
-```
+   
 
-![](ExamineResourceUsage_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
-
-``` r
-resource_usage_df %>% ggplot(aes(x=sample, y=max_memory_GiB)) + geom_col(aes(fill=prog)) + facet_wrap(~prog) +
-   theme_bw() +
-   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-    ggtitle("Max RAM usage (GiB)")
+exec_time_plot
 ```
 
 ![](ExamineResourceUsage_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+``` r
+ggsave(exec_time_plot, file="exec_time_plot.svg", width=7, height=5)
+```
+
+``` r
+mem_usage_plot = resource_usage_df %>% ggplot(aes(x=sample, y=max_memory_GiB)) + geom_col(aes(fill=prog)) + facet_wrap(~prog) +
+   theme_bw() +
+   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    ggtitle("Max RAM usage (GiB)")
+   
+
+mem_usage_plot
+```
+
+![](ExamineResourceUsage_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+``` r
+ggsave(mem_usage_plot, file="mem_usage_plot.svg", width=7, height=5)
+```
