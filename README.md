@@ -13,7 +13,7 @@ The JAFFAL (Badread) simulated fusion reads were obtained from: [https://ndownlo
 
 Fusion prediction results available [here](https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/simulated_data/sim_jaffal/prog_results)
         
-Analysis: [1.Benchmark_Simulated_Fusions/1a.jaffalpaper_simulated_reads/analyze_jaffal_simdata_accuracy.Rmd](1.Benchmark_Simulated_Fusions/1a.jaffalpaper_simulated_reads/analyze_jaffal_simdata_accuracy.md) (Figure 2b,c)
+Analysis: [1.Benchmark_Simulated_Fusions/1a.jaffalpaper_simulated_reads/analyze_jaffal_simdata_accuracy.Rmd](1.Benchmark_Simulated_Fusions/1a.jaffalpaper_simulated_reads/analyze_jaffal_simdata_accuracy.md) (Figure 2b,c) (Supp. Table 2)
 
 
 ### Benchmarking using pbsim3 simulated reads, focused on breakpoint detection accuracy:
