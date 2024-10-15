@@ -60,6 +60,8 @@ Analysis: [2.SeraCareFusions/2b.SeraCareFusionBenchmarking/SeraCareFusionAnalysi
 
 Fusion predictions for all the methods: [https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/DepMap_Cell_Lines/prog_results](https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/DepMap_Cell_Lines/prog_results)
 
+DepMap 9 cell lines filtered fusions aggregated: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/Table_Sx-DepMap.9cellLines.fusion_preds.tsv](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/Table_Sx-DepMap.9cellLines.fusion_preds.tsv) (Supplementary Table 3)
+
 Example benchmarking requiring min 3 reads and min 2 methods agreeing: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/__bmark_min-3-reads/DepMap9Lines_Benchmarking.min-3-read.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/__bmark_min-3-reads/DepMap9Lines_Benchmarking.min-3-read.md) (Figures 4a-e)
 
 'Wisdom of the crowds' benchmarking summary across 30 different truth sets: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/Examine_PR_AUC_varied_minReads.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/Examine_PR_AUC_varied_minReads.md) (Figure 4f)
@@ -91,7 +93,7 @@ Analysis: [3.DepMap9Lines/3a.CTAT_DepMap9Lines/3a.2.ThreePrimeBiasAnalysis/exami
 
 ONT transcriptome sequences were obtained from the [SG-NEx project](https://registry.opendata.aws/sgnex/).
 
-Venn for validated fusions and Illumina-supported fusions used to define trusted sets for benchmarking: [6.SGNEx_ONT_cell_lines/SGNex_ONT_eval.Rmd](6.SGNEx_ONT_cell_lines/SGNex_ONT_eval.md) (Figure 6a)
+Venn for validated fusions and Illumina-supported fusions used to define trusted sets for benchmarking: [6.SGNEx_ONT_cell_lines/SGNex_ONT_eval.Rmd](6.SGNEx_ONT_cell_lines/SGNex_ONT_eval.md) (Figure 6a) (Supplementary Table 6)
 
 Accuracy summary for benchmarking using different validation and Illumina-supported truth sets: [6.SGNEx_ONT_cell_lines/6.3.SGNex_Illumina_benchmarking/default_mode/valid_plus_Illum_TP_uniq_FP_summary.Rmd](6.SGNEx_ONT_cell_lines/6.3.SGNex_Illumina_benchmarking/default_mode/valid_plus_Illum_TP_uniq_FP_summary.md) (Figure 6b)
 
