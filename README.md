@@ -128,7 +128,7 @@ Analysis of HGSOC Patient-3 : [4.SingleCellFusions/4b.sc_HGSOC/Patient3_analysis
 Table of all fusion predictions by cell: [4.SingleCellFusions/4b.sc_HGSOC/Table_Sx-HGSOC_sc.fusion_preds_by_cell.tsv](4.SingleCellFusions/4b.sc_HGSOC/Table_Sx-HGSOC_sc.fusion_preds_by_cell.tsv) (Supplementary Table S6)
 
 Table of HGSOC fusions of interest: [4.SingleCellFusions/4b.sc_HGSOC/Table_Sx-scHGSOC_fusions_of_interest.tsv](4.SingleCellFusions/4b.sc_HGSOC/Table_Sx-scHGSOC_fusions_of_interest.tsv) (Supplementary Table S7)
-  
+
 
 # Miscellaneous
 
