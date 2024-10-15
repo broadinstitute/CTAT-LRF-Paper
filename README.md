@@ -80,7 +80,7 @@ Evaluating use of JAFFAL high-conf predictions only instead of all the predictio
 
 ### Compare fusion support and isoform detection from short vs. long RNA-seq reads:
     
-Analysis: [3.DepMap9Lines/3a.CTAT_DepMap9Lines/CTAT_DepMap9Lines.Rmd](3.DepMap9Lines/3a.CTAT_DepMap9Lines/CTAT_DepMap9Lines.md) (Figure 5)
+Analysis: [3.DepMap9Lines/3a.CTAT_DepMap9Lines/CTAT_DepMap9Lines.Rmd](3.DepMap9Lines/3a.CTAT_DepMap9Lines/CTAT_DepMap9Lines.md) (Figure 5, Supplementary Figure S5)
 
 ### Examine SR vs. LR support according to distance of the breakpoint from the 3' end
 
