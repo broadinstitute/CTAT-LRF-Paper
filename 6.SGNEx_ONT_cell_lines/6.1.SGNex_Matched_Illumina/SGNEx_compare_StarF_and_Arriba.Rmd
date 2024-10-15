@@ -92,6 +92,9 @@ both_preds %>% select(lex_ordered_fusion_name, progs, has_long_read_support) %>%
     filter(has_long_read_support) %>% 
     select(lex_ordered_fusion_name) %>% unique() %>% nrow()
 
+
+# 70
+# but note, we recover another 3 with illumina support from our own K562 illumina sequencing., so 73 total.
 ```
 
 
