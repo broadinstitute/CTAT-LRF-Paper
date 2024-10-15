@@ -60,7 +60,7 @@ Analysis: [2.SeraCareFusions/2b.SeraCareFusionBenchmarking/SeraCareFusionAnalysi
 
 Fusion predictions for all the methods: [https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/DepMap_Cell_Lines/prog_results](https://github.com/fusiontranscripts/LR-FusionBenchmarking/tree/master/DepMap_Cell_Lines/prog_results)
 
-DepMap 9 cell lines filtered fusions aggregated: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/Table_Sx-DepMap.9cellLines.fusion_preds.tsv](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/Table_Sx-DepMap.9cellLines.fusion_preds.tsv) (Supplementary Table 3)
+DepMap 9 cell lines filtered fusions aggregated: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/Table_Sx-DepMap.9cellLines.fusion_preds.tsv](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/Table_Sx-DepMap.9cellLines.fusion_preds.tsv) (Supplementary Table S3)
 
 Example benchmarking requiring min 3 reads and min 2 methods agreeing: [3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/__bmark_min-3-reads/DepMap9Lines_Benchmarking.min-3-read.Rmd](3.DepMap9Lines/3b.DepMap9Lines_Benchmarking/__bmark_min-3-reads/DepMap9Lines_Benchmarking.min-3-read.md) (Figures 4a-e)
 
@@ -93,7 +93,7 @@ Analysis: [3.DepMap9Lines/3a.CTAT_DepMap9Lines/3a.2.ThreePrimeBiasAnalysis/exami
 
 ONT transcriptome sequences were obtained from the [SG-NEx project](https://registry.opendata.aws/sgnex/).
 
-Venn for validated fusions and Illumina-supported fusions used to define trusted sets for benchmarking: [6.SGNEx_ONT_cell_lines/SGNex_ONT_eval.Rmd](6.SGNEx_ONT_cell_lines/SGNex_ONT_eval.md) (Figure 6a) (Supplementary Table 4)
+Venn for validated fusions and Illumina-supported fusions used to define trusted sets for benchmarking: [6.SGNEx_ONT_cell_lines/SGNex_ONT_eval.Rmd](6.SGNEx_ONT_cell_lines/SGNex_ONT_eval.md) (Figure 6a) (Supplementary Table S4)
 
 Accuracy summary for benchmarking using different validation and Illumina-supported truth sets: [6.SGNEx_ONT_cell_lines/6.3.SGNex_Illumina_benchmarking/default_mode/valid_plus_Illum_TP_uniq_FP_summary.Rmd](6.SGNEx_ONT_cell_lines/6.3.SGNex_Illumina_benchmarking/default_mode/valid_plus_Illum_TP_uniq_FP_summary.md) (Figure 6b)
 
@@ -125,6 +125,10 @@ Analysis of HGSOC Patient-2 : [4.SingleCellFusions/4b.sc_HGSOC/Patient2_analysis
 
 Analysis of HGSOC Patient-3 : [4.SingleCellFusions/4b.sc_HGSOC/Patient3_analysis.Rmd](4.SingleCellFusions/4b.sc_HGSOC/Patient3_analysis.md) (Figure 8d,e))
 
+Table of all fusion predictions by cell: [4.SingleCellFusions/4b.sc_HGSOC/Table_Sx-HGSOC_sc.fusion_preds_by_cell.tsv](4.SingleCellFusions/4b.sc_HGSOC/Table_Sx-HGSOC_sc.fusion_preds_by_cell.tsv) (Supplementary Table S6)
+
+Table of HGSOC fusions of interest: [4.SingleCellFusions/4b.sc_HGSOC/Table_Sx-scHGSOC_fusions_of_interest.tsv](4.SingleCellFusions/4b.sc_HGSOC/Table_Sx-scHGSOC_fusions_of_interest.tsv) (Supplementary Table S7)
+  
 
 # Miscellaneous
 

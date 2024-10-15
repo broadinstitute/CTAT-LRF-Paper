@@ -6,6 +6,6 @@ data = read.csv("data/M132TS.melanoma_sc.filtered_cells_and_dedup_umis.tsv.gz", 
 
 data = data %>% select(FusionName, LeftBreakpoint, RightBreakpoint, cell_barcode, umi, read_name, method, leiden, umap_1, umap_2)
 
-write.table(data, file="Table_Sx-M132TS_melanoma_sc_fusion_preds_by_cell.tsv", quote=F, sep="\t")
+write.table(data, file="Table_Sx-M132TS_melanoma_sc_fusion_preds_by_cell.tsv", quote=F, sep="\t", row.names=F)
 
 
