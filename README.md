@@ -110,6 +110,8 @@ The melanoma patient sample RNA-seq is protected and available under dbgap: [phs
     
 Analysis of fusions using long and short read alignments: [4.SingleCellFusions/4a.sc_Melanoma/M132TS_analysis.Rmd](4.SingleCellFusions/4a.sc_Melanoma/M132TS_analysis.md) (Figure 7a,b)
 
+Table of fusions according to method and cell: [4.SingleCellFusions/4a.sc_Melanoma/Table_Sx-M132TS_melanoma_sc_fusion_preds_by_cell.tsv](4.SingleCellFusions/4a.sc_Melanoma/Table_Sx-M132TS_melanoma_sc_fusion_preds_by_cell.tsv) (Supplementary Table S5)
+
 Evaluation of NUTM2A fusion cell content by using 'grep' with [fusion breakpoint](4.SingleCellFusions/4a.sc_Melanoma/4a.1.grep_search_brkpt/data/M132TS.ctat-LR-fusion.fusion_predictions.tsv.NUTM2A-AS1--RP11-203L2.4.tsv.fusion_brkpt_seqs.10eaSide) sequences: [4.SingleCellFusions/4a.sc_Melanoma/4a.1.grep_search_brkpt/GrepMatchedFusionCells.Rmd](4.SingleCellFusions/4a.sc_Melanoma/4a.1.grep_search_brkpt/GrepMatchedFusionCells.md)
 
 
