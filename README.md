@@ -93,7 +93,7 @@ Analysis: [3.DepMap9Lines/3a.CTAT_DepMap9Lines/3a.2.ThreePrimeBiasAnalysis/exami
 
 ONT transcriptome sequences were obtained from the [SG-NEx project](https://registry.opendata.aws/sgnex/).
 
-Venn for validated fusions and Illumina-supported fusions used to define trusted sets for benchmarking: [6.SGNEx_ONT_cell_lines/SGNex_ONT_eval.Rmd](6.SGNEx_ONT_cell_lines/SGNex_ONT_eval.md) (Figure 6a) (Supplementary Table 6)
+Venn for validated fusions and Illumina-supported fusions used to define trusted sets for benchmarking: [6.SGNEx_ONT_cell_lines/SGNex_ONT_eval.Rmd](6.SGNEx_ONT_cell_lines/SGNex_ONT_eval.md) (Figure 6a) (Supplementary Table 4)
 
 Accuracy summary for benchmarking using different validation and Illumina-supported truth sets: [6.SGNEx_ONT_cell_lines/6.3.SGNex_Illumina_benchmarking/default_mode/valid_plus_Illum_TP_uniq_FP_summary.Rmd](6.SGNEx_ONT_cell_lines/6.3.SGNex_Illumina_benchmarking/default_mode/valid_plus_Illum_TP_uniq_FP_summary.md) (Figure 6b)
 
