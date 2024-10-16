@@ -78,6 +78,10 @@ Tum_umap_data %>% group_by(celltype_final) %>% tally(name='count_cell_type') %>%
 
 # 208 HGSOC cells  (46% of total cells)
 
+
+# The Patient-2 tumor sample yielded 453 total cells, with 208 (46%) identified as HGSOC cells
+
+
 ```
 
 
@@ -215,7 +219,12 @@ fusions_of_interest = fusion_frac_cell_types %>%
 
 fusions_of_interest
 
-# 20 fusions of interest
+# 17 fusions of interest
+
+# from which we identified 17 different malignant cell enriched fusion transcripts (Supplementary Table S7),
+#  including the earlier-identified IGF2BP2::TESPA1 fusion between chr3 and chr12 evident in 176/208 (85%) of the tumor cells.
+
+# Another fusion is found with proximal breakpoints yielding fusion transcript SPATS2::TRA2B (21 tumor cells, 10%), and likely resulting from the same tumor genome rearrangements involving chr3 and chr12
 
 ```
 
@@ -229,6 +238,8 @@ fusions_of_interest = left_join(fusions_of_interest,
 
 fusions_of_interest
 
+
+# Other notable fusions in the Patient 2 tumor sample involve known tumor oncogenes and include CBL::KMT2A (16 tumor cells) and DEK::CASC17 (11 tumor cells), both identified solely by long reads
 
 ```
 
@@ -267,6 +278,31 @@ Tum_cell_counts_by_method %>%
 
 ```
 
+```{r}
+
+Tum_cell_counts_by_method %>% 
+    filter(FusionName %in% c('CBL--KMT2A', 'DEK--CASC17')) %>%
+    select(FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, cell_counts) %>%
+    spread(key=method, value=cell_counts) %>% 
+    arrange(desc(`ctat-LR-fusion`))
+
+
+# Other notable fusions in the Patient 2 tumor sample involve known tumor oncogenes and include CBL::KMT2A (16 tumor cells) and DEK::CASC17 (11 tumor cells), both identified solely by long reads
+
+```
+```{r}
+
+Tum_cell_counts_by_method %>% 
+    filter(FusionName == "PSMB7--SCAI") %>%
+    select(FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, cell_counts) %>%
+    spread(key=method, value=cell_counts) %>% 
+    arrange(desc(`ctat-LR-fusion`))
+
+# Another prevalent fusion PSMB7::SCAI (52 tumor cells) detected mostly by long reads and with four fusion splicing isoforms involves suppressor of cancer cell invasion gene SCAI
+
+```
+
+
 
 
 ```{r}
@@ -280,6 +316,11 @@ Tum_cell_counts_by_method %>%
               ggplot(aes(x=fusion, y=cell_counts, fill=method)) + 
                  geom_bar(stat='identity', position='dodge') +
                  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+# Both of these fusions were detected via long and short RNA-seq reads.
+
+# While a single fusion splicing isoform dominated IGF2BP2::TESPA1 detection in cells by both long and short reads, four additional fusion splicing isoforms were detected with long and/or short read support 
+
 ```
 
 # Examine fusions of interest in UMAPs
@@ -447,6 +488,8 @@ Tum_data %>% filter(FusionName %in% c('SPATS2--TRA2B', 'IGF2BP2--TESPA1')) %>%
     
 
 # 20 / 21 appear to be co-expressed in the same cell
+
+# Nearly all (20/21) of the SPATS2::TRA2B expression cells are found to co-express IGF2BP2::TESPA1.
 
 ```
 

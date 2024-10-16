@@ -109,6 +109,9 @@ Tum_umap_data %>% group_by(celltype_final) %>% tally(name='count_cell_type') %>%
 
 ``` r
 # 208 HGSOC cells  (46% of total cells)
+
+
+# The Patient-2 tumor sample yielded 453 total cells, with 208 (46%) identified as HGSOC cells
 ```
 
 ``` r
@@ -349,7 +352,12 @@ fusions_of_interest
     ## 17 DEK--RNU7-155P(196402),A… HGSOC                           5             1
 
 ``` r
-# 20 fusions of interest
+# 17 fusions of interest
+
+# from which we identified 17 different malignant cell enriched fusion transcripts (Supplementary Table S7),
+#  including the earlier-identified IGF2BP2::TESPA1 fusion between chr3 and chr12 evident in 176/208 (85%) of the tumor cells.
+
+# Another fusion is found with proximal breakpoints yielding fusion transcript SPATS2::TRA2B (21 tumor cells, 10%), and likely resulting from the same tumor genome rearrangements involving chr3 and chr12
 ```
 
 ``` r
@@ -386,6 +394,10 @@ fusions_of_interest
     ## 15 SMC1B--TBC1D22A    HGSOC                           6             1     <NA>  
     ## 16 TBL1XR1--TBL1XR1(… HGSOC                           6             1     <NA>  
     ## 17 DEK--RNU7-155P(19… HGSOC                           5             1     <NA>
+
+``` r
+# Other notable fusions in the Patient 2 tumor sample involve known tumor oncogenes and include CBL::KMT2A (16 tumor cells) and DEK::CASC17 (11 tumor cells), both identified solely by long reads
+```
 
 ``` r
 fusions_of_interest = left_join(fusions_of_interest, Tum_cell_counts_by_method_spread,
@@ -445,6 +457,47 @@ Tum_cell_counts_by_method %>%
     ## #   `STAR-Fusion` <int>
 
 ``` r
+Tum_cell_counts_by_method %>% 
+    filter(FusionName %in% c('CBL--KMT2A', 'DEK--CASC17')) %>%
+    select(FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, cell_counts) %>%
+    spread(key=method, value=cell_counts) %>% 
+    arrange(desc(`ctat-LR-fusion`))
+```
+
+    ## # A tibble: 3 × 5
+    ##   FusionName  LeftBreakpoint    RightBreakpoint  celltype_final `ctat-LR-fusion`
+    ##   <chr>       <chr>             <chr>            <chr>                     <int>
+    ## 1 CBL--KMT2A  chr11:119232695:+ chr11:118480174… HGSOC                        15
+    ## 2 DEK--CASC17 chr6:18249578:-   chr17:71185655:- HGSOC                        11
+    ## 3 CBL--KMT2A  chr11:119232695:+ chr11:118481715… HGSOC                         1
+
+``` r
+# Other notable fusions in the Patient 2 tumor sample involve known tumor oncogenes and include CBL::KMT2A (16 tumor cells) and DEK::CASC17 (11 tumor cells), both identified solely by long reads
+```
+
+``` r
+Tum_cell_counts_by_method %>% 
+    filter(FusionName == "PSMB7--SCAI") %>%
+    select(FusionName, LeftBreakpoint, RightBreakpoint, method, celltype_final, cell_counts) %>%
+    spread(key=method, value=cell_counts) %>% 
+    arrange(desc(`ctat-LR-fusion`))
+```
+
+    ## # A tibble: 4 × 8
+    ##   FusionName  LeftBreakpoint   RightBreakpoint  celltype_final Arriba
+    ##   <chr>       <chr>            <chr>            <chr>           <int>
+    ## 1 PSMB7--SCAI chr9:124405317:- chr9:125056007:- HGSOC               2
+    ## 2 PSMB7--SCAI chr9:124405317:- chr9:125066058:- HGSOC              NA
+    ## 3 PSMB7--SCAI chr9:124412352:- chr9:125056007:- HGSOC              NA
+    ## 4 PSMB7--SCAI chr9:124405317:- chr9:125029739:- HGSOC              NA
+    ## # ℹ 3 more variables: `ctat-LR-fusion` <int>, FusionInspector <int>,
+    ## #   `STAR-Fusion` <int>
+
+``` r
+# Another prevalent fusion PSMB7::SCAI (52 tumor cells) detected mostly by long reads and with four fusion splicing isoforms involves suppressor of cancer cell invasion gene SCAI
+```
+
+``` r
 # plotting counts of cells according to method for fusions of interest
 
 Tum_cell_counts_by_method %>% 
@@ -456,7 +509,13 @@ Tum_cell_counts_by_method %>%
                  theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+
+``` r
+# Both of these fusions were detected via long and short RNA-seq reads.
+
+# While a single fusion splicing isoform dominated IGF2BP2::TESPA1 detection in cells by both long and short reads, four additional fusion splicing isoforms were detected with long and/or short read support 
+```
 
 # Examine fusions of interest in UMAPs
 
@@ -470,7 +529,7 @@ baseplot
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
 
 ``` r
 # Examine each fusion of interest according to UMAP cell positioning
@@ -494,147 +553,147 @@ for (fusion in  fusions_of_interest$FusionName) {
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-2.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-2.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-3.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-3.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-4.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-4.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-5.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-5.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-6.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-6.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-7.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-7.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-8.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-8.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-9.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-9.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-10.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-10.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-11.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-11.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-12.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-12.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-13.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-13.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-14.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-14.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-15.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-15.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-16.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-16.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-17.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-17.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-18.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-18.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-19.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-19.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-20.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-20.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-21.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-21.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-22.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-22.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-23.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-23.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-24.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-24.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-25.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-25.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-26.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-26.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-27.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-27.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-28.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-28.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-29.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-29.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-30.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-30.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-31.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-31.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-32.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-32.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-33.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-33.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-34.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-34.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-35.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-35.png)<!-- -->
 
     ## Warning: Removed 34 rows containing missing values (`geom_point()`).
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-21-36.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-23-36.png)<!-- -->
 
 ``` r
 # make a pdf containing these plots
@@ -731,7 +790,7 @@ tumor_cell_counts %>%
     ggtitle("Patient2_Tum Fusions of Interest: Cell Counts")
 ```
 
-![](Patient2_analysis_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
+![](Patient2_analysis_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
 
 ``` r
 # Examine Venn for cells detected according to combinations of methods.
@@ -858,6 +917,8 @@ Tum_data %>% filter(FusionName %in% c('SPATS2--TRA2B', 'IGF2BP2--TESPA1')) %>%
 
 ``` r
 # 20 / 21 appear to be co-expressed in the same cell
+
+# Nearly all (20/21) of the SPATS2::TRA2B expression cells are found to co-express IGF2BP2::TESPA1.
 ```
 
 # DEK fusion looks interesting
