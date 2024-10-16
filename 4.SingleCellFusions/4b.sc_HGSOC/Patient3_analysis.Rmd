@@ -172,6 +172,9 @@ Tum_umap_data %>% group_by(celltype_final) %>% tally(name='count_cell_type') %>%
 
 # 38 HGSOC cells  (6% of total cells)
 
+
+# The Patient-3 tumor sample yielded 646 total cells with only 38 (6%) HGSOC cells.
+
 ```
 
 
@@ -254,10 +257,11 @@ fusions_of_interest = Tum_fusion_frac_cell_types %>% filter(celltype_final == "H
     arrange(desc(tot_cells_w_fusion)) %>%
     filter(tot_cells_w_fusion >= MIN_CELLS)
 
-
-
-
 fusions_of_interest
+
+
+# Here, only 2 fusions identified as enriched in the tumor cells: the previously identified CBLC::CTC-232P5.1 fusion in 16 cells (Figure 8d) and our additionally found SNRNP70::ZIK1 in 8 cells (Supplementary Tables S7).
+
 ```
 
 
@@ -487,6 +491,10 @@ CBLC_fusion_isoform_read_support_barplot = tumor_cell_counts_by_methods_by_isofo
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
 
 CBLC_fusion_isoform_read_support_barplot
+
+
+# There is evidence for five fusion transcript breakpoints for the CBLC::CTC-232P5.1 fusion indicating at least five fusion splicing isoforms 
+
 ```
 
 ```{r}
@@ -537,6 +545,10 @@ Tum_data %>% filter(FusionName %in% fusions_of_interest$FusionName) %>%
    select(fusions, cell_barcode, celltype_final, UMAP_1, UMAP_2) %>% unique() %>% 
     ungroup() %>%
     filter(grepl(",", fusions))
+
+# Each of these SNRNP70::ZIK1-expressing cells co-expressed the CBLC::CTC-232P5.1 fusion
+
+
 ```
 
 # fusions found in normal cells?
