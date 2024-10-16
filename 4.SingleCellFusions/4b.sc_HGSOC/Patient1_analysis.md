@@ -309,6 +309,9 @@ Tum_umap_data %>% group_by(celltype_final) %>% tally(name='count_cell_type') %>%
 
 ``` r
 # 92 HGSOC cells  (19% of total cells)
+
+
+# Sequencing of the Patient-1 tumor sample yielded 497 total cells, with 92 cells (19%) identified as HGSOC cells
 ```
 
 ``` r
@@ -528,10 +531,6 @@ fusions_of_interest = Tum_fusion_frac_cell_types %>% filter(celltype_final == "H
     arrange(desc(tot_cells_w_fusion)) %>%
     filter(tot_cells_w_fusion >= MIN_CELLS)
 
-
-
-
-
 fusions_of_interest
 ```
 
@@ -543,6 +542,10 @@ fusions_of_interest
     ## 2 RAPGEF5--AGMO       HGSOC                           6                 1
     ## 3 GS1-279B7.2--GNG4   HGSOC                           5                 1
     ## 4 NTN1--CDRT15P2      HGSOC                           5                 1
+
+``` r
+# from which we identified only four somatic fusion transcripts: SMG7::CH507-513H4.1 (26 cells), RAPGEF5—AGMO (6 cells),  NTN1--CDRT15P2 (5 cells), and GS1-279B7.2--GNG4 (5 cells) (Figure 8a,b, Supplementary Table S7).
+```
 
 only 4 fusions of interest, each with at least 5 cells, and found
 entirely within the tumor cell fraction
@@ -710,6 +713,10 @@ tumor_cell_counts_by_methods
     ## 5 RAPGEF5--AGMO       FusionInspector,ctat-LR-fusion                 1
     ## 6 RAPGEF5--AGMO       ctat-LR-fusion                                 3
     ## 7 SMG7--CH507-513H4.1 ctat-LR-fusion                                26
+
+``` r
+# For RAPGEF5::AGMO, half (3/6) of the cells were detected only by long reads, and 1/6 exclusively by short reads. The other three fusions were found only by long reads
+```
 
 For RAPGEF5::AGMO, half (3/6) of the cells were detected only by long
 reads, and 1/6 exclusively by short reads.
