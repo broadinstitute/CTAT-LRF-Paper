@@ -21,13 +21,47 @@ data %>% head()
 
 ```
 
+```{r}
+# restrict to those fusion gene pairs that have long read support.
+
+fusions_w_long_reads = data %>% filter(has_long_read_support) %>% select(lex_ordered_fusion_name) %>% unique() %>% pull(lex_ordered_fusion_name)
+
+data = data %>% filter(lex_ordered_fusion_name %in% fusions_w_long_reads)
+
+```
+
+
+
+
+```{r}
+
+data = data %>% mutate(sum_arriba_reads = split_reads1 + split_reads2 + discordant_mates) %>%
+    mutate(sum_starF_reads = est_J + est_S) 
+
+
+data %>% head()
+
+```
+
+```{r}
+
+# sum across fusion isoforms per gene
+summary = data %>% group_by(lex_ordered_fusion_name) %>% summarize(StarF_sum_reads = sum(sum_starF_reads, na.rm = T), 
+                                                             Arriba_sum_reads = sum(sum_arriba_reads, na.rm=T) )
+
+summary %>% head()
+
+```
+
+
+
 
 ```{r}
 
 
-# compare counts of split reads for agreed upon fusions
+# compare counts of evidence reads
 
-data %>% filter(progs == "starF,arriba") %>% ggplot(aes(x=sum_split_reads, y=est_J)) + geom_point() + xlim(0,250) + ylim(0,250) +
+summary %>% ggplot(aes(y=StarF_sum_reads, x=Arriba_sum_reads)) + geom_point() + xlim(0,250) + ylim(0,250) +
     theme_bw() +
     xlab("Arriba split read count") +
     ylab("StarF split read count") +
@@ -40,7 +74,7 @@ data %>% filter(progs == "starF,arriba") %>% ggplot(aes(x=sum_split_reads, y=est
 
 ```{r}
 
-cor(data$sum_split_reads, data$est_J, use='complete.obs')
+cor(summary$StarF_sum_reads, summary$Arriba_sum_reads, use='complete.obs')
 
 
 ```
@@ -49,69 +83,65 @@ cor(data$sum_split_reads, data$est_J, use='complete.obs')
 ```{r}
 
 
-junction_read_counts = bind_rows(
-     data %>% filter(progs == "starF,arriba") %>% 
-         mutate(junction_read_count = (est_J + sum_split_reads) / 2 ) %>%
-         select(progs, junction_read_count),
-     data %>% filter(progs == "arriba") %>% rename(junction_read_count = sum_split_reads) %>%
-         select(progs, junction_read_count),
-     data %>% filter(progs == "starF") %>% rename(junction_read_count = est_J) %>%
-         select(progs, junction_read_count)
-)
 
+summary = summary %>% mutate(progs = 'both') %>%
+    mutate(progs = ifelse(StarF_sum_reads == 0, 'arriba-only', progs)) %>%
+    mutate(progs = ifelse(Arriba_sum_reads  == 0, 'starF-only', progs)) 
 
-junction_read_counts %>% head()
+summary %>% head()
+
 
 ```
+
+```{r}
+
+summary = summary %>% mutate(sum_reads = ifelse( (StarF_sum_reads > 0 & Arriba_sum_reads > 0 ), 
+                                                 (StarF_sum_reads + Arriba_sum_reads/2),  
+                                                 StarF_sum_reads)) %>%
+    mutate(sum_reads = ifelse(sum_reads == 0, 
+                              Arriba_sum_reads, 
+                              sum_reads) )
+
+summary %>% head()
+```
+
 
 
 ```{r}
 
-junction_read_counts %>% ggplot(aes(x = progs, y=junction_read_count, color=progs)) + geom_jitter() +
+summary %>% ggplot(aes(x = progs, y=sum_reads, color=progs)) + geom_jitter() +
     theme_bw() +
-    ylim(0,250)
+    ylim(0,250) +
+    ggtitle("Compare read support for fusion pairs according to method")
 
 ```
+
+
+
+# compare both vs. arriba-only
+
+```{r}
+
+wilcox.test(summary %>% filter(progs == "both") %>% pull(sum_reads),
+            summary %>% filter(progs == "arriba-only") %>% pull(sum_reads), alternative = 'greater')
+
+
+```
+
+
+
+# compare both vs. starF-only
 
 
 ```{r}
 
-
-# test starF,arriba vs. starF-only
-
-t.test( junction_read_counts %>% filter(progs == "starF,arriba") %>% pull('junction_read_count'),
-        junction_read_counts %>% filter(progs == "starF") %>% pull('junction_read_count'))
-
-
-```
-
-```{r}
-
-wilcox.test(junction_read_counts %>% filter(progs == "starF,arriba") %>% pull('junction_read_count'),
-        junction_read_counts %>% filter(progs == "starF") %>% pull('junction_read_count'), alternative = 'greater')
-
+wilcox.test(summary %>% filter(progs == "both") %>% pull(sum_reads),
+            summary %>% filter(progs == "starF-only") %>% pull(sum_reads), alternative = 'greater')
 
 ```
 
 
 
-```{r}
 
 
-# test starF,arriba vs. arriba-only
 
-t.test( junction_read_counts %>% filter(progs == "starF,arriba") %>% pull('junction_read_count'),
-        junction_read_counts %>% filter(progs == "arriba") %>% pull('junction_read_count'))
-
-# p-value = 0.009337
-
-```
-
-
-```{r}
-
-wilcox.test(junction_read_counts %>% filter(progs == "starF,arriba") %>% pull('junction_read_count'),
-        junction_read_counts %>% filter(progs == "arriba") %>% pull('junction_read_count'), alternative = 'greater')
-
-
-```

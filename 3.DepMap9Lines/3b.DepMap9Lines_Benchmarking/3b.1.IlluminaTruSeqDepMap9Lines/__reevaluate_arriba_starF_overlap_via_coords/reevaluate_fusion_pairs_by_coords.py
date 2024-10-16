@@ -51,7 +51,7 @@ with open("../Illumina_supported_fusions.tsv", "rt") as fh:
         row["left_gene_coords"] = left_gene_coords
         row["right_gene_coords"] = right_gene_coords
 
-        starF_fusion_name = row["FusionName.starF"]
+        starF_fusion_name = row["FusionName.StarF"]
         arriba_fusion_name = row["FusionName.arriba"]
 
         priority_fusion_name = (

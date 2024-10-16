@@ -58,7 +58,7 @@ both_preds
 
 both_preds%>% select(lex_ordered_fusion_name, progs) %>% unique() %>% group_by(progs) %>% tally()
 
-
+# From the shorter Illumina read based fusion predictions derived from Arriba (282 fusions) and STAR-Fusion (266 fusions), with 92 fusions in common
 ```
 
 
