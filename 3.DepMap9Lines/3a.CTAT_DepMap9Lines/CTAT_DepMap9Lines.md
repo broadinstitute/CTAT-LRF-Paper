@@ -172,7 +172,7 @@ data %>% filter(num_LR > 0 & num_SR > 0) %>% select(sample, fusion) %>% unique()
     ## [1] 212
 
 ``` r
-# 213
+# 212
 
 data %>% filter(num_LR > 0 & num_SR > 0) %>% select(sample, fusion, LeftBreakpoint, RightBreakpoint) %>% unique() %>% nrow()
 ```
@@ -180,7 +180,7 @@ data %>% filter(num_LR > 0 & num_SR > 0) %>% select(sample, fusion, LeftBreakpoi
     ## [1] 294
 
 ``` r
-# 288
+# 294
 ```
 
 # compare long vs. short read fusion evidence, normalized by sequencing depth

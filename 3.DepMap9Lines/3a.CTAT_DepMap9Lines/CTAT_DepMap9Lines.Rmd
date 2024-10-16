@@ -107,10 +107,10 @@ write.table(data, file="DepMap_v1v2mrgd.ctatLRF_FI.consolidated.tsv", quote=F, s
 
 # How many fusion gene pairs and isoforms if require both long and short read support for breakpoints?
 data %>% filter(num_LR > 0 & num_SR > 0) %>% select(sample, fusion) %>% unique() %>% nrow()
-# 213
+# 212
 
 data %>% filter(num_LR > 0 & num_SR > 0) %>% select(sample, fusion, LeftBreakpoint, RightBreakpoint) %>% unique() %>% nrow()
-# 288
+# 294
 
 ```
 
