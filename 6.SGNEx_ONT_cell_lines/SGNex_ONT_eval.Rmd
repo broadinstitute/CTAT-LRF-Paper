@@ -318,7 +318,7 @@ read_support_sample %>% filter(as_truth) %>%
     unique()
 
 
-# 75 'truth' fusions
+# 79 'truth' fusions
 ```
 
 # score fusions
@@ -570,6 +570,8 @@ lex_sorted_validated_fusions %>%  filter(! is.na(matched_illumina)) %>% group_by
 
 ```{r}
 
+# 73 fusiosn w/ Illumina support
+
 lex_sorted_validated_fusions %>%  filter(! (is.na(matched_illumina) & is.na(other_illumina))) %>% nrow()
 
 ```
@@ -645,6 +647,7 @@ read_support_sample_scored %>% filter(prog == "ctat-LR-fusion") %>%
 trusted_fusions_found %>% mutate(matched_illumina = ifelse(is.na(matched_illumina), other_illumina, matched_illumina)) %>%
     group_by(validated_fusion, matched_illumina) %>% tally()
 
+# Venn for Figure 6a
 
 ```
 

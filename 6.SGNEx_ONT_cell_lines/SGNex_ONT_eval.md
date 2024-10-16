@@ -447,7 +447,7 @@ read_support_sample %>% filter(as_truth) %>%
     ## # ℹ 69 more rows
 
 ``` r
-# 75 'truth' fusions
+# 79 'truth' fusions
 ```
 
 # score fusions
@@ -773,6 +773,8 @@ lex_sorted_validated_fusions %>%  filter(! is.na(matched_illumina)) %>% group_by
     ## 3 starF,arriba        34
 
 ``` r
+# 73 fusiosn w/ Illumina support
+
 lex_sorted_validated_fusions %>%  filter(! (is.na(matched_illumina) & is.na(other_illumina))) %>% nrow()
 ```
 
@@ -911,6 +913,10 @@ trusted_fusions_found %>% mutate(matched_illumina = ifelse(is.na(matched_illumin
     ## 5 TRUE             starF                4
     ## 6 TRUE             starF,arriba        18
     ## 7 TRUE             <NA>                 6
+
+``` r
+# Venn for Figure 6a
+```
 
 ``` r
 # include lex sorted fusion name
