@@ -420,6 +420,10 @@ fusions_of_interest
     ## # ℹ 1 more variable: frac_tumor_cells <dbl>
 
 ``` r
+# Only one fusion was found in more than 1% of tumor or normal cells: NUTM2A-AS1::RP11-203L2.4 found in 265 tumor cells (38%) and only 3 normal cells (0.05%) through a combination of long and short read fusion transcript analyses (Figure 7a,b);
+```
+
+``` r
 x = 0
 
 plots = list()
