@@ -101,6 +101,7 @@ Counts of trusted fusions identified vs. others: [6.SGNEx_ONT_cell_lines/6.4.SGN
 
 Example benchmarking using validated + intersected(STAR-Fusion, Arriba) Illumina-supported fusions with precision-recall plot and UpSet plot: [6.SGNEx_ONT_cell_lines/6.3.SGNex_Illumina_benchmarking/default_mode/__illum_TP_uniq_FP.arriba,starF/SGNEx_DefaultModes.Rmd](6.SGNEx_ONT_cell_lines/6.3.SGNex_Illumina_benchmarking/default_mode/__illum_TP_uniq_FP.arriba,starF/SGNEx_DefaultModes.md) (Figure 6d,e)
 
+Exploration of the prevalence of duplex-type reads in ONT direct RNA vs. cDNA sequences of various types: [6.SGNEx_ONT_cell_lines/6.5.SGNEx_duplex_read_eval/eval_duplex_reads.Rmd](6.SGNEx_ONT_cell_lines/6.5.SGNEx_duplex_read_eval/eval_duplex_reads.md) and [summary figure](6.SGNEx_ONT_cell_lines/6.5.SGNEx_duplex_read_eval/SGNEx_duplex_frac_plot.svg)
     
 ## Long Read Fusion Isoform Detection from Tumor Single Cell Transcriptomes
 

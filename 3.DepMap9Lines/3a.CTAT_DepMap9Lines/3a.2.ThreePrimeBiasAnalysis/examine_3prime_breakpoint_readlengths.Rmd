@@ -108,7 +108,7 @@ ggsave(SR_LR_ratio_vs_3prime_brkpt_dist_plot, file="SR_LR_ratio_vs_3prime_brkpt_
 
 cor.test(data_GB$threePrimeBrkLen, log10(data_GB$`SR_GB/LR_GB`))
 
-# R=0.28, p=2.6e-8
+# R=0.27, p < 1e-7
 
 ```
 
@@ -251,7 +251,7 @@ K562_data_GB = data_GB %>% filter(sample == "K562") %>% filter(FusionName != "BC
 
 cor.test(K562_data_GB$threePrimeBrkLen, log10(K562_data_GB$`SR_GB/LR_GB`))
 
-# cor = 0.34, p=0.07
+# cor = 0.22, p=0.18
 
 ```
 

@@ -129,9 +129,9 @@ SR_LR_ratio_vs_3prime_brkpt_dist_plot = data_GB %>%
 SR_LR_ratio_vs_3prime_brkpt_dist_plot
 ```
 
-    ## Warning: Removed 70 rows containing non-finite values (`stat_smooth()`).
+    ## Warning: Removed 47 rows containing non-finite values (`stat_smooth()`).
 
-    ## Warning: Removed 70 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 47 rows containing missing values (`geom_point()`).
 
 ![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
@@ -139,9 +139,9 @@ SR_LR_ratio_vs_3prime_brkpt_dist_plot
 ggsave(SR_LR_ratio_vs_3prime_brkpt_dist_plot, file="SR_LR_ratio_vs_3prime_brkpt_dist_plot.svg", width=6, height=4)
 ```
 
-    ## Warning: Removed 70 rows containing non-finite values (`stat_smooth()`).
+    ## Warning: Removed 47 rows containing non-finite values (`stat_smooth()`).
 
-    ## Warning: Removed 70 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 47 rows containing missing values (`geom_point()`).
 
 ``` r
 cor.test(data_GB$threePrimeBrkLen, log10(data_GB$`SR_GB/LR_GB`))
@@ -151,16 +151,16 @@ cor.test(data_GB$threePrimeBrkLen, log10(data_GB$`SR_GB/LR_GB`))
     ##  Pearson's product-moment correlation
     ## 
     ## data:  data_GB$threePrimeBrkLen and log10(data_GB$`SR_GB/LR_GB`)
-    ## t = 5.6499, df = 374, p-value = 3.184e-08
+    ## t = 5.5135, df = 396, p-value = 6.357e-08
     ## alternative hypothesis: true correlation is not equal to 0
     ## 95 percent confidence interval:
-    ##  0.1845262 0.3710418
+    ##  0.1732535 0.3559598
     ## sample estimates:
     ##       cor 
-    ## 0.2804289
+    ## 0.2670043
 
 ``` r
-# R=0.28, p=2.6e-8
+# R=0.27, p < 1e-7
 ```
 
 ``` r
@@ -179,9 +179,9 @@ brkpt_dist_findings_plot = data_GB %>%
 brkpt_dist_findings_plot
 ```
 
-    ## Warning: Removed 70 rows containing non-finite values (`stat_smooth()`).
+    ## Warning: Removed 47 rows containing non-finite values (`stat_smooth()`).
 
-    ## Warning: Removed 70 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 47 rows containing missing values (`geom_point()`).
 
 ![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
@@ -189,9 +189,9 @@ brkpt_dist_findings_plot
 ggsave(brkpt_dist_findings_plot, file="SRenrich_vs_3primebrkptdist.svg", width=9, height=7)
 ```
 
-    ## Warning: Removed 70 rows containing non-finite values (`stat_smooth()`).
+    ## Warning: Removed 47 rows containing non-finite values (`stat_smooth()`).
 
-    ## Warning: Removed 70 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 47 rows containing missing values (`geom_point()`).
 
 ``` r
 cell_lines = data_GB %>% select(sample) %>% unique() %>% pull(sample)
@@ -217,14 +217,14 @@ threeprimebrklen_summary_stats %>% arrange(p, R)
 
     ##          sample           R            p
     ## cor...1 HCC1187  0.67739619 5.771054e-10
-    ## cor...2    K562  0.63604842 1.202175e-04
-    ## cor...3    VCAP  0.23844855 4.848666e-02
-    ## cor...4   SKBR3  0.19981101 5.350308e-02
+    ## cor...2    K562  0.54298111 4.277369e-04
+    ## cor...3   SKBR3  0.18983175 6.395668e-02
+    ## cor...4    VCAP  0.20654979 8.624325e-02
     ## cor...5    KIJK  0.53129350 9.260243e-02
-    ## cor...6   DMS53  0.13403298 4.034542e-01
+    ## cor...6   DMS53  0.15059209 2.865916e-01
     ## cor...7      MJ  0.22553635 6.674316e-01
     ## cor...8   RT112 -0.08876071 7.347879e-01
-    ## cor...9 HCC1395  0.03214821 8.398317e-01
+    ## cor...9 HCC1395  0.03776540 8.099949e-01
 
 ``` r
 data_GB = data_GB %>% group_by(sample) %>% arrange(desc(`SR_GB/LR_GB`)) %>% mutate(rn=row_number()) %>% ungroup() 
@@ -242,7 +242,7 @@ SRenrich_vs_ranking_plot = data_GB %>%
 SRenrich_vs_ranking_plot
 ```
 
-    ## Warning: Removed 70 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 47 rows containing missing values (`geom_point()`).
 
 ![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
@@ -250,7 +250,7 @@ SRenrich_vs_ranking_plot
 ggsave(SRenrich_vs_ranking_plot, file="SRenrich_vs_ranking.svg", width=9, height=7)
 ```
 
-    ## Warning: Removed 70 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 47 rows containing missing values (`geom_point()`).
 
 ``` r
 data_GB %>%
@@ -260,18 +260,18 @@ data_GB %>%
 ```
 
     ## # A tibble: 45 × 4
-    ##    sample  FusionName                   threePrimeBrkLen `SR_GB/LR_GB`
-    ##    <chr>   <chr>                                   <dbl>         <dbl>
-    ##  1 DMS53   USP43--CNTLN                             366          15.0 
-    ##  2 DMS53   RP11-59N23.3--CMAS                      1037           7.77
-    ##  3 DMS53   RP11-59N23.3--CMAS                      1393           7.77
-    ##  4 DMS53   RP11-59N23.1--CMAS                      1393           6.20
-    ##  5 DMS53   RP11-507B12.1--RP11-507B12.2             622           2.82
-    ##  6 HCC1187 PUM1--TRERF1                            4142.         17.4 
-    ##  7 HCC1187 RP11-123O10.4--GRIP1                    4851           5.15
-    ##  8 HCC1187 RP11-123O10.4--GRIP1                    1523           5.15
-    ##  9 HCC1187 RP11-123O10.4--GRIP1                    4390           5.15
-    ## 10 HCC1187 SEC22B--NOTCH2                          5782           4.18
+    ##    sample  FusionName           threePrimeBrkLen `SR_GB/LR_GB`
+    ##    <chr>   <chr>                           <dbl>         <dbl>
+    ##  1 DMS53   USP43--CNTLN                     366          15.0 
+    ##  2 DMS53   RP11-59N23.3--CMAS              1037           7.77
+    ##  3 DMS53   RP11-59N23.3--CMAS              1393           7.77
+    ##  4 DMS53   RP11-59N23.1--CMAS              1393           6.20
+    ##  5 DMS53   ABR--CDK14                      1980.          5.81
+    ##  6 HCC1187 PUM1--TRERF1                    4142.         17.4 
+    ##  7 HCC1187 RP11-123O10.4--GRIP1            4851           5.15
+    ##  8 HCC1187 RP11-123O10.4--GRIP1            1523           5.15
+    ##  9 HCC1187 RP11-123O10.4--GRIP1            4390           5.15
+    ## 10 HCC1187 SEC22B--NOTCH2                  5782           4.18
     ## # ℹ 35 more rows
 
 ``` r
@@ -300,9 +300,9 @@ K562_brkpt_dist_findings_plot = data_GB %>%
 K562_brkpt_dist_findings_plot
 ```
 
-    ## Warning: Removed 8 rows containing non-finite values (`stat_smooth()`).
+    ## Warning: Removed 1 rows containing non-finite values (`stat_smooth()`).
 
-    ## Warning: Removed 8 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 1 rows containing missing values (`geom_point()`).
 
 ![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
@@ -310,9 +310,9 @@ K562_brkpt_dist_findings_plot
 ggsave(K562_brkpt_dist_findings_plot, file="K562_SRenrich_vs_3primebrkptdist.svg", width=6, height=4)
 ```
 
-    ## Warning: Removed 8 rows containing non-finite values (`stat_smooth()`).
+    ## Warning: Removed 1 rows containing non-finite values (`stat_smooth()`).
 
-    ## Warning: Removed 8 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 1 rows containing missing values (`geom_point()`).
 
 ``` r
 # K562 BCR::ABL1 log10(SR/LR) is only significantly correlated with 3' breakpoint read length when BCR--ABL1 is included
@@ -326,16 +326,16 @@ cor.test(K562_data_GB$threePrimeBrkLen, log10(K562_data_GB$`SR_GB/LR_GB`))
     ##  Pearson's product-moment correlation
     ## 
     ## data:  K562_data_GB$threePrimeBrkLen and log10(K562_data_GB$`SR_GB/LR_GB`)
-    ## t = 1.9054, df = 28, p-value = 0.06704
+    ## t = 1.3608, df = 35, p-value = 0.1823
     ## alternative hypothesis: true correlation is not equal to 0
     ## 95 percent confidence interval:
-    ##  -0.02445982  0.62301995
+    ##  -0.1076772  0.5110618
     ## sample estimates:
     ##       cor 
-    ## 0.3387949
+    ## 0.2241627
 
 ``` r
-# cor = 0.34, p=0.07
+# cor = 0.22, p=0.18
 ```
 
 ``` r
@@ -350,7 +350,7 @@ K562_SRenrich_vs_ranking_plot = data_GB %>%
 K562_SRenrich_vs_ranking_plot
 ```
 
-    ## Warning: Removed 8 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 1 rows containing missing values (`geom_point()`).
 
 ![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
@@ -358,7 +358,7 @@ K562_SRenrich_vs_ranking_plot
 ggsave(K562_SRenrich_vs_ranking_plot, file="K562_SRenrich_vs_ranking.svg", width=6, height=4)
 ```
 
-    ## Warning: Removed 8 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 1 rows containing missing values (`geom_point()`).
 
 Worth noting, there are 2 long reads we find supporting K562 BCR::ABL1.
 The read lengths are:
@@ -395,9 +395,9 @@ data_GB %>% ggplot(aes(x=align_len, y=log10(`SR_GB/LR_GB`))) + geom_point() +
     ggtitle("SR/LR ~ alignment length")
 ```
 
-    ## Warning: Removed 70 rows containing non-finite values (`stat_smooth()`).
+    ## Warning: Removed 47 rows containing non-finite values (`stat_smooth()`).
 
-    ## Warning: Removed 70 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 47 rows containing missing values (`geom_point()`).
 
 ![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
 
@@ -409,13 +409,13 @@ cor.test(data_GB$align_len, log10(data_GB$`SR_GB/LR_GB`))
     ##  Pearson's product-moment correlation
     ## 
     ## data:  data_GB$align_len and log10(data_GB$`SR_GB/LR_GB`)
-    ## t = 6.6143, df = 374, p-value = 1.293e-10
+    ## t = 6.4996, df = 396, p-value = 2.425e-10
     ## alternative hypothesis: true correlation is not equal to 0
     ## 95 percent confidence interval:
-    ##  0.2300053 0.4112887
+    ##  0.2188581 0.3966688
     ## sample estimates:
     ##       cor 
-    ## 0.3236136
+    ## 0.3104768
 
 ``` r
 data_GB %>% ggplot(aes(x=align_len, y=log10(`SR_GB/LR_GB`))) + geom_point() +
@@ -427,9 +427,9 @@ data_GB %>% ggplot(aes(x=align_len, y=log10(`SR_GB/LR_GB`))) + geom_point() +
     ggtitle("SR/LR ~ alignment length per cell line")
 ```
 
-    ## Warning: Removed 70 rows containing non-finite values (`stat_smooth()`).
+    ## Warning: Removed 47 rows containing non-finite values (`stat_smooth()`).
 
-    ## Warning: Removed 70 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 47 rows containing missing values (`geom_point()`).
 
 ![](examine_3prime_breakpoint_readlengths_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
 
@@ -457,12 +457,12 @@ summary_stats %>% arrange(p, R)
 
     ##          sample           R            p
     ## cor...1 HCC1187  0.73483834 3.206855e-12
-    ## cor...2    K562  0.72941546 3.238620e-06
-    ## cor...3    VCAP  0.29727467 1.311638e-02
+    ## cor...2    K562  0.71062761 5.775193e-07
+    ## cor...3    VCAP  0.25997570 2.974497e-02
     ## cor...4   RT112  0.49930777 4.129419e-02
-    ## cor...5 HCC1395  0.26904949 8.489762e-02
-    ## cor...6   SKBR3  0.11403055 2.738020e-01
-    ## cor...7   DMS53  0.08523466 5.962118e-01
+    ## cor...5 HCC1395  0.26877195 8.137752e-02
+    ## cor...6   SKBR3  0.10689028 2.999407e-01
+    ## cor...7   DMS53  0.06579661 6.430526e-01
     ## cor...8      MJ  0.20958874 6.902202e-01
     ## cor...9    KIJK -0.02463739 9.426796e-01
 
@@ -482,13 +482,13 @@ cor.test(data_GB$threePrimeBrkLen, data_GB$align_len)
     ##  Pearson's product-moment correlation
     ## 
     ## data:  data_GB$threePrimeBrkLen and data_GB$align_len
-    ## t = 36.386, df = 444, p-value < 2.2e-16
+    ## t = 36.279, df = 443, p-value < 2.2e-16
     ## alternative hypothesis: true correlation is not equal to 0
     ## 95 percent confidence interval:
-    ##  0.8400117 0.8869524
+    ##  0.8395140 0.8866368
     ## sample estimates:
     ##       cor 
-    ## 0.8653679
+    ## 0.8649699
 
 ie. if the breakpoint is far away from the 3’ end, we’ll obviously only
 capture it with the longest of fusion reads sequenced.
