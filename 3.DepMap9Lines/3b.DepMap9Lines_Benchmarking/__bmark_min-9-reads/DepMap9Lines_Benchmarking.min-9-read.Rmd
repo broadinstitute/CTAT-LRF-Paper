@@ -35,34 +35,6 @@ ROC_file = paste0(scored_predictions_file, ".ROC")
 ```
 
 
-
-```{r}
-
-fusion_preds = read.table("data/preds.collected.gencode_mapped.wAnnot.filt.pass", header=T, sep="\t", stringsAsFactors = F) %>%
-    filter(prog %in% PROGS)
-
-fusion_preds$prog = factor(fusion_preds$prog, levels=PROGS)
-
-fusion_preds %>% head()
-```
-
-
-
-```{r}
-
-p = fusion_preds %>% 
-    select(sample, prog, fusion) %>% unique() %>%
-    group_by(sample, prog) %>% tally(name='num_fusions') %>%
-    ggplot(aes(x=prog, y=num_fusions)) +
-    theme_bw() +
-    geom_col(aes(fill=prog)) + facet_wrap(~sample)  + 
-    theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
-
-p 
-```
-
-
-
 ```{r}
 
 # get num truth counts (min 2 agree)
@@ -93,22 +65,6 @@ truth_data_counts %>% arrange(num_truth_fusions)
 truth_data_counts %>% summarise(sum_truth_fusions = sum(num_truth_fusions))
 
 # 71 proxy truth fusions
-
-```
-
-
-```{r}
-
-p_fusion_counts_barplot = p + geom_hline(data=truth_data_counts, aes(yintercept=num_truth_fusions))
-
-p_fusion_counts_barplot
-
-```
-
-
-```{r}
-
-ggsave(p_fusion_counts_barplot, file="depmap_fusion_counts_per_prog.barplot.svg", width=7, height=5)
 
 ```
 
