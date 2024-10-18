@@ -1,5 +1,5 @@
 ---
-title: "Trusted_vs_Other"
+title: "Trusted_vs_Unique"
 author: "bhaas"
 date: '2024-10-07'
 output: github_document
@@ -9,6 +9,7 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
+
 
 
 ```{r}
@@ -32,13 +33,43 @@ data %>% head()
 
 ```{r}
 
+fusion_prog_count_info = data %>% select(proxy_fusion_name, prog) %>% unique() %>%
+    group_by(proxy_fusion_name) %>% arrange(prog) %>%
+    mutate(progs = paste(prog, collapse=","), num_progs = n()) %>%
+    select(proxy_fusion_name, progs, num_progs) %>% unique()
+
+
+table(fusion_prog_count_info$num_progs)
+```
+
+
+```{r}
+
+unique_fusions = fusion_prog_count_info %>% filter(num_progs == 1) %>% 
+    pull(proxy_fusion_name)
+
+
+```
+
+
+```{r}
+
+data = data %>% mutate(is_unique_fusion = (proxy_fusion_name %in% unique_fusions))
+
+
+```
+
+
+
+```{r}
+
 # score fusions
 
 score_fusions = function(fusions_as_truth_labeled) {
     read_support_sample_scored = fusions_as_truth_labeled %>% 
         group_by(prog) %>%
         arrange(desc(num_reads), desc(as_truth)) %>% 
-        mutate(num_valid = cumsum(as_truth), num_other = cumsum(! as_truth)) %>%
+        mutate(num_trusted = cumsum(as_truth), num_unique_fusions = cumsum(is_unique_fusion & ! as_truth)) %>%
         ungroup()
     
     return(read_support_sample_scored)
@@ -55,6 +86,9 @@ data %>% filter(validated_fusion) %>% select(proxy_fusion_name, prog) %>% unique
 
 
 ```
+
+
+
 ```{r}
 
 validated_fusions_found_by_progs = data %>% filter(validated_fusion) %>% select(proxy_fusion_name, prog) %>% unique() %>% 
@@ -88,14 +122,14 @@ scored_validated_fusions = score_fusions( data %>% mutate(as_truth = validated_f
 ```{r}
 
 scored_validated_fusions %>% 
-    select(prog, num_other, num_valid) %>% 
-    ggplot(aes(x=num_other, y=num_valid)) + 
+    select(prog, num_unique_fusions, num_trusted) %>% 
+    ggplot(aes(x=num_unique_fusions, y=num_trusted)) + 
     geom_point(aes(color=prog), alpha=alpha_val) + 
     geom_line(aes(color=prog)) +
     scale_x_continuous(trans='log10') + theme_bw() +
-    ggtitle("Scoring validated fusions vs. other")
+    ggtitle("Scoring validated fusions vs. unique non-validated ")
 
-# but know that 'other' still contains other fusions that appear legit based on Illumina support.
+
 
 ```
 
@@ -110,7 +144,7 @@ scored_validated_fusions %>%
 scored_intersected_StarF_Arriba_fusions = score_fusions(
     data %>% rowwise() %>%
         mutate(illum_support_info = paste(matched_illumina, other_illumina), sep=",") %>%
-        mutate(as_truth = (grepl("starF", illum_support_info) & grepl("arriba", illum_support_info) | validated_fusion) )
+        mutate(as_truth = (grepl("starF", illum_support_info) & grepl("arriba", illum_support_info) ) | validated_fusion )
 )
 
 ```
@@ -118,15 +152,16 @@ scored_intersected_StarF_Arriba_fusions = score_fusions(
 ```{r}
 
 valid_plus_both_intersect_plot = scored_intersected_StarF_Arriba_fusions %>% 
-    select(prog, num_other, num_valid) %>% 
-    ggplot(aes(x=num_other, y=num_valid)) + 
-    geom_point(aes(color=prog), alpha=alpha_val) + 
+    select(prog, num_unique_fusions, num_trusted) %>% 
+    ggplot(aes(x=num_unique_fusions, y=num_trusted)) + 
+    geom_point(aes(color=prog), alpha=alpha_val, size=rel(3)) + 
     geom_line(aes(color=prog)) +
     scale_x_continuous(trans='log10') + theme_bw() +
-    ggtitle("Scoring (valid + (StarF intersect Arriba)) vs. other")
+    ggtitle("Scoring (valid + (StarF intersect Arriba)) vs. unique non-validated")
 
 
 valid_plus_both_intersect_plot
+
 ```
 
 
@@ -137,6 +172,38 @@ ggsave(valid_plus_both_intersect_plot, file="valid_plus_both_intersect_plot.svg"
 
 ```
 
+
+# valid + starF + arriba as truth:
+
+
+
+```{r}
+
+scored_union_StarF_Arriba_and_valid_fusions = score_fusions(
+    data %>% rowwise() %>%
+        mutate(illum_support_info = paste(matched_illumina, other_illumina), sep=",") %>%
+        mutate(as_truth = (grepl("starF", illum_support_info) | grepl("arriba", illum_support_info) ) | validated_fusion )
+)
+
+```
+
+```{r}
+
+scored_union_StarF_Arriba_and_valid_fusions_plot = scored_union_StarF_Arriba_and_valid_fusions %>% 
+    select(prog, num_unique_fusions, num_trusted) %>% 
+    ggplot(aes(x=num_unique_fusions, y=num_trusted)) + 
+    geom_point(aes(color=prog), alpha=alpha_val, size=rel(3)) + 
+    geom_line(aes(color=prog)) +
+    scale_x_continuous(trans='log10') + theme_bw() +
+    ggtitle("Scoring (valid + StarF + Arriba)) vs. unique non-validated")
+
+
+scored_union_StarF_Arriba_and_valid_fusions_plot
+
+```
+
+
+
 # Valid + StarF as truth
 
 
@@ -146,7 +213,7 @@ ggsave(valid_plus_both_intersect_plot, file="valid_plus_both_intersect_plot.svg"
 scored_valid_plus_StarF_fusions = score_fusions(
     data %>% rowwise() %>%
         mutate(illum_support_info = paste(matched_illumina, other_illumina), sep=",") %>%
-        mutate(as_truth = (grepl("starF", illum_support_info)  | validated_fusion ) )
+        mutate(as_truth = (grepl("starF", illum_support_info) | validated_fusion ) )
 )
 
 ```
@@ -154,12 +221,12 @@ scored_valid_plus_StarF_fusions = score_fusions(
 ```{r}
 
 scored_valid_plus_StarF_fusions %>% 
-    select(prog, num_other, num_valid) %>% 
-    ggplot(aes(x=num_other, y=num_valid)) + 
+    select(prog, num_unique_fusions, num_trusted) %>% 
+    ggplot(aes(x=num_unique_fusions, y=num_trusted)) + 
     geom_point(aes(color=prog), alpha=alpha_val) + 
     geom_line(aes(color=prog)) +
     scale_x_continuous(trans='log10') + theme_bw() +
-    ggtitle("Scoring (valid + StarF) vs. other")
+    ggtitle("Scoring (valid + StarF) vs. unique non-validated")
 
 
 ```
@@ -183,12 +250,12 @@ scored_valid_plus_Arriba_fusions = score_fusions(
 ```{r}
 
 scored_valid_plus_Arriba_fusions %>% 
-    select(prog, num_other, num_valid) %>% 
-    ggplot(aes(x=num_other, y=num_valid)) + 
+    select(prog, num_unique_fusions, num_trusted) %>% 
+    ggplot(aes(x=num_unique_fusions, y=num_trusted)) + 
     geom_point(aes(color=prog), alpha=alpha_val) + 
     geom_line(aes(color=prog)) +
     scale_x_continuous(trans='log10') + theme_bw() +
-    ggtitle("Scoring (valid + Arriba) vs. other")
+    ggtitle("Scoring (valid + Arriba) vs. unique non-validated")
 
 ```
 
