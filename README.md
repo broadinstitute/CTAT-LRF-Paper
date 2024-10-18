@@ -97,7 +97,7 @@ Venn for validated fusions and Illumina-supported fusions used to define trusted
 
 Accuracy summary for benchmarking using different validation and Illumina-supported truth sets: [6.SGNEx_ONT_cell_lines/6.3.SGNex_Illumina_benchmarking/default_mode/valid_plus_Illum_TP_uniq_FP_summary.Rmd](6.SGNEx_ONT_cell_lines/6.3.SGNex_Illumina_benchmarking/default_mode/valid_plus_Illum_TP_uniq_FP_summary.md) (Figure 6b)
 
-Counts of trusted fusions identified vs. others: [6.SGNEx_ONT_cell_lines/6.4.SGNEx_trusted_vs_other/Trusted_vs_Others.Rmd](6.SGNEx_ONT_cell_lines/6.4.SGNEx_trusted_vs_other/Trusted_vs_Others.md) (Figure 6c)
+Counts of trusted fusions identified vs. unique predictions: [6.SGNEx_ONT_cell_lines/6.4.SGNEx_trusted_vs_other/Trusted_vs_Unique.Rmd](6.SGNEx_ONT_cell_lines/6.4.SGNEx_trusted_vs_other/Trusted_vs_Unique.md) (Figure 6c)
 
 Example benchmarking using validated + intersected(STAR-Fusion, Arriba) Illumina-supported fusions with precision-recall plot and UpSet plot: [6.SGNEx_ONT_cell_lines/6.3.SGNex_Illumina_benchmarking/default_mode/__illum_TP_uniq_FP.arriba,starF/SGNEx_DefaultModes.Rmd](6.SGNEx_ONT_cell_lines/6.3.SGNex_Illumina_benchmarking/default_mode/__illum_TP_uniq_FP.arriba,starF/SGNEx_DefaultModes.md) (Figure 6d,e)
 
