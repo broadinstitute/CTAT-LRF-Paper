@@ -182,7 +182,7 @@ valid_plus_both_intersect_plot
 ![](Trusted_vs_Unique_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
 ``` r
-ggsave(valid_plus_both_intersect_plot, file="valid_plus_both_intersect_plot.svg", width=6, height=4)
+ggsave(valid_plus_both_intersect_plot, file="valid_plus_both_intersect-vs-unique.plot.svg", width=6, height=4)
 ```
 
     ## Warning: Transformation introduced infinite values in continuous x-axis
