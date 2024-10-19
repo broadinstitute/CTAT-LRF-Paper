@@ -172,6 +172,34 @@ ggsave(valid_plus_both_intersect_plot, file="valid_plus_both_intersect-vs-unique
 
 ```
 
+```{r}
+
+max_valid_fusions = scored_intersected_StarF_Arriba_fusions  %>% filter(as_truth) %>% select(proxy_fusion_name) %>% unique() %>% nrow()
+
+max_valid_fusions 
+
+```
+
+```{r}
+
+scored_intersected_StarF_Arriba_fusions =  scored_intersected_StarF_Arriba_fusions %>% 
+    mutate(precision = num_trusted / (num_trusted + num_unique_fusions ),
+           recall = num_trusted / max_valid_fusions)
+
+scored_intersected_StarF_Arriba_fusions %>% head()
+```
+
+```{r}
+
+scored_intersected_StarF_Arriba_fusions %>% 
+    group_by(prog, num_reads) %>% arrange(desc(recall), desc(precision)) %>% filter(row_number()==1) %>% ungroup() %>%
+    ggplot(aes(x=recall, y=precision, color=prog)) + 
+    theme_bw() + geom_point() + geom_line()
+
+
+```
+
+
 
 # valid + starF + arriba as truth:
 

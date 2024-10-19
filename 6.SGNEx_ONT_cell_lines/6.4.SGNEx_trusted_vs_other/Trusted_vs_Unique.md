@@ -188,6 +188,44 @@ ggsave(valid_plus_both_intersect_plot, file="valid_plus_both_intersect-vs-unique
     ## Warning: Transformation introduced infinite values in continuous x-axis
     ## Transformation introduced infinite values in continuous x-axis
 
+``` r
+max_valid_fusions = scored_intersected_StarF_Arriba_fusions  %>% filter(as_truth) %>% select(proxy_fusion_name) %>% unique() %>% nrow()
+
+max_valid_fusions 
+```
+
+    ## [1] 46
+
+``` r
+scored_intersected_StarF_Arriba_fusions =  scored_intersected_StarF_Arriba_fusions %>% 
+    mutate(precision = num_trusted / (num_trusted + num_unique_fusions ),
+           recall = num_trusted / max_valid_fusions)
+
+scored_intersected_StarF_Arriba_fusions %>% head()
+```
+
+    ## # A tibble: 6 × 15
+    ##   proxy_fusion_name   sample prog    num_reads validated_fusion matched_illumina
+    ##   <chr>               <chr>  <fct>       <int> <lgl>            <chr>           
+    ## 1 MCF7|BCAS3--BCAS4   MCF7   ctat-L…      3942 TRUE             starF,arriba    
+    ## 2 MCF7|BCAS3--BCAS4   MCF7   fusion…      3590 TRUE             starF,arriba    
+    ## 3 MCF7|BCAS3--BCAS4   MCF7   JAFFAL       3382 TRUE             starF,arriba    
+    ## 4 MCF7|BCAS3--BCAS4   MCF7   LongGF       1947 TRUE             starF,arriba    
+    ## 5 K562|TXNRD1--RPL18A K562   fusion…      1142 FALSE            <NA>            
+    ## 6 MCF7|TXNRD1--RPL18A MCF7   fusion…      1136 FALSE            <NA>            
+    ## # ℹ 9 more variables: other_illumina <chr>, is_unique_fusion <lgl>,
+    ## #   illum_support_info <chr>, sep <chr>, as_truth <lgl>, num_trusted <int>,
+    ## #   num_unique_fusions <int>, precision <dbl>, recall <dbl>
+
+``` r
+scored_intersected_StarF_Arriba_fusions %>% 
+    group_by(prog, num_reads) %>% arrange(desc(recall), desc(precision)) %>% filter(row_number()==1) %>% ungroup() %>%
+    ggplot(aes(x=recall, y=precision, color=prog)) + 
+    theme_bw() + geom_point() + geom_line()
+```
+
+![](Trusted_vs_Unique_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+
 # valid + starF + arriba as truth:
 
 ``` r
@@ -214,7 +252,7 @@ scored_union_StarF_Arriba_and_valid_fusions_plot
     ## Warning: Transformation introduced infinite values in continuous x-axis
     ## Transformation introduced infinite values in continuous x-axis
 
-![](Trusted_vs_Unique_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+![](Trusted_vs_Unique_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
 # Valid + StarF as truth
 
@@ -239,7 +277,7 @@ scored_valid_plus_StarF_fusions %>%
     ## Warning: Transformation introduced infinite values in continuous x-axis
     ## Transformation introduced infinite values in continuous x-axis
 
-![](Trusted_vs_Unique_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+![](Trusted_vs_Unique_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
 
 # Valid + Arriba support as Truth
 
@@ -264,4 +302,4 @@ scored_valid_plus_Arriba_fusions %>%
     ## Warning: Transformation introduced infinite values in continuous x-axis
     ## Transformation introduced infinite values in continuous x-axis
 
-![](Trusted_vs_Unique_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+![](Trusted_vs_Unique_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
